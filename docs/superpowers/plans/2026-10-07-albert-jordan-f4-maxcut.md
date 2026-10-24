@@ -83,3 +83,12 @@
 - [ ] Record external donor source surface as externally paid but root-kernel compatibility pending.
 - [ ] Keep actual donor instantiation, continuous E6 action, F4 identification, and full ternary-240 recognition independently open.
 - [ ] Update rollup and focused workflow.
+
+
+## 2026-10-24 native Hamiltonian proof and cross-prover attribution
+
+New proof source `Integration/RationalAlbertJordanHamiltonianSymmetry.lean` imports and REUSES the existing `RationalAlbertNative` literal rational octonionic Jordan product/unit and `RationalAlbertS3Native` genuine order-three Albert product automorphism. On this exact same product it proves `f∘L_h=L_h∘f ↔ f(h)=h` for the actual cyclic actor, with the generic right-unit argument; for native `h=diag(1,0,-1)`, `tr(h)=0`, `h≠0`, `L_h(1)=h` and `cycleA h ≠ h`, hence `L_h` does NOT commute with the source-proved order-three Jordan symmetry. This is an actual source-specific operator obstruction, not a new F4 classifier, a spatial Cube27 basis action or Monster VOA mode. Older `AlbertScalarTraceless` and `TernaryAlbertLinearBasisWeld` already construct the linear 1+26 transport; it is not an algebra intertwiner.
+
+Full local exact Cayley–Dickson/Albert Python (previous already supplied by the original 27−1 programme, now freshly rerun) PASS verifies Jordan spectrum `{-1:1,-1/2:8,0:9,1/2:8,1:1}` and tracefree compression `{−1/√3:1,−1/2:8,0:8,1/2:8,1/√3:1}`. Distinguish the separate open cube path graph 54 edges, F3³ periodic torus 81 edges, complete 351-edge affine-invariant graph, and the actual Jordan L_h.
+
+The other living cross-prover owners (NOT merged local Lean theorem terms) are Agda #1249 exact 26-dimensional **constant-mode-removed path Laplacian**, whose operator is A=D+1*bᵀ with Gram metric G=I−J/27, NOT site-origin-deleted Dirichlet D; Lean #84 handoff and #80 TOE. Do not identify site-origin delta with the actual Jordan unit or the constant Fourier vector. This Lean source is COMMITTED but **Lean/Lake exact-head kernel unverified**, since no Lean executable is available in the current runtime.

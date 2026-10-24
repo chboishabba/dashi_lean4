@@ -180,4 +180,37 @@ theorem selectedNeutralMassRanks : (2 : Nat) = 2 ∧
 -- 2pi-periodic; conditional mod-2 WZ obstruction remains.
 theorem sourceChiAnomalousChargeTwo : (2 : Nat) * 2 = 4 := by decide
 
+
+/-!
+The physically selected S1/Z2 parity allows Phi 4 complex and Chi
+5 complex scalar constant modes = 18 real (not full 36 bulk).
+Source Hessian from Agda KK #1241 PyTorch: local 18-real even
+zero-mode Hessian has 7 gauge zeros + 11 strictly positive values;
+the unrestricted 36-real Hessian has two NEGATIVE odd directions.
+These numeric signs are SOURCE LABELS only, not Lean real-analysis
+eigenvalue proofs. Actual odd 5D KK tower and global gauge/WZ remain OPEN.
+-/
+theorem orbifoldEvenPhiAndChiRealComponents :
+    2 * (4 + 5) = 18 := by decide
+
+theorem sourceSevenGoldstonesElevenPositive :
+    7 + 11 = 18 := by decide
+
+theorem parityEvenGaugeBrokenToOnePhoton :
+    7 + 1 = 8 := by decide
+
+inductive KKScalarHessianConsumer where
+  | full36BulkAtHomogeneousPoint
+  | even18FourDimensionalZeroModes
+  deriving DecidableEq, Repr
+
+def selectedSourceHasNegativeHessianEigenvalue :
+    KKScalarHessianConsumer → Bool
+  | .full36BulkAtHomogeneousPoint => true
+  | .even18FourDimensionalZeroModes => false
+
+theorem physicalEvenZeroModeHessianSourceHasNoNegative :
+    selectedSourceHasNegativeHessianEigenvalue
+      .even18FourDimensionalZeroModes = false := rfl
+
 end DASHITOE

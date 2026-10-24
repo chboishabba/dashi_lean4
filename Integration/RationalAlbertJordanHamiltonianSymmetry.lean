@@ -106,7 +106,7 @@ theorem selectedH_does_not_commute_with_cycle :
     (commutation_forces_fixed_generator cycleA selectedH
       (cycle_unit) hcomm)
 
-/-- The converse direction uses source-proved multiplication equivariance:
+/-- Positive conjugacy statement for the native Jordan automorphism: the\noperator family is covariant when its generating element is transported. -/\ntheorem cycle_conjugates_leftJordan (h x : A) :\n    cycleA (leftJordan h x) = leftJordan (cycleA h) (cycleA x) := by\n  exact cycle_preserves_product h x\n\n/-- The converse direction uses source-proved multiplication equivariance:
 if a product automorphism fixes h, its left operator commutes. -/
 theorem fixed_generator_implies_commutation
     (f : A → A)

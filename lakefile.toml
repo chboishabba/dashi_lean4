@@ -150,6 +150,13 @@ name = "NSCanonicalLeaves"
 srcDir = "DASHI/output-final_aristotle"
 globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 
+# Source-attributed analytical fragments from Miller (2021) and
+# Yan--Radulescu (2021). Opt-in: these finite algebraic results do
+# not inhabit the physical A3 criterion or a stationary PDE existence proof.
+[[lean_lib]]
+name = "NSPaperBridges"
+globs = ["RequestProject.NavierStokes.MillerAnisotropicAlgebra", "RequestProject.NavierStokes.YanRadulescuPressure"]
+
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
 # for genuine measure/topology/spectral theorems whose supporting infrastructure
 # is materially stronger in mathlib than in the Agda foundation.

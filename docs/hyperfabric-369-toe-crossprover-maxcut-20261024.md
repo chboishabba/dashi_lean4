@@ -1129,3 +1129,8 @@ occurs at depth 21, yet NO individual sibling passes the pre-existing
 one-fast-descendant threshold. This distinguishes the genuine new
 tail effect from the redundant finite two-short example. All
 claims remain conditional until source geometric marking is paid.
+
+
+### 2026-10-25 later Agda proof upgrade — chart witness actually constructed
+
+The Agda #1239 source `DASHI/Moonshine/Griess1990OriginalKernel5M81243240ChartExact.agda` has now advanced beyond the earlier uninhabited point-bijection receipt: it contains nine-case trit cancellation laws, source-written proofs `kernel5LeftRoundTrip` and `m81RightRoundTrip`, an explicitly inhabited `canonicalKernel5M81CarrierBidi`, and the forward and reverse identity/diagonal witnesses `diagonalKernel5Forward`/`diagonalKernel5Backward`. This directly reuses original `Local.Kernel5`, `SSPTritCarrier`, and the original Griess M81 *set*, without any postulates. **No Agda kernel execution**; these are source-written proofs only. The stronger `Kernel5M81BidiPayment` full relative-240 and E6-action receipt remains **uninhabited** and must not be represented as finished. On Lean #52 the actual `Old240 ≃ (M81\\{1})×F3` source equivalence and transported six true Moufang loop automorphisms remain independently source-written, with exhaustive local Python checks. The original punctured T5 is still not the already-recognized structured E8 240 representation.

@@ -490,3 +490,44 @@ True next physical cut: exact 2D WZW sigma
 Hamiltonian in doubled `TM⊕T*M` and patchwise
 B action against source g/H/Phi, then BRST,
 K27 generator/dual form and physical calibration.
+
+
+## Same WZW worldsheet sigma Hamiltonian now source-tested on gerbe patches
+
+Agda #1249 new `scripts/check_k27_wzw_gerbe_od3_hamiltonian.py`
+has an executed equivalent exact SymPy
+verification of `T^T eta T=eta`,
+`T^T M(g,B_N)T=M(g,B_S)`,
+using the original source SU2 S3
+north/south potentials and 27 phase-space
+example cases. The source actual
+`E_B(v,p)=v^Tgv+(p+Bv)^Tg^-1(p+Bv)`
+is preserved when `p_N=p_S−ΔB v`;
+this is a **real O(3,3) B-field patch**
+on the worldsheet momentum/winding bundle,
+not the original 27-site adjacency or Monster.
+
+The existing Lean #84
+`K27GerbeWZWC3OrientationCut.lean` now
+adds pure rational polynomial statements
+`localGerbeHamiltonianPatchInvariant`
+and `localGerbePairingPatchInvariant`
+for its actual B-supported 2-plane,
+with genuine interaction through momentum
+p and winding/tangent v.
+Kernel UNVERIFIED; geometric gerbe
+patching/flux integral, global canonical
+transformations and physical string
+BRST are not thereby proved.
+Original physics/mathematics authority:
+Schulz, JHEP06(2012)158
+https://arxiv.org/html/1106.6291v4 .
+
+Do not identify the B-shift `O(3,3)`
+with signed neutral C3 or a 27-site physical
+spacetime. The next fair test is an actual
+operator/observable-preserving map from
+existing 369 hyperfabric finite path
+dynamics to this specific WZW field/momentum
+Hamiltonian, with scaling and gerbe
+descent; success cannot be assumed.

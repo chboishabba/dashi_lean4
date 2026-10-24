@@ -21,6 +21,19 @@ canonical A/B owner definitions:
     NSTriadKNFiniteBipartiteCovarianceExact.agda
     NSTriadKNPhysicalCriticalTouchingDefectR44020261007Exact.agda
 
+**2026-10-24 B4 source no-go:** A fixed, globally smooth unforced
+shear solution with Fourier support ±e_x, ±e_y makes the literal
+*full-output-fibre* R440 noncore/core signed covariance diverge under
+cutoff padding by zero-amplitude incidences, whereas its Core-Core
+companion stabilizes. The upstream classifier has STRICT +3 shell gaps.
+This new negative control is in
+dashi_agda/scripts/ns_b4_literal_padding_adversary.py and the canonical
+NSProofControl roadmap. Consequently the finite pairwise Young bound
+below CANNOT be promoted to the desired cutoff-uniform B4 physical
+payment if local ED is cutoff-uniform. Reformulate against the
+zero-padding-invariant raw R440 modal amplitude rather than inventing
+another estimate on the defective centering.
+
 The propositions below are NOT the unforced global regularity theorem:
 the finite B bound is not uniform in physical shell count, and A still
 requires the same-object physical Fourier/majorant producer.

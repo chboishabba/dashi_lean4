@@ -1,4 +1,5 @@
 import QuantumChannels.MMPDiracFockParityChannel
+import QuantumChannels.MMPDiracChargeSuperselection
 
 /-!
 BIDI regression for physical-channel source selection.
@@ -25,3 +26,15 @@ theorem regression_doubleLoss_is_exact_excess
   ring
 
 end MMPQuantumChannel
+
+
+theorem regression_chargeHalfTurn_forbids_even_coherence
+    (rho : CondensedMatter.CMatrix2)
+    (h : chargedEvenHalfTurnConjugate rho = rho) :
+    rho.a12 = 0 :=
+  chargedEvenHalfTurn_invariant_offDiagonal_zero rho h
+
+theorem regression_oneParticleDualRail_remains_sameCharge
+    (z : ℂ) :
+    (-1 : ℂ) * z * (-1) = z :=
+  equalChargeDualRail_coherence_preserved z

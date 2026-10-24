@@ -129,3 +129,20 @@ print('PASS native Cayley-Dickson product on all 3 diagonal+8-slot subalgebras')
 print('PASS exact E8 rational A2^4/Hadamard isometry, no sqrt2 extension')
 print('TRIALITY NEGATIVE CONTROL: cross-slot product residual squared norm =',r2)
 print('OPEN full product-compatible 8x8x8 triality map; no Monster VOA or RH result')
+
+# The full 27D cross-slot Jordan-product obligation reduces, using
+# Frobenius-invariant Peirce fusion and the paid within-slot products,
+# to ONE 8x8x8 trilinear triality tensor comparison (512 scalars).
+# The chosen A2/E8 slot isometries need not preserve this tensor.
+S01=slots[0,1];S12=slots[1,2];S02=slots[0,2]
+def triple_source(a,b,c):return F(3*B(prod(a,b),c)[0])
+def triple_native(a,b,c):
+  x=mapped(a);y=mapped(b);w=mapped(c)
+  return F((jordanNative(x,y).T*nativeGram*w)[0])
+delta2=F(0);neq=0
+for a,b,c in product(S01,S12,S02):
+  s0=triple_source(a,b,c);n0=triple_native(a,b,c)
+  if s0!=n0:neq+=1
+  delta2+=(s0-n0)**2
+assert neq>0 and delta2>0
+print('TRIALITY exact 8x8x8 mismatch scalar count',neq,'of 512; coefficient residual sum squares',delta2)

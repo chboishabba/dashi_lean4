@@ -7,3 +7,5 @@ import Integration.DASHITOE.PrimitiveMaxCut
 import Integration.DASHITOE.Verticals
 import Integration.DASHITOE.OpenAIMathAccelerator
 import Integration.DASHITOE.ImplementationStatus
+
+import Integration.DASHITOE.KK240RoleDiscrimination

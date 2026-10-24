@@ -99,4 +99,60 @@ theorem selectedRootTraceIsNotCentre :
     (rootTraceRational, rootTraceZeta) ≠ ((-3 : ℚ), -3) := by
   norm_num [rootTraceRational, rootTraceZeta]
 
+
+/-- Original #1247 exact Galois character gives the REAL trace coefficient.
+For zeta3=-1/2+i sqrt(3)/2 the real trace is a-b/2.
+These numbers are source data; no new physical SU3 connection is asserted. -/
+def selectedRootRealTrace : ℚ :=
+  rootTraceRational - rootTraceZeta / 2
+
+/-- For a 3×3 UNITARY W, the known standard norm theorem is
+    ||W-I||_F²=6-2 Re(tr W) and
+    ||W-I||_op² >= (||W-I||_F²)/3.
+The real/complex norm inequality is an external geometry lemma,
+NOT kernel-established by this purely rational arithmetic module. -/
+def selectedRootOpGapSquaredLower : ℚ :=
+  (6 - 2 * selectedRootRealTrace) / 3
+
+/-- Exact selected-source lower bound using no numerical eigensolver. -/
+theorem selectedRootGapCertificate :
+    selectedRootRealTrace = 221179426799 / 216225930001 ∧
+    selectedRootOpGapSquaredLower =
+      854996726408 / 648677790003 ∧
+    (1 : ℚ) < selectedRootOpGapSquaredLower := by
+  norm_num [selectedRootRealTrace, selectedRootOpGapSquaredLower,
+    rootTraceRational, rootTraceZeta]
+
+/-- CONDITIONAL full-depth finite no-go: given the analytical
+    source matrix inequality (the selected q is <= delta²), a
+    certified nonnegative operator gap delta and the source tree's
+    all-leaf epsilon=1/2 upper estimate, contradiction follows
+    at ANY finite depth. The geometric all-leaf bound is UNPAID. -/
+theorem halfLengthCutoffContradiction
+    (delta : ℚ) (n : ℕ)
+    (hgapNonneg : 0 ≤ delta)
+    (hsourceNorm : selectedRootOpGapSquaredLower ≤ delta ^ 2)
+    (hsmallLeaves : delta ≤ commutatorEnvelope (1 / 2 : ℚ) n) :
+    False := by
+  rw [halfIsFixedAtEveryDepth] at hsmallLeaves
+  have hq : (1 : ℚ) < selectedRootOpGapSquaredLower :=
+    selectedRootGapCertificate.2.2
+  nlinarith [sq_nonneg delta]
+
+/-- Exact countermodel coefficient: a loop of radius r=1/n
+    repeated n² times encloses oriented area pi*N*r²=pi
+    while its geometric diameter 2/n tends to zero and its
+    arclength grows as 2 pi n. This is a smooth NON-FLAT
+    background-curvature fixture, not a horn meridian. -/
+theorem highWindingSmallDiameterCanHaveFixedFlux (n : ℚ)
+    (hn : n ≠ 0) :
+    n ^ 2 * (1 / n) ^ 2 = 1 := by
+  field_simp
+  ring
+
+theorem highWindingLoopLengthGrows (n : ℚ)
+    (hn : n ≠ 0) : n ^ 2 * (1 / n) = n := by
+  field_simp
+  ring
+
 end DASHIHornWittenRegularity

@@ -80,7 +80,7 @@ theorem jacobsLadderGenusSuccessor (n : ℕ) :
 theorem cantorTreeStageEuler (n : ℕ) :
     eulerForGenusBoundaries (cantorTreeStage n).genus
       (cantorTreeStage n).boundaryCount =
-      2 - (2 ^ n : ℕ) := by
+      (2 : ℤ) - ((2 ^ n : ℕ) : ℤ) := by
   simp [eulerForGenusBoundaries, cantorTreeStage]
 
 theorem lochNessStageEuler (n : ℕ) :

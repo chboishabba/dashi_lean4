@@ -86,6 +86,10 @@ theorem six_lifts_preserve_literal_source_multiplication :
       lift s (multiply a b) = multiply (lift s a) (lift s b) := by
   native_decide
 
+theorem six_lifts_preserve_nonidentity :
+    ∀ s : Shear, ∀ a : Loop81,
+      a ≠ identity → lift s a ≠ identity := by native_decide
+
 theorem each_lift_fixes_the_original_unit :
     ∀ s : Shear, lift s identity = identity := by native_decide
 

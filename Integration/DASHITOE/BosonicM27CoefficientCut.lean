@@ -97,4 +97,41 @@ theorem fourFormToThreeFormCoefficient :
     (4 : ℚ) / (2 * 24) = 1 / 12 := by
   norm_num
 
+/-- Minimal scalar-repair coefficient determined by source-matched scalar normalization.
+    This is a FORMAL off-shell coefficient, not a new 27D action or a
+    consistent truncation of a freely propagating scalar. -/
+def supplementalScalarSlopeSquared (d a : ℚ) : ℚ :=
+  2 * (actualStringFrameKinetic d a - requiredStringFrameKinetic d a)
+
+theorem scalarRepairFormalCoefficient (d a : ℚ) :
+    actualStringFrameKinetic d a -
+      supplementalScalarSlopeSquared d a / 2 =
+      requiredStringFrameKinetic d a := by
+  dsimp [supplementalScalarSlopeSquared]
+  ring
+
+theorem scalarSlopeSquaredAtTwentySix :
+    supplementalScalarSlopeSquared 26 1 = 32 := by
+  norm_num [supplementalScalarSlopeSquared, actualStringFrameKinetic,
+    requiredStringFrameKinetic, reducedEinsteinKinetic,
+    curvatureBoxCoefficient, curvatureGradientCoefficient,
+    gravitationalPrefactor]
+
+theorem scalarSlopeSquaredAtTen :
+    supplementalScalarSlopeSquared 10 1 = 0 := by
+  norm_num [supplementalScalarSlopeSquared, actualStringFrameKinetic,
+    requiredStringFrameKinetic, reducedEinsteinKinetic,
+    curvatureBoxCoefficient, curvatureGradientCoefficient,
+    gravitationalPrefactor]
+
+/-- For sigma=t on a flat 26D Minkowski base, the lifted free scalar wave
+    operator acting on chi=k*sigma is -22*a*k*exp(-2*a*sigma).
+    The never-vanishing exponential is external geometric input.
+    This lemma proves that its algebraic coefficient cannot vanish for
+    a nonzero warp slope and a nonzero scalar. -/
+theorem freeScalarOffShellResidualNonzero (a k : ℚ)
+    (ha : a ≠ 0) (hk : k ≠ 0) :
+    -(22 : ℚ) * a * k ≠ 0 := by
+  exact mul_ne_zero (mul_ne_zero (by norm_num) ha) hk
+
 end DASHIString27

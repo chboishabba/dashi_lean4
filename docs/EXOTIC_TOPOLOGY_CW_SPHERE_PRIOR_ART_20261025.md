@@ -364,3 +364,41 @@ The S5 representation does not prove a wild embedding on its own.
 
 Primary: https://www.maths.gla.ac.uk/~mpowell/fox-artin.pdf ,
 https://doi.org/10.2307/1969408 .
+
+
+## Finite PL ancestor bug closed; exact inverse-limit source (2026-10-25)
+
+Agda #1254 discovered and corrected a previously hidden flaw in the
+finite Cantor surface audit: selecting index-zero boundary at each
+step can select a newborn circle, leaving a preexisting branch
+unsplit, despite perfectly valid finite PL meshes and `b_n=2^n`.
+New `scripts/exotic_topology_pl_frontier_lineage.py` transports
+actual boundary vertices through the orientation-reversing gluing
+vertex quotient and checks each preexisting branch `p` is replaced
+exactly by `p0,p1`. The geometry, Euler/link checker and pants
+donors are the original implementations; no parallel mesh type
+was invented. A genuine four-boundary triangulated counterexample
+illustrates why counts fail to determine the end tree.
+
+NEW `Synthesis/ExoticTopologyCantorInverseLimit.lean` directly
+uses `Integration.Address.Addr n Bool` to define the projective
+tower of all compatible finite binary words. It source-writes
+`cantorEndInverseLimitEquiv`, with a two-sided inverse between
+coherent stage families and infinite binary streams,
+using `Fin.lastCases`, the existing core reverse induction for
+finite tuples. This is a substantive exact SYMBOLIC inverse-limit
+result, not merely a rebranding of `ℕ→Bool`; every stage must
+be coherent under the precise restriction map.
+
+The tower equivalence and the corrected PL branching supply
+two necessary inputs for proving a genuine Cantor end-space
+homeomorphism. They do NOT yet prove:
+- a topological direct-limit collared 2-manifold,
+- the Richards nested-unbounded-region end equivalence,
+- homeomorphism of the actual ideal-boundary topology with the
+  cylinder topology,
+- the identification of genus accumulated at each genuine end.
+
+New Lean source and revised Python tests have not been kernel
+or exact-head executed in this turn. Do not retroactively call
+earlier symbolic and finite receipts validation of the repair.

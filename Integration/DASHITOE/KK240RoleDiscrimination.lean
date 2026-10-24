@@ -56,4 +56,26 @@ theorem restrictedFreeBosonFortyEightMax : 48 * 5 = 240 := by decide
 -- real-field polarizations, mass function, and same-action variation.
 -- It belongs to Agda KK #1241 rather than being invented in Lean.
 
+
+/-! Source-attributed Lie-algebra branching DIMENSION arithmetic:
+E8|E6×SU3: 248=(78+8)+(27×3)+(27×3).
+E6|SU3³: 78=3×8+2×27.
+A physically selected 5D SU3³ free vector sector would have
+three physical polarizations per adjoint generator. NONE of these
+arithmetic equalities implies unbroken gauge fields, 5D action,
+physical symmetry breaking, massless spin-1 modes or observed QCD. -/
+
+theorem classicalE8E6SU3AdjointDimension :
+    248 = 78 + 8 + 2 * (27 * 3) := by decide
+
+theorem classicalE6TrinificationAdjointDimension :
+    78 = 3 * 8 + 2 * 27 := by decide
+
+theorem twoAdditionalSU3FiveDimVectorUnits :
+    (2 * 8) * 3 = 48 := by decide
+
+theorem sixDiracQuarksAndThreeVectorOctetsCount :
+    6 * 3 * 4 = 3 * 8 * 3 := by decide
+
+
 end DASHITOE

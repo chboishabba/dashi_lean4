@@ -252,4 +252,42 @@ theorem physicalR440_shear_padding_increment
 
 end PhysicalR440PaddingAudit
 
+
+/-!
+## Physical enstrophy versus quartic mixed-helicity covariance: scaling gate
+
+The original R236 selected coherent covariance uses a bilinear mixed
+helicity product M and quadratic work W(M,M), hence is homogeneous of
+degree four in velocity amplitudes (at fixed viscosity and modes).
+Classical physical vortex-stretching / nonlinear enstrophy production
+is degree three. The same nonzero physical field cannot satisfy a
+universal, *uncompensated* equality between them at every amplitude.
+
+This is an algebraic no-go, not a claim that all exact differentiated
+commutator / complement corrections are impossible. Source-specific
+remainder terms may carry additional degrees. The actual field-to-carrier
+same-object bridge remains unproved.
+-/
+
+section PhysicalCovarianceHomogeneity
+
+/-- A quartic scalar and a cubic scalar which agree under all amplitude
+scalings must both vanish. At a=1 they coincide, and at a=2 they force zero. -/
+theorem quartic_cubic_all_scales_implies_zero
+    (covariance production : ℝ)
+    (hall : ∀ a : ℝ, a ^ 4 * covariance = a ^ 3 * production) :
+    production = 0 := by
+  have h1 := hall 1
+  have h2 := hall 2
+  norm_num at h1 h2
+  linarith
+
+theorem quartic_cubic_all_scales_contradicts_nonzero
+    (covariance production : ℝ)
+    (hall : ∀ a : ℝ, a ^ 4 * covariance = a ^ 3 * production)
+    (hnz : production ≠ 0) : False := by
+  exact hnz (quartic_cubic_all_scales_implies_zero covariance production hall)
+
+end PhysicalCovarianceHomogeneity
+
 end NSUnforcedAnalyticCuts

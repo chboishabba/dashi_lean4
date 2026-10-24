@@ -327,3 +327,9 @@ https://arxiv.org/abs/hep-th/0012037;
 Lambert/West 2001 https://arxiv.org/abs/hep-th/0107209;
 Glennon 2025 https://arxiv.org/abs/2501.03000;
 Griess 1990 DOI 10.1016/0021-8693(90)90176-O.
+
+## Global colour Wilson gate after vectorlike QCD pairing (2026-10-24)
+
+The latest actual same-physical-source [Agda KK #1241](https://github.com/chboishabba/dashi_agda/pull/1241) moves beyond the earlier E6 48-polarisation radion-only / EM Wilson saddle. Source-established 5D minimal vector multiplet 3+1 vs 4 and hypermultiplet Dirac 4 vs two complex scalars 4 can cancel periodic free Casimir determinants mode-by-mode at exact mass degeneracy, but this is external supersymmetry field-content prior art, not a formal full SUSY construction.
+
+First split 6-quark QCD pair fixture locally passes all Hessians yet FAILS global SU3 colour centre (lower by 1.8325e-7). Adding two heavy split SU3 fundamental Dirac flavours to an even-eight-flavour fixture with nonnegative 3TeV scalar masses yields retuned positive radius/EM/colour Hessians and colour centre higher by 3.0569e-7. A first-harmonic dominance proof with explicit n>800 upper bound gives positive 2.075e-8 margin for globally preferred SU3 identity at x=1 and theta_EM=0; full 3D radius/EM/colour landscape, mixed 5D parity anomaly/CS, dynamical soft breaking, EW chirality and collider admissibility OPEN. Lean TOE #80 adds only finite role/non-descent labels for local-vs-global validity, not a local Casimir or Agda theorem import. Numbers 240/243, Monster and horned geometry remain unrelated to this SAME action.

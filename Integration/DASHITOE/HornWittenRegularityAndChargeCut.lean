@@ -155,4 +155,51 @@ theorem highWindingLoopLengthGrows (n : ℚ)
   field_simp
   ring
 
+
+/-- Finite-depth monotone envelope on the WHOLE interval 0<=eps<=1/2,
+not just at the epsilon=1/2 fixed point. This is pure rational
+arithmetic and does not prove its input is a geometric holonomy. -/
+theorem envelopeInHalfInterval (eps : ℚ)
+    (heps0 : 0 ≤ eps) (hepsHalf : eps ≤ 1 / 2) :
+    ∀ n : ℕ, 0 ≤ commutatorEnvelope eps n ∧
+      commutatorEnvelope eps n ≤ 1 / 2 := by
+  intro n
+  induction n with
+  | zero =>
+      exact ⟨heps0, hepsHalf⟩
+  | succ n ih =>
+      let x : ℚ := commutatorEnvelope eps n
+      have hx0 : 0 ≤ x := ih.1
+      have hxHalf : x ≤ 1 / 2 := ih.2
+      have hprod : 0 ≤ (1 / 2 - x) * (1 / 2 + x) := by
+        exact mul_nonneg (sub_nonneg.mpr hxHalf) (by linarith)
+      change 0 ≤ 2 * x * x ∧ 2 * x * x ≤ 1 / 2
+      constructor
+      · positivity
+      · nlinarith [hprod]
+
+/-- Exactly the target physical acceptance interface.
+M is a SOURCE-BOUNDED compatible connection 1-form norm,
+ell is a SOURCE-PROVED uniform length bound on genuine
+marked meridians at a COMPLETE Hatcher depth n,
+and htree is the analytic iterated unitary commutator
+bound after parallel-transport conjugation. The caller
+must provide these actual geometric/analytic witnesses;
+this arithmetic proof cannot create them. -/
+theorem selectedRootFiniteGeometricLengthNoGo
+    (M ell delta : ℚ) (n : ℕ)
+    (hM : 0 ≤ M) (hell : 0 ≤ ell)
+    (hlengthCut : M * ell ≤ 1 / 2)
+    (hunitaryTrace : selectedRootOpGapSquaredLower ≤ delta ^ 2)
+    (hdeltaNonneg : 0 ≤ delta)
+    (hsourceTree : delta ≤ commutatorEnvelope (M * ell) n) :
+    False := by
+  have hsmall : 0 ≤ M * ell := mul_nonneg hM hell
+  have hhalf : commutatorEnvelope (M * ell) n ≤ 1 / 2 :=
+    (envelopeInHalfInterval (M * ell) hsmall hlengthCut n).2
+  have hq : (1 : ℚ) < selectedRootOpGapSquaredLower :=
+    selectedRootGapCertificate.2.2
+  have hgapHalf : delta ≤ 1 / 2 := le_trans hsourceTree hhalf
+  nlinarith
+
 end DASHIHornWittenRegularity

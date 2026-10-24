@@ -38,6 +38,23 @@ def whitney():
     return {'parametric_implicit_residual':'0',
             'negative_axis_algebraic_without_real_preimage':True}
 
+
+def whitney_inverse_rational_grid():
+    tested=0
+    for u in range(-7,8):
+        for v in range(-7,8):
+            x,y,z=Fraction(u*v),Fraction(u),Fraction(v*v)
+            if y != 0:
+                ur,vr=y,x/y
+            else:
+                ur,vr=Fraction(0),Fraction(abs(v))
+            assert ur*vr==x and ur==y and vr*vr==z
+            tested+=1
+    # Source algebra (not just grid): y!=0 -> v=x/y; x²=y²z
+    # gives v²=z. If y=0 then x=0; z>=0 -> v=sqrt(z).
+    return {'rational_grid_cases':tested,'source_formula':'y!=0 -> (y,x/y); y=0 -> (0,sqrt(z))',
+            'kernel_unverified':True}
+
 def simons():
     x=S.symbols('x0:4',real=True)
     y=S.symbols('y0:4',real=True)
@@ -57,7 +74,7 @@ def c3_not_wada():
 if __name__=='__main__':
     print(json.dumps({'tetrahedral_h2':tetrahedron(),
       'finite_h2_pairing':exact_pairing(),
-      'whitney':whitney(),'simons':simons(),
+      'whitney':whitney(),'whitney_inverse_rational_grid':whitney_inverse_rational_grid(),'simons':simons(),
       'c3_wada_negative_control':c3_not_wada(),
       'status':'PASS exact finite/symbolic checks (no Lean kernel receipt)'},
       sort_keys=True,indent=2))

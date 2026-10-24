@@ -379,4 +379,24 @@ def allFaithfulQuotientBundlesGlobalCSCertified : Bool := false
 theorem liftableSpinIndexNotFullQuotientGaugeProof :
     allFaithfulQuotientBundlesGlobalCSCertified = false := rfl
 
+
+/-!
+2026-10-25 selected diagonal-Z3 quotient test:
+three projected PSU3 factors share the same obstruction B.
+Their fractional c2 periods q_i mod1 agree and lie in (1/3)Z.
+Thus *equal-weight* sum across THREE sectors is integral, though
+individual q_i may be nonintegral. Original PSU3 Pontryagin-square
+formula from global 1-form symmetry / fractional instanton theory.
+This source-finite test is NOT a complete normalized mixed gauge
+anomaly/5D CS/APS eta theorem, and does not settle U1 quotient
+first Chern class or torsion spin sectors.
+-/
+theorem diagonalZThreeFractionalInstatonsSumIntegral :
+    ∀ r : Fin 3, (r.val + r.val + r.val) % 3 = 0 := by decide
+
+def globallyQuantizedFiveDCSOnAllQuotientBundles : Bool := false
+
+theorem equalMixedFractionDoesNotFinishGlobalCS :
+    globallyQuantizedFiveDCSOnAllQuotientBundles = false := rfl
+
 end DASHITOE

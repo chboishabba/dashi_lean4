@@ -927,3 +927,18 @@ For any UNITARY A,B, the elementary exact identity ||[A,B]-I||op=||AB-BA||op giv
 Exact local rational rates for hypothetical M=100,L0=1: q=1/8 depth4, q=1/5 depth6, q=1/4 depth7, q=1/3 depth12; q>=1/2 gives no crossing. Additional heterogenous *complete* binary tree certificate 2 d(root)<=∏(2 epsilon_leaf), checked across nine exact test trees, complements one-branch criterion. Agda Python reference PASS; current remote Git script exists. Lean new native theorem source conditional on explicit normed-commutator/flatness premises, **Lean/Lake kernel UNVERIFIED**.
 
 For CURVED connections, π1 group relations do not imply equality of Wilson matrices on homotopic loops unless a curvature/homotopy (non-Abelian Stokes) error is controlled; a genuine literal loop concatenation is another possible source but must match the independently selected root loop. No claim of actual linked three-dimensional Z-block, Witten/Monster/TOE source action or Clay estimate.
+
+
+## Further exact sharpness certificate: the factor 2 cannot be universally reduced
+
+The bound d([A,B])<=2d(A) is OPTIMAL as a uniform all-unitary constant, not merely a convenient improvement. Consider, in SU(3),
+A_n=diag(z_n,z_n^-1,1), z_n=(n+i)/(n-i), and
+B=[[0,1,0],[-1,0,0],[0,0,1]]. Then B A_n B^-1=A_n^-1
+and [A_n,B]=A_n². Consequently
+
+    [d([A_n,B])/d(A_n)]²
+       = |z_n+1|² = 4n²/(n²+1) -> 4.
+
+The ratio tends to 2 as n→∞. Exact rational tests n=1,2,5,10,100,1000 PASS in the latest GitHub #1249 source script; independent explicit 3×3 SU3 numerical matrices corroborate the formula. Lean #84 source now states the rational optimality ratio and exact positive deficit 4/(n²+1); Lean kernel remains unverified.
+
+This validates why the general selected one-branch geometric rate cutoff is precisely q<1/2 *for this universal per-level bound*. Geometry or representation-specific restrictions could still improve the factor, but cannot be assumed. It is an acceptance criterion, not proof the actual linked Hatcher blocks contract at q<1/2.

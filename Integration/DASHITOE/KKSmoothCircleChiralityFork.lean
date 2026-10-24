@@ -391,7 +391,7 @@ This source-finite test is NOT a complete normalized mixed gauge
 anomaly/5D CS/APS eta theorem, and does not settle U1 quotient
 first Chern class or torsion spin sectors.
 -/
-theorem diagonalZThreeFractionalInstatonsSumIntegral :
+theorem diagonalZThreeFractionalInstantonsSumIntegral :
     ∀ r : Fin 3, (r.val + r.val + r.val) % 3 = 0 := by decide
 
 def globallyQuantizedFiveDCSOnAllQuotientBundles : Bool := false

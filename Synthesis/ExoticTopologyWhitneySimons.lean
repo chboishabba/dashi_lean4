@@ -23,7 +23,6 @@ structure Point3 where
   x : ℝ
   y : ℝ
   z : ℝ
-deriving DecidableEq
 
 def whitneyParam (u v : ℝ) : Point3 :=
   ⟨u * v, u, v ^ 2⟩

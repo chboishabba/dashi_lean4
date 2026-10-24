@@ -32,7 +32,7 @@ assert len(reps)==13 and len({frozenset((a,neg(a))) for a in reps})==13
 I=s.eye(27)
 R=s.Matrix([[0,-1],[1,-1]])
 assert R**3==s.eye(2)
-Q=(I,R,R**2)
+Q=(s.eye(2),R,R**2)
 def action(direction):
     M=I.copy()
     for k,grade in enumerate(reps):

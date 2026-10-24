@@ -74,3 +74,26 @@ Additional Lean acceptance:
 lake env lean QuantumChannels/MMPDiracChargeSuperselection.lean
 ```
 No Lean 4 compiler is installed here, so proofs in this PR remain **source-written, not kernel checked**. Original theorem authors and physical source distinctions preserved.
+
+
+## October 24 SOTA follow-on — corrected channel and selected LLL rails
+
+**New primary literature, original owners:** MMP (2018/2023) original magnetic closed-loop wormhole; Capoferri–Murro (2025, DOI 10.1002/mana.12032) global/microlocal Dirac propagator/Hadamard construction for *Cauchy-compact globally hyperbolic* 4D spacetimes; Zahn (2014, DOI 10.1142/S0129055X13300124) charged Dirac local covariant renormalized stress/current; Freivogel–Fumagalli–Tomašević (2026, arXiv:2606.12528) actual MMP massless-fermion low-energy transmission; Sadhukhan (2026, 2609.33511) first-order trace/Hall response; Negari–Salek (Aug 2026, PRL 137 080201, DOI 10.1103/65dd-448y) fermionic Gaussian channels/extendibility/antidegradability; Lu–Yang–Zheng (arXiv 2603.26051, **PRD accepted Oct 22 2026**, DOI 10.1103/7trm-rykk) GJW holographic OTOC/channel-capacity, NOT MMP physical channel.
+
+**Original erasure theorem authority:** Bennett–DiVincenzo–Smolin PRL 78 (1997) 3217 DOI 10.1103/PhysRevLett.78.3217; Barnum–Smolin–Terhal PRA 58 (1998) 3496. No global 4D Einstein/Maxwell state or real physical qubit claimed.
+
+New `QuantumChannels/MMPMonopoleLLLDualRailCapacity.lean`:
+- **assumes** standard spherical spin-c Dirac index result of `q` magnetic LLL zero modes (for q positive), not a locally proved 4D spinor operator theorem;
+- if `q≥2`, constructs two distinct `Fin q` rail labels, a better charged fixed-sector candidate than either two different massive n levels or even |00>/|11> ordinary Dirac parity code;
+- proves elementary balanced-erasure coherent-information algebra `I_c(I/2)=2T−1 > 0 ↔ T>1/2`, citing the **external** quantum erasure capacity theorem separately;
+- in the source-assumed ideal massless reduced static LLL channel, both modes can be exactly reflectionless, giving a one-bit *mathematical* zero-loss limit without proving actual physical capacity or source-driven state.
+
+New full Stinespring numerical source in Agda #1248 `check_mmp_dualrail_coherent_information_20261024.py`: fixed-charge one-particle dual rail `|j>→sqrt(T_j)|j>_B|vac>_E + sqrt(1−T_j)|vac>_B|j>_E`; constructs actual receiver and environment outputs from ONE ISOMETRY; checks Kraus/Choi, coherences, entropy eigenvalues, and `I_c` for maximally mixed input. q12 E=.20 effective massive pair has `I_c≈−0.000682974` bits despite one rail transmitting nearly perfectly; E=.55 near 1 bit; balanced erasure T=.2 has negative `I_c=-.6` and full quantum capacity 0 under Bennett et al. 1997. `check_mmp_dualrail_erasure_degradability_20261024.py` explicitly constructs CPTP receiver/environment degradation maps and checks the `T=.5` threshold.
+
+**Scope discipline:** both executed local Python tests define a restricted fixed-charge *qutrit erasure channel*. Do not automatically apply the Negari–Salek Gaussian extension SDP or Gaussian entanglement-breaking classification without proving the channel lies in its stated fermionic Gaussian operator-algebra class. The chosen `Fin q` basis labels are not prepared wavefunctions or a detector and do not solve MMP's 4D state. For general `T1≠T2`, the displayed `I_c(I/2)` is just a *single selected input* and must not be called optimized/asymptotic capacity.
+
+Lean/source acceptance (not kernel executed):
+```sh
+lake env lean QuantumChannels/MMPMonopoleLLLDualRailCapacity.lean
+lake env lean QuantumChannels/MMPDiracFockParityChannelRegression.lean
+```

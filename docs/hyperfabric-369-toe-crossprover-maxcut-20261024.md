@@ -668,3 +668,72 @@ DOES NOT pay 4D SM colour,
 The full source and W0-W6 phase roadmap:
 Agda #1249
 `docs/hyperfabric-witten-d4-conformal-su2-4-su3-1-current-embedding-maxcut-20261024.md`.
+
+
+## 2026-10-24 attached-worker Hatcher topology and Witten SU3_1 physical claim firewall
+
+New source-written
+`Integration/DASHITOE/HornWittenRegularityAndChargeCut.lean`
+records (i) the exact finite binary
+commutator-norm envelope `e→2e²`
+with 1/2 fixed point and a
+finite-depth root>1/2 contradiction
+under small-leaf-bound premises;
+(ii) generic GROUP HOM proof that
+commutators map to identity in
+abelian targets, applied to every
+Hatcher recursive meridian;
+(iii) `ZMod 3` charge commutator
+zero; (iv) selected rational
+Q(zeta3) Wilson character not
+equal to any 3 scalar SU3 centre
+matrices. **Lean/Lake kernel UNVERIFIED**;
+norm unitary bound/actual wild
+geometry and regularity are
+explicit EXTERNAL premises.
+
+This is the strongest direct
+mathematical new cut induced by
+the other worker's source-bearing
+Agda #1244/#1247 work:
+the classical horn group G is
+PERFECT, so pointed SU3_1 WZW
+fusion group C3 cannot be the
+nontrivial GROUP-CHARACTER of a
+horn meridian; three-copy
+semidirect C3 remains the
+external rotation factor only.
+The abstract NONABELIAN SU3
+holonomy and SU2_4⊂SU3_1
+conformal chiral embedding remain
+different and individually valid.
+The operator-norm recursive tower
+then makes the real open branch
+physical geometry: independently
+validate actual shrinking
+representative loop lengths and
+a bounded compatible unitary
+connection, or source a credible
+singular/nonshrinking escape.
+Original Agda
+`FlatFormalDiskHolonomySurface`
+owns the still-open analytic
+completion/Stokes targets.
+
+Exact source regression in Agda
+#1249
+`scripts/check_horn_witten_su3_holonomy_regularity_discriminator.py`
+locally equivalent execution PASS,
+including 9 and 81 abelian
+commutator cases and root gap1.438,
+illustrative depth12 length2^-12
+requires M>2048.5. Its metric
+lengths are illustrative only, not
+a proved Hatcher embedding. Worker
+50/50 receipt remains theirs and
+is not claimed as re-executed here.
+Canonical integration document:
+Agda #1249 `docs/hyperfabric-horn-witten-su3-regularity-charge-maxcut-20261024.md`.
+No real TOE/Monster/SM/QFT
+identification, Agda/Lake kernel or
+Clay analytic payment claimed.

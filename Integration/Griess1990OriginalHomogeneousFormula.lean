@@ -65,7 +65,7 @@ def gradeNeg (x : Fin 27) : Fin 27 :=
 /-- In F3^3 two grades are dependent precisely if one is zero
 or the nonzero grades differ by one of the two nonzero scalars. -/
 def gradeDependent (x y : Fin 27) : Bool :=
-  x = 0 || y = 0 || x = y || gradeNeg x = y
+  (x == 0) || (y == 0) || (x == y) || (gradeNeg x == y)
 
 /-- The explicit source phase g, using -q mod3 = (2q) mod3. -/
 def gPhase (x y : Fin 27) : Nat :=

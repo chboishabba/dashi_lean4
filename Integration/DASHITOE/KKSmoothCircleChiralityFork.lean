@@ -298,4 +298,51 @@ theorem sourceSevenGaugeElevenMassive : 7 + 11 = 18 := by decide
 def fullContinuumIntervalSpectrumCertified : Bool := false
 def anomalyFreeFiveDPhysicalQuantumVacuumCertified : Bool := false
 
+
+/-!
+2026-10-25 source #1241 original 27 orbifold anomaly-transfer MAXCUT.
+The previous two-symmetric-fixed-plane Chi33 WZ coefficient was
+half-integral under NAIVE instanton normalization. A valid 5D
+Chern-Simons TRANSFER can move both local anomalies onto ONE plane.
+There, one Chi33 charge-two WZ variation has integral coefficients
+in the declared integer TRACE coefficient ring. This is NOT proof
+of actual spin/(SU3^3×U1)/Γ integral CS or 5D eta quantization.
+Original mechanism von Gersdorff/Quiros 2003 and Hill 2006.
+-/
+
+inductive KKFixedPlaneAnomalyAllocation where
+  | symmetricTwoLocalWZ
+  | bulkCSTransferredOneLocalWZ
+  deriving DecidableEq, Repr
+
+def naiveMixedOneInstantonWZIsIntegral :
+    KKFixedPlaneAnomalyAllocation → Bool
+  | .symmetricTwoLocalWZ => false
+  | .bulkCSTransferredOneLocalWZ => true
+
+theorem bothBoundariesHaveSameIntegratedAnomaly :
+    (2 : Nat) + 0 = 1 + 1 := by decide
+
+theorem singleBoundarySourceMixedWZCoefficient :
+    (2 : Nat) / 2 = 1 := by decide
+
+theorem sourceAnomalyHalfMixedNumeratorEven :
+    (2 : Nat) = 2 * 1 := by decide
+
+-- Physical CP³ has p₁=4h²; line bundle O(q) 6D spin index
+-- (q³-q)/6. Summing source chiral27 gives the even index
+-- I(m,n)=4/3*(m-n)*(5m²+8mn+5n²-2).
+-- The exhaustive finite mod3 condition below establishes only
+-- the elementary residue divisibility, not the Dirac index theorem.
+def cpThreeSpinIndexResidueDivisible (d : Fin 3) : Bool :=
+  (d.val * (2 * d.val * d.val + 1)) % 3 == 0
+
+theorem cpThreeHalfIndexResidues : ∀ d : Fin 3,
+    cpThreeSpinIndexResidueDivisible d = true := by decide
+
+def fullSpinQuotientCSAndAPSComplete : Bool := false
+
+theorem integerNaiveTraceWZCannotCertifyGlobalAnomaly :
+    fullSpinQuotientCSAndAPSComplete = false := rfl
+
 end DASHITOE

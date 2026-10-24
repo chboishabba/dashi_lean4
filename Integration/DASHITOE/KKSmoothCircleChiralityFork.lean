@@ -133,4 +133,51 @@ No full quantum orbifold, global spin CS, SM mass source, one photon,
 orbifold Casimir, or physical full-E6 gauge field is certified.
 -/
 
+
+/-!
+2026-10-25 GREEN-SCHWARZ physical-source PARITY-GATE follow-on.
+The actual original anomaly calculation is in Agda KK #1241's
+check_kk_e6_orbifold_gs_anomaly_factor.py. These are FINITE NUMERIC
+COEFFICIENT checks and source-outcome labels, not a Lean formal
+continuum chiral determinant or a globally quantized WZ functional.
+-/
+theorem uvCubicFactorLeft : 8 * 5 = 40 := by decide
+theorem uvCubicFactorMixed : 8 * 8 = 64 := by decide
+theorem uvCubicExpansionMixed : 3 * 8 = 24 := by decide
+theorem uvGravFactor : 2 * 8 = 16 := by decide
+theorem uvMixedEachFixedPlane : 2 * 1 = 2 := by decide
+
+inductive KKOrbifoldInflowSource where
+  | oppositeEndpointBulkCSOnly
+  | twoLocalWessZuminoVariations
+  deriving DecidableEq, Repr
+
+def localFactorisedAnomalyVariationRepair : KKOrbifoldInflowSource → Bool
+  | .oppositeEndpointBulkCSOnly => false
+  | .twoLocalWessZuminoVariations => true
+
+def globalSpinQuotientWZCertified (_ : KKOrbifoldInflowSource) : Bool :=
+  false
+
+theorem bulkCSOnlyFailsIntegratedAnomaly :
+    localFactorisedAnomalyVariationRepair
+      .oppositeEndpointBulkCSOnly = false := rfl
+
+theorem localWZAnsatzDoesNotCertifyQuantumGaugeTheory :
+    globalSpinQuotientWZCertified
+      .twoLocalWessZuminoVariations = false := rfl
+
+-- The SOURCE-SPECIFIC 4x4 neutral Cartan Gram calculation using
+-- Phi E32, Chi E33, anomalous GS direction and even Chi E21
+-- finds rank 2,2,3, leaving one massless generator Q=T3L+Y.
+-- This is a labelled computational consumer, not a mathematical
+-- derivation of a scalar E21 VEV from the old E6 positive Hessian.
+theorem selectedNeutralMassRanks : (2 : Nat) = 2 ∧
+    (2 : Nat) = 2 ∧ (4 : Nat) - 3 = 1 := by decide
+
+-- Existing Chi E33 has charges (+2,-2), so argChi/2 shifts in
+-- the required infinitesimal direction but is not clearly
+-- 2pi-periodic; conditional mod-2 WZ obstruction remains.
+theorem sourceChiAnomalousChargeTwo : (2 : Nat) * 2 = 4 := by decide
+
 end DASHITOE

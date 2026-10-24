@@ -87,3 +87,8 @@ The earlier audit undercounted the **nonflat finite** GR owner and existing memb
 4. `DASHI/Geometry/CalabiYau.agda`, `CalabiYau369CompactFibreBridge.agda`, `CalabiYauAnalysisAndPhysicalUseBoundary.agda`, and `CalabiYauPhysicalProducerCutset.agda` already package structural CY, *3+6=9 spatial plus 1 time = 10D* dimensional reading and the exact missing physical compactification obligations (Yau/Ricci-flat, moduli, anomaly, reduction, spectrum, couplings, empirical matching). **Dimension matching is not string compactification.**
 
 **Revised G3/G4:** the next task is *same physical operator/action continuum sourcing* in GR and an actual selected worldsheet + anomaly/physical CY compactification in strings. Do not waste a sprint rebuilding finite curved symbolic metrics, Nambu membrane equation of state or CY dimensional identity.
+
+
+## Source-written Agda typed donor integration
+
+[Agda #1249](https://github.com/chboishabba/dashi_agda/pull/1249) now contains `DASHI/Unified/HyperfabricGRStringExistingDonorWeldExact.agda`, a thin theorem-level consumer of **original** finite nonflat curvature, 16-component Einstein–matter matching, nonzero source, positive-tension Nambu membrane equation of state, and CY spacetime-dimension `10`. This avoids duplicating Lean #68's different flat-vacuum model or silently treating structural CY and membrane data as string quantum dynamics. New Agda file is source-written, exact-head Agda kernel-unverified. Cross-prover binding requires a separately certified term/serialization bridge, not just a source filename.

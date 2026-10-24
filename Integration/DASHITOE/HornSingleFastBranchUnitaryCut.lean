@@ -7,11 +7,11 @@ Original source:
   A. Hatcher, Algebraic Topology, Example 2B.2, pp.171–172:
   horn meridian m_w=[m_w0,m_w1] in the OPEN exterior π1.
   Standard operator norm d(U)=||U-I||op for unitary matrices:
-  0<=d(U)<=2 and d([A,B])<=2d(A)d(B).
+  0<=d(U)<=2 and d([A,B])=||AB-BA||<=2 min(d(A),d(B)).
 
 This general theorem is stronger than the prior finite A5 one-leaf
 obstruction in HornFiniteImageOneBranchCut: it needs NO FINITE IMAGE
-but does require the leaf length to shrink FASTER than 4^(-depth).
+but does require the leaf length to shrink FASTER than 2^(-depth).
 
 Theorems below are a fully SOURCE-CONDITIONAL rational carrier:
 the semantic link to actual marked Hatcher loops and a FLAT compatible
@@ -28,44 +28,32 @@ namespace DASHIHornFastBranch
 def grpComm {G : Type*} [Group G] (a b : G) : G :=
   a * b * a⁻¹ * b⁻¹
 
-/-- Binary child addresses prepend the chosen bit, as in the original
-Hatcher finite-stage formal address owner. -/
+/-- Source analytical lemma: ||[A,B]-I||=||AB-BA||
+    <=2 min(||A-I||,||B-I||). Supplied as an explicit external
+    premise until the true normed SU3 matrix/holonomy owner is welded. -/
 theorem oneUnitarySiblingStep
-    {G : Type*} [Group G]
-    (g : List Bool → G) (d : G → ℚ)
+    {G : Type*} [Group G] (g : List Bool → G) (d : G → ℚ)
     (hrec : ∀ w, g w = grpComm (g (false :: w)) (g (true :: w)))
-    (hgapNonneg : ∀ a, 0 ≤ d a)
-    (hunitaryTwo : ∀ a, d a ≤ 2)
-    (hcommBound : ∀ a b, d (grpComm a b) ≤ 2 * d a * d b)
+    (hcommLinear : ∀ a b,
+      d (grpComm a b) ≤ 2 * d a ∧ d (grpComm a b) ≤ 2 * d b)
     (w : List Bool) (bit : Bool) :
-    d (g w) ≤ 4 * d (g (bit :: w)) := by
+    d (g w) ≤ 2 * d (g (bit :: w)) := by
   rw [hrec w]
-  have hb := hcommBound (g (false :: w)) (g (true :: w))
+  obtain ⟨hl, hr⟩ := hcommLinear (g (false :: w)) (g (true :: w))
   cases bit with
-  | false =>
-    have ha := hgapNonneg (g (false :: w))
-    have hc := hunitaryTwo (g (true :: w))
-    nlinarith [mul_nonneg ha (sub_nonneg.mpr hc)]
-  | true =>
-    have ha := hgapNonneg (g (true :: w))
-    have hc := hunitaryTwo (g (false :: w))
-    nlinarith [mul_nonneg ha (sub_nonneg.mpr hc)]
+  | false => exact hl
+  | true => exact hr
 
-/-- Follow ANY one depth-n path, with child addresses stored by prefix.
-For flat monodromy, the Hatcher commutator relation supplies hrec.
-Both abstract group and norm facts are deliberately explicit inputs. -/
+/-- Any one binary descendant at depth n, no finite-image assumption. -/
 theorem oneArbitraryMarkedBranchBound
-    {G : Type*} [Group G]
-    (g : List Bool → G) (d : G → ℚ)
+    {G : Type*} [Group G] (g : List Bool → G) (d : G → ℚ)
     (hrec : ∀ w, g w = grpComm (g (false :: w)) (g (true :: w)))
-    (hgapNonneg : ∀ a, 0 ≤ d a)
-    (hunitaryTwo : ∀ a, d a ≤ 2)
-    (hcommBound : ∀ a b, d (grpComm a b) ≤ 2 * d a * d b)
+    (hcommLinear : ∀ a b,
+      d (grpComm a b) ≤ 2 * d a ∧ d (grpComm a b) ≤ 2 * d b)
     (path : List Bool) :
-    d (g []) ≤ (4 : ℚ) ^ path.length * d (g path.reverse) := by
+    d (g []) ≤ (2 : ℚ) ^ path.length * d (g path.reverse) := by
   have hpath : ∀ (p base : List Bool),
-      d (g base) ≤ (4 : ℚ) ^ p.length *
-         d (g (p.reverse ++ base)) := by
+      d (g base) ≤ (2 : ℚ) ^ p.length * d (g (p.reverse ++ base)) := by
     intro p
     induction p with
     | nil =>
@@ -73,62 +61,51 @@ theorem oneArbitraryMarkedBranchBound
         simp
     | cons bit rest ih =>
         intro base
-        have hstep :=
-          oneUnitarySiblingStep g d hrec hgapNonneg
-            hunitaryTwo hcommBound base bit
+        have hstep := oneUnitarySiblingStep g d hrec hcommLinear base bit
         have hrest := ih (bit :: base)
         have hscaled :
-            4 * d (g (bit :: base)) ≤
-              4 * ((4 : ℚ) ^ rest.length *
+            2 * d (g (bit :: base)) ≤
+              2 * ((2 : ℚ) ^ rest.length *
                 d (g (rest.reverse ++ bit :: base))) :=
           mul_le_mul_of_nonneg_left hrest (by norm_num)
         calc
-          d (g base) ≤ 4 * d (g (bit :: base)) := hstep
-          _ ≤ 4 * ((4 : ℚ) ^ rest.length *
-                  d (g (rest.reverse ++ bit :: base))) := hscaled
-          _ = (4 : ℚ) ^ (bit :: rest).length *
+          d (g base) ≤ 2 * d (g (bit :: base)) := hstep
+          _ ≤ 2 * ((2 : ℚ) ^ rest.length *
+                d (g (rest.reverse ++ bit :: base))) := hscaled
+          _ = (2 : ℚ) ^ (bit :: rest).length *
                 d (g ((bit :: rest).reverse ++ base)) := by
-                simp only [List.length_cons, List.reverse_cons,
-                  List.append_assoc, List.singleton_append]
+                simp only [List.length_cons, List.reverse_cons, List.append_assoc]
                 rw [pow_succ]
                 ring
   simpa using hpath path []
 
-/-- The EXACT finite acceptance interface: if selected root gap >1,
-a genuinely marked descendant of path length n cannot have a
-source-controlled flat holonomy gap <= M*ell with
-4^n*M*ell <=1. All physical hypotheses are explicit. -/
+/-- Conditional physically marked flat length criterion, without A5. -/
 theorem selectedRootOneFastBranchNoGo
-    {G : Type*} [Group G]
-    (g : List Bool → G) (d : G → ℚ)
+    {G : Type*} [Group G] (g : List Bool → G) (d : G → ℚ)
     (hrec : ∀ w, g w = grpComm (g (false :: w)) (g (true :: w)))
-    (hgapNonneg : ∀ a, 0 ≤ d a)
-    (hunitaryTwo : ∀ a, d a ≤ 2)
-    (hcommBound : ∀ a b, d (grpComm a b) ≤ 2 * d a * d b)
+    (hcommLinear : ∀ a b,
+      d (grpComm a b) ≤ 2 * d a ∧ d (grpComm a b) ≤ 2 * d b)
     (path : List Bool) (M ell : ℚ)
     (hroot : 1 < d (g []))
-    (hM : 0 ≤ M) (hell : 0 ≤ ell)
     (hflatLength : d (g path.reverse) ≤ M * ell)
-    (hshort : (4 : ℚ) ^ path.length * (M * ell) ≤ 1) :
+    (hshort : (2 : ℚ) ^ path.length * (M * ell) ≤ 1) :
     False := by
-  have hbranch :=
-    oneArbitraryMarkedBranchBound g d hrec hgapNonneg
-      hunitaryTwo hcommBound path
-  have hpower : 0 ≤ (4 : ℚ) ^ path.length := by positivity
-  have htransport :
-      (4 : ℚ) ^ path.length * d (g path.reverse) ≤
-        (4 : ℚ) ^ path.length * (M * ell) :=
-    mul_le_mul_of_nonneg_left hflatLength hpower
-  have : d (g []) ≤ 1 := le_trans hbranch (le_trans htransport hshort)
-  exact (not_lt_of_ge this hroot)
+  have hb := oneArbitraryMarkedBranchBound g d hrec hcommLinear path
+  have hm : 0 ≤ (2 : ℚ) ^ path.length := by positivity
+  have ht :
+      (2 : ℚ) ^ path.length * d (g path.reverse) ≤
+        (2 : ℚ) ^ path.length * (M * ell) :=
+    mul_le_mul_of_nonneg_left hflatLength hm
+  have hc : d (g []) ≤ 1 := le_trans hb (le_trans ht hshort)
+  exact (not_lt_of_ge hc hroot)
 
 /-- Exact rate/example witnesses. These are hypothetical geometry,
 not a certified realization of the wild horned embedding. -/
-theorem syntheticFastRateDepthSeven :
-    (4 : ℚ) ^ 7 * 100 * (1 / 8 : ℚ) ^ 7 ≤ 1 := by norm_num
+theorem syntheticFastRateDepthFour :
+    (2 : ℚ) ^ 4 * 100 * (1 / 8 : ℚ) ^ 4 ≤ 1 := by norm_num
 
-theorem syntheticFastRateDepthTwentyOne :
-    (4 : ℚ) ^ 21 * 100 * (1 / 5 : ℚ) ^ 21 ≤ 1 := by norm_num
+theorem syntheticFastRateDepthSix :
+    (2 : ℚ) ^ 6 * 100 * (1 / 5 : ℚ) ^ 6 ≤ 1 := by norm_num
 
 /-- Heterogeneous full-leaf bounds instead of one uniform epsilon.
 2*envelope(tree)=product over leaves(2*leafGap), exactly. -/

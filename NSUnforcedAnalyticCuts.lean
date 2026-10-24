@@ -203,6 +203,42 @@ theorem physicalR440_zero_padding_increment
   unfold physicalR440FusedDefect
   ring
 
+/-- An entire batch of zero-amplitude noncore Fourier incidences
+    alters only the counting and input-rate moments. This is a
+    SAME-FOUR-MOMENT identity for the original R440 defect; it
+    introduces no new physical observable. -/
+theorem physicalR440_zero_padding_batch
+    (nN nC rN rC vN vC wN wC dn dr : ℝ) :
+    physicalR440FusedDefect (nN + dn) nC (rN + dr) rC
+      vN vC wN wC
+      - physicalR440FusedDefect nN nC rN rC vN vC wN wC =
+    dr * vC - dn * wC := by
+  unfold physicalR440FusedDefect
+  ring
+
+/-- The exact necessary and sufficient algebraic balance for a
+    zero-amplitude padding batch to preserve the full-fibre defect. -/
+theorem physicalR440_padding_invariant_iff
+    (nN nC rN rC vN vC wN wC dn dr : ℝ) :
+    physicalR440FusedDefect (nN + dn) nC (rN + dr) rC
+      vN vC wN wC =
+    physicalR440FusedDefect nN nC rN rC vN vC wN wC ↔
+    dr * vC = dn * wC := by
+  rw [← sub_eq_zero, physicalR440_zero_padding_batch]
+  exact sub_eq_zero
+
+/-- Positive work-rate imbalance forces strictly growing signed B4
+    defect under zero-velocity cutoff padding. -/
+theorem physicalR440_padding_strict_growth
+    (nN nC rN rC vN vC wN wC dn dr : ℝ)
+    (h : dn * wC < dr * vC) :
+    physicalR440FusedDefect nN nC rN rC vN vC wN wC <
+    physicalR440FusedDefect (nN + dn) nC (rN + dr) rC
+      vN vC wN wC := by
+  have hinc := physicalR440_zero_padding_batch
+    nN nC rN rC vN vC wN wC dn dr
+  linarith
+
 /-- Actual shear values: V_C= W(M,M)=1 and
     W_C=W(M,2M)=2, hence positive rate excess for s>2. -/
 theorem physicalR440_shear_padding_increment

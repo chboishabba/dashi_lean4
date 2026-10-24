@@ -60,8 +60,6 @@ for a,b in combinations(reps,2):
     E=fixed[a]*fixed[b]
     assert E*E==E and s.trace(E)==3
     assert sum(dot(a,x)==0 and dot(b,x)==0 for x in V)==3
-for a,b,c in product((1,0,0),(0,1,0),(0,0,1)):
-    pass
 e0,e1,e2=(1,0,0),(0,1,0),(0,0,1)
 E= fixed[e0]*fixed[e1]*fixed[e2]
 assert E*E==E and s.trace(E)==1
@@ -71,7 +69,7 @@ assert E==I[:,0]*I[0,:]  # full A invariants are exactly the unit line
 # 27 = 9_{1} + 9_{omega} + 9_{omega^2}. This is deduced
 # from Tr(U)=Tr(U²)=0; no artificial splitting over Q.
 for a in reps:
-    assert sum(dot(a,x)==k for x in V)==9 for k in range(3)
+    assert all(sum(dot(a,x)==k for x in V)==9 for k in range(3))
 
 # ALL 13 cyclic subgroups are equivalent under the source label normalizer
 # SL3(3); this proves label-space transitivity only, not an automatically

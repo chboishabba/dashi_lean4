@@ -183,3 +183,94 @@ reproducible independent SymPy exact audit and this source review.
 In Agda, companion draft #1254 is stacked on horned sphere #1244
 and retains separate geometric limit, wildness, Wada existence,
 noncompact-surface and other classification obligations.
+
+
+## 2026-10-25 second continuation: literal quotient, Warsaw set, native ends
+
+### Actual pinched-torus point-set realisation
+
+`Synthesis/ExoticTopologyPinchedTorusQuotient.lean` is an
+actual Mathlib topological quotient:
+- `TopologicalUnitCircle = {z : ℂ // ‖z‖ = 1}`;
+- `TopologicalTorus = S¹ × S¹`;
+- one meridian `{basepoint} × S¹` is collapsed by a
+  `Setoid` built from an explicit `Option`-valued label;
+- `PinchedTorus = Quotient pinchedTorusSetoid` carries the
+  Mathlib coinduced quotient topology;
+- the pinching is supplied as a source-written
+  `Continuous` and `IsQuotientMap` proof using EXACT source lemmas
+  `continuous_quotient_mk'` and `isQuotientMap_quotient_mk'`
+  verified at pinned Mathlib 4.28.0;
+- meridian collapse, off-meridian injectivity and separation from
+  the pinch point are supplied as source-written theorems.
+
+No homeomorphism to a wedge or homology comparison is inferred
+from the quotient definition. The previous Python `(1,1,1)`
+cellular-Betti model remains a SEPARATE calculation.
+
+### Actual Warsaw planar set
+
+`Synthesis/ExoticTopologyWarsawCircle.lean` now defines the
+topologist's sine graph on `0<x≤1`, takes its literal closure in
+`ℝ×ℝ`, and adds the exact polygonal closing arc along y=-2.
+It constructs `WarsawCircleSpace` as a topological subtype and
+records source-written graph/connector inclusions and endpoint facts.
+The independent symbolic x_n=1/(2πn+asin(t)) vertical-limit formula
+passed locally. The theorem that the entire vertical segment lies in
+the ACTUAL closure, compactness/connectedness and all homotopy
+properties remain explicitly OPEN in Lean.
+
+### Infinite-type surface stages
+
+`Synthesis/ExoticTopologySurfaceExhaustions.lean` imports the
+ALREADY-OWNED `Integration.Address.Addr n Bool`; it does not invent
+a second binary-Cantor finite address geometry. Its typed stage
+theorems give:
+- Cantor tree: boundary `2^n`, genus 0, Euler `2-2^n`;
+- Loch Ness monster: one boundary, genus n, Euler `1-2n`;
+- Jacob's ladder: two boundaries, genus 2n, Euler `-4n`;
+- graph-spine rank `2g+b-1`;
+- correct integer, NOT truncated-natural, Euler arithmetic.
+
+Those numeric invariants don't by themselves furnish Richards'
+topological classification. Locally verified stages 0..12.
+
+### Seashell
+
+`Synthesis/ExoticTopologySeashellParametric.lean` consumes the
+existing `ExoticTopologyWhitneySimons.Point3` and Mathlib real
+sine/cosine to establish the source radial identity and u-periodic
+seam. This is a real coordinate object without immersion
+or global embedding promotion.
+
+### Independent verification
+
+Extended `scripts/exotic_topology_lean_donor_audit.py`
+checks all previously recorded sphere/Whitney/Simons/Wada finite
+algebra, plus 39 surface-stage Euler/spine identities, all 4096
+Cantor frontier address count at depth 12, 256 finite pinched-torus
+relation pairs, real seashell radial and seam formulas, and the
+Warsaw vertical-limit identity. These calculations PASSED locally
+using Python 3 / SymPy. The checked-in executable is a reproducible
+audit, not kernel authority.
+
+### Current exact next cut
+
+**(a)** Kernel typecheck and preflight the Lean 4.35.0-rc3 /
+mathlib v4.28.0 lock graph (and Agda imports separately).
+**(b)** Upgrade the literal pinched torus to its actual cellular/
+singular quotient invariants, rather than asserting a homeomorphism
+from numerical homology.
+**(c)** Prove Warsaw's vertical segment inclusion and its true
+weak-homotopy / non-CW classification.
+**(d)** Realise the finite surface pants+handle tower as a genuine
+locally finite collared manifold and identify the end/genus data.
+**(e)** For Wada and Fox-Artin, pay geometric point-set conditions
+rather than symmetry or symbolic address substitutes.
+**(f)** Complete the literal sphere H₂ external pin and
+reduced/ordinary homology compatibility under one Lean source
+graph. Hatcher/McCarthy and Mathlib retain original credit.
+
+None of (b)--(f) is claimed complete by the source-written
+tranche. No additional physical wild-embedding or space-propulsion
+claim is inferred.

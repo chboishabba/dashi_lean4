@@ -213,4 +213,50 @@ theorem physicalEvenZeroModeHessianSourceHasNoNegative :
     selectedSourceHasNegativeHessianEigenvalue
       .even18FourDimensionalZeroModes = false := rfl
 
+
+/-!
+E6 SOFT SOURCE CORRECTION 2026-10-25:
+Existing E6 #1106 36-real six-invariant V6 and downstream Agda
+KK #1241 "18-even Hessian" certify only stationary INTEGRATED
+HOMOGENEOUS zero-mode scalar potential. Original t=.0246 has
+nonzero five-dimensional BULK t-force +0.147406469832 even though
+two boundary W' terms cancel in a 4D effective potential.
+Correct interval physical consumer requires separate bulk E-L and
+Robin boundary equations. Selected new dimensionless interval
+comparison BVP has nonconstant a(y),b(y),t(y), and full 36-real
+bulk-gradient/gauge-current checks; no full physical 5D EFT closure.
+This finite Lean test proves ONLY source status non-descent.
+-/
+inductive KKElectroweakVariationalSource where
+  | constantIntegratedZeroModeOnly
+  | selectedNonconstantRobinInterval
+  deriving DecidableEq, Repr
+
+def sharedEvenScalarComponentCount
+    (_ : KKElectroweakVariationalSource) : Nat := 18
+
+def passesSeparateBulkAndRobinEquations :
+    KKElectroweakVariationalSource → Bool
+  | .constantIntegratedZeroModeOnly => false
+  | .selectedNonconstantRobinInterval => true
+
+theorem equalEvenCountCannotProveFiveDEquations
+    (readout : Nat → Bool)
+    (h : ∀ s, readout (sharedEvenScalarComponentCount s) =
+      passesSeparateBulkAndRobinEquations s) : False := by
+  have old : readout 18 = false := by
+    simpa [sharedEvenScalarComponentCount,
+      passesSeparateBulkAndRobinEquations] using
+      h KKElectroweakVariationalSource.constantIntegratedZeroModeOnly
+  have corrected : readout 18 = true := by
+    simpa [sharedEvenScalarComponentCount,
+      passesSeparateBulkAndRobinEquations] using
+      h KKElectroweakVariationalSource.selectedNonconstantRobinInterval
+  cases old.symm.trans corrected
+
+-- Source checks / no quantum promotion: actual bulk/Robin 3-field
+-- BVP uses explicitly dimensionless interval length one; actual
+-- 5D b0=1e-24m requires coefficient scaling and 18-field
+-- functional Hessian, global anomalies and Israel/metric junctions.
+
 end DASHITOE

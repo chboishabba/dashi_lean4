@@ -542,3 +542,55 @@ Canonical complete details: `chboishabba/dashi_lean4` PR #52, `docs/superpowers/
 **RH disambiguation:** selected polynomial `(s−2)(s+1)^10(s−1/2)^16` fails `s↦1−s` with ratio `−((s−2)/(s+1))^9`. A tautological finite selfadjoint construction can manufacture an entire polynomial with FE and critical-line zeros but NO actual ζ ordinates or analytic A1/A2/B/G21 payoff. The RH Hilbert–Pólya eigenvalues would be imaginary ORDINATES γ in `1/2+iγ`, not the fixed Peirce L_p eigenvalue +1/2. Lean RH #50 now includes a finite exact negative-control script, not an RH theorem. FLM Monster VOA Griess dimension196884 and cyclic C27 are also wholly distinct from this Griess-1990 Albert A=F3³.
 
 **Verification**: local Python /mnt/data/check_griess1990_peirce_frame_rh_audit.py, /mnt/data/check_griess1990_peirce_rational_norm.py, /mnt/data/find_e8_a2_fourframe.py, /mnt/data/check_griess1990_native_albert_27_peirce_isometry.py PASS exact. Portable source checker committed Lean #52 (two scripts) and RH #50 (one). No exact-committed-blob Python replay, no Lean/Lake/Agda kernel or full product-compatible/physical gravity proof. Preserve original source-owner attribution.
+
+
+## Witten source audit and exact k4 chiral fusion implementation (2026-10-24)
+
+The new source-audited canonical detailed owner is Agda
+`docs/hyperfabric-witten-cs-wzw-monster-ads3-source-maxcut-20261024.md`,
+alongside original Agda PR #1239
+`docs/monster-ads3-gravity-witten-kk-braid-maxcut.md` and
+`docs/monster-c24-virasoro-primary-ads3-maxcut.md`.
+Keep **Witten 1989 CS/WZW CFT conformal blocks**,
+**Witten 2007 conjectural Monster c24/AdS3 quantum
+gravity**, **Witten SUSY index** and **Witten
+Laplacian** as different theorem/physics owners.
+Maloney–Witten 2007 saddle partition inconsistency
+is actual adversarial literature, not a claim all
+AdS3 dualities are false.
+
+New `Integration/DASHITOE/WittenCSWZWMonsterChiralCut.lean`
+source writes finite SU2_4 fusion and associativity
+for all 5 integrable doubled spins, source-selected
+Chern–Simons torus-block count 5, quantum squared
+dimension12, and a direct no-equivalence lemma
+with holomorphic FLM Monster c24 single chiral
+module and central-charge/framing discrepancy.
+Lean/Lake KERNEL UNVERIFIED.
+
+New exact Agda #1249 script
+`scripts/check_witten_su2_4_cs_wzw_monster_chiral_cut.py`
+checks actual published SU2_4 S=(1/√3)sin[(a+1)(b+1)π/6]
+over `Q(√3)`, S²=I, 125 complete Verlinde
+integers, 625 associativity equalities, quantum
+dimensions [1,√3,2,√3,1], and
+`sum d² theta/D=i`. An equivalent local
+SymPy source executed PASS.
+Source `DASHI/Unified/HyperfabricWittenCSWZWMonsterSourceOwnerCutExact.agda`
+IMPORTS original `SU2Level4Spin1RepReceipt`
+and `JCoefficientCharacterBridge`, and
+proves the declared 5≠1 and 2≠24 constraints.
+Agda kernel NOT RUN.
+
+This does NOT disprove a larger extension/tensor
+construction containing both sectors, and DOES
+NOT construct an actual CS path integral, 3D
+Einstein/BTZ gravitational state, Monster VOA
+or 369 Hilbert-space intertwiner.
+For the 26D string, source SU2_4 is a valid
+interacting worldsheet factor with 23
+free/linear-dilaton bosons, whose local
+O(3,3) gerbe patch dynamics was handled
+in the prior max-cut. The CS bulk is
+different from the chosen full worldsheet
+and from the speculative Witten gravity bulk.

@@ -202,4 +202,27 @@ theorem selectedRootFiniteGeometricLengthNoGo
   have hgapHalf : delta ≤ 1 / 2 := le_trans hsourceTree hhalf
   nlinarith
 
+
+/-- The OTHER worker's selected #1247 SU3 Wilson W is not conjugate
+to ANY element of the STANDARD real icosahedral inclusion
+A5 < SO(3) < SU(3): its cyclotomic zeta coefficient b is nonzero,
+hence Im Tr(W)=b*sqrt(3)/2 is nonzero; every real SO3 matrix has
+real trace and complex SU3 conjugation preserves trace.
+The Lie/character implication is source mathematics, not formalized
+here as an SU3 matrix equivalence; this theorem certifies b ≠ 0. -/
+theorem selectedWilsonTraceNotRealInIcosahedralSense :
+    rootTraceZeta ≠ 0 := by
+  norm_num [rootTraceZeta]
+
+/-- Exact rational certificate for the NONZERO imaginary trace:
+(Im Tr W)^2 = 3 b^2/4 >0, conditional only on the original source
+unit complex zeta3 phase. -/
+theorem selectedWilsonImaginaryTraceSquarePositive :
+    0 < (3 / 4 : ℚ) * rootTraceZeta ^ 2 := by
+  have hb : rootTraceZeta ≠ 0 :=
+    selectedWilsonTraceNotRealInIcosahedralSense
+  have hs : 0 < rootTraceZeta ^ 2 := sq_pos_of_ne_zero hb
+  positivity
+
+
 end DASHIHornWittenRegularity

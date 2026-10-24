@@ -159,6 +159,38 @@ def test_repository():
     for i,j in product(range(27),repeat=2):
         assert (newmap(basis[i]).T*gram*newmap(basis[j]))[0] == (
             sp.Rational(3)*B(basis[i],basis[j])[0])
+    # Crucial Lean carrier convention: (off12,off20,off01) corresponds to
+    # upper (12), CONJUGATE of upper (02), upper (01), respectively.
+    # Verify the literal Integration/RationalAlbertNative.jordanProduct
+    # coordinate equation, not only an abstract Hermitian 3x3 product.
+    om=p['octmul']; oc=p['octconj']; oa=p['octadd']; os=p['octscale']
+    def tolean(m):
+        return (tuple(m[:3]) + (tuple(m[19:27]),) +
+                (oc(tuple(m[11:19])), tuple(m[3:11])))
+    def lean_product(X,Y):
+        a,b,c,x,y,z=X
+        d,e,f,u,v,w=Y
+        inner=lambda t,s:om(t,oc(s))[0]
+        def sumvec(vals):
+            acc=(sp.Rational(0),)*8
+            for val in vals:acc=oa(acc,val)
+            return acc
+        half=lambda vals:os(sp.Rational(1,2),sumvec(vals))
+        return (a*d+inner(z,w)+inner(y,v),
+                b*e+inner(z,w)+inner(x,u),
+                c*f+inner(y,v)+inner(x,u),
+                half((om(oc(z),oc(v)),os(b,u),os(f,x),
+                      om(oc(w),oc(y)),os(e,x),os(c,u))),
+                half((os(d,y),om(oc(x),oc(w)),os(c,v),
+                      os(a,v),om(oc(u),oc(z)),os(f,y))),
+                half((os(a,w),os(e,z),om(oc(y),oc(u)),
+                      os(d,z),os(b,w),om(oc(v),oc(x)))))
+    for i,j in product(range(27),repeat=2):
+        lhs=tolean(newmap(sourceprod(basis[i],basis[j])))
+        rhs=lean_product(tolean(newmap(basis[i])),tolean(newmap(basis[j])))
+        assert lhs==rhs, ('LEAN COORDINATES',i,j)
+    print('PASS 729/729 Jordan products using literal Lean RationalAlbertNative coordinate formula')
+    print('PASS orientation convention: off20=conj(upper02)')
     print('PASS 729/729 full Griess1990 -> native rational H3(O) Jordan products')
     print('PASS unit and trace-pair preservation on 27D basis')
     print('Q-rational Peirce-slot matrices, order (01,12,02):')

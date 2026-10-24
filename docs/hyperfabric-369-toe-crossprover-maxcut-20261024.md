@@ -1057,3 +1057,17 @@ and Lean/Agda kernel checks are not claimed. The mathematical
 P0 donor remains the **actual #1244 same-object** 3-satellite collar
 and Hatcher-linked local meridian geometry, not yet inhabited as
 length+area source certificates.
+
+
+### Gauge norm is NOT gauge-invariant curvature
+
+The new necessary `M_n` growth is explicitly gauge/presentation
+conditional. Agda #1249 adds a flat SU3 pure-gauge negative control
+`A=diag(in,-in,0)dtheta`, `g=diag(e^(in theta),e^(-in theta),1)`
+on a punctured plane (integer n). Its field strength F is zero and
+its periodic circular holonomy is I, yet its orthonormal angular
+connection coefficient norm is n/r and can blow up. It is globally
+gauge-equivalent to zero on the puncture exterior. Therefore
+no claim of gauge-invariant physical curvature divergence or
+finite-action failure follows from an M_n inequality alone.
+The source loop/compatible gauge requirement remains explicit.

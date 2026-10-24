@@ -326,3 +326,41 @@ DOI 10.1007/BF01404309; Mardešić's 1978 shape-theory survey;
 Hatcher's book; Jack McCarthy's separate Hatcher-at
 `reducedHomology_sphere` Lean implementation. Neither citations
 nor QIDs/DDC nor Pareto ranks make a theorem executable.
+
+
+## Direct primary-source Fox--Artin S₅ witness (2026-10-25)
+
+New `Synthesis/ExoticTopologyFoxArtinS5Witness.lean` uses
+**Mathlib's existing permutation equivalence carrier**, rather than
+a synthetic group with an assumed relator. The source is the
+user-pictured **Fox--Artin Example 1.1\***,
+Ann. Math. 49 (1948), 983, original equation (2_n*):
+```
+a_n a_(n+1)^2 a_(n+2)
+  = a_(n+1) a_(n+2) a_(n+1)^(-1) a_n a_(n+1)
+```
+
+Fox/Artin's actual cycle images, three-periodic in n, are
+`(1 2 3 4 5)`, `(1 2 5 3 4)`, `(1 2 4 5 3)`.
+Lean #86 source-writes `Fin 5 ≃ Fin 5` instances with explicit
+left/right inverses and a `by decide` proof for the three distinct
+residue-class relators; the first generator is non-identity and of
+order five. This is a source-level nontrivial presentation model.
+A separate independent Python tool
+`scripts/exotic_topology_fox_artin_s5.py` locally PASSed the
+same exact relations on all integers -301..301. No kernel receipt
+for the new Lean module has been obtained.
+
+**Source-aware stop condition:** the primary text explicitly
+says Example 1.1* has a **non-simply-connected complement**.
+Example 1.2 is a wild arc whose complement IS an open 3-cell.
+Example 1.3 has a simply-connected complement that is NOT an
+open 3-cell. Therefore the previously-existing global complement
+group in the horned-sphere lane is only one of the required
+topological discriminators. Geometric Van Kampen/colimit
+identification of the actual embedded arc's fundamental group
+and the local punctured-neighborhood system are STILL OPEN.
+The S5 representation does not prove a wild embedding on its own.
+
+Primary: https://www.maths.gla.ac.uk/~mpowell/fox-artin.pdf ,
+https://doi.org/10.2307/1969408 .

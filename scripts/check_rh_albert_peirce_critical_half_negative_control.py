@@ -16,7 +16,7 @@ assert ratio==-((z-2)/(z+1))**9
 assert ratio!=1 and ratio!=-1
 # Universal Peirce operator p has spectrum 1:1, 0:10, 1/2:16.
 Lp=(z-1)*z**10*(z-half)**16
-assert s.factor(Lp.subs(z,1-z)/Lp)==-((z)/(z-1))**9
+assert s.factor(Lp.subs(z,1-z)/Lp)==-((z-1)/z)**9
 # Artificial FINITE Hilbert–Polya analogue built from H and -H:
 # Xi_toy(z)=det(((z-1/2)^2+H^2)) has obvious critical-line zeros
 # and exact functional equation. Does NOT share zeta's ordinates.

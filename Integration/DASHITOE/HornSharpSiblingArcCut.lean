@@ -143,4 +143,58 @@ theorem selectedWFirstChildGapLower
   linarith
 
 
+
+/-!
+## Exact ONE-STAGE curved Stokes-source margin
+
+Previous conditional infinite sibling tails are no longer the Pareto
+minimum when the selected root W is specified. The Agda #1249 rational
+certificate for W and the new SHARP DIRECT commutator cap imply:
+If an actual Hatcher child has d<=3/5 and the actual based parent-to-
+child-word curvature defect eta<=3/1000, then selected W is impossible.
+
+This theorem is SCALAR-CONDITIONAL: source geometry must inhabit the
+actual meridian, W, and commGap premises; the analytic direct SU3
+operator norm must provide commGap²<=arcCoefficientSquared childGap.
+Original Hatcher/Gotô and existing neutrino #1247 ownership retained.
+-/
+
+theorem rootSqExceedsRational287 :
+    (287 / 250 : ℚ) ^ 2 <
+      selectedWCertifiedRootGapSqLower := by
+  norm_num [selectedWCertifiedRootGapSqLower]
+
+theorem childArcBelowRational229 :
+    (819 / 625 : ℚ) < (229 / 200 : ℚ) ^ 2 := by
+  norm_num
+
+theorem exactOneStageCurvatureMargin :
+    (229 / 200 : ℚ) + 3 / 1000 = 287 / 250 := by
+  norm_num
+
+/-- An exact rational incompatibility certificate for a source-supplied
+curved step. A toy drawn loop/abstract group relation cannot inhabit
+the real based Stokes defect and selected child premises automatically. -/
+theorem selectedWOneStageCurvedSourceReject
+    (rootGap childGap commGap eta : ℚ)
+    (hRootNonneg : 0 <= rootGap)
+    (hChildNonneg : 0 <= childGap)
+    (hChildCap : childGap <= 3 / 5)
+    (hCommNonneg : 0 <= commGap)
+    (hEtaNonneg : 0 <= eta)
+    (hEtaCap : eta <= 3 / 1000)
+    (hSourceRoot : selectedWCertifiedRootGapSqLower <= rootGap ^ 2)
+    (hCommAnalytic : commGap ^ 2 <= arcCoefficientSquared childGap)
+    (hTrueCurvedStep : rootGap <= eta + commGap) :
+    False := by
+  have hArcCap := arcMonotoneToThreeFifths childGap hChildNonneg hChildCap
+  have hChildSmall : commGap < (229 / 200 : ℚ) := by
+    have hStrict := childArcBelowRational229
+    nlinarith
+  have hRootSmall : rootGap < (287 / 250 : ℚ) := by
+    linarith
+  have hRootLarge := rootSqExceedsRational287
+  nlinarith
+
+
 end DASHIHornSharpSiblingArc

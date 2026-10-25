@@ -30,27 +30,23 @@ jobs:
           grep -n -A 4 'mathlib' lakefile.toml
           lake --version
           lake exe cache get
-      - name: Kernel-check narrow existing-donor / arithmetic ingress
+      - name: Kernel-build named module targets with their actual import closures
         run: |
-          lake env lean Synthesis/ExoticTopologyCantorInverseLimit.lean
-          lake env lean Synthesis/ExoticTopologyCantorClopenMeasureNoGo.lean
-          lake env lean Synthesis/ExoticTopologyWhitneySimons.lean
-          lake env lean Synthesis/ExoticTopologyWhitneyRealImage.lean
-      - name: Kernel-check native geometric and homology consumers
-        run: |
-          for module in \
-            ExoticTopologyCP1TopCatSphereWeld \
-            ExoticTopologyCP1SphereH2Acceptance \
-            ExoticTopologyFiniteSpherePairing \
-            ExoticTopologyMathlibCWSource \
-            ExoticTopologyPinchedTorusQuotient \
-            ExoticTopologySeashellParametric \
-            ExoticTopologySurfaceExhaustions \
-            ExoticTopologyWadaBoundary \
-            ExoticTopologyWarsawCircle \
-            ExoticTopologyFoxArtinS5Witness; do
-            lake env lean "Synthesis/${module}.lean"
-          done
+          lake build \
+            Synthesis.ExoticTopologyCantorInverseLimit \
+            Synthesis.ExoticTopologyCantorClopenMeasureNoGo \
+            Synthesis.ExoticTopologyCP1TopCatSphereWeld \
+            Synthesis.ExoticTopologyCP1SphereH2Acceptance \
+            Synthesis.ExoticTopologyFiniteSpherePairing \
+            Synthesis.ExoticTopologyMathlibCWSource \
+            Synthesis.ExoticTopologyPinchedTorusQuotient \
+            Synthesis.ExoticTopologySeashellParametric \
+            Synthesis.ExoticTopologySurfaceExhaustions \
+            Synthesis.ExoticTopologyWadaBoundary \
+            Synthesis.ExoticTopologyWarsawCircle \
+            Synthesis.ExoticTopologyFoxArtinS5Witness \
+            Synthesis.ExoticTopologyWhitneySimons \
+            Synthesis.ExoticTopologyWhitneyRealImage
 
 # This is an execution SPECIFICATION. Source-written Lean proofs do
 # not become kernel-verified until a run on the exact SHA completes

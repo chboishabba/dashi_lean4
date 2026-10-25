@@ -438,3 +438,38 @@ The attribution chain remains Brahana 1921 ->
 Kerékjártó 1923 -> Richards 1963, retaining separate
 original compact theorem, noncompact predecessor and
 later complete theorem/realization authorship.
+
+
+## Cross-PR latest frontier and Cantor clopen obstruction, 2026-10-25
+
+NEW `Synthesis/ExoticTopologyCantorClopenMeasureNoGo.lean`
+reuses `Integration.Address` and the same branch's
+`ExoticTopologyCantorInverseLimit` for source identity, and
+proves at SOURCE LEVEL the all-depth arithmetic lemma
+`3*k != 2^n` by Mathlib's existing
+`Nat.Prime.dvd_of_dvd_pow`. A finite clopen subset of fair-bit
+Cantor space has dyadic measure, whereas a one-symbol cylinder
+of uniform ternary Cantor measure has mass 1/3. By compactness,
+a measure-preserving **homeomorphism** is impossible between
+the two SPECIFIED measured spaces, even though a topological
+homeomorphism exists via prefix-free code. The full topological
+clopen/compactness argument is mathematical prose, not a
+complete Lean theorem connecting to product measures.
+
+Sibling Agda #1254 inspected relevant NEW work:
+- #1244 already owns three-arm open cover / van Kampen conditional
+  assembly, not a fully realised Fox--Artin embedding;
+- #1239 already owns the source-first B3->SL2Z matrix image and
+  framing-loss negative controls; a finite regression consumer
+  now keeps S3 endpoints, SL2Z representation, actual B3, and
+  ribbon framing distinct;
+- #1259 reuses the generic QueryIndexedProjectionAdequacyExact;
+  Agda #1254 now instantiates BOTH an adequate sector-query
+  and inadequate linked-marker query on the same horn-address
+  projection, and imports the canonical all-rechart no-go.
+
+The original Artin 1925/1947 papers and implementing PRs
+retain separate source roles; source 1925 DOI
+10.1007/BF02950718, source 1947 DOI 10.2307/1969218.
+No Lean kernel checking or new Wada/wildness/space-end
+homeomorphism is claimed by this work.

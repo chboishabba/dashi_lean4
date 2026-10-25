@@ -1157,3 +1157,56 @@ The user explicitly recalled the original 240/243 T5 work (Lean #43/#47, Agda #1
 **Geometric gate reduced:** Hatcher X_m subset X_n for all m>=n; B subset X_n. A compact meridian loop completely outside its own X_n avoids EVERY later X_m/B, with positive clearance from compact X_n. This needs ONE real finite-stage avoidance certificate, NOT infinite separate tests. C3 spatial rotation R is an isometry, so the same loop length/clearance can be transported to the two satellite sectors once the based group marking is certified. Agda #1249 `HornStageClearanceC3SourceCutExact.agda` proves these generic conditional inclusion consequences, not actual source marking, and commits exact geometry negative controls. The main source-specific P0 missing witness is **a correctly marked finite-stage Hatcher meridian of controlled Euclidean length that avoids ALL of X_n**. Merely avoiding its one local tube is inadequate.
 
 **Verification status:** exact committed Python blobs matched independently locally executed sources; new Lean/Agda modules source-written and NOT kernel-run, no 3D source-linking/curvature homotopy, no source-selected physical action, no neutrino or Monster/TOE promotion.
+
+
+## FINAL 2026-10-25 source-selected W: one-stage DIRECT arc and curved acceptance
+
+The n=22 and n=398 squared-arc estimates in the previous section
+are valid MULTIPLICATIVE-only uniform-tail examples, but are NOT
+optimal source depths if the first actual sibling is already small:
+the DIRECT unitary commutator inequality is stronger for stopping.
+For d(B)=delta<=sqrt(2), scalar centering gives
+
+    d([A,B])<=2*delta*sqrt(1-delta²/4)
+
+WITHOUT a factor d(A). It is achieved exactly by the SU3
+eigenvector-exchange matrix on the two nontrivial eigenphases.
+The previously selected W has the existing source certificate
+d(W)^2>=854996726408/648677790003, strictly above
+c_arc(3/5)^2=819/625. Thus BOTH genuinely marked flat
+first-generation children must have d>3/5. Stronger rational
+>6019/10000 and the approximate 0.60194456 boundary are
+executed in exact Agda #1249 source. Nothing here produces
+the actual Euclidean short Hatcher meridian.
+
+With REAL curved parent-to-child-word Wilson defect eta,
+d(W)<=eta+c_arc(d(child)). The exact enclosure
+
+    root_sq_lower > (287/250)^2
+    child_sq_cap=819/625 < (229/200)^2
+    229/200 + 3/1000 = 287/250
+
+gives a **one-stage** conditional contradiction whenever
+d(child)<=3/5 AND actual based eta<=3/1000.
+These conditions require source-marked geometry, selected W,
+a compatible unitary gauge field and genuine homotopy Stokes
+surface; no such object has been silently assumed.
+
+Agda #1249 **Git-blob byte-executed Python**:
+scripts/check_horn_su3_direct_child_gap_floor.py
+(blob 7421fd621cd264ccb984442c8abc3bec74aeae92)
+and scripts/check_horn_selected_w_one_stage_curved_cut.py
+(blob c42ddbc62cf15e97d3f44542bda2dd0a018c8f02).
+Both PASS local exact rational tests; direct SU3 sharpness has
+matrix numerical controls. Lean #84
+Integration/DASHITOE/HornSharpSiblingArcCut.lean adds the
+source-conditional scalar child-gap and curved-root contradiction
+but was NOT Lean/Lake compiled; full analytic operator-norm lemma
+and true Hatcher geometry are not machine-proved.
+
+**Pareto source gate now P0=one actual correctly marked
+first-generation finite-stage short Hatcher meridian; P1=one
+actual based parent/commutator homotopy curvature-area budget.**
+Earlier 1/2, 2-of-3 and infinite sibling-tail results remain
+valid and correctly attributed to their original sources, but
+are not the shortest rejection route for selected W.

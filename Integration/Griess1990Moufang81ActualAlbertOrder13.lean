@@ -140,8 +140,7 @@ Jordan-algebra automorphism, but NOT a F4 group classification. -/
 theorem native_order_thirteen_all_source_basis_products :
     ∀ i j : Fin 27,
       toNative (applyWitness nativeOrder13Matrix
-        (fun k => sourceToNative k 0 * 0 +
-          (∑ a : Fin 27, sourceToNative k a * sourceTensor i j a))) =
+        (fun k => ∑ a : Fin 27, sourceToNative k a * sourceTensor i j a)) =
       Integration.RationalAlbertNative.RationalAlbert.jordanProduct
         (toNative (applyWitness nativeOrder13Matrix
           (fun k => sourceToNative k i)))

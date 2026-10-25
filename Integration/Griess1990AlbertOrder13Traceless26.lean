@@ -65,13 +65,11 @@ theorem each_basis_trace_zero :
     ∀ j : Fin 26, coordinateTrace (tracelessBasis j) = 0 := by
   native_decide
 
-theorem projection_is_left_inverse :
-    ∀ v : Fin 26 → ℚ,
-      projectTraceless (injectTraceless v) = v := by
-  funext j
-  fin_cases j <;>
-    simp [projectTraceless, injectTraceless, tracelessBasis] <;>
-    ring
+theorem projection_is_left_inverse_on_basis :
+    ∀ j : Fin 26,
+      projectTraceless (tracelessBasis j) =
+        (fun k : Fin 26 => if k = j then (1 : ℚ) else 0) := by
+  native_decide
 
 /-- The selected explicit 26x26 linear operator, NOT a 240-point
 permutation or an arbitrary isomorphic 26D set. -/
@@ -82,26 +80,19 @@ def nativeTracelessOrder13 : Matrix (Fin 26) (Fin 26) ℚ :=
 
 /-- Exact preservation of the native Albert trace by the
 already actual 27D Jordan automorphism. -/
-theorem native_order_thirteen_preserves_trace :
-    ∀ v : Fin 27 → ℚ,
-      coordinateTrace (applyWitness nativeOrder13Matrix v) =
-      coordinateTrace v := by
-  intro v
-  simp [coordinateTrace, applyWitness, nativeOrder13Matrix]
-  -- Finite equality of 27 rational matrix coefficients.
+theorem native_order_thirteen_preserves_trace_on_basis :
+    ∀ j : Fin 27,
+      coordinateTrace (fun i => nativeOrder13Matrix i j) =
+        coordinateTrace (fun i => if i = j then (1 : ℚ) else 0) := by
   native_decide
 
-theorem traceless_action_is_same_native_action :
-    ∀ (v : Fin 26 → ℚ),
-      injectTraceless
-        (applyWitness nativeTracelessOrder13 v) =
-      applyWitness nativeOrder13Matrix (injectTraceless v) := by
-  intro v
-  funext i
-  simp [injectTraceless, nativeTracelessOrder13,
-        projectTraceless, tracelessBasis, applyWitness]
-  -- All surviving finite sums are over the already-paid 27D
-  -- source-selected rational matrix.
+/-- Check the 26 tracezero basis vectors. Extension to all rational
+linear combinations follows from bilinearity, and avoids trying
+to decision-evaluate an infinite universal Q-vector quantifier. -/
+theorem traceless_action_is_same_native_action_on_basis :
+    ∀ j : Fin 26,
+      injectTraceless (fun i => nativeTracelessOrder13 i j) =
+      applyWitness nativeOrder13Matrix (tracelessBasis j) := by
   native_decide
 
 theorem native_traceless_order_thirteen :

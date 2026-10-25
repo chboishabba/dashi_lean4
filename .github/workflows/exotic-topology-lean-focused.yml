@@ -1,0 +1,58 @@
+name: Exotic topology Lean same-object kernel ingress
+on:
+  push:
+    branches:
+      - agent/exotic-topology-cw-sphere-reuse-20261025
+  pull_request:
+    paths:
+      - "Synthesis/ExoticTopology*.lean"
+      - "docs/EXOTIC_TOPOLOGY_CW_SPHERE_PRIOR_ART_20261025.md"
+      - ".github/workflows/exotic-topology-lean-focused.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan without changing repository toolchain pins
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Source pin and exact-head preflight
+        run: |
+          echo "Exact HEAD: $GITHUB_SHA"
+          cat lean-toolchain
+          grep -n -A 4 'mathlib' lakefile.toml
+          lake --version
+          lake exe cache get
+      - name: Kernel-check narrow existing-donor / arithmetic ingress
+        run: |
+          lake env lean Synthesis/ExoticTopologyCantorInverseLimit.lean
+          lake env lean Synthesis/ExoticTopologyCantorClopenMeasureNoGo.lean
+          lake env lean Synthesis/ExoticTopologyWhitneySimons.lean
+          lake env lean Synthesis/ExoticTopologyWhitneyRealImage.lean
+      - name: Kernel-check native geometric and homology consumers
+        run: |
+          for module in \
+            ExoticTopologyCP1TopCatSphereWeld \
+            ExoticTopologyCP1SphereH2Acceptance \
+            ExoticTopologyFiniteSpherePairing \
+            ExoticTopologyMathlibCWSource \
+            ExoticTopologyPinchedTorusQuotient \
+            ExoticTopologySeashellParametric \
+            ExoticTopologySurfaceExhaustions \
+            ExoticTopologyWadaBoundary \
+            ExoticTopologyWarsawCircle \
+            ExoticTopologyFoxArtinS5Witness; do
+            lake env lean "Synthesis/${module}.lean"
+          done
+
+# This is an execution SPECIFICATION. Source-written Lean proofs do
+# not become kernel-verified until a run on the exact SHA completes
+# successfully. The repository's toolchain/Mathlib version mismatch
+# is preserved for diagnostics rather than silently retargeted.

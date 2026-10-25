@@ -473,3 +473,51 @@ retain separate source roles; source 1925 DOI
 10.1007/BF02950718, source 1947 DOI 10.2307/1969218.
 No Lean kernel checking or new Wada/wildness/space-end
 homeomorphism is claimed by this work.
+
+
+## Latest external and repository prior art / October 25 evening
+
+Agda #1254 source first re-audited its advancing parent #1244,
+braid #1239 and recent Animalexic #1259. The new Agda source
+directly inherits the exact parent horned cover, central
+`pi1` reduction, and 867-point pierced-shell stereography after
+a non-destructive merge `f1b1c097767bf085535e48795e49b5e515792c0e`.
+No corresponding Fox--Artin arc complement theorem follows
+from this Hatcher/Alexander wild solid without a same-object map.
+
+New Lean module
+`Synthesis/ExoticTopologyCantorClopenMeasureNoGo.lean`
+source-writes the **ALL-DEPTH** theorem
+`3 * k ≠ 2 ^ n` for natural k,n by the existing
+Mathlib `Nat.Prime.dvd_of_dvd_pow` theorem. The topological
+paper corollary is that fair-bit Cantor product measure and
+uniform ternary Cantor product measure cannot be related
+by a measure-preserving homeomorphism: a one-digit
+ternary clopen cylinder has mass 1/3, while any binary
+clopen set (finite union of same-depth cylinder sets)
+has dyadic mass. The topological/measure
+homeomorphism theorem has NOT been kernel-verified.
+
+New `.github/workflows/exotic-topology-lean-focused.yml`
+follows source-pinned narrow Hatcher-style kernel ingress,
+using `lake build` module targets (with import closures)
+rather than standalone `lake env lean` on modules
+whose dependencies may have no compiled `.olean`.
+It retains the actual repo toolchain/Mathlib lock to
+expose any mismatch rather than silently upgrading
+a dependency and attributing the result to the wrong
+source. GitHub workflow existence is not an execution
+receipt; at last observed head no successful new Lean
+kernel run was available.
+
+Important reuse: `DASHI.Core.QueryIndexedProjectionAdequacyExact`
+already factors through the general
+`IntersectionalNonFactorability` theorem, as used by
+latest Animalexic #1259. Agda #1254 now imports both to
+show a **single horn-address projection** can be
+adequate for the source sector query and inadequate
+for an independent marked linking query. No
+post-recharting of that address can repair the latter.
+Original Blackwell and Crenshaw source contributions
+are conceptual; this is repository-local mathematics,
+not a theorem by those authors on wild knots.

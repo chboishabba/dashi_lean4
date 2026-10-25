@@ -81,4 +81,66 @@ theorem selectedRootRejectWithArcReceipt
   have hr : 0 < rootGap := by linarith
   nlinarith
 
+
+/-!
+## Same selected-W first-generation result (new finite source discriminator)
+
+The original selected W and source rational lower trace/norm belong to
+Agda neutrino #1247 and earlier Agda #1249 respectively. If W=[A,B]
+as a GENUINE flat Hatcher-marked parent commutator, the direct centered
+arc inequality (also valid without any factor d(A)) gives
+d(W)<=2*d(B)*sqrt(1-d(B)^2/4), for d(B)<=sqrt(2).
+The same applies to the other child by symmetry.
+The exact source root certificate is larger than 819/625, the
+squared direct cap at delta=3/5, so BOTH children must have d>3/5.
+This is an elementary new arithmetic consequence, not a source
+meridian/physical gauge-field construction. The analytic matrix
+norm-to-rational premise is EXTERNAL here.
+-/
+
+def selectedWCertifiedRootGapSqLower : ℚ :=
+  854996726408 / 648677790003
+
+theorem sourceRootExceedsThreeFifthsArcCap :
+    (819 / 625 : ℚ) < selectedWCertifiedRootGapSqLower := by
+  norm_num [selectedWCertifiedRootGapSqLower]
+
+theorem threeFifthsArcCoefficientSquared :
+    arcCoefficientSquared (3 / 5 : ℚ) = 819 / 625 := by
+  norm_num [arcCoefficientSquared]
+
+/-- Pure rational polynomial monotonicity on the source-relevant
+interval, and thus a sound scalar upper cap for any actual unitary
+sibling with 0<=d(B)<=3/5. -/
+theorem arcMonotoneToThreeFifths
+    (delta : ℚ) (hNonneg : 0 <= delta)
+    (hCap : delta <= 3 / 5) :
+    arcCoefficientSquared delta <= 819 / 625 := by
+  have hprod : 0 <= ((3 / 5 : ℚ) - delta) *
+      ((3 / 5 : ℚ) + delta) :=
+    mul_nonneg (by linarith) (by linarith)
+  have hsquared : delta ^ 2 <= (9 / 25 : ℚ) := by
+    nlinarith
+  have hmonoproduct : 0 <= ((9 / 25 : ℚ) - delta ^ 2) *
+      (4 - ((9 / 25 : ℚ) + delta ^ 2)) :=
+    mul_nonneg (by linarith) (by nlinarith)
+  unfold arcCoefficientSquared
+  nlinarith
+
+/-- A physical/source-selected W cannot have a marked child whose
+unitary norm gap is at most 3/5, IF the external direct SU3 analytic
+commutator inequality supplies hDirect. This must be established for
+the SAME Hatcher-based loop and connection; no hypothesis is hidden. -/
+theorem selectedWFirstChildGapLower
+    (rootSq childGap : ℚ)
+    (hRoot : selectedWCertifiedRootGapSqLower <= rootSq)
+    (hChildNonneg : 0 <= childGap)
+    (hChildSmall : childGap <= 3 / 5)
+    (hDirect : rootSq <= arcCoefficientSquared childGap) :
+    False := by
+  have hCap := arcMonotoneToThreeFifths childGap hChildNonneg hChildSmall
+  have hGt := sourceRootExceedsThreeFifthsArcCap
+  linarith
+
+
 end DASHIHornSharpSiblingArc

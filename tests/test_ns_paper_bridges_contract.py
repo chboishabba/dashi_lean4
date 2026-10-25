@@ -59,6 +59,7 @@ def test_source_cube_seed_has_real_derivative_and_face_obligations():
         "hasDerivAt_seed2",
         "hasDerivAt_seed3",
         "seed_divergence_zero",
+        "derivative_factor_ring_identity",
         "seed_zero_faces",
         "seed_upper_faces",
     ):

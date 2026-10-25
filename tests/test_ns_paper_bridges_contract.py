@@ -51,3 +51,28 @@ def test_opt_in_library_and_no_false_physical_claim():
     assert "RequestProject.NavierStokes.YanRadulescuPressure" in lakefile
     assert "not a formal proof of integration by parts" in MILLER.read_text()
     assert "does NOT claim to have formalised" in YAN.read_text()
+
+def test_source_cube_seed_has_real_derivative_and_face_obligations():
+    lean = (ROOT / "RequestProject/NavierStokes/YanRadulescuCubeSeed.lean").read_text()
+    for theorem in (
+        "hasDerivAt_seed1",
+        "hasDerivAt_seed2",
+        "hasDerivAt_seed3",
+        "seed_divergence_zero",
+        "seed_zero_faces",
+        "seed_upper_faces",
+    ):
+        assert "theorem " + theorem in lean
+    assert "HasDerivAt F" in lean
+    assert "Corollary 1.1" in lean
+    assert "separate exact-expression proof" in lean
+    assert 'RequestProject.NavierStokes.YanRadulescuCubeSeed' in (
+        ROOT / "lakefile.toml"
+    ).read_text()
+
+
+def test_source_polynomial_replay_105_exact_instances():
+    import runpy
+    script = ROOT / "scripts/check_yan_radulescu_polynomial_seed.py"
+    audit = runpy.run_path(str(script))
+    assert audit["run"]() == 105

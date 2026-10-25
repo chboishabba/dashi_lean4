@@ -104,4 +104,30 @@ theorem seed_upper_faces
      seed3 F D x₁ x₂ T = 0) := by
   simp [seed1, seed2, seed3, hF, hD]
 
+/-!
+## Exact formal derivative-factor algebra
+
+If a(y) = y(y-T), h(y)=a(y)^(qPred+1) and
+rho(y)=a(y)^(rhoPred+1), the chain/product rules give
+h' - h rho' = a^qPred a' * ((qPred+1) -
+                             (rhoPred+1)*a^(rhoPred+1)).
+For the paper's p and q, take qPred=q-1 and
+rhoPred=2(p+1)-1. This lemma pays the universal algebra,
+but identifying the actual HasDerivAt source expressions
+still requires differential-calculus lemmas and is not
+silently inferred.
+-/
+
+theorem derivative_factor_ring_identity
+    (z zPrime : ℝ) (qPred rhoPred : ℕ) :
+    (((qPred + 1 : ℕ) : ℝ) * z ^ qPred * zPrime) -
+      z ^ (qPred + 1) *
+        (((rhoPred + 1 : ℕ) : ℝ) * z ^ rhoPred * zPrime)
+      =
+    z ^ qPred * zPrime *
+      (((qPred + 1 : ℕ) : ℝ) -
+        ((rhoPred + 1 : ℕ) : ℝ) * z ^ (rhoPred + 1)) := by
+  rw [pow_succ z qPred, pow_succ z rhoPred]
+  ring
+
 end RequestProject.NavierStokes.YanRadulescuCubeSeed

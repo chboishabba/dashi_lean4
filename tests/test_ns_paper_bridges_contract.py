@@ -196,3 +196,15 @@ def test_sample_enstrophy_to_projection_fourth_power_majorant():
     assert "finite_sample_fourth_power_budget" in lean
     assert "source *continuum*" in lean
     assert "not a proof that the periodic #1271 source" in lean
+
+
+def test_exact_three_dimensional_stationary_pressure_adversarial_example():
+    """Source-agnostic SymPy pointwise 3D PDE identity, not Lean certification."""
+    import runpy
+    path = ROOT / "scripts/check_ns_pressure_divergence_exact.py"
+    audit = runpy.run_path(str(path))
+    assert audit["run"]() == 3
+    script = path.read_text(encoding="utf-8")
+    assert "10.1007/s12215-020-00540-3" in script
+    assert "divergence_f" in script and "laplace_p" in script
+    assert "extra source assumptions could repair" in script

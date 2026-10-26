@@ -35,6 +35,7 @@ jobs:
           lake build \
             Synthesis.ExoticTopologyCantorInverseLimit \
             Synthesis.ExoticTopologyCantorClopenMeasureNoGo \
+            Synthesis.ExoticTopologyPLMaxwellGenusNoGo \
             Synthesis.ExoticTopologyCP1TopCatSphereWeld \
             Synthesis.ExoticTopologyCP1SphereH2Acceptance \
             Synthesis.ExoticTopologyFiniteSpherePairing \

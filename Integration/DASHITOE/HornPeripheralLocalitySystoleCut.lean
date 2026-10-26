@@ -112,4 +112,51 @@ theorem siblingMarkedSystoleLower
     (31/60 : ℚ) < M*ell := by
   linarith
 
+
+/-!
+## Original Hatcher local straight-tube chart quantitative WELD
+
+Hatcher AT Ex.2B.2 says Z-A is HOMEOMORPHIC to a ball with two
+straight tubes removed, hence child local circles represent the
+corresponding abstract meridian generators. This DOES NOT assert
+an EUCLIDEAN Lipschitz bound for the actual Hatcher embedding.
+
+If a correctly SOURCE-MARKED geometric chart maps a circle of
+radius b into the actual whole-stage-avoiding exterior and has
+Lipschitz coefficient Lambda, then (pi<22/7)
+localLength<=44/7*Lambda*b is a sufficient input.
+The next theorem uses only those independently paid source facts.
+-/
+
+theorem syntheticUniformTubeAtDepthOne :
+    (44/105 : ℚ) < 781/1000 := by norm_num
+
+theorem syntheticUnboundedDistortionBlocksCut :
+    (781/1000 : ℚ) < 44/35 := by norm_num
+
+/-- Literal metric source acceptance, NOT a claim that Hatcher's
+topological homeomorphism is uniformly bi-Lipschitz. In a real
+application sourceMarking must identify the parent/child classes,
+actualLength must come from a true exterior meridian, and hChart
+from a controlled metric chart on THAT same source embedding. -/
+theorem selectedWActualTubeChartReject
+    (rootSq childGap M actualLength Lambda circleRadius : ℚ)
+    (hRoot : DASHIHornSelectedWSpectralCubic.selectedRootSqThreshold
+       < rootSq)
+    (hNonneg : 0 ≤ childGap)
+    (hDirect : rootSq ≤
+      DASHIHornSelectedWSpectralCubic.directArcSquared childGap)
+    (hTransport : childGap ≤ M*actualLength)
+    (hGauge : 0 ≤ M)
+    (hChart : actualLength ≤ (44/7)*Lambda*circleRadius)
+    (hBudget : M*((44/7)*Lambda*circleRadius) ≤ 781/1000) :
+    False := by
+  have hProduct := markedLocalMeridianRequiresML
+    rootSq childGap M actualLength hRoot hNonneg hDirect hTransport
+  have hUpper : M*actualLength ≤
+      M*((44/7)*Lambda*circleRadius) :=
+    mul_le_mul_of_nonneg_left hChart hGauge
+  linarith
+
+
 end DASHIHornPeripheralLocality

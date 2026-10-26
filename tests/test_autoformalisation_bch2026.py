@@ -53,7 +53,7 @@ def test_sci_conclusions_have_externally_provided_hardness_inputs():
                        "sigmaLevelPaid", "dprmReductionPaid",
                        "postConditionPaid"):
         assert hypothesis in s
-    assert "does not formalise" in s
+    assert "*does not* formalise" in s
     assert "SCI=infinity" in s
     assert not re.search(r"(?m)^\s*(sorry|axiom)\b", s)
 

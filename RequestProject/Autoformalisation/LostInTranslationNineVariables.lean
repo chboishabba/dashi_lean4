@@ -118,6 +118,18 @@ theorem sourceIndex_identifies_source_code
   classical
   exact Nat.find_spec (hSurjective (target e))
 
+/-- The selected matching coefficient-code index is also least, as
+required by the source's μ-operator. Classical leastness is a
+mathematical fact and still does NOT prove computability of μ-search. -/
+theorem sourceIndex_is_least_matching_code
+    {Code : Type*} (enumeration : ℕ → Code)
+    (target : ℕ → Code)
+    (hSurjective : Function.Surjective enumeration)
+    (e j : ℕ) (hMatch : enumeration j = target e) :
+    sourceIndex enumeration target hSurjective e ≤ j := by
+  classical
+  exact Nat.find_min' (hSurjective (target e)) hMatch
+
 /-- Original d shape, evaluated on a chosen enumeration code. -/
 def IndexedNoRoot
     {Code : Type*}

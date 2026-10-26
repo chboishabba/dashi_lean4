@@ -130,7 +130,7 @@ theorem pressure_rhs_no_unconditional_comparison :
   norm_num [leanPressureFluxRhsAtBZeroROne,
     paperPressureFluxRhsAtBZeroROne] at h0
 
-/-! ## §4, Example 4.3: a default value is not an existence witness
+/-! ## §4, Example 4.1: a default value is not an existence witness
 
 B_e(n) says there are no natural solutions x₁+x₂=n.
 But (x₁,x₂)=(n,0) always solves the displayed equation.

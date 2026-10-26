@@ -1428,3 +1428,92 @@ do not alter our separate generic group commutator
 orientation/whisker invariance or the exact selected-W
 synthetic two-arm fringe-odd consumer, nor do they pay
 the physical source/Stokes gates.
+
+
+## 2026-10-26 Hatcher peripheral localisation / marked systole SOURCE WALL
+
+LIVE owner checks: Hatcher original AT Ex2B2 printed pp171–172
+and Agda horn #1244's actual source-supported 3-sector C3 open
+cover, pierced-shell product, conditional tame central pi1
+argument, original stable cap and global-to-overlap paths;
+neutrino #1247 original selected W; exotic #1254/Lean #86
+chronological/ambient-linking severe controls. These are
+original DONORS, not competing discoveries.
+
+Agda #1249 new exact GIT-BLOB-BYTE-EXECUTED scripts:
+* `check_horn_peripheral_localization_maxcut.py`
+  SHA 9fff0ab312aa0f2993ebd19b3ae237a0334d231c.
+  On the owner's actual x0=(20,20,20), c_i=9e_i,
+  r_-=15/4, any nontrivial FLAT loop must leave the
+  source-paper simply connected C and enter an inner ball,
+  whence its GLOBAL BASED length>531/10=53.1 by exact
+  Euclidean triangle inequality (conditional on the
+  source same-object pi1(C)=1). The owner's contractible
+  pierced-shell collar only has identity FLAT holonomy;
+  a synthetic CURVED SU3 diagonal connection on its
+  chart has nontrivial holonomy around a contractible
+  circle, so curved consumers must pay a true Stokes
+  surface and eta, not assume homotopy invariance.
+* `check_horn_marked_systolic_tree_cut.py`
+  SHA e99f62379696803c2d24ded671686ef547092a3e.
+  A SHORT LOCAL meridian, not a long based whisker,
+  must pay d(Hol)<=M*length. The infimum over local
+  true free-Hatcher generator representatives is
+  marked systole ell(m). Existing sharp sibling
+  factor at rational 31/60 has squared coefficient
+  12914879/12960000<1: any nontrivial root forces
+  infinitely many sibling gaps>31/60 along every
+  marked infinite branch. Any globally M-bounded
+  compatible flat gauge then requires infinitely
+  many marked systoles>31/(60M) per branch.
+  If actual SOURCE systoles tend to zero along
+  even one properly marked infinite branch,
+  no uniformly bounded gauge representative exists.
+  This is gauge invariant as a NONEXISTENCE proposition,
+  but no curvature/energy singularity is inferred.
+  A simple once-winding polar curve with diam->0
+  but length>=1 is a severe geometry negative control:
+  diameter alone does not certify actual arclength.
+* `check_horn_straight_tube_metric_gate.py`
+  SHA 6f130618abc14760416e1860e06fd3d6f9e39475.
+  Hatcher ORIGINAL Z-A is HOMEOMORPHIC to the ball
+  with two straight tubes deleted; its local child
+  meridians generate F2 and the annulus word is
+  their commutator. The missing EUCLIDEAN distortion
+  constant Lambda_w for the actual linked source
+  is not inherited from homeomorphism. For a true
+  source-marked chart with transverse round radius
+  b_w and Lipschitz Lambda_w, actual local length
+  <=2*pi*Lambda_w*b_w < (44/7)*Lambda_w*b_w.
+  Selected W first child is excluded by
+  M*(44/7)*Lambda_w*b_w<=781/1000.
+  A genuine linear stretch with Lambda_n=3^n
+  and b_n=1/(5*3^n) keeps this bound non-shrinking,
+  exposing the precise metric-source wall.
+All three committed blobs match locally executed
+file bytes and focused tests PASS; NO source infinite
+wild linked handle stage, true local marked meridian,
+real physical connection or kernel receipt is asserted.
+
+New **SOURCE-WRITTEN** Lean bridge:
+`Integration/DASHITOE/HornPeripheralLocalitySystoleCut.lean`
+includes exact 921 centre squared distance, strict >531/10
+global based entry length conditional on true source
+metric hypotheses, p_i shell position, selected-W
+ML>781/1000 local-meridian necessary bound, exact flat
+rejection and source-gated metric Lipschitz tube
+acceptance `selectedWActualTubeChartReject`.
+No Lean/Lake kernel compiled or same-object geometric
+instance exists in this branch.
+
+**Pareto/Ibrahim stop rule:** the exact indispensable
+producer is a relative **linked Hatcher pillbox-to-real
+Euclidean source** chart with (i) correct child
+generator/whisker, (ii) whole finite-stage exterior
+avoidance, and (iii) either a short local geometric
+meridian or a controlled length distortion Lambda_w.
+Hatcher and Lippert pay classical wild topology;
+the owner #1244 pays outer C3 tame gluing and
+collar but NOT this source-specific metric instance.
+Do not trade more finite synthetic C3/VOA/Cantor
+facets for this unpaid witness. No CI priority.

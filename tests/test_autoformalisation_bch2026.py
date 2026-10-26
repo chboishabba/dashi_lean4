@@ -298,3 +298,41 @@ def test_fixed_integer_polynomial_parity_replay_and_optimizer_guard():
     )
     assert proc.returncode != 0
     assert "Cannot trust optimized Python" in proc.stderr
+
+
+def test_bch_nine_to_k_natural_padding_does_not_change_root_status():
+    import itertools
+    lean = (
+        ROOT / "RequestProject/Autoformalisation/LostInTranslationPadding.lean"
+    ).read_text()
+    for theorem in (
+        "take_liftNine",
+        "existential_nine_iff_k_padding",
+        "universal_nine_iff_k_padding",
+        "source_polynomial_exists_padding",
+        "source_polynomial_forall_padding",
+    ):
+        assert "theorem " + theorem in lean
+    assert "James P." in lean and "10.2307/2273588" in lean
+    assert "OPEN producer" in lean
+    assert "RequestProject.Autoformalisation.LostInTranslationPadding" in (
+        ROOT / "lakefile.toml"
+    ).read_text()
+    for k in (9, 10, 11):
+        for q in range(5):
+            def polynomial(x):
+                # Fixed integer coefficients, one polynomial on Fin 9.
+                return sum((i+1)*x[i] for i in range(9)) - q
+            roots9 = [
+                x for x in itertools.product((0, 1), repeat=9)
+                if polynomial(x) == 0
+            ]
+            roots_k = [
+                y for y in itertools.product((0, 1), repeat=k)
+                if polynomial(y[:9]) == 0
+            ]
+            assert bool(roots9) == bool(roots_k)
+            assert (len(roots9) == 0) == (len(roots_k) == 0)
+            for x in roots9:
+                y = x + (0,) * (k-9)
+                assert y[:9] == x and polynomial(y[:9]) == 0

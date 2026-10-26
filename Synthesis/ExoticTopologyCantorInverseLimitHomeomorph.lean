@@ -122,6 +122,28 @@ theorem sourceStageChildCylinder_subset (n : ℕ)
     exact t.compatible n i
   exact hcompat.symm.trans (congrArg (forgetLast n) ht)
 
+
+/-- At every finite stage the original discrete address cylinders cover
+the ENTIRE coherent limit; no compatible tower is omitted. -/
+theorem sourceStageCylindersCover (n : ℕ) :
+    (⋃ w : CantorStage n, sourceStageCylinder n w) = Set.univ := by
+  apply Set.eq_univ_iff_forall.mpr
+  intro t
+  exact Set.mem_iUnion.mpr ⟨t.stage n, rfl⟩
+
+/-- Distinct stage addresses give disjoint actual topological
+cylinders; later genuine surface tails must mirror this partition,
+not merely have the same number of boundary circles. -/
+theorem sourceStageCylindersPairwiseDisjoint (n : ℕ)
+    (w z : CantorStage n) (hne : w ≠ z) :
+    Disjoint (sourceStageCylinder n w)
+      (sourceStageCylinder n z) := by
+  apply Set.disjoint_left.mpr
+  intro t hw hz
+  change t.stage n = w at hw
+  change t.stage n = z at hz
+  exact hne (hw.symm.trans hz)
+
 /-- Compose with Mathlib's pinned v4.28.0 theorem on the LITERAL
 real middle-thirds Cantor set, not a new hand-defined subset. -/
 noncomputable def realCantorSetHomeomorphToSourceFrontiers :

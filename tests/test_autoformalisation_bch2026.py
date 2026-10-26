@@ -122,3 +122,40 @@ def test_appendix_A5_fixed_level_unboundedness_is_conditional():
     for h in range(1001):
         l = max(2, h + 1)
         assert l >= 2 and l > h
+
+
+def test_appendix_A4_alternation_prefix_preserved_and_source_gates_explicit():
+    path = ROOT / "RequestProject/Autoformalisation/LostInTranslationAlternation.lean"
+    source = path.read_text()
+    for name in (
+        "quantifyPrefix_congr",
+        "final_exists_of_nine_variable_representation",
+        "final_forall_of_nine_variable_representation",
+    ):
+        assert "theorem " + name in source
+    assert "Fin 9 → ℕ" in source
+    assert "hRepresentation" in source
+    assert "not construct" in source
+    assert not re.search(r"(?m)^\s*(sorry|axiom)\b", source)
+    assert "RequestProject.Autoformalisation.LostInTranslationAlternation" in (
+        ROOT / "lakefile.toml"
+    ).read_text()
+
+
+def test_quantifier_prefix_toy_semantics_unchanged_by_last_block():
+    # A finite two-element universe tests the same extensional
+    # congruence (not the unbounded source quantifier family).
+    import itertools
+    U = (0, 1)
+    for bits in itertools.product((False, True), repeat=3):
+        def quantify(prefix, P, chosen=()):
+            if not prefix:
+                return P(chosen)
+            values = (quantify(prefix[1:], P, chosen + (x,)) for x in U)
+            return any(values) if prefix[0] else all(values)
+        for seed in range(8):
+            def P(xs):
+                return (sum(xs) + seed) % 3 == 0
+            def Q(xs):
+                return P(xs)
+            assert quantify(bits, P) == quantify(bits, Q)

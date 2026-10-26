@@ -159,3 +159,48 @@ def test_quantifier_prefix_toy_semantics_unchanged_by_last_block():
             def Q(xs):
                 return P(xs)
             assert quantify(bits, P) == quantify(bits, Q)
+
+
+
+def test_A3_enumeration_index_keeps_surjectivity_and_effectivity_separate():
+    leaf = (ROOT / "RequestProject/Autoformalisation/LostInTranslationNineVariables.lean").read_text()
+    for identifier in (
+        "sourceIndex",
+        "sourceIndex_identifies_source_code",
+        "sourceIndex_preserves_nontermination_membership",
+        "IndexedNoRoot",
+        "Function.Surjective enumeration",
+    ):
+        assert identifier in leaf
+    assert "noncomputable def sourceIndex" in leaf
+    assert "computability of the selected index" in leaf
+    # Model a *specific* decidable surjective enumeration whose least
+    # matching index is known explicitly. This is NOT a polynomial
+    # encoding of the source's NTOT machine enumeration.
+    for e in range(24):
+        index = e + 2
+        assert index == next(j for j in range(100) if j == e+2)
+        for n in range(24):
+            halt = (n == e + 2)
+            root_at_index = (index == n)
+            assert (not halt) == (not root_at_index)
+
+
+def test_guarded_conditional_output_does_not_assert_closed_decision():
+    path = ROOT / "RequestProject/Autoformalisation/ConditionalTranslation.lean"
+    t = path.read_text()
+    for key in (
+        "MinimalNatural",
+        "square_identity_from_presupposition",
+        "uniform_guarded_template",
+        "no_instance_for_source_no_root_example",
+        "guarded_schema_does_not_exhibit_nonexistent_minimum",
+    ):
+        assert key in t
+    assert "Example 4.1" in t
+    assert "TOTAL" in t
+    assert "not a refutation" in t.lower()
+    assert not re.search(r"(?m)^\s*(sorry|axiom)\b", t)
+    assert "RequestProject.Autoformalisation.ConditionalTranslation" in (
+        ROOT / "lakefile.toml"
+    ).read_text()

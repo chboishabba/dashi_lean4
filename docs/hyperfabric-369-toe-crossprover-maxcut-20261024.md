@@ -1604,3 +1604,98 @@ P1 SAME source Euclidean length/metric
 Lipschitz; P2 curved based Stokes source;
 P3 native kernel and physical action.
 No user/source attribution recoded.
+
+
+## 2026-10-27 finite F₂ *peripheral* contract and explicit ribbon-genus collision
+
+After rejecting #1244's finite original linked round
+two-core Hopf comparator as the WRONG source
+(its π₁=ℤ², so parent commutator trivial),
+the next exact source-positive finite model is
+an ACTUAL open disk radius3 with two straight
+closed subdisks radius1/8 at ±(1,0) deleted,
+cross an open interval. This local region
+deformation retracts to a twice-punctured
+disk, π₁=F₂. Its REAL transverse meridian
+circles of radius1/4 are disjoint and
+after original #1244 C3 satellite scale 1/8
+have length π/16<11/56, strict source
+clearance 1/8 to own solid and 13/8 to
+foreign solid in the unscaled model.
+
+**Further structural discriminator**: an abstract
+group F₂ and the exact SAME two geometric
+meridian lengths do NOT by themselves
+determine Hatcher's original INCOMING ANNULUS
+peripheral word. On one vertex/two loop
+edges (a,b) with darts a,A,b,B, the SAME
+edge flip α=(a A)(b B) has radically
+different ribbon topologies depending on
+vertex cyclic order σ:
+
+- Alternating σ=(a B A b), φ=σ∘α yields ONE
+  4-cycle (a b A B); its oriented ribbon
+  thickening is χ=1−2=−1, b=1,
+  genus1, **once punctured torus**, boundary
+  [a,b] — the original Hatcher local source
+  peripheral TYPE.
+- Nonalternating σ=(a A b B) yields THREE
+  boundary cycles (a b), (A), (B);
+  the same graph has χ=−1, b=3, genus0,
+  **pair of pants**, WRONG peripheral object.
+
+Both source-written finite carriers committed:
+Agda #1249
+`DASHI/Mathematics/Topology/HatcherRibbonPeripheralBoundaryExact.agda`
+(exact dart successor/reflection equations),
+Python `scripts/check_horn_local_f2_ribbon_boundary_source_cut.py`
+(exact rational geometry, cycles/genus, C3 and
+free group word), and Lean #84
+`Integration/DASHITOE/HornHatcherRibbonPeripheralOrderCut.lean`
+(finite decision table + Euler arithmetic).
+Independent locally reconstructed exact Fraction
+script PASS (positive punctured torus vs negative
+pants), and independent SU3 nonabelian source
+receiver PASS. No native Agda/Lean kernel run
+and the new committed Python bytes have NOT
+been executed byte-identically locally.
+
+**Important same-object restraint**: the local
+straight-core metric curves and combinatorial
+orientable punctured-torus ribbon thickening
+were constructed as SEPARATE positive finite
+components. No explicit ambient embedding
+of this ribbon into the SAME punctured-disk
+3-manifold, with metric curves identified,
+has yet been constructed as a concrete 3D
+source certificate. Even such an embedding
+would not prove the original Hatcher infinite
+linked wild stage and relative #1244 homotopy/
+basepoint transport. The source owner #1244
+now has NEW
+`ThreeArmHatcherHomotopyTransport.lean` and
+`ThreeArmHatcherPathTransport.lean`,
+which can RECEIVE these actual geometric
+equivalences but do not inhabit them.
+
+Original roots Hatcher AT Ex2B2, Alexander
+1924 and standard ribbon graph topology;
+SageMath Ribbon Graphs docs are a later
+implementation of classical dart permutations,
+not a new original source. Original finite PL
+pants owner is Agda #1254, and original owner
+clasp/C3 is #1244; no source credit transferred.
+New finite implementation user-directed
+Johl Brown with OpenAI ChatGPT assistance.
+
+Pareto wall P0=correct actual Hatcher F₂
+PERIPHERALLY-MARKED punctured torus/annulus
+map in the SAME wild satellite (including
+real relative collar homotopy group equivalence,
+coherent based paths and meridian identities).
+P1=same linked exterior actual Euclidean
+meridian length/Lipschitz, P2=curved based
+Stokes surface/eta, P3=kernel/physical
+selection. Group rank, local linking, clean
+C3 geometry and short model loops are NOT
+interchangeable P0 receipts.

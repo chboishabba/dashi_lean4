@@ -243,3 +243,22 @@ def test_nonnegative_weighted_time_budget_rational_sweep():
     assert "weighted_sample_fourth_power_budget" in lean
     assert "weighted_sample_budget_with_total_duration" in lean
     assert "quadrature convergence" in lean
+
+
+def test_source_bound_mathlib_lean_toolchain_preflight_fails_closed():
+    """Metadata consistency is necessary, not sufficient for kernel proof."""
+    import runpy
+    preflight_path = ROOT / "scripts/check_ns_paper_build_preflight.py"
+    module = runpy.run_path(str(preflight_path))
+    report = module["check_preflight"]()
+    assert report["mathlib_revision"] == report["manifest_revision"]
+    assert report["expected_toolchain"] == (
+        "leanprover/lean4:" + report["mathlib_revision"]
+    )
+    assert "lake build NSPaperBridges" in report["scoped_build_command"]
+    # Do NOT overwrite the root toolchain to satisfy this leaf library.
+    if not report["matches"]:
+        assert report["root_toolchain"] != report["expected_toolchain"]
+    assert "Kernel compilation remains UNVERIFIED" in (
+        preflight_path.read_text()
+    )

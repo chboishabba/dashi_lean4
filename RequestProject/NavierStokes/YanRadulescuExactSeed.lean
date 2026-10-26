@@ -115,9 +115,16 @@ theorem hasDerivAt_sourceF_from_factors
       hDerivative rhoDerivative
   convert hProduct using 1
   · rfl
-  · simp only [F, D, g]
-    have hPositive : 2 * (pExtra + 3) = (2 * (pExtra + 3) - 1) + 1 := by omega
-    rw [hPositive, pow_succ]
+  · simp only [D, g, h]
+    have hQ : qExtra + 3 = (qExtra + 2) + 1 := by omega
+    have hP : (2 * (pExtra + 3) - 1) + 1 =
+        2 * (pExtra + 3) := by omega
+    have hPow :
+        polynomialBase T y ^ (2 * (pExtra + 3)) =
+        polynomialBase T y ^ (2 * (pExtra + 3) - 1) *
+          polynomialBase T y := by
+      rw [← hP, pow_succ]
+    rw [hQ, pow_succ, hPow]
     ring
 
 /-- Exact printed F,D supply all six Dirichlet faces independently of

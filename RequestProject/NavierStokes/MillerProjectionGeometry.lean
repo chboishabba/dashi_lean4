@@ -87,4 +87,39 @@ theorem parallel_direction_has_zero_cross
   unfold crossNormSq normSq cross1 cross2 cross3
   ring
 
+/-!
+## Finite sample majorant / R735 transfer boundary
+
+A same-source *continuum* enstrophy ceiling D would imply finite
+projected fourth-power expenditure over a bounded time interval.
+The following theorem only proves that finite nonnegative real
+sample analogue. It is a safe consumer of supplied numerical bounds,
+not a proof that the periodic #1271 source provides Miller's R³
+spacetime estimates (nor a replacement for integration, compactness
+or continuation).
+-/
+
+/-- If the projected square P at each time is no larger than the full
+enstrophy E and each E is no larger than D, the finite-sample
+fourth-power budget is at most (#samples) * D². -/
+theorem finite_sample_fourth_power_budget
+    {Time : Type*} (samples : Finset Time)
+    (P E : Time → ℝ) (D : ℝ)
+    (hPNonnegative : ∀ t ∈ samples, 0 ≤ P t)
+    (hProjection : ∀ t ∈ samples, P t ≤ E t)
+    (hEnstrophyCeiling : ∀ t ∈ samples, E t ≤ D) :
+    (∑ t ∈ samples, (P t) ^ 2) ≤
+      (samples.card : ℝ) * D ^ 2 := by
+  calc
+    ∑ t ∈ samples, (P t) ^ 2 ≤
+        ∑ t ∈ samples, D ^ 2 := by
+      apply Finset.sum_le_sum
+      intro t ht
+      have hp0 : 0 ≤ P t := hPNonnegative t ht
+      have hpD : P t ≤ D :=
+        (hProjection t ht).trans (hEnstrophyCeiling t ht)
+      have hD0 : 0 ≤ D := hp0.trans hpD
+      nlinarith [mul_nonneg (sub_nonneg.mpr hpD) (add_nonneg hD0 hp0)]
+    _ = (samples.card : ℝ) * D ^ 2 := by simp
+
 end RequestProject.NavierStokes.MillerProjectionGeometry

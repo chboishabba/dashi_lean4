@@ -123,4 +123,51 @@ theorem coherent_section_J0_differs_from_grade_permutation :
       (-1 : ℚ) ≠ (nonzeroGradePermutationTrace s : ℚ) := by
   native_decide
 
+
+/-! ## Bidirectional C13 recovery from the COHERENT complement
+
+The older arbitrary three-shear word e01→e12→e20 was already
+computationally shown to be order13 on the literal Griess M81 and
+to admit an invertible native tracezero26 Q[C13] intertwiner
+of determinant -729/4096. The actual new COHERENT complement's
+three-shear word differs by one ORIGINAL character shift
+mu=(2,1,0), and is conjugate by nu=(1,1,2).
+This is a SOURCE-SAME positive recovery under the new group section,
+NOT an identification of the full SL3 action with the grade26 points.
+
+Independent LOCAL rational certificate additionally verifies that
+the induced actual native Albert J0 conjugating matrix has determinant
+one, and that the transported 26×26 intertwiner still has determinant
+-729/4096. Both source and native matrix results are NOT kernel checked.
+-/
+
+def olderArbitraryWord (a : Loop81) : Loop81 :=
+  lift .e20 (lift .e12 (lift .e01 a))
+
+def coherentSourceWord (a : Loop81) : Loop81 :=
+  coherentLift .e20 (coherentLift .e12 (coherentLift .e01 a))
+
+def wordDifferenceCharacter : Grade := ![2,1,0]
+def wordConjugatingCharacter : Grade := ![1,1,2]
+
+theorem coherent_word_differs_by_actual_kernel_shift :
+    ∀ a : Loop81,
+      coherentSourceWord a =
+        centralCharacterShift wordDifferenceCharacter (olderArbitraryWord a) := by
+  native_decide
+
+theorem coherent_word_is_conjugate_to_old_order13 :
+    ∀ a : Loop81,
+      coherentSourceWord a =
+        centralCharacterShift wordConjugatingCharacter
+          (olderArbitraryWord
+            (centralCharacterShift (-wordConjugatingCharacter) a)) := by
+  native_decide
+
+theorem coherent_word_order_thirteen_on_M81 :
+    ∀ a : Loop81,
+      (coherentSourceWord^[13]) a = a := by
+  native_decide
+
+
 end Integration.Griess1990MoufangCoherentSL3Section

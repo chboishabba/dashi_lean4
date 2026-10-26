@@ -148,4 +148,63 @@ theorem markedRightChildExceeds781
   rw [markedRootGapIndependentOfBasingAndOrientation gap hConj hInv m]
   exact hDirect
 
+
+/-!
+## Curved Wilson *paired* defect under coherent transport
+
+Unlike flat group relations, curved Wilson matrices are not
+homotopy-invariant. The quantitative Stokes acceptance uses
+eta=||Hol(parent)-Hol(transported child commutator)||op.
+For unitary transports, simultaneous inversion of both matrices
+or common global-basepoint conjugation preserves eta exactly.
+Independent parent-only or child-only whiskers do NOT.
+
+The `defect` below must be instantiated by the true matrix norm and
+actual same-source holonomies; its unitary invariances are premises.
+No source Hatcher based strip/curvature integral is created.
+-/
+
+/-- One common Wilson pair is the correct unit of orientation/basing
+transport for the CURVED defect eta. -/
+theorem pairedDefectBasingAndOrientation
+    (defect : G → G → ℚ)
+    (hConj : ∀ (g x y : G),
+      defect (g*x*g⁻¹) (g*y*g⁻¹) = defect x y)
+    (hInv : ∀ (x y : G),
+      defect x⁻¹ y⁻¹ = defect x y)
+    (g x y : G) (inverted : Bool) :
+    defect
+        (g * (if inverted then x⁻¹ else x) * g⁻¹)
+        (g * (if inverted then y⁻¹ else y) * g⁻¹) =
+      defect x y := by
+  calc
+    defect
+        (g * (if inverted then x⁻¹ else x) * g⁻¹)
+        (g * (if inverted then y⁻¹ else y) * g⁻¹) =
+      defect (if inverted then x⁻¹ else x)
+             (if inverted then y⁻¹ else y) :=
+        hConj g _ _
+    _ = defect x y := by
+      cases h : inverted with
+      | false => simp [h]
+      | true => simpa [h] using hInv x y
+
+/-- The numerical source eta gate (23/500) transports ONLY with
+the entire based parent/child-word pair. -/
+theorem pairedCurvedSourceEtaCapTransport
+    (defect : G → G → ℚ)
+    (hConj : ∀ (g x y : G),
+      defect (g*x*g⁻¹) (g*y*g⁻¹) = defect x y)
+    (hInv : ∀ (x y : G),
+      defect x⁻¹ y⁻¹ = defect x y)
+    (g x y : G) (inverted : Bool)
+    (hSourceEta : defect x y ≤ 23 / 500) :
+    defect
+        (g * (if inverted then x⁻¹ else x) * g⁻¹)
+        (g * (if inverted then y⁻¹ else y) * g⁻¹)
+       ≤ 23 / 500 := by
+  rw [pairedDefectBasingAndOrientation defect hConj hInv g x y inverted]
+  exact hSourceEta
+
+
 end DASHIHornMeridianOrientation

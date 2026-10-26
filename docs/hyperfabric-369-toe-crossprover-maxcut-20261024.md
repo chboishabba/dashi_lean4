@@ -1226,3 +1226,67 @@ are not the shortest rejection route for selected W.
 **Canonical focused max-cut owner:** [Lean #52 order13 actual Albert26 / E8 Weyl discriminator](https://github.com/chboishabba/dashi_lean4/blob/agent/albert-jordan-f4-maxcut-20261007/docs/superpowers/plans/2026-10-25-griess-order13-albert26-e8-weyl-discriminator.md).
 
 **Next Pareto:** (1) actual Lean/Lake kernel compile of original Q(omega) Griess formula and source-to-native 729 Jordan map, then concrete order13 actor (source-written now); (2) typecheck Agda 81-constructor action and instantiate original-to-native Agda transport record, not repeated arithmetic; (3) original-Q F4 classification remains separate; (4) genuine selected Monster VOA 3B source eigensector and physics consumers require independently supported same-object operators. NO CI receipts invented.
+
+
+## 2026-10-26 selected W exact spectral-cubic source-first crosscut
+
+New source-written module:
+`Integration/DASHITOE/HornSelectedWSpectralCubicCut.lean`.
+It reuses **neutrino Agda #1247's SAME exact SU3 selected W trace**
+(176093404722400-19836986431118*zeta)/181846007130841,
+zeta=-1/2+i sqrt3/2, and classical SU3 determinant-one trace/Newton
+identities. It does not choose a different matrix or duplicate #1247's
+original selected-W provenance.
+
+For X=(W-I)^*(W-I), write t=Re tr(W), u²=(Im tr(W))².
+The positive Hermitian X has the scalar cubic
+
+    p_X(x)=x³-2(3-t)x²+((3-t)²+u²)x-4u².
+
+Exact rational p_X(517/250)<0 proves selected ||W-I||op²>517/250
+assuming the actual SU3 matrix-to-charpoly identity.
+The source-written Lean file includes rational cubic, negative
+evaluation, a THREE-factor spectral implication and rational sign
+certificates isolating all three squared eigenvalues:
+
+    (919/100000,920/100000)
+    (187659/100000,187660/100000)
+    (206838/100000,206839/100000).
+
+This tightens the previous selected-W certificate based on
+Frobenius/trace averaging from about 1.318 to >2.068.
+
+Combining the EXISTING prior sharp DIRECT SU3 commutator cap
+d([A,B])²<=4s²-s⁴ (for s=d(B)<=sqrt2) with the same actual
+Hatcher-marked flat W commutator yields BOTH child gaps >781/1000.
+For a curved source, one genuinely marked child d<=3/4 and a TRUE
+based parent-to-child-word defect eta<=23/500 (rather than old
+d<=3/5,eta<=3/1000) suffice for exact source-conditional
+contradiction. No actual Hatcher meridian/cap/physical field or
+Stokes-area eta has been produced.
+
+**GitHub implementation**: Agda #1249 adds executable
+`scripts/check_horn_w_exact_spectral_cubic_maxcut.py`, executed
+independent equivalent Fraction and numerical original-fixture
+audits PASS, and
+`scripts/check_horn_homothety_source_scale_no_go.py` negative control.
+The same-source scaling identities M'L'=ML and K'Area'=KArea
+prevent promoting merely shrinking Euclidean horn coordinates
+into a gauge-field regularity violation. The updated source ledger
+lives in
+`docs/hyperfabric-horn-w-spectral-cubic-pareto-ibrahim-20261026.md`.
+Committed-file existence verified; exact-byte committed script replay
+and Lean kernel have NOT been claimed.
+
+**Latest PR source inspiration**: Agda horn-owner #1244 now has an
+explicit pierced-shell product and relative exterior open cover,
+so do NOT reinvent van Kampen collar geometry. Exotic Agda #1254
+and Lean #86 reiterate why a Cantor address or surrogate link
+cannot replace SAME ambient Hatcher marking. P0 still requires one
+correctly marked first-stage local meridian loop avoiding ALL of X1,
+with actual source arclength. The unbased local representative may
+have a long global-basepoint whisker: norm d(Hol) is invariant
+under unitary conjugation, but the generator marking is not free.
+The one-stage curved acceptance additionally requires a based
+source homotopy and transported curvature area. No CI or
+physical selection/Monster-neutrino promotion.

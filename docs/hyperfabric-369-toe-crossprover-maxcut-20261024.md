@@ -1864,3 +1864,73 @@ linked handlebody π1 injections in the
 chosen #1244 spatial geometry or
 a metric peripheral meridian. Kernel
 status remains source-written.
+
+
+## 2026-10-27 Hatcher nonsplit residual-solvable and exact SU3 depth2 false positive
+
+Source original Hatcher Ex2B2 stage injection is
+mapped generator→commutator on distinct fresh
+child pairs. The derived elementary normal-form
+proof shows **every** reduced free word has
+exact 4× reduced length at each stage.
+Stage abelianizations map ZERO, so no
+group homomorphic retraction can left-split
+the original injective bonding map.
+
+Classically the full nontrivial Hatcher
+limit group is PERFECT. For ANY residually
+solvable receiver R, hom G_A→R is trivial:
+every image in a solvable quotient is a
+perfect solvable group, hence 1, while
+residual solvability separates nontrivial
+elements. In particular free groups
+are residually nilpotent (Magnus/Iwasawa;
+Mathlib Nielsen-Schreier is a separate
+upstream original formal donor), so
+**no nontrivial map back from limit
+G_A to any finite free stage exists**.
+Do not confuse this with nontrivial
+maps INTO SU3, which original Gotô
+allows recursively at the group level.
+
+New SOURCE-WRITTEN Lean modules
+`Integration/DASHITOE/HornHatcherStageNonsplittingCut.lean`
+(reuses previously attributed
+`HornHopfClaspVsHatcherF2NoGoCut`
+commutator-abelian-character lemma)
+and `HornNilpotentSU3ExtensionNoGoCut.lean`
+(rejects any TRUE Hatcher depth2
+source word in a class2-nilpotent
+receiver). Neither file is native
+Lean kernel checked and the actual
+3D Hatcher source stage remains external.
+
+Exact independent local controls PASS:
+`check_horn_commutator_stage_nonsplit.py`
+SHA256 73974d5b70f96772838d2be1226ffa4a74fc2a4ed84d73183a28ff28b95ec447:
+F1,F3,F6 reduced words, 4× length,
+C3 naturality and zero abelianisation;
+`check_horn_nilpotent_clock_shift.py`
+SHA256 16d709fbbe738b90b4fb7f7199075d4823ce5d5e80c5b52bddc40da1a4a54eee:
+exact SU3 X clock, Z phase;
+[X,Z]=ω²I nontrivial but
+two-step H3 of 27 elements has ALL
+729 commutators central and
+depth2 commutators identity.
+
+No all-depth Hatcher non-Abelian
+representation can have image inside
+that nilpotent SU3 subgroup, even
+though the first-level fringe is a
+genuine non-Abelian effect. This is
+an actionable additional physical
+FALSE-POSITIVE control for #1244
+2I and #1247 qutrit experiments,
+not itself a wild-specific signal.
+Canonical original-source and
+proof-type attribution:
+`docs/hyperfabric-horn-hatcher-nonsplit-residually-solvable-20261027.md`
+on Agda #1249. Same-object relative
+satellite and metric meridian gates
+still uninhabited; no physical
+measurement or Lean kernel receipt.

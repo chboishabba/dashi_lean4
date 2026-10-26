@@ -1699,3 +1699,88 @@ Stokes surface/eta, P3=kernel/physical
 selection. Group rank, local linking, clean
 C3 geometry and short model loops are NOT
 interchangeable P0 receipts.
+
+
+## 2026-10-27 ORIGINAL inquiry, finite all-word nonidentifiability and deliverables
+
+The project target is an **actual same-object** three-sector
+Alexander/Hatcher wild exterior E with fundamental group
+G_A*G_A*G_A and ambient outer C3, followed by an honest
+SU3 Wilson regularity obstruction, and only downstream a
+PHYSICALLY SELECTED gauge/matter and neutrino/KK prediction.
+Abstract representations, C3 symbolic orbit actors and
+selected post-hoc W are preliminary algebra, not the original
+fully sourced target.
+
+**NEW source-written Lean**:
+`Integration/DASHITOE/HornFiniteDepthWilsonWordNonidentifiabilityCut.lean`.
+Given the true finite marked Hatcher stage isomorphism
+`Source ≃* FreeGroup (Fin (3*2^n))`, any receiver group
+homomorphism `Source →* SU3` can be transported to the
+tame rose free group by inverse of that stage isomorphism.
+For ALL source stage words, the tame rose receives the
+IDENTICAL matrix, hence ANY observable of the receiver
+(even full spectrum, trace, entire collection of words)
+matches. C3 sector permutation on marked generators
+also has a tame rose relabeling. It is a finite-word
+OBSERVER NONIDENTIFIABILITY theorem, not a theorem
+that the two geometric spaces are homeomorphic or
+have the same metric lengths/field regularity.
+
+The original published source for F_{2^n} in the Hatcher
+horned exterior is his Example 2B.2. The *tame rose*
+free-group identification is the earlier Hatcher
+Example 1.21, already kernel formalized as
+`Hatcher.fundamentalGroupEquivWedgeCircles` by
+Deicyde/hatcher-at. Our new conditional Lean
+source DOES NOT reprove or miscredit that upstream theorem.
+Existing #1244 finite 2I C3 simulator is a donor, not
+independent evidence of wildness; existing #1247
+SU3 W/qutrit is selected post-hoc, not generated
+by horn dynamics. Current simple software audit
+checks exact symbolic finite ancestor words and C3
+rotation to depth6 and exact SU3 matrices for all
+ancestors to depth4, PASS independently on local Python.
+Committed Python exact-byte replay and Lean kernel
+compilation were not run. Word lengths
+L_root=4^n, three roots 3*4^n, are naive
+word/circuit costs, not minimum physical gate bounds.
+
+**Implication for Pareto selection:** arbitrarily
+precise data on finitely many finite-stage Wilson
+WORDS do not certify the wildness/physical
+source. The distinguishing test must use
+same-source geometry, arbitrarily deep compatible
+sequence and regularity, or a physical metric/
+curvature/defect observable beyond the word
+homomorphism. The exact Hatcher wild
+source-to-cover-member *peripheral* map,
+correct one-boundary commutator annulus and
+marked meridian Euclidean length are the
+two serial P0/P1 gates; the prior Hopf ℤ²
+and wrong ribbon-genus controls reject
+false substitutes.
+
+**Formal/physics phase ledger:** P0 source attribution
+paid; P1 abstract group/algebra partly formal;
+P2 actual three-sector wild geometry conditional,
+not kernel checked; P3 geometric shrinking-meridian
+flat regularity conditional; P4 curvature/Hosotani
+dynamics, renormalized matter, anomaly-safe
+lepton couplings absent; P5 finite SU3/
+2I synthetic demo runnable but NOT wild-specific
+and no laboratory data; P6 independent
+prediction/likelihood/native kernel still open.
+Canonical full original-inquiry/phase/priority/
+deliverable and falsifier report lives in
+Agda #1249
+`docs/hyperfabric-horn-original-inquiry-phase-deliverables-ibrahim-maxcut-20261027.md`.
+
+Original mathematical credit Alexander 1924, Hatcher,
+Gotô 1949, van Kampen, Hosotani 1989, pinned
+Deicyde/hatcher-at; separate repo owners #1244
+and #1247; current derived software by
+Johl Brown with OpenAI ChatGPT assistance.
+No analogy, source code or negative-control
+experiment is upgraded to kernel proof
+or neutrino prediction.

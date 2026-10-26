@@ -83,7 +83,7 @@ def PaysDerivativeBudget (available required : ℕ) : Prop :=
 
 theorem source_budget_pays_source_jet (m : ℕ) :
     PaysDerivativeBudget (m + 4) (m + 4) := by
-  dsimp [PaysDerivativeBudget]
+  exact le_refl _
 
 theorem source_budget_cannot_pay_audited_lean_jet (m : ℕ) :
     ¬ PaysDerivativeBudget (m + 4) (m + 5) := by

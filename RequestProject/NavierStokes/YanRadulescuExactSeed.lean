@@ -180,4 +180,63 @@ theorem printed_seed_divergence_zero_of_source_derivatives
     (F T pExtra qExtra) (D T pExtra qExtra)
     x₁ x₂ x₃ h1 h2 h3
 
+/-!
+## Full printed derivative gate, built from actual Mathlib HasDerivAt
+
+The lemmas below instantiate the polynomial factor derivatives by the
+ordinary real chain rule. Together with the already-established envelope
+and algebraic factorisation, they remove the *assumed source derivative*
+from the three-coordinate seed's divergence calculation. They do not
+prove a Navier–Stokes solution, nor an H^s bound.
+-/
+
+theorem polynomialBase_hasDerivAt (T y : ℝ) :
+    HasDerivAt (polynomialBase T) (2 * y - T) y := by
+  convert (hasDerivAt_id y).mul
+    ((hasDerivAt_id y).sub_const T) using 1 <;>
+    simp [polynomialBase] <;> ring
+
+theorem h_hasDerivAt (T : ℝ) (qExtra : ℕ) (y : ℝ) :
+    HasDerivAt (h T qExtra)
+      ((((qExtra + 3 : ℕ) : ℝ)) *
+        polynomialBase T y ^ (qExtra + 2) * (2 * y - T)) y := by
+  have hPower := (polynomialBase_hasDerivAt T y).pow (qExtra + 3)
+  have hExponent : qExtra + 3 - 1 = qExtra + 2 := by omega
+  convert hPower using 1 <;> simp only [hExponent] <;> ring
+
+theorem rho_hasDerivAt (T : ℝ) (pExtra : ℕ) (y : ℝ) :
+    HasDerivAt (rho T pExtra)
+      ((((2 * (pExtra + 3) : ℕ) : ℝ)) *
+        polynomialBase T y ^ (2 * (pExtra + 3) - 1) *
+          (2 * y - T)) y := by
+  have hPower :=
+    (polynomialBase_hasDerivAt T y).pow (2 * (pExtra + 3))
+  convert hPower using 1 <;> ring
+
+/-- Source-specific analytic identity F'=D for all finite parameters
+p>=2, q>=3, without importing the stationary PDE existence theorem. -/
+theorem sourceF_hasDerivAt (T : ℝ) (pExtra qExtra : ℕ) (y : ℝ) :
+    HasDerivAt (F T pExtra qExtra)
+      (D T pExtra qExtra y) y :=
+  hasDerivAt_sourceF_from_factors
+    T pExtra qExtra y
+    (h_hasDerivAt T qExtra y)
+    (rho_hasDerivAt T pExtra y)
+
+/-- Actual divergence of the original 3-vector seed is zero for all
+points and all eligible p and q (assuming real-valued coordinates). -/
+theorem printed_seed_divergence_zero
+    (T : ℝ) (pExtra qExtra : ℕ) (x₁ x₂ x₃ : ℝ) :
+    deriv (fun y =>
+      seed1 (F T pExtra qExtra) (D T pExtra qExtra) y x₂ x₃) x₁ +
+    deriv (fun y =>
+      seed2 (F T pExtra qExtra) (D T pExtra qExtra) x₁ y x₃) x₂ +
+    deriv (fun y =>
+      seed3 (F T pExtra qExtra) (D T pExtra qExtra) x₁ x₂ y) x₃ = 0 :=
+  printed_seed_divergence_zero_of_source_derivatives
+    T pExtra qExtra x₁ x₂ x₃
+    (sourceF_hasDerivAt T pExtra qExtra x₁)
+    (sourceF_hasDerivAt T pExtra qExtra x₂)
+    (sourceF_hasDerivAt T pExtra qExtra x₃)
+
 end RequestProject.NavierStokes.YanRadulescuExactSeed

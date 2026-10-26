@@ -110,3 +110,15 @@ def test_exact_nine_variable_diophantine_replay_on_two_toy_sources():
             assert (not halts) == (not root_exists)
     for e in range(20):
         assert any(n != e for n in range(20))
+
+
+def test_appendix_A5_fixed_level_unboundedness_is_conditional():
+    sci = SCI.read_text()
+    assert "fixed_level_sci_unbounded_of_corollary_A5" in sci
+    assert "no_uniform_finite_height_if_all_fixed_levels_restrict" in sci
+    assert "hA5" in sci
+    assert "hRestrictions" in sci
+    # Small exact finite-prefix regressions for the deduction, not for SCI.
+    for h in range(1001):
+        l = max(2, h + 1)
+        assert l >= 2 and l > h

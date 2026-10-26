@@ -1,0 +1,15 @@
+import Dashi.Biology.NeuralPredictionAcquisitionParetoExact
+
+namespace Dashi.Biology.NeuralPredictionAcquisitionParetoRegression
+
+open Dashi.Biology.NeuralPredictionAcquisitionParetoExact
+
+#check metaMechanismSeparationAcquisition
+#check videoNeuroforecastAcquisition
+#check neuralinkIndependentReplicationAcquisition
+#check crossParticipantBCIAcquisition
+#check canonicalMultimodalInterfaceBoundary
+#check canonicalPredictionAcquisitionFrontier
+#check canonicalNeuralPredictionAcquisitionBoundary
+
+end Dashi.Biology.NeuralPredictionAcquisitionParetoRegression

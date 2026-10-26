@@ -1,0 +1,8 @@
+import Dashi.Biology.QuailEggOralGIAnimalBridgeExact
+
+namespace Dashi.Biology.QuailEggOralGIAnimalBridgeRegression
+open Dashi.Biology.QuailEggOralGIAnimalBridgeExact
+example : QuailOralGIAnimalReceipt := lianto2018EoEReceipt
+example : MouseEoEEvidencePaysHumanIBSPermission → False := mouseEoEDoesNotPayHumanIBS
+example : QuailOralGIAnimalBoundary := canonicalQuailOralGIAnimalBoundary
+end Dashi.Biology.QuailEggOralGIAnimalBridgeRegression

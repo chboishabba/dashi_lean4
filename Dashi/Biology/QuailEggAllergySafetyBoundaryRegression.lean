@@ -1,0 +1,10 @@
+import Dashi.Biology.QuailEggAllergySafetyBoundaryExact
+
+namespace Dashi.Biology.QuailEggAllergySafetyBoundaryRegression
+open Dashi.Biology.QuailEggAllergySafetyBoundaryExact
+example : QuailEggAllergyEvidenceReceipt := delgadoPrada2025Receipt
+example : QuailEggAllergyEvidenceReceipt := yamashita2024Receipt
+example : HenEggToleranceImpliesQuailEggTolerancePermission → False := henToleranceDoesNotGuaranteeQuailTolerance
+example : QuailEggInterventionSafetyRequirement := canonicalQuailEggInterventionSafetyRequirement
+example : QuailEggAllergySafetyBoundary := canonicalQuailEggAllergySafetyBoundary
+end Dashi.Biology.QuailEggAllergySafetyBoundaryRegression

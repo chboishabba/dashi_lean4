@@ -173,4 +173,39 @@ theorem selectedWCurvedOneStageReject
   have hRootLarge := selectedRootStrictBound
   nlinarith
 
+
+/-!
+## Exact source spectral intervals
+
+The three disjoint real intervals below have opposite endpoint signs
+for the EXACT cubic derived from the original Q(zeta3) trace.
+A classical intermediate-value/degree-three argument isolates
+all three eigenvalue-squared gaps, provided the actual SU3
+matrix-to-cubic bridge is supplied. No new physical spectral claim.
+-/
+
+theorem lowSquaredGapSignChange :
+    spectralCubic (919 / 100000 : ℚ) *
+      spectralCubic (920 / 100000 : ℚ) < 0 := by
+  norm_num [spectralCubic, trReal, trImagSquared,
+    sourceTraceA, sourceTraceB, trDenominator]
+
+theorem middleSquaredGapSignChange :
+    spectralCubic (187659 / 100000 : ℚ) *
+      spectralCubic (187660 / 100000 : ℚ) < 0 := by
+  norm_num [spectralCubic, trReal, trImagSquared,
+    sourceTraceA, sourceTraceB, trDenominator]
+
+theorem highSquaredGapSignChange :
+    spectralCubic (206838 / 100000 : ℚ) *
+      spectralCubic (206839 / 100000 : ℚ) < 0 := by
+  norm_num [spectralCubic, trReal, trImagSquared,
+    sourceTraceA, sourceTraceB, trDenominator]
+
+theorem spectralIntervalsOrdered :
+    (920 / 100000 : ℚ) < 187659 / 100000 ∧
+      (187660 / 100000 : ℚ) < 206838 / 100000 := by
+  constructor <;> norm_num
+
+
 end DASHIHornSelectedWSpectralCubic

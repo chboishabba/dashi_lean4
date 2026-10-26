@@ -223,3 +223,23 @@ def test_zero_projection_unit_norm_not_a_direction_slope_bound():
     assert "finite_zero_projection_allows_arbitrarily_steep_slope" in lean
     assert "two_unit_samples_aligned_projection_zero" in lean
     assert "not a single smooth" in lean.lower()
+
+def test_nonnegative_weighted_time_budget_rational_sweep():
+    """6075 exact finite quadrature samples, not continuum integration."""
+    for D in range(5):
+        for p in itertools.product(range(D + 1), repeat=3):
+            for w in itertools.product(
+                (Fraction(0), Fraction(1, 3), Fraction(2, 5)),
+                repeat=3,
+            ):
+                weighted_expenditure = sum(
+                    wi * pi*pi for wi, pi in zip(w, p)
+                )
+                T = sum(w)
+                assert weighted_expenditure <= T * D*D
+    lean = (
+        ROOT / "RequestProject/NavierStokes/MillerProjectionGeometry.lean"
+    ).read_text()
+    assert "weighted_sample_fourth_power_budget" in lean
+    assert "weighted_sample_budget_with_total_duration" in lean
+    assert "quadrature convergence" in lean

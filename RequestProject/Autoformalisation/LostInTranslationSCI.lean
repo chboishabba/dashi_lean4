@@ -164,4 +164,50 @@ theorem some_witness_count_not_enough_for_nine :
   · rintro ⟨k, hk, hEq⟩
     omega
 
+/-!
+## Appendix A.5: exact logical unboundedness consequence
+
+The original paper's Corollary A.5 asserts that the *fixed-level*
+SCI_A(chi_(d_l)) equals l, for every l>=2. It then infers that one
+algorithm which correctly resolves *all* levels has no finite uniform
+SCI height, when a uniform height would bound each fixed-level task.
+
+This file certifies only THAT elementary mathematical deduction from
+an external proof of the fixed-level SCI equalities and the required
+restriction semantics. It does not define or prove the arithmetic
+tower SCI, Sigma_l completeness, Post's theorem, the nine-unknown
+polynomial encoding, or the level-to-uniform restriction theorem.
+-/
+
+/-- From the source's A.5 *as an explicit premise*, no finite
+uniform ceiling can bound all fixed-level SCI values. -/
+theorem fixed_level_sci_unbounded_of_corollary_A5
+    (fixedLevelSCI : ℕ → ℕ)
+    (hA5 : ∀ l : ℕ, 2 ≤ l → fixedLevelSCI l = l) :
+    ∀ height : ℕ, ∃ l : ℕ,
+      2 ≤ l ∧ height < fixedLevelSCI l := by
+  intro height
+  refine ⟨max 2 (height + 1), ?_, ?_⟩
+  · exact le_max_left _ _
+  · rw [hA5 _ (le_max_left _ _)]
+    have h : height + 1 ≤ max 2 (height + 1) :=
+      le_max_right _ _
+    omega
+
+/-- A hypothetical *uniform* finite-height procedure must supply an
+independent theorem bounding EVERY fixed-level restriction.
+That cannot coexist with the paper's A.5 fixed-level equalities.
+This is an exact quantified contradiction, not an SCI definition. -/
+theorem no_uniform_finite_height_if_all_fixed_levels_restrict
+    (fixedLevelSCI : ℕ → ℕ)
+    (hA5 : ∀ l : ℕ, 2 ≤ l → fixedLevelSCI l = l)
+    (uniformHeight : ℕ)
+    (hRestrictions :
+      ∀ l : ℕ, 2 ≤ l → fixedLevelSCI l ≤ uniformHeight) :
+    False := by
+  obtain ⟨l, hl2, hlUnbounded⟩ :=
+    fixed_level_sci_unbounded_of_corollary_A5 fixedLevelSCI hA5
+      uniformHeight
+  exact (not_lt_of_ge (hRestrictions l hl2)) hlUnbounded
+
 end RequestProject.Autoformalisation.LostInTranslationSCI

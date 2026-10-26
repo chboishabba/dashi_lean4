@@ -168,4 +168,58 @@ theorem finite_zero_projection_allows_arbitrarily_steep_slope
     have hnonneg : 0 ≤ abs bound := abs_nonneg bound
     nlinarith [sq_nonneg (abs bound)]
 
+/-!
+## Weighted time samples: a stronger R735/Miller interface
+
+Actual time integration requires nonnegative quadrature weights,
+a same-source spatial L² enstrophy/projection relation,
+and a convergence/continuity argument. The next theorem makes the
+finite weighted arithmetic exact. It does *not* provide quadrature
+convergence or transfer T³ Galerkin data to a whole-space R³ solution.
+-/
+
+/-- Arbitrary nonnegative time weights; the same uniform enstrophy
+ceiling D controls every corresponding projected-fourth-power budget. -/
+theorem weighted_sample_fourth_power_budget
+    {Time : Type*} (samples : Finset Time)
+    (weights P E : Time → ℝ) (D : ℝ)
+    (hWeights : ∀ t ∈ samples, 0 ≤ weights t)
+    (hProjectionNonnegative : ∀ t ∈ samples, 0 ≤ P t)
+    (hProjectionBound : ∀ t ∈ samples, P t ≤ E t)
+    (hEnstrophyCeiling : ∀ t ∈ samples, E t ≤ D) :
+    (∑ t ∈ samples, weights t * (P t) ^ 2) ≤
+      (∑ t ∈ samples, weights t) * D ^ 2 := by
+  calc
+    ∑ t ∈ samples, weights t * (P t) ^ 2 ≤
+        ∑ t ∈ samples, weights t * D ^ 2 := by
+      apply Finset.sum_le_sum
+      intro t ht
+      have hp0 : 0 ≤ P t := hProjectionNonnegative t ht
+      have hpD : P t ≤ D :=
+        (hProjectionBound t ht).trans (hEnstrophyCeiling t ht)
+      have hD0 : 0 ≤ D := hp0.trans hpD
+      have hsquared : (P t) ^ 2 ≤ D ^ 2 := by
+        nlinarith [mul_nonneg (sub_nonneg.mpr hpD) (add_nonneg hD0 hp0)]
+      exact mul_le_mul_of_nonneg_left hsquared (hWeights t ht)
+    _ = (∑ t ∈ samples, weights t) * D ^ 2 := by
+      rw [Finset.sum_mul]
+
+/-- In the special case where independent quadrature construction proves
+that the weights have total duration T, the exact bound is T*D².
+No time integral theorem is inferred from this finite statement. -/
+theorem weighted_sample_budget_with_total_duration
+    {Time : Type*} (samples : Finset Time)
+    (weights P E : Time → ℝ) (D T : ℝ)
+    (hWeights : ∀ t ∈ samples, 0 ≤ weights t)
+    (hProjectionNonnegative : ∀ t ∈ samples, 0 ≤ P t)
+    (hProjectionBound : ∀ t ∈ samples, P t ≤ E t)
+    (hEnstrophyCeiling : ∀ t ∈ samples, E t ≤ D)
+    (hTotalDuration : (∑ t ∈ samples, weights t) = T) :
+    (∑ t ∈ samples, weights t * (P t) ^ 2) ≤ T * D ^ 2 := by
+  convert weighted_sample_fourth_power_budget
+    samples weights P E D
+    hWeights hProjectionNonnegative hProjectionBound hEnstrophyCeiling
+    using 1
+  rw [hTotalDuration]
+
 end RequestProject.NavierStokes.MillerProjectionGeometry

@@ -1,21 +1,28 @@
 import Mathlib
 
 /-!
-# BCH2026 Appendix A.4: parity-preserving final Diophantine block
+# BCH2026 Appendix A.4: parity-preserving Diophantine final blocks
 
-Original: Bastounis, Circelli, Hansen, arXiv:2610.08144v1,
-Appendix A, Theorem A.4. This DASHI reconstruction proves that
-replacing the last block by a semantically equivalent nine-variable
-polynomial block preserves an existing quantifier prefix. It does
-not construct the source's DPRM polynomial, effective index reduction,
-Sigma^0_l completeness or SCI hierarchy.
+Original mathematical source: Alexander Bastounis, Fabian Circelli,
+Anders C. Hansen, arXiv:2610.08144v1 (2026-10-06), Theorem A.4.
+Original numerical-variable restriction: k >= 9. This file proves
+source-shaped statements at k=9, with a *real integer polynomial* in
+one distinguished input n, the l-2 prefix variables, and nine final
+root variables. It does NOT prove the uniform effective polynomial
+construction, Sigma^0_l completeness, or SCI=infinity. General k>=9
+requires a separate source-preserving parameterisation/padding lemma.
+
+The generic congruence theorem below preserves quantifier-prefix
+semantics. Crucially, a *function* Q(xs,z) can encode any predicate
+using a case split and would not be a DPRM representation. Therefore
+all the source-specific final blocks are now restricted to actual
+MvPolynomial values with fixed coefficients, independent of the
+individual assignments n, prefix variables and root variables.
 -/
 
 namespace RequestProject.Autoformalisation.LostInTranslationAlternation
 
-/-- A reusable ordered quantifier prefix. True = existential,
-false = universal; the particular source alternation is specified
-by the consumer. -/
+/-- Ordered prefix: true = existential; false = universal. -/
 def quantifyPrefix : List Bool → (List ℕ → Prop) → Prop
   | [], P => P []
   | true :: rest, P =>
@@ -23,7 +30,8 @@ def quantifyPrefix : List Bool → (List ℕ → Prop) → Prop
   | false :: rest, P =>
       ∀ x : ℕ, quantifyPrefix rest (fun ys => P (x :: ys))
 
-/-- Pointwise equivalence survives any *existing* prefix. -/
+/-- Any *pointwise* equivalence survives an unchanged quantifier prefix.
+This does not by itself prove either predicate is Diophantine. -/
 theorem quantifyPrefix_congr
     (prefix : List Bool) (P Q : List ℕ → Prop)
     (h : ∀ xs : List ℕ, P xs ↔ Q xs) :
@@ -48,95 +56,111 @@ theorem quantifyPrefix_congr
           · rintro ⟨x, hx⟩
             exact ⟨x, (ih _ _ (fun ys => h (x :: ys))).mpr hx⟩
 
-/-- Existential nine-variable Diophantine substitution, conditional
-on an actual polynomial representation at every prefix assignment. -/
-theorem final_exists_of_nine_variable_representation
-    (prefix : List Bool) (C : List ℕ → Prop)
-    (Q : List ℕ → (Fin 9 → ℕ) → ℤ)
-    (hRepresentation :
-      ∀ xs : List ℕ, C xs ↔ ∃ z : Fin 9 → ℕ, Q xs z = 0) :
-    quantifyPrefix prefix C ↔
-      quantifyPrefix prefix
-        (fun xs => ∃ z : Fin 9 → ℕ, Q xs z = 0) :=
-  quantifyPrefix_congr prefix _ _ hRepresentation
-
-/-- The negated final existential block corresponds to a universal
-nine-variable non-root condition, leaving the prefix unchanged. -/
-theorem final_forall_of_nine_variable_representation
-    (prefix : List Bool) (C : List ℕ → Prop)
-    (Q : List ℕ → (Fin 9 → ℕ) → ℤ)
-    (hRepresentation :
-      ∀ xs : List ℕ, C xs ↔ ∃ z : Fin 9 → ℕ, Q xs z = 0) :
-    quantifyPrefix prefix (fun xs => ¬ C xs) ↔
-      quantifyPrefix prefix
-        (fun xs => ∀ z : Fin 9 → ℕ, Q xs z ≠ 0) := by
-  apply quantifyPrefix_congr
-  intro xs
-  constructor
-  · intro hNoC z hz
-    exact hNoC ((hRepresentation xs).mpr ⟨z, hz⟩)
-  · intro hNoRoot hC
-    obtain ⟨z, hz⟩ := (hRepresentation xs).mp hC
-    exact hNoRoot z hz
-
-/-!
-## Source-exact A.4a/b quantifier parity and finite 9-witness block
-
-For level l>=2, the prefix is Q₂ ... Q_(l-1), with
-Q_j = ∀ when j even, ∃ when j odd. In the final block the paper
-uses ∀x Q≠0 for EVEN l and ∃x Q=0 for ODD l.
-The predicate supplied below is source-shaped, not a proof of
-Sigma^0_l completeness or of effective polynomial enumeration.
--/
-
-/-- Boolean true=exists, false=forall; index i refers to Q_(i+2). -/
+/-- Q₂=∀, Q₃=∃, alternating thereafter; prefix length is l-2. -/
 def sourceAlternationPrefix (level : ℕ) : List Bool :=
   (List.range (level - 2)).map
     (fun i => (i + 2) % 2 == 1)
 
-/-- A.4a/b with the exact source alternation and exactly nine final
-natural variables. General k>=9 needs source-preserving padding. -/
-def sourceA4Predicate
-    (level : ℕ) (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
-    (n : ℕ) : Prop :=
-  quantifyPrefix (sourceAlternationPrefix level)
-    (fun zs =>
-      if level % 2 == 0 then
-        ∀ x : Fin 9 → ℕ, Q n zs x ≠ 0
-      else
-        ∃ x : Fin 9 → ℕ, Q n zs x = 0)
-
-/-- Source has exactly (l-2) intermediate quantifier variables. -/
 theorem sourceAlternationPrefix_length (level : ℕ) :
     (sourceAlternationPrefix level).length = level - 2 := by
   simp [sourceAlternationPrefix]
 
-/-- Theorem A.4 states the level-two base case is A.3. -/
+/-- One actual INTEGER-COEFFICIENT polynomial in: distinguished n,
+the l-2 intermediate quantified variables, and nine final variables.
+The coefficient syntax P cannot vary with the sample assignments.
+For malformed lists, out-of-bounds prefix variables default to 0;
+only the source-shaped full-length prefix is consumed below. -/
+def evalSourceA4Polynomial
+    (level : ℕ)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (level - 2) ⊕ Fin 9)) ℤ)
+    (n : ℕ) (zs : List ℕ) (x : Fin 9 → ℕ) : ℤ :=
+  MvPolynomial.eval
+    (Sum.elim
+      (fun _ : Fin 1 => (n : ℤ))
+      (Sum.elim
+        (fun i : Fin (level - 2) => ((zs.getD i.val 0 : ℕ) : ℤ))
+        (fun i : Fin 9 => (x i : ℤ)))) P
+
+/-- Even level: universal nonroot final block; odd level:
+existential polynomial-root final block. `P` is syntactic polynomial
+source code, unlike a case-defined function that smuggles C in. -/
+def sourceA4Predicate
+    (level : ℕ)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (level - 2) ⊕ Fin 9)) ℤ)
+    (n : ℕ) : Prop :=
+  quantifyPrefix (sourceAlternationPrefix level)
+    (fun zs =>
+      if level % 2 == 0 then
+        ∀ x : Fin 9 → ℕ, evalSourceA4Polynomial level P n zs x ≠ 0
+      else
+        ∃ x : Fin 9 → ℕ, evalSourceA4Polynomial level P n zs x = 0)
+
+/-- Pointwise source-to-Diophantine representation, including a fixed
+polynomial P, survives an arbitrary prefix. This is only conditional
+on the separately provided representation theorem. -/
+theorem final_exists_of_nine_variable_representation
+    (level : ℕ) (prefix : List Bool) (C : List ℕ → Prop)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (level - 2) ⊕ Fin 9)) ℤ)
+    (n : ℕ)
+    (hRepresentation :
+      ∀ zs : List ℕ,
+        C zs ↔ ∃ x : Fin 9 → ℕ,
+          evalSourceA4Polynomial level P n zs x = 0) :
+    quantifyPrefix prefix C ↔
+      quantifyPrefix prefix
+        (fun zs => ∃ x : Fin 9 → ℕ,
+          evalSourceA4Polynomial level P n zs x = 0) :=
+  quantifyPrefix_congr prefix _ _ hRepresentation
+
+/-- Negating the final existential polynomial-root block produces
+the universal non-root block under the same outer prefix. -/
+theorem final_forall_of_nine_variable_representation
+    (level : ℕ) (prefix : List Bool) (C : List ℕ → Prop)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (level - 2) ⊕ Fin 9)) ℤ)
+    (n : ℕ)
+    (hRepresentation :
+      ∀ zs : List ℕ,
+        C zs ↔ ∃ x : Fin 9 → ℕ,
+          evalSourceA4Polynomial level P n zs x = 0) :
+    quantifyPrefix prefix (fun zs => ¬ C zs) ↔
+      quantifyPrefix prefix
+        (fun zs => ∀ x : Fin 9 → ℕ,
+          evalSourceA4Polynomial level P n zs x ≠ 0) := by
+  apply quantifyPrefix_congr
+  intro zs
+  constructor
+  · intro hNoC x hx
+    exact hNoC ((hRepresentation zs).mpr ⟨x, hx⟩)
+  · intro hNoRoot hC
+    obtain ⟨x, hx⟩ := (hRepresentation zs).mp hC
+    exact hNoRoot x hx
+
+/-- A.4 level two recovers the A.3 universal non-root block. -/
 theorem source_A4_level_two_is_A3
-    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (2 - 2) ⊕ Fin 9)) ℤ)
     (n : ℕ) :
-    sourceA4Predicate 2 Q n ↔
-      ∀ x : Fin 9 → ℕ, Q n [] x ≠ 0 := by
+    sourceA4Predicate 2 P n ↔
+      ∀ x : Fin 9 → ℕ,
+        evalSourceA4Polynomial 2 P n [] x ≠ 0 := by
   rfl
 
-/-- Odd level three: Q₂ universal, then a final existential block. -/
+/-- The odd level-three outer Q₂ is universal. -/
 theorem source_A4_level_three_shape
-    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (3 - 2) ⊕ Fin 9)) ℤ)
     (n : ℕ) :
-    sourceA4Predicate 3 Q n ↔
+    sourceA4Predicate 3 P n ↔
       ∀ z₂ : ℕ, ∃ x : Fin 9 → ℕ,
-        Q n [z₂] x = 0 := by
+        evalSourceA4Polynomial 3 P n [z₂] x = 0 := by
   rfl
 
-/-- Even level four: Q₂ universal then Q₃ existential, followed
-by a universal non-root block. -/
+/-- The even level-four prefix is Q₂=∀, Q₃=∃. -/
 theorem source_A4_level_four_shape
-    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (P : MvPolynomial (Fin 1 ⊕ (Fin (4 - 2) ⊕ Fin 9)) ℤ)
     (n : ℕ) :
-    sourceA4Predicate 4 Q n ↔
+    sourceA4Predicate 4 P n ↔
       ∀ z₂ : ℕ, ∃ z₃ : ℕ,
         ∀ x : Fin 9 → ℕ,
-          Q n [z₂, z₃] x ≠ 0 := by
+          evalSourceA4Polynomial 4 P n [z₂, z₃] x ≠ 0 := by
   rfl
 
 end RequestProject.Autoformalisation.LostInTranslationAlternation

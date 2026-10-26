@@ -1008,3 +1008,74 @@ genuine source-space end topology; this compact
 cofinality lemma cannot substitute for an
 actual locally finite PL realisation. These
 remain independent, explicit geometric inputs.
+
+
+## 27 October — genuine all-depth PL realisation donor audit on exact locked Mathlib
+
+Verified by ACTUAL `leanprover-community/mathlib4` **v4.28.0**
+file fetch:
+
+- `Mathlib/AlgebraicTopology/SingularSet.lean` defines
+  `SSet.toTop : SSet ⥤ TopCat` (noncomputable) as
+  the left Kan extension of `SimplexCategory.toTop`,
+  and the real adjunction `sSetTopAdj`.
+  This is real topological GEOMETRIC REALISATION,
+  not a finite simplicial Euler table. Its original
+  Mathlib header names **Johan Commelin, Kim Morrison,
+  Adam Topaz** (2023 copyright Johan Commelin);
+  those are source implementation owners, not
+  new DASHI authors.
+- A useful 2026 modern preprint/paper,
+  `Formalizing Abstract Simplicial Complexes &
+  Stellar Subdivisions in Lean`, ITP 2026 DOI
+  **10.4230/LIPIcs.ITP.2026.21**, describes newer
+  combinatorial complex/stellar subdivisions.
+  Current Mathlib online docs show
+  `Mathlib/AlgebraicTopology/SimplicialComplex/Basic`;
+  a direct fetch at our LOCKED `v4.28.0` returned
+  NOT_FOUND. Therefore it is NOT a lawful existing
+  pinned dependency; do NOT import it silently
+  into this source tree or present ITP 2026 code
+  as kernel-checked by old Mathlib.
+- `Mathlib/Topology/Compactness/Compact.lean`
+  v4.28.0 has the EXACT source theorem
+  `IsCompact.elim_directed_cover`, requiring
+  genuine directed OPEN sets. This is the
+  original reusable theorem called in both the
+  latest Hatcher #1244 and our compact
+  cofinality source. The negative examples
+  in #1244 show why a mere increasing closed
+  exhaustion of finite data cannot replace
+  the openness hypothesis.
+
+**Maximal-cut P2 implementation choice:**
+model the EXISTING owner oriented triangle and edge-gluing
+data as a *compatible* actual simplicial set family
+`S_n` with face/degeneracy identities, original injective
+simplicial maps `S_n→S_(n+1)`, and a filtered-colimit
+simplicial set `S∞`. Reuse pinned
+`SSet.toTop.obj S∞` for the actual topological carrier
+and prove its vertex links circles, locally finite,
+connected/oriented and old-stage collars.
+Only THEN apply `compactAbsorbedByNestedCollaredExhaustion`
+and identify the end topology via the canonical
+coherent Cantor frontiers. The existing Python
+finite PL triangle data and abstract Agda
+`StarChain` prove bounded/conditional inputs,
+not that `S∞` already exists in the kernel.
+
+**Alternative:** a modern abstract simplicial
+complex library, but this would require
+a separately attributed, version-compatible
+import/port plus realization comparison.
+Prefer already pinned SSet first. No wrong
+identification of arbitrary simplicial sets
+with finite oriented simplicial complexes
+without a normalization/vertex-order and
+face-degeneracy proof.
+
+All declarations in newly added Lean topology files
+remain SOURCE-WRITTEN, without a successful exact-head
+Lean 4.28 kernel receipt. This donor analysis
+is a verified API inventory, not a compiled
+construction of S∞ or a completed Richards theorem.

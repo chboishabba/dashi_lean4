@@ -640,3 +640,78 @@ a clopen partition of the connected ambient wild
 DASHI owners) and repo-local implementation
 remain separate. All new proof-bearing sources
 are KERNEL-PENDING at the observed heads.
+
+
+## 27 October: exact PL old-star-stability input and later horned van Kampen donors
+
+The companion Agda #1254 (stacked on current #1244)
+has now developed an actual-source
+`exotic_topology_pl_stable_stars.py` consumer:
+binary Cantor, Loch Ness, Jacob and balanced trit
+surface builders return actual old->new simplicial
+vertex injections through backwards-compatible
+`with_transport=True` options. Over any two
+tested sliding three-stage windows it checks ALL
+old vertices become interior after their first
+full oriented collar, and subsequent actual
+triangles cannot alter their transported incident
+stars. An independently executed local
+source-equivalent algorithm PASSed eight windows
+with old-vertex counts 3/152, 3/36, 152/218,
+and 3/301 for the four families, rejecting a
+collapsed old-vertex map. The balanced ternary
+Kraft identity was made `Fraction`-exact.
+
+NEW generic, not topology-pretending Agda
+`ExoticSimplicialStarTransportExact.agda`
+source-writes a Nat-inductive `StarChain`
+proof of **all-later-finite-stage star stability**,
+conditional on real single-step incidence,
+interior persistence and no-new-interior-face
+geometric input. `oldStageStarHasNoLaterNewFaces`
+has a constructive earlier-face witness. No
+concrete Agda `StarChain` for the original
+triangulation and no native infinite weak
+geometric realisation were built yet.
+Kernel run is unavailable at current head.
+
+The NEW parent #1244 imports actual source
+`ThreeArmRadiusCutGeometry.lean` with
+continuous pullbacks of radius cuts from the
+REAL ambient 3-space Y into exterior X, plus
+`ThreeArmRadiusCutHatcherTransport`,
+`ThreeArmHatcherGroupTransport`,
+`ThreeArmHatcherHomotopyTransport` and
+`ThreeArmHatcherPathTransport`. Pinned Hatcher
+group/free-product algebra is now a
+CONDITIONAL composition with the geometric
+meridian/collar, central pi1, and satellite
+homotopy inputs kept explicit. No claim
+that the Fox--Artin arc itself shares this
+Alexander wild-ball cover or ambient
+fundamental group.
+
+Original source root for the infinite end
+classification remains Richards' own
+*On the Classification of Noncompact
+Surfaces*, Trans. AMS 106 (1963), printed
+p.261 Definition 1 (nested unbounded
+connected compact-boundary regions) and
+Definitions 2–3 (end topology/planarity):
+https://people.dm.unipi.it/benedett/Richards.pdf .
+Brahana and Kerékjártó retain separate
+earlier credit, with the latter's gaps
+noted explicitly by Richards. Locally
+finite simplicial weak-realisation is
+a separate classical donor, not
+a checked Lean result on this branch.
+
+The native Lean #86 `CantorInverseLimit`
+is presently a **prefix-tower combinatorial**
+equivalence; it must be connected to
+the ACTUAL infinite simplicial
+weak-realisation and genuine topological
+space of ends, rather than receiving
+a fabricated identification from finite
+address counts or from this Agda abstract
+`StarChain` record.

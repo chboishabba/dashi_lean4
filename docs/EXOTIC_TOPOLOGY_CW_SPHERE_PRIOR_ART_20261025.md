@@ -794,3 +794,77 @@ topology and universal arithmetic are
 separate acceptance layers, and
 original authorship of the modern
 and historical theorem roots is preserved.
+
+
+## 27 October: original twenty-space target, Power boundary budget and dense-core BIDI
+
+The original question is the **20 named exotic topological objects**,
+not the narrower seven outstanding Pareto consumers.
+Companion Agda #1254 now publishes the canonical
+`Docs/topology/ExoticTwentyOriginalInquiryPhaseDeliverables20261027.md`
+and executable 20-object/six-phase nonpromotion validator,
+with source identity, same-object realisation,
+discriminating theorem and exact pinned kernel/paper
+receipt separated for each source object.
+No currently missing actual geom/topological theorem
+is promoted by adding this acceptance ledger.
+
+NEW Mathlib arithmetic in THIS Lean source:
+`Synthesis/ExoticTopologyPLMaxwellGenusNoGo.lean`
+now proves `tightWholeGraphIffBoundaryBudget`,
+`sparseWholeGraphRequiresBoundaryBudget`,
+`lochNessNecessaryBoundaryLength`,
+`jacobLadderNecessaryBoundaryLength`,
+on genuine integer Euler/face-incidence assumptions:
+
+```text
+3V - E = 6 - 6g - 3b + L
+3V - E = 6  ↔  L = 3b + 6g
+3V - E >=6  =>  L >= 3b + 6g.
+```
+
+At one handle transition, the original Loch
+triangular boundary L=3 must become at least 9;
+the Jacob two-handle source L=6 must become at least 18.
+These lengths are NECESSARY, not full sparsity or
+minimal generic 3-rigidity.
+
+Companion Agda #1254 constructs a **real finite
+negative control**, not an appeal to analogy:
+`exotic_topology_power_boundary_surgery_counterexample.py`
+takes those original oriented PL meshes and makes 6/12
+legal boundary edge subdivisions, preserving
+genus and reaching whole-graph Maxwell count SIX.
+But the original 36-vertex Loch core induces
+107 edges, with f=1; the original 218-vertex
+Jacob core induces 659 edges, with f=-5.
+Because Power's selected (3,6)-sparse source
+requires f(S)>=6 for EVERY subgraph with at
+least three vertices, the naive boundary subdivision
+model is positively REFUTED by explicit source
+same-object finite witness. Original Power 2025
+DOI 10.1112/blms.70083 proves existence of
+appropriately constructed triangulations, not
+the selected DASHI mesh. Rigidity-preserving
+0-extension/vertex-splitting and subgraph girth
+proofs remain the targeted future supplier.
+
+Fresh parent #1244 adds actual rational points
+P_i=13e_i to show nonempty source cover overlaps
+C ∩ S_i: squared distance 16 from its own centre,
+250 from each other and basepoint clearance 921.
+This reduces a geometric prerequisite on the
+Alexander exterior but still does not prove
+path-connectedness of the selected U_i, based
+central π₁, or a Fox–Artin arc same-object
+fundamental group. Child #1254 directly imports
+the original parent executable and negative flags.
+
+**Critical Pareto priority:** a true kernel-checked
+all-n locally finite simplicial union and Richards
+decorated-end homeomorphism closes three of the
+original twenty objects, independently of whether
+their present finite handled meshes are
+(3,6)-tight. The Power rigidity subgoal is a
+secondary construction enhancement, not a
+replacement for the original classification.

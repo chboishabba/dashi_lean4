@@ -55,6 +55,9 @@ def test_sci_conclusions_have_externally_provided_hardness_inputs():
         assert hypothesis in s
     assert "*does not* formalise" in s
     assert "SCI=infinity" in s
+    assert "some_witness_count_not_enough_for_nine" in s
+    assert "nine_unknown_representation_implies_some_representation" in s
+    assert "Cameron Freer" in s
     assert not re.search(r"(?m)^\s*(sorry|axiom)\b", s)
 
 

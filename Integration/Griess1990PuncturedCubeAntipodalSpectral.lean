@@ -112,7 +112,7 @@ theorem parity_bipartite :
 theorem actual_even_gram_is_twoI_plus_twoJ :
     evenGram =
       (2 : ℤ) • (1 : Matrix (Fin 6) (Fin 6) ℤ) +
-      (2 : ℤ) • (Matrix.of fun _ _ : Fin 6 => (1 : ℤ)) := by
+      (2 : ℤ) • ((fun _ _ => (1 : ℤ)) : Matrix (Fin 6) (Fin 6) ℤ) := by
   native_decide
 
 theorem actual_odd_gram_quadratic :

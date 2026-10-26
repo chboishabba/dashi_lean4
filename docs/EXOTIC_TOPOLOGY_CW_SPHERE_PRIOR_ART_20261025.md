@@ -521,3 +521,53 @@ post-recharting of that address can repair the latter.
 Original Blackwell and Crenshaw source contributions
 are conceptual; this is repository-local mathematics,
 not a theorem by those authors on wild knots.
+
+
+## 26 October: complemented PL boundaries and address-order correction in Agda #1254
+
+The newest sibling Agda #1254 now adds
+`scripts/exotic_topology_pl_complement_components.py`.
+It reuses the **actual** existing finite oriented triangulations
+and marked gluing and checks simplexwise injected old stages,
+edge-connected new complementary components, all shared old
+boundary edges, and a literal bijection between old outgoing
+circles and exterior components with corresponding new
+descendants. An independently reimplemented local Python
+model PASSED Cantor component counts 1/2/4, Loch 1/1/1,
+and Jacob 2/2/2 through three stage transitions and rejected
+both an invalid collapsed source-vertex map and a false
+boundary genealogy. These are finite PL fixtures; no
+topological end homeomorphism or exact-head GitHub run
+was claimed.
+
+A *material* interpretation gap was found between
+`DASHI.Foundations.CantorProjectiveCylinderMeasureExact` and
+the geometric collar descendants. The original Cantor
+premeasure source uses `leftChild (cylinder p) =
+cylinder (false :: p)`, i.e. **PREPEND**, whereas
+the ordinary first-n-digits stream product topology and
+the Lean `Integration.Address.Addr n Bool` projective
+restriction use **APPEND** children `p0,p1`.
+The first convention still has the correct dyadic child
+MASS identities, but does not make an included
+chronological cylinder EVENT. The explicit counterexample
+is parent word `[true]`, prepended child `[false,true]`,
+and stream beginning `[false,true]`: it satisfies the
+child and fails the presumed parent.
+
+The new Agda module
+`DASHI.Mathematics.Topology.ExoticCantorCylinderOrientationExact`
+reuses the ORIGINAL `Cantor.Cylinder` and
+`Cantor.BitStream`, defines chronological event membership,
+proves arbitrary append-child refinement by induction,
+and refutes the improperly promoted old prepend membership
+using that explicit stream. No existing owner was changed.
+The companion Python finite orientation audit checks
+word reversal as the *finite* conjugacy; no infinite
+terminal-bit reversal or sigma-additive measure is inferred.
+
+Thus the Lean tower-to-stream equivalence should be
+matched to the NEW chronological event semantics
+before attempting a kernel Freudenthal/Richards
+homeomorphism theorem. The geometric and kernel
+tasks remain open and separately attributed.

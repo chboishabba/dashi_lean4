@@ -157,6 +157,7 @@ name = "AutoformalisationBCH2026"
 globs = ["RequestProject.Autoformalisation.LostInTranslationExamples",
          "RequestProject.Autoformalisation.LostInTranslationSCI",
          "RequestProject.Autoformalisation.LostInTranslationNineVariables",
+         "RequestProject.Autoformalisation.ConditionalTranslation",
          "RequestProject.Autoformalisation.LostInTranslationAlternation"]
 
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved

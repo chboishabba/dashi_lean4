@@ -95,23 +95,29 @@ theorem no_effective_resolution_of_many_one_hardness
 levels. We encode the quantified *family* by an external predicate;
 we do not construct the DPRM polynomials or prove Σ⁰_l-completeness. -/
 structure ArithmeticalHardnessObligation
-    (level : ℕ) (Target : ℕ → Prop) : Prop where
+    (level : ℕ) (Target : ℕ → Prop)
+    (SigmaComplete : ℕ → (ℕ → Prop) → Prop)
+    (HasDPRMReduction : ℕ → (ℕ → Prop) → Prop)
+    (PostTheoremCondition : ℕ → (ℕ → Prop) → Prop) : Prop where
   levelAtLeastTwo : 2 ≤ level
-  sigmaLevelComplete : Prop
-  verifiedDPRMReduction : Prop
-  postTheoremDischarge : Prop
-  requirementsPaid :
-    sigmaLevelComplete ∧ verifiedDPRMReduction ∧ postTheoremDischarge
+  sigmaLevelPaid : SigmaComplete level Target
+  dprmReductionPaid : HasDPRMReduction level Target
+  postConditionPaid : PostTheoremCondition level Target
 
-/-- A schema carrying data is not a proof that the data exist at each
-level. This projection only unpacks the requirements of an actually
-inhabited certificate. -/
+/-- The three exact statements are supplied by the source's chosen formal
+interpretation; a consumer must supply proofs of EACH. These predicates
+are NOT constructed or asserted by this module. -/
 theorem paid_appendix_requirements
     {level : ℕ} {Target : ℕ → Prop}
-    (receipt : ArithmeticalHardnessObligation level Target) :
-    receipt.sigmaLevelComplete ∧
-      receipt.verifiedDPRMReduction ∧
-      receipt.postTheoremDischarge :=
-  receipt.requirementsPaid
+    {SigmaComplete : ℕ → (ℕ → Prop) → Prop}
+    {HasDPRMReduction : ℕ → (ℕ → Prop) → Prop}
+    {PostTheoremCondition : ℕ → (ℕ → Prop) → Prop}
+    (receipt : ArithmeticalHardnessObligation
+      level Target SigmaComplete HasDPRMReduction PostTheoremCondition) :
+    SigmaComplete level Target ∧
+      HasDPRMReduction level Target ∧
+      PostTheoremCondition level Target :=
+  ⟨receipt.sigmaLevelPaid, receipt.dprmReductionPaid,
+   receipt.postConditionPaid⟩
 
 end RequestProject.Autoformalisation.LostInTranslationSCI

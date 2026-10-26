@@ -150,6 +150,13 @@ name = "NSCanonicalLeaves"
 srcDir = "DASHI/output-final_aristotle"
 globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 
+# Source-attributed, opt-in formalisation of Bastounis--Circelli--Hansen
+# arXiv:2610.08144v1. Proof of concrete examples != proof of SCI infinity.
+[[lean_lib]]
+name = "AutoformalisationBCH2026"
+globs = ["RequestProject.Autoformalisation.LostInTranslationExamples",
+         "RequestProject.Autoformalisation.LostInTranslationSCI"]
+
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
 # for genuine measure/topology/spectral theorems whose supporting infrastructure
 # is materially stronger in mathlib than in the Agda foundation.

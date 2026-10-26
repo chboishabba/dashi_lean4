@@ -56,6 +56,27 @@ theorem quantifyPrefix_congr
           · rintro ⟨x, hx⟩
             exact ⟨x, (ih _ _ (fun ys => h (x :: ys))).mpr hx⟩
 
+/-- Adversarial audit of the *old* unrestricted Q-function type:
+EVERY predicate C can be encoded by an arbitrary 0/1-valued function,
+irrespective of computability or polynomial structure. Therefore
+a lemma accepting such Q as a "Diophantine representation" is
+mathematically vacuous. This is a DASHI source-contract countermodel,
+not a claim that every predicate is actually Diophantine. -/
+theorem arbitrary_zero_one_function_can_encode_any_predicate
+    (C : List ℕ → Prop) :
+    ∃ Q : List ℕ → (Fin 9 → ℕ) → ℤ,
+      ∀ zs : List ℕ, C zs ↔
+        ∃ x : Fin 9 → ℕ, Q zs x = 0 := by
+  classical
+  refine ⟨fun zs _ => if C zs then (0 : ℤ) else 1, ?_⟩
+  intro zs
+  constructor
+  · intro hC
+    exact ⟨fun _ => 0, by simp [hC]⟩
+  · rintro ⟨x, hx⟩
+    by_contra hNotC
+    simp [hNotC] at hx
+
 /-- A quantifier-prefix consumer cannot access malformed-length
 assignments: this eliminates a potential *new* default-value trap in
 the source-level MvPolynomial evaluator. Two predicates that agree on

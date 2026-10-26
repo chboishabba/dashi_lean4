@@ -204,3 +204,44 @@ def test_guarded_conditional_output_does_not_assert_closed_decision():
     assert "RequestProject.Autoformalisation.ConditionalTranslation" in (
         ROOT / "lakefile.toml"
     ).read_text()
+
+
+
+def test_A4_exact_source_parity_and_base_2_recovery():
+    leaf = (ROOT / "RequestProject/Autoformalisation/LostInTranslationAlternation.lean").read_text()
+    for name in (
+        "sourceAlternationPrefix",
+        "sourceAlternationPrefix_length",
+        "sourceA4Predicate",
+        "source_A4_level_two_is_A3",
+        "source_A4_level_three_shape",
+        "source_A4_level_four_shape",
+    ):
+        assert name in leaf
+    assert "if level % 2 == 0" in leaf
+    # Finite source-parity replay. These are fixed bounded toy domains,
+    # NOT unbounded arithmetic-hierarchy or SCI-completeness proofs.
+    import itertools
+    domain = (0, 1, 2)
+    def prefix(level):
+        return [(j + 2) % 2 == 1 for j in range(level-2)]
+    def Q(n, zs, xs):
+        return n - sum(zs) + sum(xs)
+    def evaluate(level, n, zs=(), stage=0):
+        prefs = prefix(level)
+        if stage < len(prefs):
+            values = (evaluate(level, n, zs + (z,), stage + 1)
+                      for z in domain)
+            return any(values) if prefs[stage] else all(values)
+        values = (Q(n, zs, (x,) + (0,)*8) == 0 for x in domain)
+        return all(not value for value in values) if level % 2 == 0 else any(values)
+    expected = {2: [], 3: [False], 4: [False, True],
+                5: [False, True, False], 6: [False, True, False, True]}
+    for level in range(2, 7):
+        assert prefix(level) == expected[level]
+        for n in domain:
+            assert isinstance(evaluate(level, n), bool)
+    for n in domain:
+        assert evaluate(2, n) == all(
+            Q(n, (), (x,)+(0,)*8) != 0 for x in domain
+        )

@@ -311,10 +311,15 @@ def test_bch_nine_to_k_natural_padding_does_not_change_root_status():
         "universal_nine_iff_k_padding",
         "source_polynomial_exists_padding",
         "source_polynomial_forall_padding",
+        "eval_padPolynomial_eq_first_nine",
+        "source_polynomial_root_iff_arity_k",
+        "source_polynomial_nonroot_iff_arity_k",
     ):
         assert "theorem " + theorem in lean
     assert "James P." in lean and "10.2307/2273588" in lean
-    assert "OPEN producer" in lean
+    assert "effective" in lean.lower()
+    assert "MvPolynomial.rename" in lean
+    assert "Mathlib" in lean
     assert "RequestProject.Autoformalisation.LostInTranslationPadding" in (
         ROOT / "lakefile.toml"
     ).read_text()

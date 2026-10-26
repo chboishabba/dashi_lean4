@@ -274,3 +274,23 @@ def test_finite_checker_rejects_python_optimization():
     )
     assert run.returncode != 0
     assert "BCH finite audit refuses Python -O" in run.stderr
+
+
+def test_fixed_integer_polynomial_parity_replay_and_optimizer_guard():
+    import runpy
+    import subprocess
+    import sys
+    path = ROOT / "scripts/check_bch2026_fixed_polynomial_parity.py"
+    result = runpy.run_path(str(path))["check"]()
+    assert result == {"fixed_polynomial_fixtures": 120,
+                      "quantifier_shapes": 5}
+    text = path.read_text(encoding="utf-8")
+    assert "eval_fixed_polynomial" in text
+    assert "FIXED polynomial" in text
+    assert "repeat=9" in text
+    proc = subprocess.run(
+        [sys.executable, "-O", str(path)],
+        capture_output=True, text=True, timeout=20,
+    )
+    assert proc.returncode != 0
+    assert "Cannot trust optimized Python" in proc.stderr

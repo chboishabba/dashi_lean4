@@ -1403,3 +1403,28 @@ orientation/basing transformations, but cannot be inferred
 from homotopic words or inconsistent transporter choices.
 No actual Hatcher based strip, physical F_A or kernel
 check is claimed.
+
+
+### Final owner audit: specialized horn chronological bridge already in #1244
+
+Original horn #1244 advanced to head
+`bf77f7c6cda943610a7e6d645178ede34b569044`
+with source-written
+`AlexanderHornedC3ChronologicalClopenBridgeExact.agda`
+literally importing original Bin.chronological, EndMass bool
+conversion and Cantor cylinder. It pays the Horn
+newest-first PREPEND to chronological APPEND source rewrite
+in its original owner, and #1254 owns the generic event
+inclusion and counterexample. The 254-path Python bit
+checks in #1249 are regression only, not a new competing
+Agda proof of this already-owned theorem.
+
+The same owner added a TAME C3×Cantor spatial cylinder
+realization with shrinking disjoint Euclidean balls.
+This is a valid comparator but NOT the wild linked
+Hatcher tower, a relative satellite pi1 equivalence or
+a true source short meridian. These actual donor advances
+do not alter our separate generic group commutator
+orientation/whisker invariance or the exact selected-W
+synthetic two-arm fringe-odd consumer, nor do they pay
+the physical source/Stokes gates.

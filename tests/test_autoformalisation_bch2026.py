@@ -257,6 +257,9 @@ def test_A4_polynomial_representation_is_syntactically_fixed():
     assert "sourceA4Predicate" in t
     assert "sourceAlternationPrefix" in t
     assert "The coefficient syntax P cannot vary" in t
+    assert "quantifyPrefix_congr_at_valid_length" in t
+    assert "sourceA4_prefix_coordinate_in_bounds" in t
+    assert "sourceA4_prefix_getD_agrees_with_actual" in t
     # The old source claim accepted arbitrary Q : List -> tuple -> Int,
     # allowing a nonpolynomial oracle to encode the target predicate.
     assert "Q : List ℕ → (Fin 9 → ℕ) → ℤ" not in t

@@ -122,4 +122,50 @@ theorem finite_sample_fourth_power_budget
       nlinarith [mul_nonneg (sub_nonneg.mpr hpD) (add_nonneg hD0 hp0)]
     _ = (samples.card : ℝ) * D ^ 2 := by simp
 
+/-!
+## Two-sample nonimplication: projected vorticity vs direction slope
+
+**DASHI finite discriminator**, using classical 3-vector algebra rather
+than a theorem attributed to Evan Miller. At x₀=0 and x₁=1/n (n>0)
+choose the two unit directions v₀=(0,1,0), v₁=(0,0,1) and sampled
+vorticities omegaᵢ=vᵢ. Both projected-vorticity cross products vanish.
+However (v₁-v₀)/(x₁-x₀)=(0,-n,n), whose squared norm is 2n².
+Hence no bound on the spatial derivative of v follows merely from
+pointwise vanishing projection and the unit-direction condition.
+
+This is a two-point *geometric* countermodel, NOT a single smooth
+Navier–Stokes flow or a proof of what happens at vorticity zeros.
+Miller's source theorem independently requires spatial gradient bounds;
+this finite obstruction explains why that hypothesis cannot be erased.
+-/
+
+/-- Both sampled normals are unit and have zero projection of an aligned
+sampled vorticity. Their unscaled squared difference is two. -/
+theorem two_unit_samples_aligned_projection_zero :
+    normSq 0 1 0 = 1 ∧
+      normSq 0 0 1 = 1 ∧
+      crossNormSq 0 1 0 0 1 0 = 0 ∧
+      crossNormSq 0 0 1 0 0 1 = 0 ∧
+      normSq 0 (-1) 1 = 2 := by
+  simp [normSq, crossNormSq, cross1, cross2, cross3]
+
+/-- The squared difference quotient for sample separation 1/n. -/
+theorem two_sample_direction_slope_squared (n : ℝ) :
+    normSq 0 (-n) n = 2 * n ^ 2 := by
+  unfold normSq
+  ring
+
+/-- No finite prescribed squared-gradient ceiling follows from the
+two samples' unit and zero-projection constraints alone. -/
+theorem finite_zero_projection_allows_arbitrarily_steep_slope
+    (bound : ℝ) :
+    ∃ n : ℝ, 0 < n ∧ bound < normSq 0 (-n) n := by
+  refine ⟨abs bound + 1, ?_, ?_⟩
+  · have h : 0 ≤ abs bound := abs_nonneg bound
+    linarith
+  · rw [two_sample_direction_slope_squared]
+    have h : bound ≤ abs bound := le_abs_self bound
+    have hnonneg : 0 ≤ abs bound := abs_nonneg bound
+    nlinarith [sq_nonneg (abs bound)]
+
 end RequestProject.NavierStokes.MillerProjectionGeometry

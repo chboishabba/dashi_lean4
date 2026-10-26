@@ -104,8 +104,9 @@ noncomputable def sourceIndex
     {Code : Type*} (enumeration : ℕ → Code)
     (target : ℕ → Code)
     (hSurjective : Function.Surjective enumeration)
-    (e : ℕ) : ℕ :=
-  Nat.find (hSurjective (target e))
+    (e : ℕ) : ℕ := by
+  classical
+  exact Nat.find (hSurjective (target e))
 
 theorem sourceIndex_identifies_source_code
     {Code : Type*} (enumeration : ℕ → Code)
@@ -114,6 +115,7 @@ theorem sourceIndex_identifies_source_code
     (e : ℕ) :
     enumeration (sourceIndex enumeration target hSurjective e) =
       target e := by
+  classical
   exact Nat.find_spec (hSurjective (target e))
 
 /-- Original d shape, evaluated on a chosen enumeration code. -/

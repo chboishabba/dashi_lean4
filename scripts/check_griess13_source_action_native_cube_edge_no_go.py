@@ -60,3 +60,24 @@ print('PASS projective 13-axis spatial graph: 24 edges, only 5 preserved; degree
 print('PASS one projective 13-cycle cannot preserve mixed degrees or 24 edges')
 print('PASS connected Z2 antipodal cover: cycle ranks 12 -> 23 = 2*12-1')
 print('NOT an Albert/Jordan/Monster/physical operator equality')
+
+
+# SAME native four-edge signed-cover acceptance. Derive the VOLTAGES
+# from literal original P3^3 adjacency on representatives (not from
+# an invented XOR graph), source-equivalent to the Agda #1249
+# noSpatialSectionOnNativeFourCycle theorem.
+# Historical general voltage-graph formalism: Jonathan L. Gross (1974)
+# and Gross--Tucker (1977), with DOI in #1249/Lean #52 ledgers.
+r={'X':(1,0,0),'PP':(1,1,0),'Y':(0,1,0),'PM':(1,2,0)}
+four=[('X','PP',0),('PP','Y',0),('Y','PM',1),('PM','X',0)]
+def orient(v,b):
+ return neg(v) if b else v
+for a,b,voltage in four:
+ for s in (0,1):
+  for t in (0,1):
+   assert edge(orient(r[a],s),orient(r[b],t))==((s^t)==voltage)
+assert sum(v for _,_,v in four)%2==1
+assert not any(all(edge(orient(r[a],bits[i]),orient(r[b],bits[(i+1)%4]))
+                   for i,(a,b,_) in enumerate(four))
+               for bits in product((0,1),repeat=4))
+print('PASS all 16 actual native four-cycle edge-sign cases; odd XOR/no-global-section')

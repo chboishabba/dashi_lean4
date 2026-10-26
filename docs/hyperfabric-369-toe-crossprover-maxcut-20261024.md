@@ -1331,3 +1331,53 @@ The selected *SOURCE* grade action is `M(x0,x1,x2)=(x0+x1,x1+x2,x0+x1+x2) mod3`;
 **Latest additional PR #1260:** `Z[ω]/(1−ω)^9` has the *same cardinal* `3^9=81×243=19683`, but its additive group is `C81×C243`, not `(C3)^9`, and not the nonassociative exponent-three Moufang `M81×(C3)^5` under loop multiplication. The finite cyclic group has elements of order243, whereas the latter trit structures have exponent3; its 3-torsion has 9 elements versus the elementary group's 19683. This is a decisive *NO-ID* arithmetic source discriminator. Do not graft onto #1260's separate Pickover/RH claims. Agda #1250's original Monster-selected 78 character/6.Suz task is similarly distinct: no selected same-actor/class intertwiner follows from repeated 13/26/78.
 
 **Canonical detailed source-graded Pareto ledger:** [Lean #52 2026-10-26 source-grade/all-edge/no-go](https://github.com/chboishabba/dashi_lean4/blob/agent/albert-jordan-f4-maxcut-20261007/docs/superpowers/plans/2026-10-26-punctured27-projective13-all-edge-obstruction-and-source-snowball.md). Standalone portable finite regression added identically to Lean #52 and Agda #1249 as `scripts/check_griess13_source_action_native_cube_edge_no_go.py`; new Lean proof source and exact GitHub Python bytes were not kernel-tested or exact-byte replayed. No CI, Agda or Lean kernel success represented. Next Pareto: Lean/Agda typecheck actual original Jordan products, 26×26 invertible C13 representation, native sign quotient/odd voltage. Full exceptional F4, selected Monster 3B, physical observable/RH gates remain independent.
+
+
+## 2026-10-26 marked-meridian orientation and odd-fringe consumer
+
+Latest source-reuse from Agda #1254 and Lean #86 shows
+old Hatcher HornAddress.suffix PREPENDS bits, while
+chronological source paths APPEND; existing
+AlexanderHornedBinaryPadicCylinderExact.chronological
+owns the reversal. Original horn geometry #1244 now owns
+spatial C3 central-to-collar paths but not the relative
+satellite group-generator map. No duplicate codec,
+C3 basing or geometric cover was introduced.
+
+New Integration/DASHITOE/HornMarkedMeridianOrientationCut.lean
+proves SOURCE-WRITTEN generic group identities for the exact
+Hatcher symbolic commutator, swapped/inverted child
+orientations and one COMMON conjugating whisker.
+SourceMarkedCommutator carries the still-UNPAID actual
+source group relation as a field. With independently
+supplied unitary conjugation/inversion gap invariance,
+the existing HornSelectedWSpectralCubicCut child
+>781/1000 rejection theorem transports through
+whole-word inversion or coherent common basing.
+Independent child whiskers are NOT covered.
+The actual geometric source-pi1 map and matrix norm
+are not magically constructed by source-written Lean.
+
+New Integration/DASHITOE/HornWilsonFringeOrientationCut.lean
+reuses ORIGINAL neutrino #1247 exact selected W trace
+and two-arm phase-zero model: P(0) invariant under W
+inversion, but odd fringe
+D=P(pi/2)-P(-pi/2)=B sqrt3/6 reverses sign,
+B=19836986431118/181846007130841. The exact
+D²=98376507667089911639682481 /
+99203910928289627462680101843, nonzero rational.
+The unitary spectral operator X=(W-I)*(W-I) remains
+the SAME under W->W^-1, so no-go is orientation-even.
+C3 conjugation is trace-even and does not produce
+three independent orientation signals. Independently
+calibrated phase/direction conventions are necessary
+for ANY physical orientation inference; no experiment
+or physical lepton spectrum is claimed.
+
+Agda #1249 companion two Python scripts have independent
+locally executed equivalent finite tests PASS; exact new
+GitHub file existence verified, Git-blob matched byte
+execution not claimed. Lean/Lake kernel NOT RUN.
+Canonical first-link/attribution/acceptance narrative at
+Agda #1249
+docs/hyperfabric-horn-orientation-basing-fringe-ibrahim-maxcut-20261026.md.

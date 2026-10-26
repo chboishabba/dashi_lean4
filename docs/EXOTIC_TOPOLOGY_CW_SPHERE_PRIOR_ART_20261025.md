@@ -1079,3 +1079,26 @@ remain SOURCE-WRITTEN, without a successful exact-head
 Lean 4.28 kernel receipt. This donor analysis
 is a verified API inventory, not a compiled
 construction of S∞ or a completed Richards theorem.
+
+
+### Exact modern source-root disambiguation
+
+The ITP 2026 paper
+*Formalizing Abstract Simplicial Complexes &
+Stellar Subdivisions in Lean* is by
+**Garett Cunningham, Daniel Zach, Stefan Friedl**
+(arXiv:2607.10216, https://arxiv.org/abs/2607.10216;
+ITP 2026 DOI 10.4230/LIPIcs.ITP.2026.21).
+Its July 2026 research contribution is a
+combinatorial Lean framework for abstract complexes,
+links and stellar subdivision. This is a
+**different source root** from the earlier
+v4.28.0 pinned `SSet.toTop` authors
+Commelin/Morrison/Topaz, and from Power's
+2025 mathematical surface-rigidity paper.
+No program by Cunningham/Zach/Friedl has been
+vendored here and the user-facing material must
+not claim its theorem is installed in this
+locked project. Future source imports should
+identify the exact revision, attribution header
+and API compatibility first.

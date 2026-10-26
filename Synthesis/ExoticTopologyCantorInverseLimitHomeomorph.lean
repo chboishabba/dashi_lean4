@@ -1,6 +1,7 @@
 import Synthesis.ExoticTopologyCantorInverseLimit
 import Mathlib.Topology.Instances.CantorSet
 import Mathlib.Topology.Constructions
+import Mathlib.Topology.Clopen
 
 /-!
 # Source-owned compatible binary frontiers have the Cantor product topology
@@ -86,6 +87,40 @@ def cantorEndInverseLimitHomeomorph :
   toEquiv := cantorEndInverseLimitEquiv
   continuous_toFun := continuous_towerToStream
   continuous_invFun := continuous_streamToTower
+
+
+/-- Actual clopen cylinder on the existing coherent tower:
+select every infinite address whose STAGE-n source address is w.
+Not a clopen subset of the connected 2D surface itself. -/
+def sourceStageCylinder (n : ℕ) (w : CantorStage n) :
+    Set CompatibleCantorTower :=
+  { t | t.stage n = w }
+
+/-- Genuine topological clopen, not merely the Boolean claim that a
+finite string has an address. Uses the pinned v4.28.0 Mathlib
+`isClopen_discrete` and `IsClopen.preimage` APIs. -/
+theorem sourceStageCylinder_isClopen (n : ℕ) (w : CantorStage n) :
+    IsClopen (sourceStageCylinder n w) := by
+  have h : Continuous (fun t : CompatibleCantorTower => t.stage n) :=
+    (continuous_apply n).comp continuous_towerStage
+  change IsClopen
+    ((fun t : CompatibleCantorTower => t.stage n) ⁻¹' ({w} : Set (CantorStage n)))
+  exact (isClopen_discrete ({w} : Set (CantorStage n))).preimage h
+
+/-- Actual child cylinder EVENT inclusion on the coherent-product
+topology. This proof relies on the ORIGINAL compatible tower proof,
+not an incompatible prepend-word convention. -/
+theorem sourceStageChildCylinder_subset (n : ℕ)
+    (child : CantorStage (n + 1)) :
+    sourceStageCylinder (n + 1) child ⊆
+      sourceStageCylinder n (forgetLast n child) := by
+  intro t ht
+  change t.stage (n + 1) = child at ht
+  change t.stage n = forgetLast n child
+  have hcompat : forgetLast n (t.stage (n + 1)) = t.stage n := by
+    funext i
+    exact t.compatible n i
+  exact hcompat.symm.trans (congrArg (forgetLast n) ht)
 
 /-- Compose with Mathlib's pinned v4.28.0 theorem on the LITERAL
 real middle-thirds Cantor set, not a new hand-defined subset. -/

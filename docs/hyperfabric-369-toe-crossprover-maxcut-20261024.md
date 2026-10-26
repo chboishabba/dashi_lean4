@@ -1844,3 +1844,23 @@ meridian systole or curvature regularity,
 P4 physical dynamical W selection.
 No group equivalent 2D local system
 establishes a 3D finite-energy field.
+
+
+### 2026-10-27 latest horn-owner compact-exhaustion Mathlib reuse
+
+PR #1244 adds original-owner `HatcherOpenExhaustionCompactAbsorption.lean`
+using Mathlib `IsCompact.elim_directed_cover`.
+It conditionally factors compact loops/homotopies
+through one actual increasing open exterior
+stage Y_n. Source scripts supply severe
+nonopen/nondirected cover counterexamples.
+This is the correct 3D source compactness
+donor for the original Hatcher colimit;
+do not duplicate or conflate it with the
+separate 2D C3 rose mapping telescope's
+bounded HEIGHT absorption.
+Neither producer proves real Hatcher
+linked handlebody π1 injections in the
+chosen #1244 spatial geometry or
+a metric peripheral meridian. Kernel
+status remains source-written.

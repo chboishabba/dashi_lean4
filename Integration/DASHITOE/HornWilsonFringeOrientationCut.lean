@@ -78,11 +78,15 @@ theorem orientationInversionFlipsOdd :
     signedOddCoefficient true = -signedOddCoefficient false := by
   simp [signedOddCoefficient]
 
-/-- Conjugation keeps the TRACE and squared operator gap invariant,
-whereas inversion conjugates trace and reverses its imaginary part.
-No abstract C3-sector rotation can make THREE independent physical
-phase contrasts out of the same conjugacy class. -/
-theorem phaseZeroInvariantUnderLoopInversion :
-    phaseZeroPort = phaseZeroPort := rfl
+/-- The two EXACT orientations share the selected real part of
+the source trace; reversing only the odd part is not a new independent
+C3-sector observation. The original physical two-arm formula remains
+external, owned by the neutrino PR #1247. -/
+theorem orientationSignsAreOppositeAndNonzero :
+    signedOddCoefficient false = -signedOddCoefficient true ∧
+      0 < signedOddCoefficient false := by
+  constructor
+  · simp [signedOddCoefficient]
+  · exact originalOrientationPositive
 
 end DASHIHornWilsonFringeOrientation

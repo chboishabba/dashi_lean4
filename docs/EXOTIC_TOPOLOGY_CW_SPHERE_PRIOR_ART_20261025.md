@@ -1102,3 +1102,59 @@ not claim its theorem is installed in this
 locked project. Future source imports should
 identify the exact revision, attribution header
 and API compatibility first.
+
+
+## FINAL 27 October maximal-reuse correction: Mathlib already HAS CompactExhaustion
+
+A further direct original-API audit on locked **v4.28.0**
+found the more specific theorem we should have used
+BEFORE writing an independent compactness proof:
+`Mathlib/Topology/Compactness/SigmaCompact.lean`
+provides
+`structure CompactExhaustion (X)`, with fields
+`toFun`, `isCompact'`,
+`subset_interior_succ'`, `iUnion_eq'`;
+and its OWN `CompactExhaustion.exists_superset_of_isCompact`
+and `CompactExhaustion.exists_mem_nhds`.
+The ORIGINAL Mathlib module authors are
+**Johannes Hölzl, Mario Carneiro, Yury Kudryashov**,
+copyright (c) Johannes Hölzl 2017.
+
+The earlier current-turn standalone source-written proof
+of directed cover cofinality was therefore a DUPLICATE
+of a stronger existing donor for the real intended
+**COMPACT** PL stages and has been **REPLACED**, not
+left as a competing implementation. The updated file
+`Synthesis/ExoticTopologyCollaredCompactCofinality.lean`
+now has only the SOURCE-SPECIFIC constructor
+`sourceCollaredCompactExhaustion` and two
+one-line/native-theorem consumers. It asks for
+actual finite-stage compactness, interior collar
+inclusion and exhaustion of X, constructs
+Mathlib's own `CompactExhaustion X`, and invokes
+the original cofinality and neighbourhood theorems.
+The compact-map corollary likewise uses this
+source-owned API. We no longer claim credit for
+proving compact absorption from scratch.
+
+This **reduces**, rather than expands, the P2 residual:
+prove the original PL source actually realises
+`K_n : Set X` and the THREE genuine Mathlib
+`CompactExhaustion` fields at ALL n.
+Then compact cofinality and the fact that stages
+are neighbourhoods are already **donated**
+kernel theorems when the constructor typechecks.
+The remaining Richards end-space comparison
+and nonplanar end-genus determination are
+source-selected GEOMETRIC tasks, not implicit
+in that type. No exact-head local Lean build
+has yet been executed, so the adapter remains
+source-written.
+
+This supersedes earlier descriptions in this
+research log that speak of a new independent
+compact-directed-cover proof in #86. Those
+earlier commits are retained as historical work
+rather than silently rewritten; this section
+records the source-first correction and dated
+attribution fix.

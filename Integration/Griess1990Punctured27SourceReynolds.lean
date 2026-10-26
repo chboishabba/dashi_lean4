@@ -151,4 +151,93 @@ theorem full_source_average_even_sector :
         (-projectiveRepresentative j) =
         (if i = j then 0 else (4/13 : ℚ)) := by native_decide
 
+/-! ## P0 full-source commutant: exactly 3 orbital indicator kernels
+
+EXACT local BFS over the actual six SL3 source generators finds
+THREE ordered-pair grade orbits (same, negative, independent).
+Thus the entire full-label-group commutant is
+span_Q {identity, antipode, all-ones}, with spectral projectors
+of ranks 1+12+13. This is classical permutation-module theory,
+NOT an exceptional Jordan product/Monster/physical result.
+
+Every fully SL3 grade-invariant operator is SCALAR on the odd13
+anti-antipodal sector. The actual spatial signed 13-axis operator is
+not scalar, so cannot commute with all six original grade shears.
+-/
+
+/-- Same original grade orbit chart, 26 selected nonzero points. -/
+def sourceAntipodalMatrix : Matrix (Fin 26) (Fin 26) ℚ :=
+  fun i j => if sourceOrbitPoint i = -sourceOrbitPoint j then 1 else 0
+
+def sourceOneMatrix : Matrix (Fin 26) (Fin 26) ℚ :=
+  fun _ _ => 1
+
+/-- The three mutually orthogonal rational PROJECTORS onto 1,12,13
+of the original 26-point grade permutation representation of
+FULL SL3(3), not the actual Albert J0 26 representation. -/
+def sourceTrivialProjector : Matrix (Fin 26) (Fin 26) ℚ :=
+  fun _ _ => 1/26
+
+def sourceEvenNonconstantProjector : Matrix (Fin 26) (Fin 26) ℚ :=
+  fun i j =>
+    (if i = j then (1/2 : ℚ) else 0) +
+    (if sourceOrbitPoint i = -sourceOrbitPoint j then (1/2 : ℚ) else 0) -
+    1/26
+
+def sourceOddProjector : Matrix (Fin 26) (Fin 26) ℚ :=
+  fun i j =>
+    (if i = j then (1/2 : ℚ) else 0) -
+    (if sourceOrbitPoint i = -sourceOrbitPoint j then (1/2 : ℚ) else 0)
+
+theorem source_full_triv_projector_rank_one :
+    Matrix.trace sourceTrivialProjector = (1 : ℚ) := by native_decide
+
+theorem source_full_even_projector_rank_twelve :
+    Matrix.trace sourceEvenNonconstantProjector = (12 : ℚ) := by native_decide
+
+theorem source_full_odd_projector_rank_thirteen :
+    Matrix.trace sourceOddProjector = (13 : ℚ) := by native_decide
+
+theorem source_full_projectors_sum_identity :
+    sourceTrivialProjector + sourceEvenNonconstantProjector +
+      sourceOddProjector = 1 := by native_decide
+
+theorem source_full_projectors_are_idempotent :
+    sourceTrivialProjector * sourceTrivialProjector = sourceTrivialProjector ∧
+    sourceEvenNonconstantProjector * sourceEvenNonconstantProjector =
+      sourceEvenNonconstantProjector ∧
+    sourceOddProjector * sourceOddProjector = sourceOddProjector := by
+  native_decide
+
+theorem source_full_projectors_are_pairwise_orthogonal :
+    sourceTrivialProjector * sourceEvenNonconstantProjector = 0 ∧
+    sourceTrivialProjector * sourceOddProjector = 0 ∧
+    sourceEvenNonconstantProjector * sourceOddProjector = 0 := by
+  native_decide
+
+/-- All full-source-invariant rational kernels are CONSTANT on the
+three ordered-pair orbitals (equal/opposite/independent). The
+separate universality of this classification is checked by exact
+finite orbit BFS over six native generators in the Python receipt. -/
+def sourceInvariantKernel (equalCoeff oppositeCoeff independentCoeff : ℚ)
+    (x y : Grade) : ℚ :=
+  if x = y then equalCoeff
+  else if x = -y then oppositeCoeff
+  else independentCoeff
+
+/-- Universal SIGNED sector is scalar for any orbital constants:
+off-diagonal elements cancel, diagonal becomes equal-opposite. -/
+theorem source_full_invariant_odd_sector_is_scalar
+    (equalCoeff oppositeCoeff independentCoeff : ℚ) :
+    ∀ i j : Fin 13,
+      sourceInvariantKernel equalCoeff oppositeCoeff independentCoeff
+        (projectiveRepresentative i) (projectiveRepresentative j) -
+      sourceInvariantKernel equalCoeff oppositeCoeff independentCoeff
+        (projectiveRepresentative i) (-projectiveRepresentative j) =
+        (if i = j then equalCoeff-oppositeCoeff else 0) := by
+  intro i j
+  fin_cases i <;> fin_cases j <;>
+    norm_num [sourceInvariantKernel, projectiveRepresentative]
+
+
 end Integration.Griess1990Punctured27SourceReynolds

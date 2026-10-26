@@ -945,3 +945,66 @@ pays a genuine conditional phase-3
 SYMBOLIC end-space topology input. The
 unrealised noncompact surface itself and
 its genuine space of ends are still OPEN.
+
+
+## 27 October second source-precise topological payment: collar interiors imply compact cofinality
+
+Latest horned parent Agda #1244 (head at merge:
+`a5fb69cc24299e96b91145083cefaf09cdf8e32f`)
+now carries original
+`HatcherOpenExhaustionCompactAbsorption.lean`
+and `alexander_horned_c3_open_exhaustion_severe_controls.py`.
+The former **reuses** `IsCompact.elim_directed_cover`
+in pinned Mathlib; the latter contrasts
+(i) a directed open cover that works, (ii) an
+increasing CLOSED cover of compact
+`{0}∪{1/n}` that never captures all of it at any stage,
+and (iii) a nondirected two-open cover of the
+two-point discrete compact space. Thus the
+openness AND directedness assumptions cannot
+be erased when carrying this argument to actual
+surface end geometry. Child Agda #1254 directly
+imports the parent's source regression and retains
+its `Hatcher\pi_1`-unverified flags after a
+nondestructive parent restack.
+
+**New native Lean #86 source:**
+`Synthesis/ExoticTopologyCollaredCompactCofinality.lean`
+implements the reusable TWO-LINE missing logical bridge:
+if actual subsets `K_n ⊆ X` are increasing,
+exhaust `X`, and each `K_n` lies inside
+`interior(K_(n+1))`, then for every compact
+`C ⊆ X` there is `n` with `C ⊆ K_n`.
+The source-written proof forms the directed
+open cover `interior(K_n)` and calls the
+SAME original pinned
+`Mathlib.IsCompact.elim_directed_cover`
+Hatcher's latest parent already uses, rather
+than copying another classical proof library.
+There is also a compact-map corollary: images
+of compactly parametrised loops and homotopies
+fit into some `K_n`, although their actual
+topological null-homotopy is not asserted.
+
+**Important improvement of roadmap assumptions:**
+compact cofinality is not a separate unexplained
+hypothesis once the source-specific uniform
+collar-interiority inclusion and genuine topological
+exhaustion have been established. This makes the
+remaining surface P2 boundary more economical:
+(1) build actual locally finite orientable PL
+direct union `X`; (2) prove `K_n⊆interior(K_(n+1))`
+inside THAT X and that their union covers X;
+(3) REUSE the new compact cofinality theorem;
+(4) compare true unbounded connected complement
+components with the already built source
+compatible Cantor tower and its now source-written
+real Cantor-set homeomorphism.
+
+**Neither new Lean module is kernel-checked** in
+the current tool execution. The new symbolic
+Cantor homeomorphism cannot substitute for the
+genuine source-space end topology; this compact
+cofinality lemma cannot substitute for an
+actual locally finite PL realisation. These
+remain independent, explicit geometric inputs.

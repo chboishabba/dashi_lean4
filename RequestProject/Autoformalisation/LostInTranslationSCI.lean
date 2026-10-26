@@ -120,4 +120,48 @@ theorem paid_appendix_requirements
   ⟨receipt.sigmaLevelPaid, receipt.dprmReductionPaid,
    receipt.postConditionPaid⟩
 
+/-!
+## Cameron Freer's Hilbert10 (2026): exact donor-compatibility barrier
+
+Original external theorem declaration, attributed to Cameron Freer,
+`Hilbert10.exists_universal_mvPolynomial`, is of the form
+  ∃ k U, ∀ e x y, evaluation ↔ ∃ z : Fin k → ℕ, U(...,z)=0.
+This is an impressive universal *existence* theorem. It does NOT
+supply a numerical bound k ≤ 9. BCH2026 Theorem A.3 invokes a
+NINE-unknown DPRM refinement and A.4 adds the Σ_l arithmetical
+hierarchy/strictness step. A successful direct import of Freer's
+library thus would not discharge those separate requirements.
+
+This theorem is a finite logical discriminator, NOT a judgement about
+the correctness of Freer's Lean proofs or a substitute for importing
+his exact original source. Never infer a 9-unknown statement from an
+unbounded existential quantifier.
+-/
+
+/-- Existential representation with some witness count. -/
+def HasSomeWitnessCount (R : ℕ → Prop) : Prop :=
+  ∃ k : ℕ, R k
+
+/-- The additional nine-unknown acceptance obligation. -/
+def HasAtMostNineWitnesses (R : ℕ → Prop) : Prop :=
+  ∃ k : ℕ, k ≤ 9 ∧ R k
+
+theorem nine_unknown_representation_implies_some_representation
+    (R : ℕ → Prop) :
+    HasAtMostNineWitnesses R → HasSomeWitnessCount R := by
+  rintro ⟨k, _, hk⟩
+  exact ⟨k, hk⟩
+
+/-- A finite model witnesses failure of the converse as a *general*
+logical implication. This does NOT say Freer's actual universal
+polynomial needs ten witnesses; only that his unbounded theorem
+alone does not contain the additional nine-variable bound. -/
+theorem some_witness_count_not_enough_for_nine :
+    HasSomeWitnessCount (fun k : ℕ => k = 10) ∧
+      ¬ HasAtMostNineWitnesses (fun k : ℕ => k = 10) := by
+  constructor
+  · exact ⟨10, rfl⟩
+  · rintro ⟨k, hk, hEq⟩
+    omega
+
 end RequestProject.Autoformalisation.LostInTranslationSCI

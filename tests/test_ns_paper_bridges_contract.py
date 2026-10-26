@@ -208,3 +208,18 @@ def test_exact_three_dimensional_stationary_pressure_adversarial_example():
     assert "10.1007/s12215-020-00540-3" in script
     assert "divergence_f" in script and "laplace_p" in script
     assert "extra source assumptions could repair" in script
+
+def test_zero_projection_unit_norm_not_a_direction_slope_bound():
+    """401 exact rational two-point samples, not a smooth Navier--Stokes flow."""
+    v0, v1 = (0, 1, 0), (0, 0, 1)
+    for bound in range(-200, 201):
+        n = abs(bound) + 1
+        delta_x = Fraction(1, n)
+        difference = tuple(v1[i] - v0[i] for i in range(3))
+        slope2 = sum((Fraction(d) / delta_x) ** 2 for d in difference)
+        assert slope2 == 2 * n*n and slope2 > bound
+        assert sum(z*z for z in v0) == sum(z*z for z in v1) == 1
+    lean = (ROOT / "RequestProject/NavierStokes/MillerProjectionGeometry.lean").read_text()
+    assert "finite_zero_projection_allows_arbitrarily_steep_slope" in lean
+    assert "two_unit_samples_aligned_projection_zero" in lean
+    assert "not a single smooth" in lean.lower()

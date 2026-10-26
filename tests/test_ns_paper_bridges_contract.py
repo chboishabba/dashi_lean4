@@ -140,3 +140,41 @@ def test_pressure_countermodel_pays_actual_derivative_not_just_scalars():
     assert "RequestProject.NavierStokes.YanRadulescuPressureCountermodel" in (
         ROOT / "lakefile.toml"
     ).read_text()
+
+
+def test_miller_projection_lagrange_exact_integer_sweep():
+    """Finite consistency checks only; Lean/mathlib kernel status separate."""
+    def cross(v, w):
+        return (v[1]*w[2]-v[2]*w[1],
+                v[2]*w[0]-v[0]*w[2],
+                v[0]*w[1]-v[1]*w[0])
+    def square(v):
+        return sum(x*x for x in v)
+    for v in itertools.product(range(-2, 3), repeat=3):
+        for w in itertools.product(range(-2, 3), repeat=3):
+            left = square(cross(v, w))
+            right = square(v)*square(w) - sum(
+                a*b for a, b in zip(v, w)
+            )**2
+            assert left == right, (v, w, left, right)
+    assert square(cross((0, 0, 1), (7, 11, 13))) == 7**2+11**2
+
+
+def test_miller_projection_source_semantics_and_no_promotion():
+    text = (
+        ROOT / "RequestProject/NavierStokes/MillerProjectionGeometry.lean"
+    ).read_text()
+    for name in (
+        "cross_normSq_lagrange",
+        "unit_direction_projected_square",
+        "unit_direction_projected_le_total",
+        "constant_z_plane_formula",
+        "parallel_direction_has_zero_cross",
+    ):
+        assert "theorem " + name in text
+    assert "10.1090/bproc/74" in text
+    assert "cannot" in text.lower()
+    assert not re.search(r"(?m)^\s*(sorry|axiom)\b", text)
+    assert "RequestProject.NavierStokes.MillerProjectionGeometry" in (
+        ROOT / "lakefile.toml"
+    ).read_text()

@@ -104,4 +104,34 @@ theorem selected_e01_character_equality_impossible :
   selected_e01_trace_mismatch
 
 
+
+/-! The specific selected six lifts are NOT themselves a coherent
+SL3(3) section: e01 and e20 are conjugate GRADE transvections under
+the positive 3-cycle of coordinates, but the corresponding selected
+rational Albert/J0 character traces differ (-1 versus 8).
+A group representation MUST give equal traces on conjugates.
+This says nothing against the EXISTENCE of an alternative section.
+Sah (1974) / Griess (1976) establish abstract splitting under the
+original natural-module extension hypothesis. -/
+
+/-- The actual determinant+1 three-coordinate cycle on ORIGINAL
+F3³ grade labels, not a spatial P3³ graph symmetry. -/
+def cyclicGrade (x : Grade) : Grade := ![x 1, x 2, x 0]
+
+def inverseCyclicGrade (x : Grade) : Grade := ![x 2, x 0, x 1]
+
+theorem grade_coordinate_cycle_inverse :
+    ∀ x : Grade, cyclicGrade (inverseCyclicGrade x) = x ∧
+      inverseCyclicGrade (cyclicGrade x) = x := by native_decide
+
+theorem e01_and_e20_grade_conjugate_by_3cycle :
+    ∀ x : Grade,
+      cyclicGrade (gradeShear .e01 (inverseCyclicGrade x)) =
+        gradeShear .e20 x := by native_decide
+
+theorem selected_lift_e01_e20_characters_disagree :
+    correctedShearTracelessTrace .e01 ≠
+      correctedShearTracelessTrace .e20 := by native_decide
+
+
 end Integration.Griess1990SourceShearCharacterNoFull26

@@ -93,25 +93,15 @@ theorem selected_e01_trace_mismatch :
     correctedShearTracelessTrace .e01 ≠
       (nonzeroGradePermutationTrace .e01 : ℚ) := by native_decide
 
-/-- The abstract trace-conjugacy obstruction is classical linear
-algebra; the above exact local computation pays the actual traces.
-This theorem is conditional on the two matrices being those source
-operators, NOT a different source-selected central-character lift. -/
-theorem no_same_selected_e01_intertwiner
-    (X J P : Matrix (Fin 26) (Fin 26) ℚ)
-    (h_trace_J : Matrix.trace J = -1)
-    (h_trace_P : Matrix.trace P = 8)
-    (h_inv : IsUnit X.det)
-    (h_intertwine : J * X = X * P) : False := by
-  have h_traces : Matrix.trace J = Matrix.trace P := by
-    have hI : IsUnit X.det := h_inv
-    -- Classical cyclicity of trace plus the invertible intertwiner.
-    have hmul : Matrix.trace (J * X) = Matrix.trace (X * P) := by
-      rw [h_intertwine]
-    -- Cyclicity and cancellation can be supplied by the existing
-    -- Mathlib trace + nonsingular-matrix source owner.
-    sorry
-  rw [h_trace_J,h_trace_P] at h_traces
-  norm_num at h_traces
+/-- The actual selected generator character equality needed by
+an e01 same-operator intertwiner is formally false.
+A generic theorem promoting equality of traces from an invertible
+matrix intertwiner requires a separately kernel-verified Mathlib
+cyclicity lemma. We DO NOT insert holes or claim that payment here. -/
+theorem selected_e01_character_equality_impossible :
+    ¬ (correctedShearTracelessTrace .e01 =
+       (nonzeroGradePermutationTrace .e01 : ℚ)) :=
+  selected_e01_trace_mismatch
+
 
 end Integration.Griess1990SourceShearCharacterNoFull26

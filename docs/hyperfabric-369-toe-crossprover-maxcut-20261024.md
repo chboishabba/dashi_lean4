@@ -1784,3 +1784,63 @@ Johl Brown with OpenAI ChatGPT assistance.
 No analogy, source code or negative-control
 experiment is upgraded to kernel proof
 or neutrino prediction.
+
+
+## 2026-10-27 all-depth acyclic CW mapping telescope, stronger than finite rose
+
+Source Hatcher Example 2B.2 provides F_(2^n)
+injective commutator replacements; ORIGINAL
+Hatcher Section 3.F constructs mapping telescope
+CW realisations. Using R_n=wedge(3*2^n circles)
+with f_n(old generator)=[two children],
+strictly C3-equivariant, the genuine
+2-dimensional countable mapping telescope
+T has pi1(T)=colim F_(3*2^n)=G_A*G_A*G_A.
+The finite truncations retract to terminal
+roses, H_k=0 for k>=2, and all bonding maps
+on H1 are ZERO, yielding reduced H*(T)=0.
+Original π1 injections preserve nontrivial
+roots. Every sphere map has bounded
+telescope-height image and retracts into
+a finite rose, hence pi_k(T)=0 for k>=2.
+T is thus acyclic, aspherical,
+NONCONTRACTIBLE, and not a wild sphere or
+3D smooth gauge manifold.
+
+The group result supplies an ALL-DEPTH
+countermodel to recovering original wild
+3D spatial topology from abstract SU3
+holonomy characters. It is stronger than
+the prior finite-stage rose factorisation
+and is a derived specialisation of classical
+Hatcher mapping-telescope/CW results,
+not a new theorem attribution to DASHI.
+
+New source-written module
+`Integration/DASHITOE/HornC3AcyclicMappingTelescopeCut.lean`
+tests finite rank identities and transports
+ANY group representation to a telescope
+via EXPLICIT group equivalence; the actual
+CW equivalence/pi1 theorem, acyclicity
+and source wild 3D geometry remain
+EXTERNAL and were NOT Lean-kernel proved.
+Agda #1249 companion exact integer/free
+word/C3 audit `check_horn_c3_acyclic_rose_telescope.py`
+and canonical report
+`docs/hyperfabric-horn-c3-acyclic-telescope-all-depth-source-cut-20261027.md`.
+Independent local source-equivalent Python
+invariants n<=8 PASS; no GitHub byte
+replay or CI. Keep original #1244
+3D outer C3 spatial-geometry ownership,
+#1247 selected W, #1266 general observer
+nonfactorability, Deicyde/hatcher-at
+upstream wedge-group formal owner.
+
+The new TRUE source-specific phase gate
+is not more Wilson words; it is P2
+actual 3D relative Hatcher marked
+peripheral geometry, P3 source Euclidean
+meridian systole or curvature regularity,
+P4 physical dynamical W selection.
+No group equivalent 2D local system
+establishes a 3D finite-energy field.

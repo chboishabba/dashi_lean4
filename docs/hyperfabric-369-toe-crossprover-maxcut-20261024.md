@@ -1517,3 +1517,36 @@ the owner #1244 pays outer C3 tame gluing and
 collar but NOT this source-specific metric instance.
 Do not trade more finite synthetic C3/VOA/Cantor
 facets for this unpaid witness. No CI priority.
+
+
+### 2026-10-26 final LIVE owner #1244 metric-radius and source member_group acceptance
+
+Horn-owner Agda #1244 additionally advanced to
+`9f447f2cd9bd482c76cc0aadd995b520a15e8e8d`
+with new `ThreeArmRadiusCutGeometry.lean`,
+`ThreeArmHatcherGroupTransport.lean`,
+`ThreeArmRadiusCutHatcherTransport.lean`
+and `AlexanderHornedC3MetricVanKampenCutset20261026.md`.
+This pays the SOURCE-WRITTEN **metric open-cover algebra**
+and source-group free-product COMPOSITION using pre-existing
+pinned Hatcher-at `coprodIEquiv`, but not the wild
+satellite `ThreeArmSourceGroupCertificates.member_group`
+source witness, central pi1 proof or local Euclidean
+meridian metric. The ambient-ball centres c_i live
+in removed solid B, so owner correctly pulls radial
+cuts back along continuous f:E→R³ instead of
+incorrectly treating them as centres inside E.
+
+Our independent Lean
+`HornPeripheralLocalitySystoleCut.lean` and
+three byte-executed Agda #1249 local scripts DO NOT
+duplicate those cover/group objects: they consume
+a REAL source-marked local meridian plus
+a length/Lipschitz source bound and the existing
+selected W exact spectral norm. A topological group
+equivalence does not imply a bi-Lipschitz
+Hatcher Z-A chart. Remaining P0 is the pair
+(relative actual Hatcher satellite meridian-group
+map, and controlled-Euclidean local meridian
+source), not another scalar or C3 construction.
+No kernel/physical receipt is promoted.

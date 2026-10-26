@@ -245,3 +245,32 @@ def test_A4_exact_source_parity_and_base_2_recovery():
         assert evaluate(2, n) == all(
             Q(n, (), (x,)+(0,)*8) != 0 for x in domain
         )
+
+
+def test_A4_polynomial_representation_is_syntactically_fixed():
+    t = (
+        ROOT / "RequestProject/Autoformalisation/LostInTranslationAlternation.lean"
+    ).read_text()
+    assert "def evalSourceA4Polynomial" in t
+    assert "P : MvPolynomial (Fin 1 ⊕ (Fin (level - 2) ⊕ Fin 9)) ℤ" in t
+    assert "MvPolynomial.eval" in t
+    assert "sourceA4Predicate" in t
+    assert "sourceAlternationPrefix" in t
+    assert "The coefficient syntax P cannot vary" in t
+    # The old source claim accepted arbitrary Q : List -> tuple -> Int,
+    # allowing a nonpolynomial oracle to encode the target predicate.
+    assert "Q : List ℕ → (Fin 9 → ℕ) → ℤ" not in t
+    assert "source_A4_level_two_is_A3" in t
+    assert not re.search(r"(?m)^\s*(sorry|axiom)\b", t)
+
+
+def test_finite_checker_rejects_python_optimization():
+    import subprocess
+    import sys
+    checker = ROOT / "scripts/check_bch2026_finite_examples.py"
+    run = subprocess.run(
+        [sys.executable, "-O", str(checker)],
+        capture_output=True, text=True, timeout=20,
+    )
+    assert run.returncode != 0
+    assert "BCH finite audit refuses Python -O" in run.stderr

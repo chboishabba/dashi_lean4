@@ -170,6 +170,7 @@ def test_miller_projection_source_semantics_and_no_promotion():
         "unit_direction_projected_le_total",
         "constant_z_plane_formula",
         "parallel_direction_has_zero_cross",
+        "finite_sample_fourth_power_budget",
     ):
         assert "theorem " + name in text
     assert "10.1090/bproc/74" in text
@@ -178,3 +179,20 @@ def test_miller_projection_source_semantics_and_no_promotion():
     assert "RequestProject.NavierStokes.MillerProjectionGeometry" in (
         ROOT / "lakefile.toml"
     ).read_text()
+
+
+def test_sample_enstrophy_to_projection_fourth_power_majorant():
+    """Synthetic sample arithmetic, not an R3 spacetime norm or BKM theorem."""
+    for D in range(0, 5):
+        for p0 in range(D + 1):
+            for p1 in range(D + 1):
+                for p2 in range(D + 1):
+                    projected = (Fraction(p0), Fraction(p1), Fraction(p2))
+                    budget = sum(x*x for x in projected)
+                    assert budget <= 3 * Fraction(D)**2
+    lean = (
+        ROOT / "RequestProject/NavierStokes/MillerProjectionGeometry.lean"
+    ).read_text()
+    assert "finite_sample_fourth_power_budget" in lean
+    assert "source *continuum*" in lean
+    assert "not a proof that the periodic #1271 source" in lean

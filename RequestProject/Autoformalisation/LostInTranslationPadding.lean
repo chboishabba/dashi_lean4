@@ -13,10 +13,10 @@ arXiv:2610.08144v1, Theorem A.4, requires every k >= 9.
 This DASHI lemma proves that padding a nine-tuple with irrelevant
 coordinates preserves both existential-root and universal-nonroot
 SEMANTICS. We instantiate it on the genuine integer `MvPolynomial`
-source evaluator in `LostInTranslationAlternation`. Formally
-constructing a renamed polynomial of arity k and an *effective*
-integer coefficient-code compiler is still separate; this is
-not a proof of Σ_l-completeness or SCI infinity.
+source evaluator in `LostInTranslationAlternation`. An actual arity-k polynomial is constructed below by Mathlib's
+variable-renaming operation. What remains open is an *effective*
+integer coefficient-code compiler and the subsequent completeness/
+SCI theorems.
 -/
 
 namespace RequestProject.Autoformalisation.LostInTranslationPadding

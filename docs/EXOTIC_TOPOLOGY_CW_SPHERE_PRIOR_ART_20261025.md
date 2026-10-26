@@ -715,3 +715,82 @@ space of ends, rather than receiving
 a fabricated identification from finite
 address counts or from this Agda abstract
 `StarChain` record.
+
+
+## 27 October Power 2025: universal Euler–Maxwell and exact finite spherical caps
+
+Primary NEW modern source root: Stephen C. Power,
+*Noncompact surfaces, triangulations and rigidity*,
+Bull. London Math. Soc. 57 (2025), 2097–2115,
+DOI https://doi.org/10.1112/blms.70083,
+earlier preprint arXiv:2403.11986 (2024).
+Theorem 4.5 gives existence of (3,6)-tight
+noncompact triangulations; Theorem 6.4 upgrades
+the chosen construction to minimal generic
+3-rigidity. This source does NOT certify
+arbitrary triangulations, and it is neither
+the original Kerékjártó nor Richards theorem.
+
+This Lean branch now has genuinely NEW
+`Synthesis/ExoticTopologyPLMaxwellGenusNoGo.lean`:
+source-written integer-arithmetic theorems
+`eulerMaxwellWithBoundaryLength`,
+`triangularBoundaryMaxwellGenus`,
+`positiveGenusViolates36WholeGraph`,
+`zeroGenusHasWholeGraphMaxwellSix`.
+The exact general identity is
+
+```text
+3F=2E-L, V-E+F=2-2g-b =>
+3V-E=3(2-2g-b)+L,
+and for triangular boundaries L=3b:
+3V-E=6-6g.
+```
+
+The source is now listed as a named target
+in the focused Lean `lake build` workflow
+but has NOT been kernel-executed.
+
+The sibling Agda #1254 now directly validates
+this identity on source-owned selected finite
+PL surfaces. An independent finite replay
+of 12 stages, also using a separate planar
+graph algorithm, passed: binary Cantor f=6/6/6,
+balanced 1→3 f=6/6/6,
+Loch f=6/0/−6, Jacob f=6/−6/−18.
+Positive genus therefore makes THOSE selected
+finite handled meshes non-(3,6)-sparse even
+though different chosen triangulations
+of those surfaces exist by Power.
+
+Another NEW actual geometric donor on Agda #1254,
+`scripts/exotic_topology_genus_zero_sphere_caps.py`,
+caps each positive-depth genus-zero mesh's
+3-edge boundary with an opposite-oriented
+triangle, using NO new vertices or edges.
+The original oriented PL manifold checker
+recognizes each capped complex as a CLOSED
+genus-zero simplicial 2-sphere. It thus
+supplies a concrete planar embedding of
+the exact same 1-skeleton. Combine with
+the classical planar subgraph bound
+e'≤3v'−6 (for v'≥3) and f=6 to derive
+(3,6)-tightness of the selected finite
+genus-zero meshes at tested depths.
+The single-triangle initial disk K3 has
+a direct planar embedding and cannot
+be capped by duplicating its only face.
+A positive-genus handle cannot be
+spherically capped either. Both cases
+are explicit negative controls.
+
+No new Lean source in this branch proves
+the full planar embedding/subgraph theorem,
+the all-n binary/trit exhaustion,
+Power's minimal 3-rigidity, or the
+actual Richards ideal-boundary
+homeomorphism. The new finite checked
+topology and universal arithmetic are
+separate acceptance layers, and
+original authorship of the modern
+and historical theorem roots is preserved.

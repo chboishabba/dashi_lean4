@@ -85,4 +85,71 @@ coefficients in the chosen enumeration. Our Q is a mathematical function;
 this theorem alone supplies neither effective indices nor Σ^0_2-hardness.
 -/
 
+/-!
+## Appendix A.3: exact enumeration-index search and target equivalence
+
+The paper selects t(e)=μj[enum(j) has exactly the same polynomial
+coefficients as specialised q(e,n,x)]; total computable indexing
+uses two independent inputs: an effective enumeration/equality test and
+surjectivity. We prove index correctness and the membership reduction,
+but not the computability of the selected index.
+
+A generic Code may be specialised to integer polynomial syntax by
+a later donor. Genericity itself supplies no polynomiality.
+-/
+
+/-- A least source index from an actual surjectivity proof.
+No algorithmic computability of this search is claimed. -/
+noncomputable def sourceIndex
+    {Code : Type*} (enumeration : ℕ → Code)
+    (target : ℕ → Code)
+    (hSurjective : Function.Surjective enumeration)
+    (e : ℕ) : ℕ :=
+  Nat.find (hSurjective (target e))
+
+theorem sourceIndex_identifies_source_code
+    {Code : Type*} (enumeration : ℕ → Code)
+    (target : ℕ → Code)
+    (hSurjective : Function.Surjective enumeration)
+    (e : ℕ) :
+    enumeration (sourceIndex enumeration target hSurjective e) =
+      target e := by
+  exact Nat.find_spec (hSurjective (target e))
+
+/-- Original d shape, evaluated on a chosen enumeration code. -/
+def IndexedNoRoot
+    {Code : Type*}
+    (enumeration : ℕ → Code)
+    (root : Code → ℕ → Prop) (index : ℕ) : Prop :=
+  ∃ n : ℕ, ¬ root (enumeration index) n
+
+/-- The exact source index t(e) transports the NTOT predicate to d,
+given a source-specific halting-root representation.
+No effective mapping is constructed or inferred. -/
+theorem sourceIndex_preserves_nontermination_membership
+    {Code : Type*} (enumeration : ℕ → Code)
+    (target : ℕ → Code)
+    (hSurjective : Function.Surjective enumeration)
+    (root : Code → ℕ → Prop) (Halts : ℕ → ℕ → Prop)
+    (hRepresentation :
+      ∀ e n, Halts e n ↔ root (target e) n)
+    (e : ℕ) :
+    SomeInputDoesNotHalt Halts e ↔
+      IndexedNoRoot enumeration root
+        (sourceIndex enumeration target hSurjective e) := by
+  constructor
+  · rintro ⟨n, hNotHalts⟩
+    refine ⟨n, ?_⟩
+    rw [sourceIndex_identifies_source_code
+      enumeration target hSurjective e]
+    intro hRoot
+    exact hNotHalts ((hRepresentation e n).mpr hRoot)
+  · rintro ⟨n, hNotRoot⟩
+    refine ⟨n, ?_⟩
+    intro hHalts
+    apply hNotRoot
+    rw [sourceIndex_identifies_source_code
+      enumeration target hSurjective e]
+    exact (hRepresentation e n).mp hHalts
+
 end RequestProject.Autoformalisation.LostInTranslationNineVariables

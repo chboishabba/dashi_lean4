@@ -1,0 +1,110 @@
+name: 2B post-Brauer final compiler
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean'
+      - 'Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean'
+      - 'Integration/OggSSP2BMonster2LocalThree276Source.lean'
+      - 'Integration/OggSSP2BFi22d2NaturalTenSource.lean'
+      - 'Integration/OggSSP2BMonsterGF2RepresentationSource.lean'
+      - 'Integration/OggSSP2BIteratedTateDefectDetector.lean'
+      - 'Integration/OggSSP2BM22d2OuterClassDuadDefect.lean'
+      - 'Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean'
+      - 'Integration/OggSSP2BTatePlusMinusCokernel.lean'
+      - 'Integration/OggSSP2BCo1UntwistedSectorSplit.lean'
+      - 'Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean'
+      - 'Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean'
+      - 'Integration/OggSSP2BCo1FrobeniusHomRigidity.lean'
+      - 'Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean'
+      - 'Integration/OggSSP2BTateCokernelRankRigidity.lean'
+      - 'Integration/OggSSP2BDirectResidualRankCompiler.lean'
+      - 'Integration/OggSSP2BResidualSupportSqueeze.lean'
+      - 'Integration/OggSSP2BResidualSupportFromFactorization.lean'
+      - 'Integration/OggSSP2BResidualBlockProjectorFactorization.lean'
+      - 'Integration/OggSSP2BBlockProjectorNaturality.lean'
+      - 'Integration/OggSSP2BCentralIdempotentNaturality.lean'
+      - 'Integration/OggSSP2BBlockSeparatedNormCoordinates.lean'
+      - 'Integration/OggSSP2BBlockSeparatedDirectRankWeld.lean'
+      - 'Integration/OggSSP2BBlockSeparatedSupportNormWeld.lean'
+      - 'Integration/OggSSP2BResidualNaturalQuotient.lean'
+      - 'Integration/OggSSP2BEquivariantResidualQuotient.lean'
+      - 'Integration/OggSSP2BEquivariantResidualQuotientRegression.lean'
+      - 'Integration/OggSSP2BResidualFrobeniusWeld.lean'
+      - 'Integration/OggSSP2BResidualFrobeniusEquivarianceCompiler.lean'
+      - 'Integration/OggSSP2BCommonLaneKernelWeld.lean'
+      - 'Integration/OggSSP2BCokernelCancellation.lean'
+      - 'Integration/OggSSP2BNormWeldCompiler.lean'
+      - 'Integration/OggSSP2BResidualExteriorQuotient.lean'
+      - 'Integration/OggSSP2BNormToStableCompletion.lean'
+      - 'Integration/OggSSP2BActualStableCompletionSubquotient.lean'
+      - 'Integration/OggSSP2BStableCompletionModelTransport.lean'
+      - 'Integration/ThreeC2TateFibreFromLinearGroupConjugacy.lean'
+      - 'Integration/OggSSP2BSelectedQ10TransportCompiler.lean'
+      - 'Integration/OggSSP2BAutomaticFinalCompiler.lean'
+      - 'Integration/OggSSP2BPostBrauerFinalCompiler.lean'
+      - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
+      - '.github/workflows/twob-post-brauer-final.yml'
+
+concurrency:
+  group: dashi-global-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Download Mathlib cache
+        run: lake exe cache get
+      - name: Check post-Brauer 2B owners
+        run: |
+          lake env lean Integration/OggSSP2BTate276M24BrauerRuntimeReceipt.lean
+          lake env lean Integration/OggSSP2BBrauerOuterInvolutionBoundary.lean
+          lake env lean Integration/OggSSP2BMonster2LocalThree276Source.lean
+          lake env lean Integration/OggSSP2BFi22d2NaturalTenSource.lean
+          lake env lean Integration/OggSSP2BMonsterGF2RepresentationSource.lean
+          lake env lean Integration/OggSSP2BIteratedTateDefectDetector.lean
+          lake env lean Integration/OggSSP2BM22d2OuterClassDuadDefect.lean
+          lake env lean Integration/OggSSP2BWeightTwoIntegralC2Decomposition.lean
+          lake env lean Integration/OggSSP2BTatePlusMinusCokernel.lean
+          lake env lean Integration/OggSSP2BCo1UntwistedSectorSplit.lean
+          lake env lean Integration/OggSSP2BCo1ExteriorSquareTateCandidate.lean
+          lake env lean Integration/OggSSP2BCo1AugmentationTrivialityCriterion.lean
+          lake env lean Integration/OggSSP2BCo1FrobeniusHomRigidity.lean
+          lake env lean Integration/OggSSP2BCentralizerMod2CancellationRigidity.lean
+          lake env lean Integration/OggSSP2BTateCokernelRankRigidity.lean
+          lake env lean Integration/OggSSP2BDirectResidualRankCompiler.lean
+          lake env lean Integration/OggSSP2BResidualSupportSqueeze.lean
+          lake env lean Integration/OggSSP2BResidualSupportFromFactorization.lean
+          lake env lean Integration/OggSSP2BResidualBlockProjectorFactorization.lean
+          lake env lean Integration/OggSSP2BBlockProjectorNaturality.lean
+          lake env lean Integration/OggSSP2BCentralIdempotentNaturality.lean
+          lake env lean Integration/OggSSP2BBlockSeparatedNormCoordinates.lean
+          lake env lean Integration/OggSSP2BBlockSeparatedDirectRankWeld.lean
+          lake env lean Integration/OggSSP2BBlockSeparatedSupportNormWeld.lean
+          lake env lean Integration/OggSSP2BResidualNaturalQuotient.lean
+          lake env lean Integration/OggSSP2BEquivariantResidualQuotient.lean
+          lake env lean Integration/OggSSP2BEquivariantResidualQuotientRegression.lean
+          lake env lean Integration/OggSSP2BResidualFrobeniusWeld.lean
+          lake env lean Integration/OggSSP2BResidualFrobeniusEquivarianceCompiler.lean
+          lake env lean Integration/OggSSP2BCommonLaneKernelWeld.lean
+          lake env lean Integration/OggSSP2BCokernelCancellation.lean
+          lake env lean Integration/OggSSP2BNormWeldCompiler.lean
+          lake env lean Integration/OggSSP2BResidualExteriorQuotient.lean
+          lake env lean Integration/OggSSP2BNormToStableCompletion.lean
+          lake env lean Integration/OggSSP2BActualStableCompletionSubquotient.lean
+          lake env lean Integration/OggSSP2BStableCompletionModelTransport.lean
+          lake env lean Integration/ThreeC2TateFibreFromLinearGroupConjugacy.lean
+          lake env lean Integration/OggSSP2BSelectedQ10TransportCompiler.lean
+          lake env lean Integration/OggSSP2BAutomaticFinalCompiler.lean
+          lake env lean Integration/OggSSP2BPostBrauerFinalCompiler.lean
+          lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean

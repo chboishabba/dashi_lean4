@@ -1,0 +1,56 @@
+name: 2B unique invariant range weld
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'Integration/OggSSP2BUniqueInvariant24Range.lean'
+      - 'Integration/OggSSP2BUniqueInvariant24RangeRegression.lean'
+      - 'Integration/OggSSP2BUniqueRangeNormWeld.lean'
+      - 'Integration/OggSSP2BUniqueRangeNormWeldRegression.lean'
+      - 'Integration/OggSSP2BEquivariantResidualQuotient.lean'
+      - 'Integration/OggSSP2BEquivariantResidualQuotientRegression.lean'
+      - 'Integration/OggSSP2BResidualFrobeniusEquivarianceCompiler.lean'
+      - 'Integration/OggSSP2BEquivariantRangeInvariant.lean'
+      - 'Integration/OggSSP2BEquivariantRangeInvariantRegression.lean'
+      - 'Integration/OggSSP2BBlockIdempotentNaturality.lean'
+      - 'Integration/OggSSP2BBlockIdempotentNaturalityRegression.lean'
+      - 'Integration/OggSSP2BSocleForcesUnique24.lean'
+      - 'Integration/OggSSP2BCentralizerNormEquivariance.lean'
+      - 'Integration/OggSSP2BCentralizerNormEquivarianceRegression.lean'
+      - 'Integration/OggSSP2BCompletionAcquisitionFrontier.lean'
+      - 'Integration/OggSSP2BPostSocleMaxCut.lean'
+      - '.github/workflows/twob-unique-range-weld.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+      - name: Download Mathlib cache
+        run: lake exe cache get
+      - name: Check unique-range 2B weld
+        run: |
+          lake env lean Integration/OggSSP2BEquivariantResidualQuotient.lean
+          lake env lean Integration/OggSSP2BEquivariantResidualQuotientRegression.lean
+          lake env lean Integration/OggSSP2BResidualFrobeniusEquivarianceCompiler.lean
+          lake env lean Integration/OggSSP2BEquivariantRangeInvariant.lean
+          lake env lean Integration/OggSSP2BEquivariantRangeInvariantRegression.lean
+          lake env lean Integration/OggSSP2BBlockIdempotentNaturality.lean
+          lake env lean Integration/OggSSP2BSocleForcesUnique24.lean
+          lake env lean Integration/OggSSP2BBlockIdempotentNaturalityRegression.lean
+          lake env lean Integration/OggSSP2BCentralizerNormEquivariance.lean
+          lake env lean Integration/OggSSP2BCentralizerNormEquivarianceRegression.lean
+          lake env lean Integration/OggSSP2BUniqueInvariant24Range.lean
+          lake env lean Integration/OggSSP2BUniqueInvariant24RangeRegression.lean
+          lake env lean Integration/OggSSP2BUniqueRangeNormWeld.lean
+          lake env lean Integration/OggSSP2BUniqueRangeNormWeldRegression.lean
+          lake env lean Integration/OggSSP2BCompletionAcquisitionFrontier.lean
+          lake env lean Integration/OggSSP2BPostSocleMaxCut.lean

@@ -1,0 +1,9 @@
+import Integration.OggSSP2BEquivariantCokernelCancellation
+
+namespace Integration.OggSSP2BEquivariantCokernelCancellationRegression
+
+namespace E := Integration.OggSSP2BEquivariantCokernelCancellation
+
+example : E.commonLaneCancellationEquivarianceIsCompilerOutput = true := rfl
+
+end Integration.OggSSP2BEquivariantCokernelCancellationRegression

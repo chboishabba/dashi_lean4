@@ -167,4 +167,77 @@ theorem source_albert_order13_not_native_path_symmetry :
   exact original_order13_breaks_actual_path_edge
     (h 0 chosenY origin_adjacent_y)
 
+
+/-- Max-cut finite strengthening: the SAME original order-13
+Griess/Albert grade actor destroys EVERY original P3³ path edge, not
+just the one selected earlier. Its three source matrix columns have
+support sizes 2,3,2, while spatial neighbours differ in one axis.
+Classical finite graph obstruction, not an F4 or physics no-go. -/
+theorem actual_source_order13_sends_all_original_edges_to_nonedges :
+    ∀ x y : Grade, originalCubeAdjacent x y →
+      ¬ originalCubeAdjacent (gradeOrder13 x) (gradeOrder13 y) := by
+  native_decide
+
+/-- PG(2,3)'s thirteen actual projective Griess grade labels with
+the DIFFERENT source-owned nonwrapping spatial quotient graph
+relation. Its edges are unoriented sign-orbits, NOT the 52 flags of
+the classical projective-plane point-line incidence relation. -/
+def projectiveSpatialAdjacent (a b : Fin 13) : Prop :=
+  a ≠ b ∧
+    (originalCubeAdjacent (projectiveRepresentative a)
+        (projectiveRepresentative b) ∨
+      originalCubeAdjacent (projectiveRepresentative a)
+        (-projectiveRepresentative b))
+
+def projectiveSpatialDegree (a : Fin 13) : Nat :=
+  (Finset.univ.filter fun b : Fin 13 =>
+    projectiveSpatialAdjacent a b).card
+
+theorem actual_projective_spatial_directed_edges :
+    (Finset.univ.filter fun ab : Fin 13 × Fin 13 =>
+      projectiveSpatialAdjacent ab.1 ab.2).card = 48 := by
+  native_decide
+
+/-- Exactly 9 axes of degree 4 and 4 axes of degree 3. A
+transitive 13-cycle on all 13 vertices cannot be a graph symmetry
+because graph automorphisms preserve degree. -/
+theorem actual_projective_spatial_degree_four_count :
+    (Finset.univ.filter fun a : Fin 13 =>
+      projectiveSpatialDegree a = 4).card = 9 := by
+  native_decide
+
+theorem actual_projective_spatial_degree_three_count :
+    (Finset.univ.filter fun a : Fin 13 =>
+      projectiveSpatialDegree a = 3).card = 4 := by
+  native_decide
+
+def sourceProjectiveOrder13 (i : Fin 13) : Fin 13 :=
+  projectiveIndex (gradeOrder13 (projectiveRepresentative i))
+
+/-- The selected source order-13 map takes a single
+13-vertex projective orbit; it cannot preserve degrees 4 and 3. -/
+theorem source_projective13_is_one_orbit :
+    ∀ i j : Fin 13, ∃ k : Fin 13,
+      (sourceProjectiveOrder13^[k.val]) i = j := by
+  native_decide
+
+theorem source_projective_order13_is_not_spatial_graph_automorphism :
+    ¬ ∀ i j : Fin 13,
+      projectiveSpatialAdjacent i j →
+      projectiveSpatialAdjacent
+        (sourceProjectiveOrder13 i)
+        (sourceProjectiveOrder13 j) := by
+  native_decide
+
+/-- The source word preserves exactly five of the 24 unordered
+quotient graph edges (ten directed pairs). In particular this
+numeric fingerprint is NOT 24/24 and NOT the PG(2,3) incidence. -/
+theorem source_projective13_spatial_preserved_directed_edge_count :
+    (Finset.univ.filter fun ij : Fin 13 × Fin 13 =>
+      projectiveSpatialAdjacent ij.1 ij.2 ∧
+      projectiveSpatialAdjacent
+        (sourceProjectiveOrder13 ij.1)
+        (sourceProjectiveOrder13 ij.2)).card = 10 := by
+  native_decide
+
 end Integration.Griess1990Projective13PuncturedCube27SameGrade

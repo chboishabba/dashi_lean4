@@ -155,7 +155,8 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 [[lean_lib]]
 name = "AutoformalisationBCH2026"
 globs = ["RequestProject.Autoformalisation.LostInTranslationExamples",
-         "RequestProject.Autoformalisation.LostInTranslationSCI"]
+         "RequestProject.Autoformalisation.LostInTranslationSCI",
+         "RequestProject.Autoformalisation.LostInTranslationNineVariables"]
 
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
 # for genuine measure/topology/spectral theorems whose supporting infrastructure

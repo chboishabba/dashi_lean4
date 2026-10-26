@@ -70,64 +70,59 @@ theorem finiteThreeSectorStageCount (n : ℕ) :
 variable {Source Receiver : Type*}
   [Group Source] [Group Receiver]
 
-/-- An actual source-to-telescope group isomorphism is mandatory.
-The original #1244 real wild-satellite exterior identification
-remains a SEPARATE unproved geometry input. -/
-structure SourceTelescopeGroupCertificate
-    (Source : Type*) [Group Source] where
-  TelescopeGroup : Type
-  instGroup : Group TelescopeGroup
-  groupEquivalence : Source ≃* TelescopeGroup
+/-- The exact CW mapping telescope group must be inhabited by
+the ORIGINAL Hatcher direct-limit source equivalence, which is
+NOT constructed in this Lean module. The group equivalence is
+an explicit parameter and cannot be conjured from a finite
+rose or the connectedness of a cover. -/
+variable {Telescope : Type*} [Group Telescope]
 
-attribute [instance] SourceTelescopeGroupCertificate.instGroup
-
-/-- Every abstract source holonomy admits an all-depth telescope
-receiver with EXACTLY the same class functions and even the
-same raw matrix after transporting the source word.
-This is a GROUP result, not metric/curvature equivalence. -/
+/-- Any chosen all-depth source representation transports through
+the genuine group isomorphism to the telescope. This does NOT
+transport Euclidean metric, smooth gauge regularity or curvature. -/
 def telescopeReceiver
-    (cert : SourceTelescopeGroupCertificate Source)
+    (sourceToTelescope : Source ≃* Telescope)
     (sourceHolonomy : Source →* Receiver) :
-    cert.TelescopeGroup →* Receiver :=
-  sourceHolonomy.comp cert.groupEquivalence.symm.toMonoidHom
+    Telescope →* Receiver :=
+  sourceHolonomy.comp sourceToTelescope.symm.toMonoidHom
 
 theorem telescopeMatchesEverySourceWord
-    (cert : SourceTelescopeGroupCertificate Source)
+    (sourceToTelescope : Source ≃* Telescope)
     (sourceHolonomy : Source →* Receiver)
     (word : Source) :
-    telescopeReceiver cert sourceHolonomy
-      (cert.groupEquivalence word) =
+    telescopeReceiver sourceToTelescope sourceHolonomy
+      (sourceToTelescope word) =
     sourceHolonomy word := by
   change sourceHolonomy
-    (cert.groupEquivalence.symm (cert.groupEquivalence word)) =
+    (sourceToTelescope.symm (sourceToTelescope word)) =
     sourceHolonomy word
   simp
 
 theorem telescopeMatchesEverySourceObservable
     {Observed : Type*}
-    (cert : SourceTelescopeGroupCertificate Source)
+    (sourceToTelescope : Source ≃* Telescope)
     (sourceHolonomy : Source →* Receiver)
     (observable : Receiver → Observed)
     (word : Source) :
     observable
-      (telescopeReceiver cert sourceHolonomy
-        (cert.groupEquivalence word)) =
+      (telescopeReceiver sourceToTelescope sourceHolonomy
+        (sourceToTelescope word)) =
     observable (sourceHolonomy word) := by
   rw [telescopeMatchesEverySourceWord]
 
-/-- A C3 rotation of the entire group and its conjugate/renamed
-telescope representation may share observables. No spatial
-Euclidean isometry is constructed on the CW telescope. -/
+/-- The source C3 automorphism can be observed on the other
+model's receiver as a group homomorphism, without thereby
+producing a C3 spatial rotation in ambient Euclidean R3. -/
 theorem telescopeMatchesRotatedWords
     {Observed : Type*}
-    (cert : SourceTelescopeGroupCertificate Source)
+    (sourceToTelescope : Source ≃* Telescope)
     (sourceHolonomy : Source →* Receiver)
     (observable : Receiver → Observed)
     (rotate : Source ≃* Source)
     (word : Source) :
     observable
-      (telescopeReceiver cert sourceHolonomy
-        (cert.groupEquivalence (rotate word))) =
+      (telescopeReceiver sourceToTelescope sourceHolonomy
+        (sourceToTelescope (rotate word))) =
     observable (sourceHolonomy (rotate word)) := by
   rw [telescopeMatchesEverySourceWord]
 

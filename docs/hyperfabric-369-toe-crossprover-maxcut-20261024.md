@@ -1381,3 +1381,25 @@ execution not claimed. Lean/Lake kernel NOT RUN.
 Canonical first-link/attribution/acceptance narrative at
 Agda #1249
 docs/hyperfabric-horn-orientation-basing-fringe-ibrahim-maxcut-20261026.md.
+
+
+### Paired curved source error invariance 2026-10-26
+
+Agda #1249's exact original-W matrix control now tests the TRUE
+pairwise unitary error eta=||U-V||op (U=parent, V=the real
+based child commutator). Both simultaneous inversion
+and simultaneous unitary conjugation of U,V preserve eta.
+One-sided basepoint change need not: with V=G W G^-1,
+the actual eta=||W-V||op is nonzero, while a parent-only
+change W->G W G^-1 would artificially return zero.
+This is a severe false-zero/Stokes negative control.
+
+Lean `HornMarkedMeridianOrientationCut.lean` now contains
+`pairedDefectBasingAndOrientation` and
+`pairedCurvedSourceEtaCapTransport`, conditional on the
+same-source unitary norm invariance. Thus the previous
+source-curved eta<=23/500 threshold is robust to *coherent*
+orientation/basing transformations, but cannot be inferred
+from homotopic words or inconsistent transporter choices.
+No actual Hatcher based strip, physical F_A or kernel
+check is claimed.

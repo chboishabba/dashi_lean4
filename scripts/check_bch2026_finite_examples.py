@@ -13,6 +13,8 @@ from fractions import Fraction as Q
 
 
 def run() -> dict[str, int]:
+    if not __debug__:
+        raise RuntimeError("BCH finite audit refuses Python -O: assertions would be stripped")
     counts: dict[str, int] = {}
 
     # Example 2.1: the NL polynomial theorem is correct while the

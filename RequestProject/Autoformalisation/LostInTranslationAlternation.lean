@@ -79,4 +79,64 @@ theorem final_forall_of_nine_variable_representation
     obtain ⟨z, hz⟩ := (hRepresentation xs).mp hC
     exact hNoRoot z hz
 
+/-!
+## Source-exact A.4a/b quantifier parity and finite 9-witness block
+
+For level l>=2, the prefix is Q₂ ... Q_(l-1), with
+Q_j = ∀ when j even, ∃ when j odd. In the final block the paper
+uses ∀x Q≠0 for EVEN l and ∃x Q=0 for ODD l.
+The predicate supplied below is source-shaped, not a proof of
+Sigma^0_l completeness or of effective polynomial enumeration.
+-/
+
+/-- Boolean true=exists, false=forall; index i refers to Q_(i+2). -/
+def sourceAlternationPrefix (level : ℕ) : List Bool :=
+  (List.range (level - 2)).map
+    (fun i => (i + 2) % 2 == 1)
+
+/-- A.4a/b with the exact source alternation and exactly nine final
+natural variables. General k>=9 needs source-preserving padding. -/
+def sourceA4Predicate
+    (level : ℕ) (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (n : ℕ) : Prop :=
+  quantifyPrefix (sourceAlternationPrefix level)
+    (fun zs =>
+      if level % 2 == 0 then
+        ∀ x : Fin 9 → ℕ, Q n zs x ≠ 0
+      else
+        ∃ x : Fin 9 → ℕ, Q n zs x = 0)
+
+/-- Source has exactly (l-2) intermediate quantifier variables. -/
+theorem sourceAlternationPrefix_length (level : ℕ) :
+    (sourceAlternationPrefix level).length = level - 2 := by
+  simp [sourceAlternationPrefix]
+
+/-- Theorem A.4 states the level-two base case is A.3. -/
+theorem source_A4_level_two_is_A3
+    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (n : ℕ) :
+    sourceA4Predicate 2 Q n ↔
+      ∀ x : Fin 9 → ℕ, Q n [] x ≠ 0 := by
+  rfl
+
+/-- Odd level three: Q₂ universal, then a final existential block. -/
+theorem source_A4_level_three_shape
+    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (n : ℕ) :
+    sourceA4Predicate 3 Q n ↔
+      ∀ z₂ : ℕ, ∃ x : Fin 9 → ℕ,
+        Q n [z₂] x = 0 := by
+  rfl
+
+/-- Even level four: Q₂ universal then Q₃ existential, followed
+by a universal non-root block. -/
+theorem source_A4_level_four_shape
+    (Q : ℕ → List ℕ → (Fin 9 → ℕ) → ℤ)
+    (n : ℕ) :
+    sourceA4Predicate 4 Q n ↔
+      ∀ z₂ : ℕ, ∃ z₃ : ℕ,
+        ∀ x : Fin 9 → ℕ,
+          Q n [z₂, z₃] x ≠ 0 := by
+  rfl
+
 end RequestProject.Autoformalisation.LostInTranslationAlternation

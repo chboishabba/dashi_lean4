@@ -129,6 +129,27 @@ def evalSourceA4Polynomial
         (fun i : Fin (level - 2) => ((zs.getD i.val 0 : ℕ) : ℤ))
         (fun i : Fin 9 => (x i : ℤ)))) P
 
+/-- Under the valid source prefix length, every source-variable
+index is actually in range. The List.getD fallback used above cannot
+be reached by any valid prefix assignment. -/
+theorem sourceA4_prefix_coordinate_in_bounds
+    (level : ℕ) (zs : List ℕ)
+    (hLength : zs.length = level - 2)
+    (i : Fin (level - 2)) :
+    i.val < zs.length := by
+  simpa only [hLength] using i.isLt
+
+/-- Consequently evaluation uses the ACTUAL source coordinate, not an
+unjustified manufactured zero. The explicit length witness is essential. -/
+theorem sourceA4_prefix_getD_agrees_with_actual
+    (level : ℕ) (zs : List ℕ)
+    (hLength : zs.length = level - 2)
+    (i : Fin (level - 2)) :
+    zs.getD i.val 0 =
+      zs[i.val]'(sourceA4_prefix_coordinate_in_bounds level zs hLength i) := by
+  exact List.getD_eq_getElem zs 0
+    (sourceA4_prefix_coordinate_in_bounds level zs hLength i)
+
 /-- Even level: universal nonroot final block; odd level:
 existential polynomial-root final block. `P` is syntactic polynomial
 source code, unlike a case-defined function that smuggles C in. -/

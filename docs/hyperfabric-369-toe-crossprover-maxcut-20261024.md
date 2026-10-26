@@ -1550,3 +1550,57 @@ Hatcher Z-A chart. Remaining P0 is the pair
 map, and controlled-Euclidean local meridian
 source), not another scalar or C3 construction.
 No kernel/physical receipt is promoted.
+
+
+### 2026-10-27: finite owner Hopf clasp gets rejected as the Hatcher F2 metric source
+
+Classical original Hatcher AT Ex2B2 gives
+π1(Z)=F2 and nontrivial incoming-annulus
+word alpha=[alpha1,alpha2]. The original
+Agda horn owner #1244 already has exact
+linked clasp closed core circles with lk=−1.
+Our new finite metric CONTROL supplies
+literal C3-equivariant round meridians of
+length pi/32<11/112 after owner source
+scaling, with exact positive core/tube
+clearances and a DISJOINT Hopf isotopy
+certificate. Nevertheless its actual
+SOURCE group is Hopf π1=Z² (Friedl 2024
+Lemma 3.13), not Hatcher F2. Hence all
+images of its commuting meridians have
+commutator ONE; its short loops cannot
+realize any nontrivial W via the Hatcher
+parent commutator. This is the precise
+failure of short-metric-yet-wrong-source.
+
+New source-written
+`Integration/DASHITOE/HornHopfClaspVsHatcherF2NoGoCut.lean`
+formally consumes a COMMUTATIVE source group
+and rejects nontrivial selected W. Separate
+exact SU3 matrices i sigma_x, i sigma_y
+give [A,B]=diag(-1,-1,1), a positive
+nonabelian receiver control for F2.
+The literal ambient Hopf isotopy and
+its group theorem are original/classical
+external sources; **not Lean kernel checked**.
+
+Actual #1244 owner advanced at latest
+head dbf91f81 with
+`ThreeArmHatcherHomotopyTransport.lean` and
+`ThreeArmHatcherPathTransport.lean`: they
+consume the original Hatcher-at
+homotopy-equivalence group map and Mathlib
+based-path transport to global x0. These
+are source-written APIs for the STILL MISSING
+real wild satellite relative equivalence,
+not such an equivalence's geometric proof.
+
+Stop threshold:
+P0 true Hatcher Z punctured-torus
+parent-annulus F2 meridian injection
+through the chosen relative satellite
+collar equivalence, NOT Hopf-linked cores;
+P1 SAME source Euclidean length/metric
+Lipschitz; P2 curved based Stokes source;
+P3 native kernel and physical action.
+No user/source attribution recoded.

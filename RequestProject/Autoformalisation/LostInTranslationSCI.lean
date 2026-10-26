@@ -38,13 +38,15 @@ def ExistencePresupposition (R : ℕ → ℕ → ℕ → Prop)
 existence proof, rather than manufacturing a default witness. -/
 noncomputable def leastPresupposition
     (R : ℕ → ℕ → ℕ → Prop) (e : ℕ)
-    (hExists : ExistencePresupposition R e) : ℕ :=
-  Nat.find hExists
+    (hExists : ExistencePresupposition R e) : ℕ := by
+  classical
+  exact Nat.find hExists
 
 theorem leastPresupposition_is_admissible
     (R : ℕ → ℕ → ℕ → Prop) (e : ℕ)
     (hExists : ExistencePresupposition R e) :
     WitnesslessAt R e (leastPresupposition R e hExists) := by
+  classical
   exact Nat.find_spec hExists
 
 /-- A Boolean candidate is *extensionally correct* as a decision

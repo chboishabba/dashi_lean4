@@ -1290,3 +1290,28 @@ under unitary conjugation, but the generator marking is not free.
 The one-stage curved acceptance additionally requires a based
 source homotopy and transported curvature area. No CI or
 physical selection/Monster-neutrino promotion.
+
+
+### 2026-10-26 latest owner follow-on: C3 basing now paid in #1244
+
+At a subsequent live-head reread, original horn geometry owner
+Agda #1244 advanced to head
+`ae805ee8ec4ca23e7eadec28aa5f90855af75844`.
+Its new `alexander_horned_c3_equivariant_basing_paths.py` exactly
+constructs C3-transported central basing paths from (20,20,20)
+to the already-defined shell-overlap positions 13e_i.
+Its `alexander_horned_c3_same_cover_discriminator.py`
+constructs a SEVERE tame/wild replacement collision: both solids
+share exterior central cover/overlap and basing-path measurements
+without sharing source wild-satellite pi1. These files belong
+to #1244; do not duplicate as a Lean theorem here.
+
+Thus the first not-yet-paid SAME-OBJECT step is the
+**relative satellite Hatcher group equivalence and explicitly
+named generator/meridian transport**, THEN the whole
+finite-stage-avoiding and metrically short local meridian.
+Our quantitative exact W cubic, curved acceptance and scale
+no-go remain independent source-conditional consumers.
+The new cover-based basing paths cannot alone instantiate
+`hRootSpectral`, `hTrueDirectArc`, or the based
+Stokes `hTrueBasedCurvedStep` premises.

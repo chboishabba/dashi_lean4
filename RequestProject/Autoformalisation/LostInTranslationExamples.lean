@@ -52,6 +52,22 @@ theorem symmetric_two_by_two_trace_square_nonnegative
     0 ≤ a ^ 2 + 2 * b ^ 2 + d ^ 2 := by
   positivity
 
+/-- The direct entrywise sum-of-squares proof of the trace-square
+nonnegativity conclusion for a general symmetric real matrix is
+source-described as the AI's *different* proof route (Example 2.2).
+No diagonalisation lemma appears here; source proof-path preservation
+would require a separately checked orthonormal eigenbasis proof. -/
+theorem symmetric_matrix_trace_square_entrywise
+    {n : ℕ} (A : Fin n → Fin n → ℝ)
+    (hSymmetric : ∀ i j, A i j = A j i) :
+    0 ≤ ∑ i : Fin n, ∑ j : Fin n, A i j * A j i := by
+  apply Finset.sum_nonneg
+  intro i _
+  apply Finset.sum_nonneg
+  intro j _
+  rw [hSymmetric j i]
+  exact mul_self_nonneg _
+
 /-! ## §3, Example 3.1: an extra derivative is a real hypothesis debt
 
 The NL equation (8.19) uses C_y^(m+4) to bound C_y^m,

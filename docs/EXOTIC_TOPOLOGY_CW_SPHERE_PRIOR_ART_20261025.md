@@ -868,3 +868,80 @@ their present finite handled meshes are
 (3,6)-tight. The Power rigidity subgoal is a
 secondary construction enhancement, not a
 replacement for the original classification.
+
+
+## 27 October 2026 — SOURCE-PINNED Mathlib Cantor homeomorphism and Lean CI toolchain repair
+
+A direct read of the **ACTUAL LOCKED Mathlib v4.28.0 source**
+`Mathlib/Topology/Instances/CantorSet.lean` (not current HTML docs)
+confirms the genuine theorem
+`cantorSetHomeomorphNatToBool :
+  cantorSet ≃ₜ (ℕ → Bool)` on the **literal middle-thirds
+real Cantor set**, as well as source theorem
+`cantorSpaceHomeomorphNatToCantorSpace`.
+Do not treat a theorem appearing in latest web docs
+as automatically present in the locked version; this
+one WAS confirmed in exactly v4.28.0.
+
+**Original actual source owner credit** (file header):
+Artur Szafarczyk, Suraj Krishna M S, Jean-Baptiste
+Stiegler, Isabelle Dubois, Tomáš Jakl, Lorenzo Zanichelli,
+Alina Yan, Emilie Uthaiwat, Jana Göken and Filippo A. E.
+Nuccio (copyright Jana Göken 2024), Apache-2.0
+Mathlib source. Classical Cantor space remains
+classical mathematics; DASHI reuses the original
+Mathlib theorem rather than claiming discovery.
+
+New
+`Synthesis/ExoticTopologyCantorInverseLimitHomeomorph.lean`
+does **not** redefine the frontier, stage or stream.
+It reuses `CompatibleCantorTower`,
+`Integration.Address.Addr n Bool`, and
+the proven two-sided inverse-limit equiv from the
+existing `ExoticTopologyCantorInverseLimit.lean`.
+It supplies the REAL inverse-limit topology, induced
+by `(fun t => t.stage)` into the ordinary product of
+finite discrete stage spaces. Via Mathlib's pinned
+`continuous_pi`, `continuous_apply` and
+`continuous_induced_rng`, it source-writes actual
+continuity in BOTH directions between coherent
+towers and product-topology binary streams.
+It then composes the pinned Mathlib
+`cantorSetHomeomorphNatToBool` to produce
+`realCantorSetHomeomorphToSourceFrontiers :
+   cantorSet ≃ₜ CompatibleCantorTower`.
+This is not a homeomorphism of the eventual
+Freudenthal/Richards end space of our infinite
+surface; that actual geometric same-object
+comparison remains unresolved.
+
+**A real P0 environment defect was fixed in the
+focused Lean workflow, NOT globally:**
+the original root `lean-toolchain` is
+`leanprover/lean4:v4.35.0-rc3`, while Mathlib
+`rev = v4.28.0` itself pins
+`leanprover/lean4:v4.28.0`. The earlier focused
+CI workflow printed the conflict but still
+ran `lake exe cache get` under v4.35.
+New `.github/workflows/exotic-topology-lean-focused.yml`
+sets **job-local**
+`LEAN_TOOLCHAIN=leanprover/lean4:v4.28.0`,
+prints both versions, installs cached mathlib
+and checks that the fetched package
+`.lake/packages/mathlib/lean-toolchain`
+matches v4.28.0. The entire project's v4.35
+root file and lock revisions remain unchanged.
+If unrelated repo files require v4.35, their
+compatibility is a separately reported CI
+issue, not permission to silently retarget
+the canonical Mathlib theorem attribution.
+
+**Proof-status gate:** source-written exact
+theorem/API checked against upstream v4.28.0;
+not yet source/kernel-compiled under the repo's
+actual imports. The workflow is an execution
+specification, not a passing receipt. This
+pays a genuine conditional phase-3
+SYMBOLIC end-space topology input. The
+unrealised noncompact surface itself and
+its genuine space of ends are still OPEN.

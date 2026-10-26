@@ -56,6 +56,54 @@ theorem quantifyPrefix_congr
           · rintro ⟨x, hx⟩
             exact ⟨x, (ih _ _ (fun ys => h (x :: ys))).mpr hx⟩
 
+/-- A quantifier-prefix consumer cannot access malformed-length
+assignments: this eliminates a potential *new* default-value trap in
+the source-level MvPolynomial evaluator. Two predicates that agree on
+assignments of the actual prefix length are indistinguishable under
+that prefix, even if they differ on arbitrary other lists. -/
+theorem quantifyPrefix_congr_at_valid_length
+    (prefix : List Bool) (P Q : List ℕ → Prop)
+    (h : ∀ zs : List ℕ,
+      zs.length = prefix.length → (P zs ↔ Q zs)) :
+    quantifyPrefix prefix P ↔ quantifyPrefix prefix Q := by
+  induction prefix generalizing P Q with
+  | nil =>
+      exact h [] rfl
+  | cons b rest ih =>
+      cases b with
+      | false =>
+          change (∀ x : ℕ, quantifyPrefix rest (fun ys => P (x :: ys))) ↔
+            (∀ x : ℕ, quantifyPrefix rest (fun ys => Q (x :: ys)))
+          constructor
+          · intro hp x
+            have hx : ∀ ys : List ℕ, ys.length = rest.length →
+                (P (x :: ys) ↔ Q (x :: ys)) := by
+              intro ys hlen
+              exact h (x :: ys) (by simp [hlen])
+            exact (ih _ _ hx).mp (hp x)
+          · intro hq x
+            have hx : ∀ ys : List ℕ, ys.length = rest.length →
+                (P (x :: ys) ↔ Q (x :: ys)) := by
+              intro ys hlen
+              exact h (x :: ys) (by simp [hlen])
+            exact (ih _ _ hx).mpr (hq x)
+      | true =>
+          change (∃ x : ℕ, quantifyPrefix rest (fun ys => P (x :: ys))) ↔
+            (∃ x : ℕ, quantifyPrefix rest (fun ys => Q (x :: ys)))
+          constructor
+          · rintro ⟨x, hp⟩
+            have hx : ∀ ys : List ℕ, ys.length = rest.length →
+                (P (x :: ys) ↔ Q (x :: ys)) := by
+              intro ys hlen
+              exact h (x :: ys) (by simp [hlen])
+            exact ⟨x, (ih _ _ hx).mp hp⟩
+          · rintro ⟨x, hq⟩
+            have hx : ∀ ys : List ℕ, ys.length = rest.length →
+                (P (x :: ys) ↔ Q (x :: ys)) := by
+              intro ys hlen
+              exact h (x :: ys) (by simp [hlen])
+            exact ⟨x, (ih _ _ hx).mpr hq⟩
+
 /-- Q₂=∀, Q₃=∃, alternating thereafter; prefix length is l-2. -/
 def sourceAlternationPrefix (level : ℕ) : List Bool :=
   (List.range (level - 2)).map

@@ -90,14 +90,14 @@ def cantorEndInverseLimitHomeomorph :
 /-- Compose with Mathlib's pinned v4.28.0 theorem on the LITERAL
 real middle-thirds Cantor set, not a new hand-defined subset. -/
 noncomputable def realCantorSetHomeomorphToSourceFrontiers :
-    (↑cantorSet) ≃ₜ CompatibleCantorTower :=
+    cantorSet ≃ₜ CompatibleCantorTower :=
   cantorSetHomeomorphNatToBool.trans
     cantorEndInverseLimitHomeomorph.symm
 
 /-- Retains the same exact finite-stage projection identity for
 the resulting real Cantor-set point via the SOURCE coherent tower. -/
 theorem realCantorStageForget
-    (x : (↑cantorSet)) (n : ℕ) :
+    (x : cantorSet) (n : ℕ) :
     forgetLast n ((realCantorSetHomeomorphToSourceFrontiers x).stage (n + 1)) =
       (realCantorSetHomeomorphToSourceFrontiers x).stage n := by
   funext i

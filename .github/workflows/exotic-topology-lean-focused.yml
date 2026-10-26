@@ -34,6 +34,7 @@ jobs:
         run: |
           lake build \
             Synthesis.ExoticTopologyCantorInverseLimit \
+            Synthesis.ExoticTopologyCantorInverseLimitHomeomorph \
             Synthesis.ExoticTopologyCantorClopenMeasureNoGo \
             Synthesis.ExoticTopologyPLMaxwellGenusNoGo \
             Synthesis.ExoticTopologyCP1TopCatSphereWeld \

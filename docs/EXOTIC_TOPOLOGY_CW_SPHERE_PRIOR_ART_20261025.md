@@ -571,3 +571,72 @@ matched to the NEW chronological event semantics
 before attempting a kernel Freudenthal/Richards
 homeomorphism theorem. The geometric and kernel
 tasks remain open and separately attributed.
+
+
+## 26 Oct: maximum reuse of Agda's actual balanced-ternary PL source (no Lean clone)
+
+Agda #1254 now imports the ALREADY-owned `DASHI.Algebra.Trit`,
+`Codec.BalancedTritBitFibre`, native SSP369 address,
+balanced-prefix ultrametric and exact two-pants
+1→3 `TernaryPantsFrontierExact` apparatus.
+
+New source-written Agda
+`ExoticBalancedTernaryPantsWeldExact.agda`
+establishes digit3/6/9 ↔ neg/zero/pos, two-sided
+arbitrary-depth finite-word maps, prefix-agreement
+transport into the REAL existing balanced ultrametric,
+and exact branch append naturality by importing the
+original ternary pants theorem. Order-two sign reversal
+is distinguished from the order-three cyclic group.
+
+New local-PL script `exotic_topology_balanced_ternary_pl.py`
+actually glues TWO original three-holed pairs of
+pants per outgoing boundary to make a genus-zero
+FOUR-boundary 1→3 cobordism, with a genuine outgoing
+zero branch. It reuses the existing simplex/vertex
+link and dual-complement component algorithm.
+An independently executed local PL reimplementation
+gave boundary counts 1,3,9,27, genus zero throughout,
+component counts 1,3,9 and 7,723 triangles at depth3.
+This is a finite calculation, not a Lean/Agda kernel
+or Freudenthal/Richards topology certificate.
+
+New Agda `ExoticBalancedDepthThreeCubeSetBridgeExact.agda`
+reuses ACTUAL original `SSPTritCarrier` roundtrips
+and `Base369Ternary27HypervoxelFabricGeometryExact`
+for a 27 balanced-leaf-label ↔ 27 cube-point SET
+bijection. The native cube GRID graph has 54
+edges and optional same-prefix 3-leaf sibling
+pairing has 27 pairs (overlap 18; 9 sibling-only,
+36 cube-only). Do not promote set equality to
+graph equivalence, or 2D connected surface
+to finite 3D points, or the latest #1261
+punctured-26/13 antipodal projective graph
+to an infinite end space.
+
+Most important for THIS Lean branch: the existing
+`ExoticTopologyCantorInverseLimit.lean` already
+reuses `Integration.Address.Addr n Bool` as its
+binary coherent-prefix tower. A balanced ternary
+end tower can be compared using the **existing**
+Agda prefix-free code `3→0,6→10,9→11`
+(the source-wide mathematical product topology
+homeomorphism has explicit moduli n and 2n).
+No new Lean CW/finite-trit library was fabricated
+here. The fair binary and uniform ternary
+Bernoulli measures remain inequivalent under
+homeomorphisms by the source-owned dyadic
+clopen 1/3 obstruction; topology≠measure≠group.
+
+Agda #1254 also source-writes
+`ExoticHornChronologicalCantorConsumerExact.agda`
+against the newest parent #1244 real Horn
+newest-first → append-chronological conversion,
+closing exact symbolic Horn child-Cantor cylinder
+inclusion and C3 endpoint invariance; this is NOT
+a clopen partition of the connected ambient wild
+3-manifold exterior. Original-source attribution
+(Brahana, Kerékjártó, Richards, Atiyah and prior
+DASHI owners) and repo-local implementation
+remain separate. All new proof-bearing sources
+are KERNEL-PENDING at the observed heads.

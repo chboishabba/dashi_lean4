@@ -73,3 +73,40 @@ def test_opt_in_no_default_target_expansion():
     assert len(mathlib) == 1 and mathlib[0]["inputRev"] == "v4.28.0"
     # Root-vs-Mathlib toolchain divergence requires scoped override.
     assert toolchain == "leanprover/lean4:v4.35.0-rc3"
+
+
+def test_appendix_a3_nine_variable_logical_bridge_is_exactly_conditional():
+    lean = (
+        ROOT / "RequestProject/Autoformalisation/LostInTranslationNineVariables.lean"
+    ).read_text()
+    for theorem in (
+        "not_nine_root_iff_all_nonzero",
+        "semantic_reduction_at_nine_variables",
+    ):
+        assert "theorem " + theorem in lean
+    assert "Fin 9 → ℕ" in lean
+    assert "hDPRMNine" in lean
+    assert "no source-to-polynomial code compiler" in lean.lower()
+    assert "effective" in lean.lower()
+    assert not re.search(r"(?m)^\s*(axiom|sorry)\b", lean)
+    assert "RequestProject.Autoformalisation.LostInTranslationNineVariables" in (
+        ROOT / "lakefile.toml"
+    ).read_text()
+
+
+def test_exact_nine_variable_diophantine_replay_on_two_toy_sources():
+    """Finite source-shaped replay; not DPRM/Sigma2 proof."""
+    def nine_root(e: int, n: int, x: tuple[int, ...]) -> int:
+        assert len(x) == 9
+        return (e - n)**2 + sum(t*t for t in x)
+    for e in range(20):
+        for n in range(20):
+            halts = (e == n)
+            root_exists = (nine_root(e, n, (0,) * 9) == 0)
+            assert halts == root_exists
+            # Sum of nonnegative integer squares cannot vanish unless
+            # the seed (e-n)^2 vanishes.
+            assert not halts or root_exists
+            assert (not halts) == (not root_exists)
+    for e in range(20):
+        assert any(n != e for n in range(20))

@@ -79,4 +79,62 @@ theorem zeroGenusHasWholeGraphMaxwellSix
     3 * V - E = 6 := by
   omega
 
+
+/-- Exact boundary-length budget for the *whole graph* to have
+Maxwell count six, assuming genuine triangular-face incidence
+and the Euler characteristic of the selected bordered surface.
+
+This is necessary but NOT sufficient for all-subgraph sparsity,
+generic 3-rigidity, or the existence of a compatible infinite
+tower. It is the budget implicit in Power's construction:
+a genus-g stage needs 6g extra boundary edges beyond
+three per boundary circle. -/
+theorem tightWholeGraphIffBoundaryBudget
+    (V E F L g b : ℤ)
+    (incidence : 3 * F = 2 * E - L)
+    (euler : V - E + F = 2 - 2 * g - b) :
+    (3 * V - E = 6) ↔ (L = 3 * b + 6 * g) := by
+  constructor
+  · intro ht
+    have hm := eulerMaxwellWithBoundaryLength
+      V E F L g b incidence euler
+    omega
+  · intro hb
+    have hm := eulerMaxwellWithBoundaryLength
+      V E F L g b incidence euler
+    omega
+
+/-- Even a necessary (3,6)-sparse full-graph count forces the
+boundary surplus to cover the genus. -/
+theorem sparseWholeGraphRequiresBoundaryBudget
+    (V E F L g b : ℤ)
+    (incidence : 3 * F = 2 * E - L)
+    (euler : V - E + F = 2 - 2 * g - b)
+    (wholeGraphBound : 6 ≤ 3 * V - E) :
+    3 * b + 6 * g ≤ L := by
+  have hm := eulerMaxwellWithBoundaryLength
+    V E F L g b incidence euler
+  omega
+
+/-- An n-handle one-tail stage needs 3+6n boundary edges,
+not the unchanged triangular 3-cycle in the current mesh.
+This is a necessary whole-graph count, not a rigidity proof. -/
+theorem lochNessNecessaryBoundaryLength
+    (V E F L n : ℤ)
+    (incidence : 3 * F = 2 * E - L)
+    (euler : V - E + F = 1 - 2 * n)
+    (wholeTight : 3 * V - E = 6) :
+    L = 3 + 6 * n := by
+  omega
+
+/-- A two-tail n-handle-on-each-side Jacob stage has genus 2n
+and hence needs 6+12n total boundary edges for full count six. -/
+theorem jacobLadderNecessaryBoundaryLength
+    (V E F L n : ℤ)
+    (incidence : 3 * F = 2 * E - L)
+    (euler : V - E + F = -(4 * n))
+    (wholeTight : 3 * V - E = 6) :
+    L = 6 + 12 * n := by
+  omega
+
 end Synthesis.ExoticTopology

@@ -39,6 +39,8 @@ def source_quantified(level: int, n: int,
 
     def evaluate(stage: int, zs: tuple[int, ...]) -> bool:
         if stage == len(prefix):
+            if len(zs) != level - 2:
+                raise ValueError("Malformed source quantifier prefix")
             roots = (
                 eval_fixed_polynomial(n, zs, x, coeff) == 0
                 for x in FINAL_WITNESSES

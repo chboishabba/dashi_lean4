@@ -155,7 +155,7 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 # not inhabit the physical A3 criterion or a stationary PDE existence proof.
 [[lean_lib]]
 name = "NSPaperBridges"
-globs = ["RequestProject.NavierStokes.MillerAnisotropicAlgebra", "RequestProject.NavierStokes.YanRadulescuPressure", "RequestProject.NavierStokes.YanRadulescuCubeSeed"]
+globs = ["RequestProject.NavierStokes.MillerAnisotropicAlgebra", "RequestProject.NavierStokes.YanRadulescuPressure", "RequestProject.NavierStokes.YanRadulescuCubeSeed", "RequestProject.NavierStokes.YanRadulescuExactSeed", "RequestProject.NavierStokes.YanRadulescuPressureCountermodel"]
 
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
 # for genuine measure/topology/spectral theorems whose supporting infrastructure

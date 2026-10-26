@@ -152,4 +152,43 @@ theorem sourceIndex_preserves_nontermination_membership
       enumeration target hSurjective e]
     exact (hRepresentation e n).mp hHalts
 
+/-!
+## Appendix A.3: instantiate the source enumeration with real polynomials
+
+The paper's source index enumerates INTEGER-COEFFICIENT POLYNOMIALS
+in (n,x₁,...,x₉), not abstract codes. The type below pays that
+syntactic polynomial requirement by using Mathlib's MvPolynomial.
+What remains unpaid is the explicit computable enumeration, the
+specialisation of a nine-unknown universal polynomial, and a
+computable-index-search theorem. Do NOT promote a noncomputable
+Nat.find to a verified Turing reduction.
+-/
+
+/-- A genuine integer-coefficient 10-variable polynomial with
+one distinguished natural parameter and nine natural root variables. -/
+def IntegerPolynomialRoot
+    (P : MvPolynomial (Fin 1 ⊕ Fin 9) ℤ) (n : ℕ) : Prop :=
+  ∃ x : Fin 9 → ℕ,
+    MvPolynomial.eval
+      (Sum.elim (fun _ : Fin 1 => (n : ℤ))
+        (fun i : Fin 9 => (x i : ℤ))) P = 0
+
+/-- Instantiates the earlier exact index search at the PAPER's
+polynomial source type. The source's nine-variable DPRM and
+computable enumeration premises remain external/visible. -/
+theorem polynomial_index_reduces_ntot_if_representation_is_paid
+    (enumeration : ℕ → MvPolynomial (Fin 1 ⊕ Fin 9) ℤ)
+    (hSurj : Function.Surjective enumeration)
+    (specialized : ℕ → MvPolynomial (Fin 1 ⊕ Fin 9) ℤ)
+    (Halts : ℕ → ℕ → Prop)
+    (hNineVariablePolynomial :
+      ∀ e n, Halts e n ↔ IntegerPolynomialRoot (specialized e) n)
+    (e : ℕ) :
+    SomeInputDoesNotHalt Halts e ↔
+      IndexedNoRoot enumeration IntegerPolynomialRoot
+        (sourceIndex enumeration specialized hSurj e) := by
+  exact sourceIndex_preserves_nontermination_membership
+    enumeration specialized hSurj IntegerPolynomialRoot
+    Halts hNineVariablePolynomial e
+
 end RequestProject.Autoformalisation.LostInTranslationNineVariables

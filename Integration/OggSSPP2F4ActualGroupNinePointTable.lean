@@ -30,6 +30,35 @@ open WeierstrassCurve
 
 abbrev W := B.specialCurve.toAffine
 
+/-- The inverse of P=(0,0). -/
+noncomputable def Pbar : E.ActualCurveGroup :=
+  E.fromAffineEquation 0 1 (by norm_num)
+
+/-- The inverse of Q=(1,zeta). -/
+noncomputable def Qbar : E.ActualCurveGroup :=
+  E.fromAffineEquation 1 (Z.zeta ^ 2) (by
+    simpa using Z.zeta_squared_trace_one)
+
+theorem neg_P_eq_Pbar :
+    -G.P = Pbar := by
+  unfold G.P Pbar E.fromAffineEquation
+  rw [WeierstrassCurve.Affine.Point.neg_some]
+  rw [WeierstrassCurve.Affine.Point.some.injEq]
+  constructor
+  · rfl
+  · simp [WeierstrassCurve.Affine.negY, B.specialCurve]
+
+theorem neg_Q_eq_Qbar :
+    -G.Q = Qbar := by
+  unfold G.Q Qbar E.fromAffineEquation
+  rw [WeierstrassCurve.Affine.Point.neg_some]
+  rw [WeierstrassCurve.Affine.Point.some.injEq]
+  constructor
+  · rfl
+  · simp [WeierstrassCurve.Affine.negY, B.specialCurve]
+    have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+    linear_combination Z.zeta_trace_one + htwo
+
 noncomputable def S : E.ActualCurveGroup :=
   E.fromAffineEquation (Z.zeta ^ 2) (Z.zeta ^ 2) (by
     calc
@@ -126,7 +155,8 @@ theorem chart_10 :
     Basis.actualC3SquareAddEquiv (1,0) = G.P := by simp
 
 theorem chart_20 :
-    Basis.actualC3SquareAddEquiv (2,0) = -G.P := by
+    Basis.actualC3SquareAddEquiv (2,0) = Pbar := by
+  rw [← neg_P_eq_Pbar]
   simp [Basis.actualC3SquareAddEquiv_apply, G.candidateChart,
     R.P_add_P_eq_neg_P, two_nsmul]
 
@@ -134,7 +164,8 @@ theorem chart_01 :
     Basis.actualC3SquareAddEquiv (0,1) = G.Q := by simp
 
 theorem chart_02 :
-    Basis.actualC3SquareAddEquiv (0,2) = -G.Q := by
+    Basis.actualC3SquareAddEquiv (0,2) = Qbar := by
+  rw [← neg_Q_eq_Qbar]
   simp [Basis.actualC3SquareAddEquiv_apply, G.candidateChart,
     R.Q_add_Q_eq_neg_Q, two_nsmul]
 

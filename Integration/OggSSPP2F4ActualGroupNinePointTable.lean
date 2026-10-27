@@ -79,6 +79,46 @@ theorem P_sub_Q_eq_S :
   rw [WeierstrassCurve.Affine.Point.some.injEq]
   exact ⟨addX_P_negQ, addY_P_negQ⟩
 
+/-- The inverse of S=(zeta²,zeta²), with the same x-coordinate. -/
+noncomputable def T : E.ActualCurveGroup :=
+  E.fromAffineEquation (Z.zeta ^ 2) Z.zeta (by
+    calc
+      Z.zeta ^ 2 + Z.zeta = 1 := Z.zeta_trace_one
+      _ = (Z.zeta ^ 2) ^ 3 := by
+        symm
+        exact (Z.cube_one_iff (Z.zeta ^ 2)).2
+          (Or.inr (Or.inr rfl)))
+
+/-- The inverse of R=(zeta,zeta). -/
+noncomputable def U : E.ActualCurveGroup :=
+  E.fromAffineEquation Z.zeta (Z.zeta ^ 2) (by
+    calc
+      (Z.zeta ^ 2) ^ 2 + Z.zeta ^ 2 = 1 :=
+        Z.zeta_squared_trace_one
+      _ = Z.zeta ^ 3 := Z.zeta_cube_is_one.symm)
+
+theorem neg_S_eq_T :
+    -S = T := by
+  unfold S T E.fromAffineEquation
+  rw [WeierstrassCurve.Affine.Point.neg_some]
+  rw [WeierstrassCurve.Affine.Point.some.injEq]
+  constructor
+  · rfl
+  · simp [WeierstrassCurve.Affine.negY, B.specialCurve]
+    have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+    linear_combination Z.zeta_trace_one + htwo
+
+theorem neg_R_eq_U :
+    -R.R = U := by
+  unfold R.R U E.fromAffineEquation
+  rw [WeierstrassCurve.Affine.Point.neg_some]
+  rw [WeierstrassCurve.Affine.Point.some.injEq]
+  constructor
+  · rfl
+  · simp [WeierstrassCurve.Affine.negY, B.specialCurve]
+    have htwo : (2 : B.F4) = 0 := CharP.cast_eq_zero B.F4 2
+    linear_combination Z.zeta_trace_one + htwo
+
 theorem chart_00 :
     Basis.actualC3SquareAddEquiv (0,0) = 0 := by simp
 
@@ -110,18 +150,19 @@ theorem chart_12 :
   simpa [sub_eq_add_neg] using P_sub_Q_eq_S
 
 theorem chart_21 :
-    Basis.actualC3SquareAddEquiv (2,1) = -S := by
+    Basis.actualC3SquareAddEquiv (2,1) = T := by
   rw [Basis.actualC3SquareAddEquiv_apply]
   simp [G.candidateChart, two_nsmul, R.P_add_P_eq_neg_P]
   have h := congrArg Neg.neg P_sub_Q_eq_S
+  rw [← neg_S_eq_T]
   simpa [sub_eq_add_neg, neg_add_rev] using h
 
 theorem chart_22 :
-    Basis.actualC3SquareAddEquiv (2,2) = -R.R := by
+    Basis.actualC3SquareAddEquiv (2,2) = U := by
   rw [Basis.actualC3SquareAddEquiv_apply]
   simp [G.candidateChart, two_nsmul,
     R.P_add_P_eq_neg_P, R.Q_add_Q_eq_neg_Q]
-  rw [← neg_add]
+  rw [← neg_R_eq_U, ← neg_add]
   exact congrArg Neg.neg R.P_add_Q_eq_R
 
 structure Boundary where

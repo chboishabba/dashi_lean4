@@ -1,6 +1,12 @@
 name: J369 p2 Banerjee geometric source kernel
 
 on:
+  push:
+    paths:
+      - "Integration/OggSSPP2F4ActualGroupGenerators.lean"
+      - "Integration/OggSSPP2F4ActualGroupBasisLaw.lean"
+      - "Integration/OggSSPP2F4ActualThreeTorsion.lean"
+      - ".github/workflows/j369-p2-banerjee-geometry.yml"
   pull_request:
     paths:
       - "Integration/OggSSPP2BanerjeeF4UniversalDeformationSource.lean"

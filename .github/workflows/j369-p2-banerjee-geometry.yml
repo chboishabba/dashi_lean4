@@ -5,6 +5,9 @@ on:
     paths:
       - "Integration/OggSSPP2F4ActualGroupGenerators.lean"
       - "Integration/OggSSPP2F4ActualGroupBasisLaw.lean"
+      - "Integration/OggSSPP2F4ActualGroupExponentThree.lean"
+      - "Integration/OggSSPP2F4ActualCoordinateActionGlobal.lean"
+      - "Integration/OggSSPP2F4ActualGroupNinePointTable.lean"
       - "Integration/OggSSPP2F4ActualThreeTorsion.lean"
       - ".github/workflows/j369-p2-banerjee-geometry.yml"
   pull_request:
@@ -70,4 +73,10 @@ jobs:
         run: lake env lean Integration/OggSSPP2F4ActualEllipticGroup.lean
       - name: Check actual P Q candidate basis
         run: lake env lean Integration/OggSSPP2F4ActualGroupGenerators.lean
+      - name: Check global coordinate action recognition
+        run: lake env lean Integration/OggSSPP2F4ActualCoordinateActionGlobal.lean
+      - name: Check actual nine-point group table
+        run: lake env lean Integration/OggSSPP2F4ActualGroupNinePointTable.lean
+      - name: Check actual exponent-three group theorem
+        run: lake env lean Integration/OggSSPP2F4ActualGroupExponentThree.lean
 

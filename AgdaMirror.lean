@@ -125,6 +125,12 @@ provides faithful Lean mirrors:
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
 
+* **Safe-and-just paper-chain mirror**: `AuthorityBoundary` also mirrors the
+  golden Agda non-promotion ledger for the O'Neill 2018 -> Fanning 2022 ->
+  Kallis 2025 chain.  It checks a finite lossy-count witness and keeps forecast,
+  provisioning, GDP-association, and policy-authority promotions closed.  Agda
+  remains the formal authority.
+
 * **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
 
 * **AdK exact-CV mirror**: the source-facing residue/domain roles and mass

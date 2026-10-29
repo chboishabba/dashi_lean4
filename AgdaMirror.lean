@@ -146,3 +146,5 @@ import AgdaMirror.JInvariant369TenRankSeventeenHyperformalism
 import AgdaMirror.AntigravitySourceGeometryWeld
 
 import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation
+
+import AgdaMirror.PlantNutrientTransport

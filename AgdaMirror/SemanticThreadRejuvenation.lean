@@ -91,4 +91,26 @@ theorem worker01ComparisonPreserved :
 theorem worker01ChangePreserved :
     canonicalWorker01.mutation = .change "change" := rfl
 
+
+/- Worker 06: parsed input is supplied, not proven correct. -/
+structure ParsedAutoNode where
+  parsedText : String
+  expanded : Bool
+  deriving DecidableEq
+
+def collapseAuto (node : ParsedAutoNode) : ParsedAutoNode :=
+  ⟨node.parsedText, false⟩
+
+theorem collapseAutoPreservesText (node : ParsedAutoNode) :
+    (collapseAuto node).parsedText = node.parsedText := rfl
+
+theorem collapseAutoHides (node : ParsedAutoNode) :
+    (collapseAuto node).expanded = false := rfl
+
+theorem collapseAutoIdempotent (node : ParsedAutoNode) :
+    collapseAuto (collapseAuto node) = collapseAuto node := by
+  cases node with
+  | mk parsedText expanded =>
+    rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

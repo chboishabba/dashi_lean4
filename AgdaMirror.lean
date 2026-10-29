@@ -1,3 +1,4 @@
+import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation
 import AgdaMirror.StageTwelveGrothendieckRelation
 import AgdaMirror.JInvariantSheafDescent
 import AgdaMirror.Moonshine
@@ -57,6 +58,7 @@ import AgdaMirror.SignatureDerivation
 import AgdaMirror.PhysicsConformance
 import AgdaMirror.QuotientSetoidSurface
 import AgdaMirror.AuthorityBoundary
+import AgdaMirror.WetteConstructiveFoundations
 import AgdaMirror.SeaMeInItPhysicalSuitClosure
 import AgdaMirror.SeaMeInItAdaptiveSuitClosure
 import AgdaMirror.IntersectionalNonFactorability
@@ -144,5 +146,3 @@ import AgdaMirror.JInvariant369Zeta6561MonsterCrosswalk
 import AgdaMirror.JInvariant369TenRankSeventeenHyperformalism
 
 import AgdaMirror.AntigravitySourceGeometryWeld
-
-import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation

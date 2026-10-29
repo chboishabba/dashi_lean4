@@ -94,4 +94,41 @@ def comparatorChallengeIsProofAuthority : Bool := false
 /-- The routed atlas never manufactures a solution to a broader Millennium problem. -/
 def sourceAtlasPromotesMillenniumClaims : Bool := false
 
+
+/-- An upstream proof released after our immutable vendor pin. This metadata
+does NOT cause the pinned submodule to contain the source theorem or make a
+DASHI kernel acceptance claim. Source status and import status are different. -/
+structure LaterUpstreamReceipt where
+  familyId : String
+  observedUpstreamCommit : String
+  releaseDate : String
+  solutionModule : String
+  declaration : String
+  comparator : String
+  presentAtPinnedVendor : Bool := false
+  dashiKernelVerified : Bool := false
+  sameObjectTransportPaid : Bool := false
+  deriving Repr
+
+/-- Family 378: the October 26 addition, inspected directly in the public
+upstream Lean solution and Comparator sources. Exact count, SAT, machine steps,
+and all-prefix visited-tape bounds; *not* a proof of P = NP.
+Previous DASHI SAT compiler results have independent ownership and do not
+supply this runtime theorem. -/
+def ethSubexponentialLater : LaterUpstreamReceipt :=
+  { familyId := "378"
+    observedUpstreamCommit := "7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a"
+    releaseDate := "2026-10-26"
+    solutionModule := "OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.Final"
+    declaration := "OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.exact_count_and_sat"
+    comparator := "ComparatorChallenges.SubexponentialSAT" }
+
+/-- The current DASHI source pin predates the later family-378 source. -/
+theorem laterEthNotPresentInVendor :
+    ethSubexponentialLater.presentAtPinnedVendor = false := rfl
+
+/-- A separately pinned, local same-object proof receipt remains unpaid. -/
+theorem laterEthNotYetDashiVerified :
+    ethSubexponentialLater.dashiKernelVerified = false := rfl
+
 end Integration.OpenAIMath

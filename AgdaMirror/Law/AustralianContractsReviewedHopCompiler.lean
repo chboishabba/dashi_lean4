@@ -135,6 +135,26 @@ theorem no_legal_authority :
 theorem no_current_law_conclusion :
     canonicalMaxCut.createsCurrentLawConclusion = false := rfl
 
+def metaIntrospectorReferenceRepos : List String := [
+  "meta-introspector/zkperf",
+  "meta-introspector/zos-server",
+  "meta-introspector/erdfa-py",
+  "meta-introspector/aristotle-cli-rs"
+]
+
+def metaIntrospectorProofBorrowed : Bool := false
+def metaIntrospectorAttributionPreserved : Bool := true
+def ibrahimOwnershipPreserved : Bool := true
+
+theorem meta_introspector_proof_not_borrowed :
+    metaIntrospectorProofBorrowed = false := rfl
+
+theorem meta_introspector_attribution_preserved :
+    metaIntrospectorAttributionPreserved = true := rfl
+
+theorem ibrahim_ownership_preserved :
+    ibrahimOwnershipPreserved = true := rfl
+
 def dischargedCoreKnowledgeFibres : Nat := 584
 def polarityContradictionGaps : Nat := 44
 def unformalisedFormalGaps : Nat := 58

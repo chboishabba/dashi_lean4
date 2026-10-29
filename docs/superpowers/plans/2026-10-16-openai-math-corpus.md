@@ -269,3 +269,35 @@ Precise result: for any undirected nonnegative weighted finite graph and vertex 
 - [ ] **PARETO1 ranked source-faithful tests:** First: TSP→SAT variable blow-up; A* admissibility; exact ETH theorem type. Next: RSA factor certificate and Shor source identity. Finally: tetration/9999 as counterexample-backed complexity diagnostic. Reuse #772 recursive selective invalidation without duplicate owner.
 
 **Roadmap cut:** No kernel-verified TSP→SAT complexity transfer, admissible TSP A* heuristic, or uniform tetration-based factoring improvement is claimed in this tranche. Existing source-written finite arithmetic, pathfinding and RSA owners are useful donors but not same-object proof receipts.
+
+
+## 29 October 2026 — CORRECTION: Pickover sine `99^(9999!)`, not factoring/tetration
+
+**User correction accepted.** The relevant challenge is `sign(sin(99^(9999!)))`, with **postfix factorial**. The prefix `!9999` is the unrelated subfactorial/derangement count. Previous `FACT3` tetration-to-factoring framing must NOT be represented as the user's intended 9999 task. Treat the previous FACT3 as an optional independently gated arithmetic experiment, not a motivating source or necessary ETH/P-vs-NP bridge.
+
+**Actual repository owners verified in Agda PR #1414, head `b87483e44d5fef456c0aa081b957f0d736873e51`:**
+- `DASHI/Foundations/PolynomialPickoverFactorialGammaDegreeExact.agda` defines `factorialIndex9999 = 9999 !` and `pickoverInteger = 99 ^ factorialIndex9999`. It distinguishes degree-angle reduction and radian analytic authority, includes factorial vs subfactorial typed differentiation, modular cycle witnesses, and makes `isRadianAngleSolvedHere = false`. Historical Euler/Legendre Gamma and classical Euler phase law have their own attribution. Analytic Gamma interpolation is conditional.
+- Agda #1260 owns the pre-existing exact `9999` CRT / factorial and Machin-rational sign-probe machinery on an independent branch; import only once merge/reconciliation allows; do not copy/reassign its source proof ownership.
+- Primary mathematical search: https://math.stackexchange.com/questions/5152905/determining-the-sign-of-sin999999-is-straightforward-with-the-angle-in . This is **discussion**, not an accepted mathematical proof or original Pickover publication. Degrees: `pow(99, factorial(9999), 360) = 81`, so sine positive. Radians: cannot reduce integer argument modulo 360; needs rigorously certified distance from nearest multiple of `pi`, with enough precision to settle sign. Neither tetration, CRT residue nor finite decimal coincidence by itself solves this analytical sign.
+
+**Confirmed PR #1414 27→11→7 reusable owner and proof status:**
+- `PolynomialC3S3TwentySevenOrbitQuotientExact.agda`: C3 conjugation on the **27 functions** of three-valued truth set, 11 orbit classes (three fixed plus eight triples), actual classifier/representatives/witnesses, induced reflection, map to seven S3 classes, orbit-iff equivalence and invariant-function factorization. SOURCE-WRITTEN, no Agda kernel receipt.
+- `PolynomialC3S3OrbitFieldVectorAtlasExact.agda`: 7/11/27 length field codecs with 3^7/3^11/3^27 counts and 11=7+4 residual coordinates. No Fourier-eigenspace or Monster identification inferred.
+- `PolynomialC3S3OrbitSamplingProjectionExact.agda`: selected-representative projections `P_C3`/`P_S3` idempotent with nested absorption, not Fourier averaging or orthogonal projection.
+- Non-equivariance: conjugation C3 has fixed points; free output-phase C3 has none. No equivariant identification. **Separate quotients**: conjugation 27→11→7; output phase 27→9; unrelated horn five-orbit quotient in Agda #1244.
+- Dedicated original Agda roadmap `Docs/papers/PolynomialVideoTernaryOrbitInvariantFieldsRoadmap20261029.md` tracks O01–O24 and later O25–O26 at #1414; keep its detailed algebraic ownership, status and independent geometric/Spin/Galois boundaries there. No new duplicate orbit theorem belongs in Lean ingestion branch.
+
+### New priority ledger and false-weld guards
+
+- [x] **PICK0 expression identity:** `99^(9999!)` distinguished from `99^(!9999)`, `(99^9999)!` and tetration. Paid at source level in Agda #1414.
+- [x] **PICK1 degree sign:** exact residue `81 mod 360` and positive sine in degrees; Agda source and cited independent finite run. Local Agda kernel pending.
+- [ ] **PICK2 radians sign:** need an actually checkable interval enclosure for `99^(9999!) / pi` or the equivalent rational enclosure of `pi` with precision sufficient to determine which sine half-period contains the huge integer; computing a decimal approximation with ordinary precision is not evidence. Complexity and rational-interval bit lengths may be astronomical.
+- [ ] **PICK3 prior art:** confirm original Pickover publication (if any); record existing math discussion as secondary source only, original historical modular periodicity and Gamma authorship separately; do not claim original discovery.
+- [x] **ORB1 existing quotient:** reuse #1414 27→11→7 with exact 27 classifiers, source-only proof and finite tests; different from phase 27→9 and horn five-orbit.
+- [x] **ORB2 non-equivalence:** no fixed-point-preserving equivariant identification of conjugation action with free output-phase action.
+- [ ] **ORB3 kernel:** typecheck exact #1414 Agda checkout and imports; retain kernel pending until receipt.
+- [ ] **ORB4 Fourier extension:** only attempt actual C3/S3 representation-equivariant character/Fourier intertwiner on typed invariant fields; sampling projectors are not averages. Check characteristic and inner product before claiming orthogonality.
+- [ ] **ORB5 cross-domain search:** mathematical joining to OpenAI ETH SAT counting/TSP/Max-Cut requires explicit graph/constraint action, orbit-preserved objective or counting-weight identity, and complexity/encoding bounds. Bare 27/11/7 counts or parity cannot transfer hardness or SAT speedup.
+- [ ] **SOURCE1 updated original attribution:** separate historic finite-group/orbit/Galois mathematics, PR #1414 original Agda proof authoring, PR #1260 arithmetic owners, external OpenAI ETH/Max-Cut formalizer, executed Python and Agda-kernel status, and Ibrahim Monster 3B original ownership. No coincidental numerical or character fingerprints become a same-object representation.
+
+**Pareto order:** first preserve already-paid #1414/#1260 owners, then obtain PICK2 analytic sign bounds if feasible, then exact ORB4 Fourier proof; only after actual same-object coupling should OpenAI SAT/graph complexity receive a bridge. No CI edit required; missing compiler receipts remain explicit.

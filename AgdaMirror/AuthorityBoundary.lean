@@ -262,3 +262,20 @@ def canonicalSafeJustLegalGovernanceZKPFrame : TOEZKPFrame where
   createsMonsterRecognition := false
 
 end AgdaMirror.AuthorityBoundaries
+
+
+namespace AgdaMirror.AuthorityBoundaries
+
+theorem goldenAgdaOwnershipPinned :
+    canonicalSafeJustLegalGovernanceBoundary.goldenAgdaOwnsFormalSemantics = true := by
+  rfl
+
+theorem dischargedFleetFibresStayOutsideTarget :
+    canonicalSafeJustLegalGovernanceBoundary.discharged584FibresRetargeted = false := by
+  rfl
+
+theorem onlyFormalGapFrontierRemainsTargeted :
+    canonicalSafeJustLegalGovernanceBoundary.only58UnformalisedFormalGapsRemainTargeted = true := by
+  rfl
+
+end AgdaMirror.AuthorityBoundaries

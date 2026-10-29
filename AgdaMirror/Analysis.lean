@@ -4,4 +4,9 @@ import AgdaMirror.Analysis.CanonicalRationalMetric
 import AgdaMirror.Analysis.ConcreteComplex
 import AgdaMirror.Analysis.ConstructiveIntermediateValue
 
-/-! Lean mirrors of the `DASHI/Analysis` tranche completed in Aristotle wave 1. -/
+/-! Lean mirrors of golden `DASHI/Analysis` contracts.
+
+The residual-budget mirror is current golden infrastructure.
+It does not promote Lean status into an Agda proof.
+-/
+import AgdaMirror.Analysis.ResidualBudgetMarginCompilerExact

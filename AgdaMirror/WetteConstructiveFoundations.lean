@@ -44,6 +44,7 @@ inductive Premise27Residual where
   deriving DecidableEq, Repr
 
 structure GoldenBoundaryReceipt where
+  canonicalPremise18SpineRecoveryDischarged : Bool
   canonicalP145PremisesFixed : Bool
   generatedScaffoldCompleteExceptMajors : Bool
   sharedPremises1015ProducedOnce : Bool
@@ -57,7 +58,8 @@ structure GoldenBoundaryReceipt where
   deriving DecidableEq, Repr
 
 def canonicalGoldenBoundary : GoldenBoundaryReceipt :=
-  { canonicalP145PremisesFixed := true
+  { canonicalPremise18SpineRecoveryDischarged := true
+    canonicalP145PremisesFixed := true
     generatedScaffoldCompleteExceptMajors := true
     sharedPremises1015ProducedOnce := true
     premise18Selected9323RouteCloses := true
@@ -67,6 +69,9 @@ def canonicalGoldenBoundary : GoldenBoundaryReceipt :=
     documentationCreatesMajorProof := false
     verificationStatusCreatesMajorProof := false
     fleetPriorityCreatesMajorProof := false }
+
+theorem canonicalPremise18SpineRecoveryIsDischarged :
+    canonicalGoldenBoundary.canonicalPremise18SpineRecoveryDischarged = true := rfl
 
 theorem canonicalP145PremisesFixed :
     canonicalGoldenBoundary.canonicalP145PremisesFixed = true := rfl

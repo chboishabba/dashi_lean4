@@ -201,3 +201,14 @@ Source admission completes only after every pinned manuscript and every catalogu
 **Attribution:** Goemans–Williamson SDP approximation, Unique Games hardness source authors, OpenAI released formalization, and previous DASHI ternary/orbit theorem owners are separate. A new exact graph quotient proof by DASHI, if supplied, is attributable to its repository implementation, not original invention of the general method.
 
 **Immediate blocker:** exact upstream family-102 Lean theorem signature and direct same-problem DASHI graph objective owner not yet source-verified in this pass; do not declare reduction complete.
+
+
+### 29 October — actual finite Max-Cut orbit regression committed
+
+Lean #78 branch commit `796781ba2decdb66b00e1243e3dfba5817e15797` adds `scripts/check_openai_maxcut_orbit_objective.py`. An equivalent locally executed Python script passed finite graph/orbit/counterexample tests in this session. The committed script itself has not been independently re-executed by a connected checkout or CI; mark **SOURCE-WRITTEN**, with local algorithmic-equivalent **EXECUTED CHECK**, not kernel-accepted.
+
+Precise result: for any undirected nonnegative weighted finite graph and vertex partition (orbits of a weight-preserving automorphism action), sum inter-orbit edge weights. Each Boolean quotient assignment lifts to a vertex-orbit-constant cut with **identical** weighted objective; every invariant cut descends. Thus `maxCutInvariant(G,H) = maxCut(quotientWeighted(G,H)) <= maxCut(G)`. The inequality is strict for a one-edge two-vertex graph with vertex-swap symmetry, and a four-cycle with transitive rotation. This finite proof idea is classical; source regression code ownership is DASHI.
+
+**New proof target:** Re-express this theorem over upstream `OAI.OptimalMaxCut.Graph.cutSize` (simple unweighted graph, edges exactly once), rather than inventing a second graph ontology. Verify the actual upstream pinned solution theorem `OAI.OptimalMaxCut.main` separately. State weighted orbit aggregation as a target interface and prove an objective-preserving graph-reduction law plus a polynomial encoding/runtime bound only when the quotient graph family grows with input. Do not claim general Max-Cut hardness for fixed 9/27 sites or on symmetry-restricted cuts. Compare with #1407 mathematical 13/27–5/9 involution, but do not identify its signed Fourier coefficient involution with graph automorphism without a concrete action on the graph edges.
+
+**Highest-alpha follow-up:** (1) Lean native exact cut/quotient theorem on pinned upstream graph type; (2) source-verified uniform complexity transport, preserving thresholds and output scale; (3) graph family/action witness from existing finite fibre owners; (4) reverse BIDI and prior-art ledger with Ibrahim Pareto/snowball source custody; (5) optional lifted symmetry QAOA orbit-state reduction, maintaining the distinction between invariant *assignments* and invariant *linear subspaces*.

@@ -89,4 +89,86 @@ structure DASHIUniversalTheory where
   scaleOf : State → Scale
   causalOf : State → CausalStructure
 
+
+/-!
+SensibLaw numeric-PNF delta-fed projection mirror.
+
+Agda is the golden theorem authority:
+* DASHI.Cognition.PNF.SetwiseGroupedFibreProjectionExact
+* DASHI.Cognition.PNF.AffectedBoundaryLocalReductionExact
+* DASHI.Cognition.PNF.SentenceAnaphorSetwiseProjectionExact
+
+This Lean surface mirrors the normalized execution contract only.
+It does not promote candidate evidence to resolution and does not replace the
+Agda proofs.
+-/
+
+structure DeltaFedProjection
+    (SourceDelta ProjectionRelation AffectedKeys Authority : Type) where
+  projectDelta : SourceDelta → ProjectionRelation
+  affectedKeys : ProjectionRelation → AffectedKeys
+  legacyAuthority : SourceDelta → Authority
+  deltaFedAuthority : SourceDelta → Authority
+  finalAuthorityExact :
+    ∀ delta, legacyAuthority delta = deltaFedAuthority delta
+  sourceInteriorRescanCount : SourceDelta → Nat
+  sourceInteriorRescanCountIsZero :
+    ∀ delta, sourceInteriorRescanCount delta = 0
+  recursiveSelfUpdateCount : SourceDelta → Nat
+  recursiveSelfUpdateCountIsZero :
+    ∀ delta, recursiveSelfUpdateCount delta = 0
+  perSourceProceduralStatementCount : SourceDelta → Nat
+  perSourceProceduralStatementCountIsZero :
+    ∀ delta, perSourceProceduralStatementCount delta = 0
+
+structure AffectedLocalReducer
+    (State Delta AffectedKeys : Type) where
+  affected : Delta → AffectedKeys
+  affectedKeyCount : AffectedKeys → Nat
+  reduceAffected : State → Delta → State
+  emittedDeltaCount : State → Delta → Nat
+  noAffectedKeysPreserveState :
+    ∀ state delta,
+      affectedKeyCount (affected delta) = 0 →
+      reduceAffected state delta = state
+  noStateChangeEmitsNoDelta :
+    ∀ state delta,
+      reduceAffected state delta = state →
+      emittedDeltaCount state delta = 0
+
+inductive PNFAnaphorSurfaceIdentityPromotion : Prop
+
+inductive PNFAnaphorCandidateResolutionPromotion : Prop
+
+inductive PNFAnaphorRecursiveSelfUpdate : Prop
+
+theorem pnfAnaphorSurfaceIdentityPromotionImpossible :
+    ¬ PNFAnaphorSurfaceIdentityPromotion := by
+  intro h
+  cases h
+
+theorem pnfAnaphorCandidateResolutionPromotionImpossible :
+    ¬ PNFAnaphorCandidateResolutionPromotion := by
+  intro h
+  cases h
+
+theorem pnfAnaphorRecursiveSelfUpdateImpossible :
+    ¬ PNFAnaphorRecursiveSelfUpdate := by
+  intro h
+  cases h
+
+structure SentenceAnaphorProjectionZKPFrame
+    (SourceDelta ProjectionRelation AffectedKeys Authority State : Type) where
+  projectionSystem :
+    DeltaFedProjection
+      SourceDelta ProjectionRelation AffectedKeys Authority
+  localReducer :
+    AffectedLocalReducer State ProjectionRelation AffectedKeys
+  surfaceIdentityNonPromotion :
+    ¬ PNFAnaphorSurfaceIdentityPromotion
+  candidateResolutionNonPromotion :
+    ¬ PNFAnaphorCandidateResolutionPromotion
+  recursiveSelfUpdateNonPromotion :
+    ¬ PNFAnaphorRecursiveSelfUpdate
+
 end DASHITOE

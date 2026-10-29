@@ -113,4 +113,21 @@ theorem collapseAutoIdempotent (node : ParsedAutoNode) :
   | mk parsedText expanded =>
     rfl
 
+
+/- Worker 08: a fixture witness is not an executed runtime test. -/
+structure TextTestCase where
+  inputText : String
+  expectedText : String
+
+structure TextTestResult where
+  testCase : TextTestCase
+  observedText : String
+  matchesExpected : observedText = testCase.expectedText
+
+def canonicalTextTest (text : String) : TextTestResult :=
+  ⟨⟨text, text⟩, text, rfl⟩
+
+theorem canonicalTextTestMatches (text : String) :
+    (canonicalTextTest text).observedText = text := rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

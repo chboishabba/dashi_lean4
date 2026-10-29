@@ -125,6 +125,12 @@ provides faithful Lean mirrors:
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
 
+* **Golden safe/just legal-governance mirror**: `AuthorityBoundary` also mirrors
+  the stable Agda TOE exports for literal Fanning provenance, compositional
+  compliance handoffs, SensibLaw/Actionstep non-promotion, the 584/58 fleet
+  target invariant, and the O/R/C/S/L/P/G/F governance receipt. Agda remains
+  the semantic owner.
+
 * **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
 
 * **AdK exact-CV mirror**: the source-facing residue/domain roles and mass

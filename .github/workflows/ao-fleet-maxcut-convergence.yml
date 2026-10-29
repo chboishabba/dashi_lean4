@@ -1,0 +1,18 @@
+name: AO fleet max-cut Lean mirror
+
+on:
+  pull_request:
+    paths:
+      - 'Dashi/AOFleetMaxCutConvergence.lean'
+      - 'Docs/AOFleetMaxCutConvergence.md'
+      - '.github/workflows/ao-fleet-maxcut-convergence.yml'
+  workflow_dispatch:
+
+jobs:
+  exact-head-lean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check AO fleet mirror
+        run: lake env lean Dashi/AOFleetMaxCutConvergence.lean

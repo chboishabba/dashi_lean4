@@ -125,6 +125,12 @@ provides faithful Lean mirrors:
   (abstract entropy systems, restoration, completion law — with the genuinely
   provable 3-adic, `ℤ/6`-regularity, and no-infinite-descent facts proved).
 
+* **Golden safe/just legal-governance mirror**: `AuthorityBoundary` also mirrors
+  the stable Agda TOE exports for literal Fanning provenance, compositional
+  compliance handoffs, SensibLaw/Actionstep non-promotion, the 584/58 fleet
+  target invariant, and the O/R/C/S/L/P/G/F governance receipt. Agda remains
+  the semantic owner. The same surface now mirrors settlement-mediated norm transmission while keeping party obligation, platform policy, competitor adoption, industry convention, and generally binding law distinct. The Meta 2026 fixture follows the official Meta and California AG source boundary. The JMD poster remains interpretive provenance and does not create legal authority.
+
 * **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
 
 * **AdK exact-CV mirror**: the source-facing residue/domain roles and mass

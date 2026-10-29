@@ -186,3 +186,18 @@ Statuses: `MANUSCRIPT_ONLY`, `FORMAL_SOURCE_IDENTIFIED`, `SOURCE_WRITTEN`, `EXEC
 ### Stop condition
 
 Source admission completes only after every pinned manuscript and every catalogue entry has a row and revision policy; formal theorem promotion completes only for named entries with adequate kernel and target transport receipts. Research into every remaining unformalized manuscript and general Clay problems is **not** silently included in ingestion completion. Record all walls in the evidence row; never fake completion.
+
+
+### 29 October — Max-Cut terminology correction and original owner reuse
+
+**Confirmed two different senses of “max-cut”:**
+1. OpenAI family 102 is the actual graph-optimization/approximation-hardness theorem `OAI.OptimalMaxCut.main` in `OAI.Computability.MaxCut.Main` (source-owned OpenAI `openai/math`, pinned above). Independent mathvet review lists `OptimalMaxCut` among built/audited solutions and Comparator-accepted challenges. Verify actual target statement directly before adapting it.
+2. DASHI's “max-cut” often names a *frontier/obligation partition*, not the graph optimization problem. Existing Agda `DASHI.Unified.TOE369MaxCutKernelBidiTernaryExact` is a theorem reuse / nonpromotion aggregate, not a Max-Cut graph-hardness proof.
+
+**Recent reuse:** Agda #1407 owns 27/9 antipodal orbit symmetry, Hermitian Q(omega) reconstruction and 729-contribution finite convolution (source-written; kernel pending); #1390/#1336 converge finite-ternary/kernel-BIDI/Ibrahim nonpromotion; #1249 owns distinct path/periodic cube graph/Fourier geometry. Keep these mathematical owners separate from OpenAI family 102 and from graph-hardness claims.
+
+**Corrected P2 max-cut:** First inspect the **actual** type and assumptions of `OAI.OptimalMaxCut.main`. Identify its graph classes, weighted/unweighted convention, approximation ratio, Unique Games assumptions, reduction and complexity model. Separately audit DASHI for any existing *actual graph-cut objective* and corresponding algorithm/reduction. Only then attempt a graph-morphism or group-orbit quotient with an exact weighted edge-count/objective identity and polynomial-time construction. The necessary condition for orbit compression is that edge weights are invariant under the acting graph automorphism group (or that a more general equitable quotient preserves the relevant weighted cut), not that a 27- or 9-element orbit count merely matches. If group-invariant cuts are only a restricted subclass, their quotient optimum need not equal unrestricted Max-Cut; retain this as an explicit counterexample/negative-control task. In particular, no hardness transfer from general graphs to fixed 27-vertex finite graphs can exist under standard variable-input complexity definitions; a finite fixed graph has constant-size exhaustive search. Require a *uniform variable-size graph family* plus polynomial reduction and objective/approximation-preserving correspondence.
+
+**Attribution:** Goemans–Williamson SDP approximation, Unique Games hardness source authors, OpenAI released formalization, and previous DASHI ternary/orbit theorem owners are separate. A new exact graph quotient proof by DASHI, if supplied, is attributable to its repository implementation, not original invention of the general method.
+
+**Immediate blocker:** exact upstream family-102 Lean theorem signature and direct same-problem DASHI graph objective owner not yet source-verified in this pass; do not declare reduction complete.

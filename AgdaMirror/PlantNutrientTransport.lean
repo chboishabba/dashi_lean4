@@ -113,4 +113,31 @@ theorem controlledComparisonRequiredBeforeCausalPromotion :
         .controlledComparisonIsRequiredForCausalPromotion = true := by
   rfl
 
+
+structure LeafAreaNutrientCouplingBoundary where
+  leafAreaCanChangeTranspiringSurface : Bool
+  transpirationCanCoupleToRootWaterDemand : Bool
+  photosyntheticSurfaceCanCoupleToCarbonSupply : Bool
+  nutrientDemandCanCoupleToWholePlantGrowth : Bool
+  leafAreaAloneDeterminesNutrientUptake : Bool
+  soilMoistureAloneDeterminesNutrientUptake : Bool
+  wholePlantStateNeededForNutrientCouplingClaim : Bool
+
+def canonicalLeafAreaNutrientCouplingBoundary :
+    LeafAreaNutrientCouplingBoundary :=
+  {
+    leafAreaCanChangeTranspiringSurface := true
+    transpirationCanCoupleToRootWaterDemand := true
+    photosyntheticSurfaceCanCoupleToCarbonSupply := true
+    nutrientDemandCanCoupleToWholePlantGrowth := true
+    leafAreaAloneDeterminesNutrientUptake := false
+    soilMoistureAloneDeterminesNutrientUptake := false
+    wholePlantStateNeededForNutrientCouplingClaim := true
+  }
+
+theorem leafAreaDoesNotDetermineNutrientUptakeAlone :
+    canonicalLeafAreaNutrientCouplingBoundary
+        .leafAreaAloneDeterminesNutrientUptake = false := by
+  rfl
+
 end AgdaMirror.PlantNutrientTransport

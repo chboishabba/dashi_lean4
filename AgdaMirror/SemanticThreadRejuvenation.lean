@@ -163,4 +163,30 @@ theorem chooseRatherPreservesPhrase (preferred alternative : String) :
 theorem chooseRatherSelectsPreferred (preferred alternative : String) :
     (chooseRather preferred alternative).selected = preferred := rfl
 
+
+/- Worker 12: protocol buffering, not kernel execution or GPU buffering. -/
+structure BufferedTestResult where
+  bufferedResult : TextTestResult
+  pending : Bool
+
+def bufferResult (result : TextTestResult) : BufferedTestResult :=
+  ⟨result, true⟩
+
+def releaseBuffered (entry : BufferedTestResult) : BufferedTestResult :=
+  ⟨entry.bufferedResult, false⟩
+
+theorem bufferPreservesObserved (result : TextTestResult) :
+    (bufferResult result).bufferedResult.observedText = result.observedText := rfl
+
+theorem releasePreservesResult (entry : BufferedTestResult) :
+    (releaseBuffered entry).bufferedResult = entry.bufferedResult := rfl
+
+theorem releaseClearsPending (entry : BufferedTestResult) :
+    (releaseBuffered entry).pending = false := rfl
+
+theorem releaseIdempotent (entry : BufferedTestResult) :
+    releaseBuffered (releaseBuffered entry) = releaseBuffered entry := by
+  cases entry with
+  | mk bufferedResult pending => rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

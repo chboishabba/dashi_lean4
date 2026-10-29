@@ -278,4 +278,132 @@ theorem onlyFormalGapFrontierRemainsTargeted :
     canonicalSafeJustLegalGovernanceBoundary.only58UnformalisedFormalGapsRemainTargeted = true := by
   rfl
 
+/-!
+## Settlement-mediated institutional norm transmission
+
+This mirrors the golden Agda owner
+`DASHI.Core.InstitutionalNormProductionExact`.
+
+The mirror keeps party binding force, platform policy, competitor adoption,
+industry convention, and generally binding law distinct.
+-/
+
+inductive NormativeReach where
+  | partyBound
+  | platformPolicy
+  | competitorAdoption
+  | industryConvention
+  | generallyBindingLaw
+  deriving DecidableEq, Repr
+
+inductive AuthoritySource where
+  | settlementAuthority
+  | voluntaryPolicyAuthority
+  | competitorPressureAuthority
+  | legislativeAuthority
+  | judicialHoldingAuthority
+  deriving DecidableEq, Repr
+
+structure SettlementTransmission where
+  origin : NormativeReach
+  platformSurface : NormativeReach
+  competitorSurface : NormativeReach
+  industrySurface : NormativeReach
+  deriving Repr
+
+def canonicalSettlementTransmission : SettlementTransmission where
+  origin := .partyBound
+  platformSurface := .platformPolicy
+  competitorSurface := .competitorAdoption
+  industrySurface := .industryConvention
+
+inductive IndustryConventionCreatesFederalLaw : Prop
+inductive SettlementCreatesSupremeCourtHolding : Prop
+inductive SettlementCreatesConstitutionalPrecedent : Prop
+inductive SameVisiblePolicyImpliesSameAuthoritySource : Prop
+
+theorem industryConventionDoesNotCreateFederalLaw :
+    ¬ IndustryConventionCreatesFederalLaw := by
+  intro h
+  cases h
+
+theorem settlementDoesNotCreateSupremeCourtHolding :
+    ¬ SettlementCreatesSupremeCourtHolding := by
+  intro h
+  cases h
+
+theorem settlementDoesNotCreateConstitutionalPrecedent :
+    ¬ SettlementCreatesConstitutionalPrecedent := by
+  intro h
+  cases h
+
+theorem sameVisiblePolicyDoesNotImplySameAuthoritySource :
+    ¬ SameVisiblePolicyImpliesSameAuthoritySource := by
+  intro h
+  cases h
+
+structure SettlementTransmissionBoundary where
+  settlementCanBindParties : Bool
+  settlementCanBindPartiesIsTrue : settlementCanBindParties = true
+  settlementAloneBindsCompetitors : Bool
+  settlementAloneBindsCompetitorsIsFalse : settlementAloneBindsCompetitors = false
+  competitorAdoptionCanConvergePolicy : Bool
+  competitorAdoptionCanConvergePolicyIsTrue :
+    competitorAdoptionCanConvergePolicy = true
+  industryConventionIsFederalLaw : Bool
+  industryConventionIsFederalLawIsFalse : industryConventionIsFederalLaw = false
+  settlementIsSupremeCourtHolding : Bool
+  settlementIsSupremeCourtHoldingIsFalse : settlementIsSupremeCourtHolding = false
+  settlementIsConstitutionalPrecedent : Bool
+  settlementIsConstitutionalPrecedentIsFalse :
+    settlementIsConstitutionalPrecedent = false
+  sameVisiblePolicyImpliesSameAuthority : Bool
+  sameVisiblePolicyImpliesSameAuthorityIsFalse :
+    sameVisiblePolicyImpliesSameAuthority = false
+  productionHistoryRemainsRelevant : Bool
+  productionHistoryRemainsRelevantIsTrue :
+    productionHistoryRemainsRelevant = true
+
+def canonicalSettlementTransmissionBoundary : SettlementTransmissionBoundary where
+  settlementCanBindParties := true
+  settlementCanBindPartiesIsTrue := rfl
+  settlementAloneBindsCompetitors := false
+  settlementAloneBindsCompetitorsIsFalse := rfl
+  competitorAdoptionCanConvergePolicy := true
+  competitorAdoptionCanConvergePolicyIsTrue := rfl
+  industryConventionIsFederalLaw := false
+  industryConventionIsFederalLawIsFalse := rfl
+  settlementIsSupremeCourtHolding := false
+  settlementIsSupremeCourtHoldingIsFalse := rfl
+  settlementIsConstitutionalPrecedent := false
+  settlementIsConstitutionalPrecedentIsFalse := rfl
+  sameVisiblePolicyImpliesSameAuthority := false
+  sameVisiblePolicyImpliesSameAuthorityIsFalse := rfl
+  productionHistoryRemainsRelevant := true
+  productionHistoryRemainsRelevantIsTrue := rfl
+
+def canonicalSettlementNormTransmissionZKPFrame : TOEZKPFrame where
+  objective :=
+    "O: formalize settlement-mediated norm transmission without promoting convergence into generally binding law"
+  reuse :=
+    "R: mirror the golden Agda institutional norm owner and existing TOE governance handoff"
+  construction :=
+    "C: mirror only the stable boundary and non-promotion receipts"
+  safetyInvariant :=
+    "S: party obligation, platform policy, competitor adoption, industry convention, and generally binding law remain distinct"
+  lane :=
+    "L: one disjoint governance lane; the 584 discharged fibres remain outside the 58-gap target"
+  preconditions :=
+    "P: a settlement source, party scope, policy surface, and authority source are typed before downstream claims"
+  governance :=
+    "G: process standards are governance lenses only; they do not create legal or theorem authority"
+  postconditions :=
+    "F: same visible policy does not imply the same authority source; convergence does not create federal law"
+  verification :=
+    "Lean mirrors Agda only; exact-head kernel verification is required before claiming Lean success"
+  esdMutationAllowed := false
+  createsPhysicalPromotion := false
+  createsHistoricalIdentity := false
+  createsMonsterRecognition := false
+
 end AgdaMirror.AuthorityBoundaries

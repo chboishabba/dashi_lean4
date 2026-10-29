@@ -1,3 +1,4 @@
+import AgdaMirror.Law.AustralianContractsReviewedHopCompiler
 import AgdaMirror.StageTwelveGrothendieckRelation
 import AgdaMirror.JInvariantSheafDescent
 import AgdaMirror.Moonshine

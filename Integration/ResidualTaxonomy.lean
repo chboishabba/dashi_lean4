@@ -172,4 +172,84 @@ theorem contrastive_not_reconstructive :
     ¬ ∃ f : Bool → ℤ, ∀ a b : Bool, f b = (if b then 1 else 0) - (if a then 1 else 0) :=
   contrast_not_function_of_present
 
+
+/-! ## Structural transfer: missing target structure vs spurious source transfer
+
+This section mirrors only the generic structural boundary from the Agda golden
+owner `DASHI.Reasoning.MetaphorTransferResidualExact`.
+
+A transfer can fail by omission or by over-transfer.
+
+* `missingTargetStructure`: the representation drops a distinction required by
+  the declared consumer.
+* `spuriousSourceTransfer`: the representation imports a source-side predicate
+  that the target does not support.
+
+The mirror does not import Kimmerer, Two-Eyed Seeing, Fatima, or Shakespeare as
+Lean theorem authority. Source attribution and the canonical ZKP/TOE contract
+remain Agda-owned.
+-/
+
+inductive TransferResidualKind where
+  | missingTargetStructure
+  | spuriousSourceTransfer
+  deriving DecidableEq, Repr
+
+theorem transferResidualKinds_distinct :
+    TransferResidualKind.missingTargetStructure ≠
+      TransferResidualKind.spuriousSourceTransfer := by
+  decide
+
+structure StructuralTransferProfile where
+  sourceFeatureTransferred : Bool
+  targetFeatureAvailable : Bool
+  consumerRequiresFeature : Bool
+  kind : TransferResidualKind
+  deriving Repr
+
+def missingRelationProfile : StructuralTransferProfile where
+  sourceFeatureTransferred := false
+  targetFeatureAvailable := true
+  consumerRequiresFeature := true
+  kind := .missingTargetStructure
+
+def spuriousRecoverabilityProfile : StructuralTransferProfile where
+  sourceFeatureTransferred := true
+  targetFeatureAvailable := false
+  consumerRequiresFeature := false
+  kind := .spuriousSourceTransfer
+
+/-- One observer can be sufficient for one consumer and insufficient for
+another. This is the finite consumer-relative transfer shape. -/
+def transferProjection : Bool × Bool → Bool := Prod.fst
+
+def coarseTransferConsumer : Bool × Bool → Bool := Prod.fst
+
+def relationalTransferConsumer : Bool × Bool → Bool := Prod.snd
+
+theorem coarseTransferConsumer_factors :
+    ∃ f : Bool → Bool, ∀ x, coarseTransferConsumer x = f (transferProjection x) := by
+  exact ⟨id, by intro x; rfl⟩
+
+theorem relationalTransferConsumer_not_factors :
+    ¬ ∃ f : Bool → Bool, ∀ x, relationalTransferConsumer x = f (transferProjection x) := by
+  rintro ⟨f, h⟩
+  have h₀ := h (false, false)
+  have h₁ := h (false, true)
+  simp [relationalTransferConsumer, transferProjection] at h₀ h₁
+  cases h₀.trans h₁.symm
+
+structure StructuralTransferBoundary where
+  oneConsumerFitImpliesAllConsumerFit : Bool
+  omissionEqualsSpuriousTransfer : Bool
+  failedTransferMayRequireWithdrawal : Bool
+  agdaRemainsGoldenAuthority : Bool
+  deriving Repr
+
+def canonicalStructuralTransferBoundary : StructuralTransferBoundary where
+  oneConsumerFitImpliesAllConsumerFit := false
+  omissionEqualsSpuriousTransfer := false
+  failedTransferMayRequireWithdrawal := true
+  agdaRemainsGoldenAuthority := true
+
 end Integration.ResidualTaxonomy

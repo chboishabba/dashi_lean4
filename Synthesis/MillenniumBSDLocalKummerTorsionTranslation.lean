@@ -97,7 +97,9 @@ theorem zeroTorsion_second_squareClass
         field_simp [hx0]
         exact add_ne_zero.mpr (by
           intro h
-          exact hxNeg (by linarith))⟩
+          exact hxNeg (by
+            have := eq_neg_of_add_eq_zero_left h
+            simpa using this))⟩
       =
     padicSquareClassOf p
       ⟨x - 1, sub_ne_zero.mpr hx1⟩
@@ -139,7 +141,9 @@ theorem oneTorsion_first_squareClass
       ⟨(x + 1) / (x - 1), div_ne_zero
         (by exact add_ne_zero.mpr (by
           intro h
-          exact hxNeg (by linarith)))
+          exact hxNeg (by
+            have := eq_neg_of_add_eq_zero_left h
+            simpa using this)))
         (sub_ne_zero.mpr hx1)⟩
       =
     padicSquareClassOf p ⟨x, hx0⟩

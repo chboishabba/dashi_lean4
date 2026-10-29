@@ -66,4 +66,37 @@ def citationOnly : CitationAuthorityNoArtifact where
   artifactAuthorityIsFalse := rfl
   machineReadableArtifactPresentIsFalse := rfl
 
+
+/-!
+## Downstream volatility-observer authority boundary
+
+Agda remains the golden owner for the GJR volatility adapter in
+`DASHI.Finance.DashiTradeFibreBridgeExact`.
+
+This Lean section mirrors only the authority boundary.
+It does not duplicate the GJR recurrence, empirical fixtures, or governance model.
+-/
+
+/-- A downstream receipt that keeps observed dynamics and trade authority separate. -/
+structure VolatilityObservationNoTradeAuthority where
+  sourceReceipt : String
+  observationAccepted : Bool
+  classificationAccepted : Bool
+  tradeAuthority : Bool
+  tradeAuthorityIsFalse : tradeAuthority = false
+
+/-- Canonical downstream witness. Observation and classification do not authorize a trade. -/
+def gjrObservationOnly : VolatilityObservationNoTradeAuthority where
+  sourceReceipt :=
+    "Agda golden owner: DASHI.Finance.DashiTradeFibreBridgeExact"
+  observationAccepted := true
+  classificationAccepted := true
+  tradeAuthority := false
+  tradeAuthorityIsFalse := rfl
+
+theorem gjrObservationDoesNotAuthorize :
+    gjrObservationOnly.tradeAuthority = false := by
+  rfl
+
+
 end AgdaMirror.AuthorityBoundaries

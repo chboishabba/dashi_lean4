@@ -47,4 +47,28 @@ theorem enrichmentCannotPromoteProof {t : Thread} {p : PNF t}
     result.proofPromotionByEnrichment = false :=
   result.proofPromotionByEnrichmentFalse
 
+
+/- Topic 1 syntax mirror. Agda remains authoritative; this does not verify execution. -/
+inductive TopicOperation where
+  | collapseProperty (value : String)
+  | expandTemporal (value : String)
+  deriving DecidableEq
+
+structure TopicOnePlan where
+  autoCollapse : TopicOperation
+  lastCollapse : TopicOperation
+  nowExpansion : TopicOperation
+
+def canonicalTopicOne : TopicOnePlan :=
+  ⟨.collapseProperty "auto", .collapseProperty "last", .expandTemporal "now"⟩
+
+theorem topicOneAutoPreserved :
+    canonicalTopicOne.autoCollapse = .collapseProperty "auto" := rfl
+
+theorem topicOneLastPreserved :
+    canonicalTopicOne.lastCollapse = .collapseProperty "last" := rfl
+
+theorem topicOneNowPreserved :
+    canonicalTopicOne.nowExpansion = .expandTemporal "now" := rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

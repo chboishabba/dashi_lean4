@@ -1,3 +1,17 @@
+/-!
+# RiemannAnalytic package authority
+
+Agda is the golden theorem and route-status ledger.
+
+The current RH max-cut is normalized in
+`DASHI/Unified/RiemannRHMaxCutTOEExact.agda`.
+
+This Lean package supplies theorem-bearing analytic machinery and mirrors the
+golden residual-budget grammar.  It does not redefine the current route
+scheduler.  A Lean source theorem or build receipt does not become an Agda proof
+without explicit cross-prover transport.
+-/
+
 import RiemannAnalytic.PoissonExtension
 import RiemannAnalytic.LatticeRetention
 import RiemannAnalytic.GaussianEnvelope

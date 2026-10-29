@@ -147,4 +147,20 @@ theorem packagePreservesExpected (label : String) (result : TextTestResult) :
     (packageSatisfied label result).packagedResult.testCase.expectedText =
       result.testCase.expectedText := rfl
 
+
+/- Worker 11: a selected comparative state is not a parser certificate. -/
+structure ComparativeState where
+  phrase : ComparativeChangeMotif
+  selected : String
+
+def chooseRather (preferred alternative : String) : ComparativeState :=
+  ⟨.ratherThan preferred alternative, preferred⟩
+
+theorem chooseRatherPreservesPhrase (preferred alternative : String) :
+    (chooseRather preferred alternative).phrase =
+      .ratherThan preferred alternative := rfl
+
+theorem chooseRatherSelectsPreferred (preferred alternative : String) :
+    (chooseRather preferred alternative).selected = preferred := rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

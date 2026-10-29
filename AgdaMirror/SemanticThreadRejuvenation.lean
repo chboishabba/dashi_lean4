@@ -71,4 +71,24 @@ theorem topicOneLastPreserved :
 theorem topicOneNowPreserved :
     canonicalTopicOne.nowExpansion = .expandTemporal "now" := rfl
 
+
+/- Worker 01 lexical motif mirror; no semantic equivalence is asserted. -/
+inductive ComparativeChangeMotif where
+  | ratherThan (preferred alternative : String)
+  | change (label : String)
+  deriving DecidableEq
+
+structure Worker01Motif where
+  comparison : ComparativeChangeMotif
+  mutation : ComparativeChangeMotif
+
+def canonicalWorker01 : Worker01Motif :=
+  ⟨.ratherThan "rather" "than", .change "change"⟩
+
+theorem worker01ComparisonPreserved :
+    canonicalWorker01.comparison = .ratherThan "rather" "than" := rfl
+
+theorem worker01ChangePreserved :
+    canonicalWorker01.mutation = .change "change" := rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

@@ -73,7 +73,13 @@ theorem raw_dom_not_admissible :
 
 structure MPSpectralBasisWitness (Scalar Vector : Type*) where
   truncation : SpectralTruncationK
+  sampleCount : Nat
+  activation : Fin sampleCount → Vector
   covarianceAction : Vector → Vector
+  EmpiricalCovarianceAATOverM :
+    (Fin sampleCount → Vector) → (Vector → Vector) → Prop
+  covarianceIsEmpiricalAATOverM :
+    EmpiricalCovarianceAATOverM activation covarianceAction
   eigenvalue : Vector → Scalar
   lambdaPlus : Scalar
   AboveBulkEdge : Scalar → Scalar → Prop
@@ -108,6 +114,9 @@ structure FullTwentyWorkerSchedule
   TopParetoRanked : Goal → Prop
   scheduledGoalTopParetoRanked :
     ∀ slot, TopParetoRanked (assignment slot)
+  distinctSlotsHaveDistinctGoals :
+    ∀ left right, left ≠ right →
+      assignment left ≠ assignment right
   pairwiseNoTypedMeet :
     ∀ left right, left ≠ right →
       NoTypedMeet (assignment left) (assignment right)

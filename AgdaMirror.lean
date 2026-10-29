@@ -102,6 +102,7 @@ import AgdaMirror.Core
 import AgdaMirror.Algebra
 import AgdaMirror.Analysis
 import AgdaMirror.Physics.YangMills
+import AgdaMirror.Physics.FeynmanNonPromotion
 import AgdaMirror.AdK
 
 /-!
@@ -127,7 +128,7 @@ provides faithful Lean mirrors:
 
 * **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
 
-* **AdK exact-CV mirror**: the source-facing residue/domain roles and mass
+* **Feynman/TSFV non-promotion mirror**: the golden Agda lane keeps finite path/amplitude compatibility separate from physical realization, propagator derivation, shortest-path promotion, and TSFV experimental validation.\n\n* **AdK exact-CV mirror**: the source-facing residue/domain roles and mass
   convention retain their upstream attribution, while exact rational selected
   content, COM extensionality, canonical non-factorability, and recharting obstruction are
   DASHI reconstruction/theorems under `AgdaMirror.AdK`.

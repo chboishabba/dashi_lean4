@@ -104,28 +104,28 @@ theorem sameBioCountDoesNotRecoverCO2 :
     bioA.co2Over ≠ bioB.co2Over := by
   decide
 
-inductive UniversalSafeJustImpossibilityPromotion : Prop
+abbrev UniversalSafeJustImpossibilityPromotion : Prop := False
 
 theorem observedSampleDoesNotCreateUniversalImpossibility :
     ¬ UniversalSafeJustImpossibilityPromotion := by
   intro h
   cases h
 
-inductive IdentifiedProvisioningTreatmentEffectPromotion : Prop
+abbrev IdentifiedProvisioningTreatmentEffectPromotion : Prop := False
 
 theorem observedProvisioningGapDoesNotIdentifyTreatmentEffect :
     ¬ IdentifiedProvisioningTreatmentEffectPromotion := by
   intro h
   cases h
 
-inductive BAUProjectionAsObservedFuturePromotion : Prop
+abbrev BAUProjectionAsObservedFuturePromotion : Prop := False
 
 theorem bauProjectionDoesNotBecomeObservedFuture :
     ¬ BAUProjectionAsObservedFuturePromotion := by
   intro h
   cases h
 
-inductive GDP15000CausalThresholdPromotion : Prop
+abbrev GDP15000CausalThresholdPromotion : Prop := False
 
 theorem gdp15000PatternDoesNotBecomeCausalThreshold :
     ¬ GDP15000CausalThresholdPromotion := by

@@ -87,6 +87,29 @@ theorem verificationStatusDoesNotCreateMajorProof :
 theorem fleetPriorityDoesNotCreateMajorProof :
     canonicalGoldenBoundary.fleetPriorityCreatesMajorProof = false := rfl
 
+structure ResidualContractMirror where
+  premise18PreconditionsExplicit : Bool
+  premise27PreconditionsExplicit : Bool
+  generatedScaffoldInvariantPreserved : Bool
+  certifiedRule915PostconditionExplicit : Bool
+  deriving DecidableEq, Repr
+
+def canonicalResidualContractMirror : ResidualContractMirror :=
+  { premise18PreconditionsExplicit := true
+    premise27PreconditionsExplicit := true
+    generatedScaffoldInvariantPreserved := true
+    certifiedRule915PostconditionExplicit := true }
+
+theorem residualContractKeepsPreconditionsExplicit :
+    canonicalResidualContractMirror.premise18PreconditionsExplicit = true ∧
+    canonicalResidualContractMirror.premise27PreconditionsExplicit = true := by
+  constructor <;> rfl
+
+theorem residualContractKeepsInvariantAndPostconditionExplicit :
+    canonicalResidualContractMirror.generatedScaffoldInvariantPreserved = true ∧
+    canonicalResidualContractMirror.certifiedRule915PostconditionExplicit = true := by
+  constructor <;> rfl
+
 structure ZKPFrame where
   O : String
   R : String

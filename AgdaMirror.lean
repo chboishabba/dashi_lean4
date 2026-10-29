@@ -144,3 +144,5 @@ import AgdaMirror.JInvariant369Zeta6561MonsterCrosswalk
 import AgdaMirror.JInvariant369TenRankSeventeenHyperformalism
 
 import AgdaMirror.AntigravitySourceGeometryWeld
+
+import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation

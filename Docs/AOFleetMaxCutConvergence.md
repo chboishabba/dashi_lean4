@@ -26,6 +26,8 @@ MP eigenspace
 
 The supported runtime spectral truncations are K=50 and K=100.
 
+The MP receipt carries an explicit same-object obligation that its covariance is the empirical `(1/M) A A^T` producer.
+
 A spectral coordinate is not a semantic topic.
 
 A topic is not a theorem owner.
@@ -41,6 +43,7 @@ Every assigned goal is unblocked.
 Every assigned goal is Pareto eligible.
 
 Every pair of distinct slots requires noTypedMeet evidence.
+Distinct slots also require distinct goals.
 
 A serial W=1 loop or modulo-eight reuse is not a full W=20 schedule.
 

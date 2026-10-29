@@ -97,7 +97,6 @@ structure RuntimeExactBudgetAdmission where
   parentKeyCountIsExcessPlusCapacity :
     parentKeyCount = excessKeyCount + configuredCapacity
   disposition : BudgetAdmissionDisposition
-  deriving Repr
 
 def canonical8206Over8192BudgetRejection : RuntimeExactBudgetAdmission where
   parentKeyCount := 8206

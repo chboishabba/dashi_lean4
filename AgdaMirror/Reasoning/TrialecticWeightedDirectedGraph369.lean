@@ -132,4 +132,23 @@ theorem attached_face_does_not_factor_through_matrix :
         simpa [rightState, observe, consume] using hRight.symm
   cases bad
 
+
+/-- Exact weighted length-two walks in hundredths (matrix entries are tenths). -/
+def twoStepAtoC : Nat :=
+  matrixToGraph fixture .a .a * matrixToGraph fixture .a .c +
+  matrixToGraph fixture .a .b * matrixToGraph fixture .b .c +
+  matrixToGraph fixture .a .c * matrixToGraph fixture .c .c
+
+theorem missing_direct_a_to_c : matrixToGraph fixture .a .c = 0 := by decide
+theorem two_step_a_to_c_220 : twoStepAtoC = 220 := by decide
+theorem two_step_a_to_c_nonzero : twoStepAtoC ≠ 0 := by decide
+
+/-- Local outgoing-row stalk and restriction: a concrete compatible section,
+    not a source-authorized global human or geometric hyperfabric claim. -/
+def outgoingRow (source : Vertex3) : Vertex3 → Nat :=
+  matrixToGraph fixture source
+
+theorem outgoing_row_restriction_compatible (source target : Vertex3) :
+    outgoingRow source target = matrixToGraph fixture source target := rfl
+
 end AgdaMirror.Reasoning.TrialecticWeightedDirectedGraph369

@@ -130,4 +130,21 @@ def canonicalTextTest (text : String) : TextTestResult :=
 theorem canonicalTextTestMatches (text : String) :
     (canonicalTextTest text).observedText = text := rfl
 
+
+/- Worker 09: packaging preserves an existing witness, not runner evidence. -/
+structure AssessedPackage where
+  packageLabel : String
+  packagedResult : TextTestResult
+
+def packageSatisfied (label : String) (result : TextTestResult) :
+    AssessedPackage := ⟨label, result⟩
+
+theorem packagePreservesObserved (label : String) (result : TextTestResult) :
+    (packageSatisfied label result).packagedResult.observedText =
+      result.observedText := rfl
+
+theorem packagePreservesExpected (label : String) (result : TextTestResult) :
+    (packageSatisfied label result).packagedResult.testCase.expectedText =
+      result.testCase.expectedText := rfl
+
 end AgdaMirror.SemanticThreadRejuvenation

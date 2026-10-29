@@ -93,3 +93,106 @@ def conceptualSourceCreatesFactorisationTheorem : Bool := false
 example : conceptualSourceCreatesFactorisationTheorem = false := rfl
 
 end AgdaMirror.IntersectionalNonFactorability
+
+
+namespace DashiTradeGoldenParity
+
+open AgdaMirror.IntersectionalNonFactorability
+
+/-!
+Parity-only dashiTRADE instance.
+
+Agda owns the trading semantics in
+`DASHI/Trading/DashiTradeDreamOptionConeExact.agda`.
+
+This Lean section only instantiates the existing generic non-factorability
+mirror. It does not create an independent trading ontology or runtime
+conformance claim.
+-/
+
+inductive Direction
+  | shortDirection
+  | flatDirection
+  | longDirection
+  deriving DecidableEq, Repr
+
+inductive InventoryRegime
+  | neutralInventory
+  | crowdedLongInventory
+  deriving DecidableEq, Repr
+
+structure TradingState where
+  proposal : Direction
+  inventory : InventoryRegime
+  deriving DecidableEq, Repr
+
+inductive TradeAction
+  | sellAction
+  | holdAction
+  | buyAction
+  deriving DecidableEq, Repr
+
+def candidateObserver (state : TradingState) : Direction :=
+  state.proposal
+
+def actionAvailable : TradingState → TradeAction → Bool
+  | _, .holdAction => true
+  | _, .sellAction => true
+  | ⟨.longDirection, .neutralInventory⟩, .buyAction => true
+  | _, .buyAction => false
+
+def cleanLongState : TradingState :=
+  ⟨.longDirection, .neutralInventory⟩
+
+def crowdedLongState : TradingState :=
+  ⟨.longDirection, .crowdedLongInventory⟩
+
+theorem sameLongProposal :
+    candidateObserver cleanLongState = candidateObserver crowdedLongState := rfl
+
+theorem buyAvailabilityDiffers :
+    actionAvailable cleanLongState .buyAction ≠
+      actionAvailable crowdedLongState .buyAction := by
+  decide
+
+def buyViabilityDoesNotFactorThroughDirection :
+    NonFactorabilityWitness
+      candidateObserver
+      (fun state => actionAvailable state .buyAction) where
+  left := cleanLongState
+  right := crowdedLongState
+  sameFlatProjection := sameLongProposal
+  situatedOutcomesDiffer := buyAvailabilityDiffers
+
+theorem noDirectionOnlyBuyClassifier :
+    ¬ FactorsThrough
+      candidateObserver
+      (fun state => actionAvailable state .buyAction) := by
+  intro factor
+  exact witnessRulesOutEveryFlatFactorisation
+    buyViabilityDoesNotFactorThroughDirection
+    factor
+
+theorem postprocessedDirectionStillCannotRecoverBuyViability
+    {Chart : Type*}
+    (rechart : Direction → Chart) :
+    ¬ FactorsThrough
+      (fun state => rechart (candidateObserver state))
+      (fun state => actionAvailable state .buyAction) :=
+  rechartingCannotRecoverErasedPhenomenon
+    rechart
+    buyViabilityDoesNotFactorThroughDirection
+
+def agdaIsGoldenOwner : Bool := true
+
+def leanDefinesIndependentTradingSemantics : Bool := false
+
+def leanClaimsRuntimeConformance : Bool := false
+
+example : agdaIsGoldenOwner = true := rfl
+
+example : leanDefinesIndependentTradingSemantics = false := rfl
+
+example : leanClaimsRuntimeConformance = false := rfl
+
+end DashiTradeGoldenParity

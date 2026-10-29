@@ -38,6 +38,11 @@ structure RelationDeltaOwnerRouting where
   reconciliationReceiptOwnerMatchesHotPath :
     reconciliationReceiptOwnerCount = hotPathReconcilerOwnerCount
 
+structure RelationDeltaAuthorityBoundary where
+  ownerRouting : RelationDeltaOwnerRouting
+  runtimeAuthority : Bool
+  runtimeAuthorityIsFalse : runtimeAuthority = false
+
 def singleCandidateRelationOwner : RelationDeltaOwnerRouting where
   candidateMutationOwnerCount := 1
   privateCandidateMutationBypassCount := 0
@@ -47,6 +52,14 @@ def singleCandidateRelationOwner : RelationDeltaOwnerRouting where
   privateCandidateMutationBypassZero := rfl
   hotPathReconcilerOwnerUnique := rfl
   reconciliationReceiptOwnerMatchesHotPath := rfl
+
+def candidateRelationExecutionBoundary : RelationDeltaAuthorityBoundary where
+  ownerRouting := singleCandidateRelationOwner
+  runtimeAuthority := false
+  runtimeAuthorityIsFalse := rfl
+
+theorem candidate_relation_runtime_authority_is_false :
+    candidateRelationExecutionBoundary.runtimeAuthority = false := rfl
 
 def noOpReceipt (retained : Nat) : RelationDeltaReceipt where
   desiredRows := retained

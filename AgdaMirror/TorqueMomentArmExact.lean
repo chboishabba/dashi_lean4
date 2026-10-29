@@ -29,4 +29,21 @@ theorem zeroForceZeroTorque (arm : Nat) :
     torqueMagnitude ⟨arm, 0⟩ = 0 := by
   simp [torqueMagnitude]
 
+
+/- Citation markers identify provenance, not proof authority. -/
+structure CitedCompactTorque where
+  citationMarker : String
+  load : PerpendicularLoad
+  compactResult : Nat
+  resultExact : compactResult = torqueMagnitude load
+
+theorem citedResultSound (entry : CitedCompactTorque) :
+    entry.compactResult = torqueMagnitude entry.load := entry.resultExact
+
+def makeCitedCompactTorque (marker : String) (load : PerpendicularLoad) :
+    CitedCompactTorque := ⟨marker, load, torqueMagnitude load, rfl⟩
+
+theorem compactResultPreserved (marker : String) (load : PerpendicularLoad) :
+    (makeCitedCompactTorque marker load).compactResult = torqueMagnitude load := rfl
+
 end AgdaMirror.TorqueMomentArmExact

@@ -18,6 +18,8 @@ jobs:
         run: lake build AgdaMirror.Analysis.ResidualBudgetMarginCompilerExact
       - name: Build Riemann residual allowance consumer
         run: lake build RiemannAnalytic.GramBudgetTransport
+      - name: Build golden Feynman non-promotion mirror
+        run: lake build AgdaMirror.Physics.FeynmanNonPromotion
 
   external-clay-ns:
     runs-on: ubuntu-latest

@@ -37,6 +37,7 @@ one for the zeros of `ζ`.
 -/
 import RiemannAnalytic.TraceInterface
 import RiemannAnalytic.WeightedGramTarget
+import AgdaMirror.Analysis.ResidualBudgetMarginCompilerExact
 
 namespace RiemannAnalytic
 
@@ -236,3 +237,54 @@ theorem source_tube_tendsto_zero {Ebud L α : ℝ → ℝ}
   tendsto_zero_of_budget_ratio (by norm_num) hratio htube
 
 end RiemannAnalytic
+
+/-! ### Golden residual-budget contract return
+
+The golden Agda RH surface assigns allowances downstream.
+The analytic producer proves that its budget fits the assigned allowance.
+The final consumer proves that the allowance sum is strictly below its signal
+margin.
+
+This section mirrors only that real ordered arithmetic.  It does not select a
+three-tap route, identify carriers, or prove RH.
+-/
+
+/-- Real-scalar form of the golden residual-budget compiler. -/
+theorem realResidualBudget_lt_margin
+    {residual budget margin : ℝ}
+    (hResidual : residual ≤ budget)
+    (hBudget : budget < margin) :
+    residual < margin :=
+  lt_of_le_of_lt hResidual hBudget
+
+/-- Two-channel real allowance compiler.
+
+This is the ordered arithmetic used after the Off/Gamma source relations have
+already been transported to one final scalar order. -/
+theorem twoChannelAllowance_lt_margin
+    {offResponse gammaResponse offBudget gammaBudget
+      offAllowance gammaAllowance margin : ℝ}
+    (hOffResponse : offResponse ≤ offBudget)
+    (hGammaResponse : gammaResponse ≤ gammaBudget)
+    (hOffAllowance : offBudget ≤ offAllowance)
+    (hGammaAllowance : gammaBudget ≤ gammaAllowance)
+    (hAllowances : offAllowance + gammaAllowance < margin) :
+    offResponse + gammaResponse < margin := by
+  have hBudget :
+      offResponse + gammaResponse ≤ offBudget + gammaBudget :=
+    add_le_add hOffResponse hGammaResponse
+  have hAssigned :
+      offBudget + gammaBudget ≤ offAllowance + gammaAllowance :=
+    add_le_add hOffAllowance hGammaAllowance
+  exact lt_of_le_of_lt (hBudget.trans hAssigned) hAllowances
+
+/-- Split a structured/local residual from a far residual.
+Positive residuals are allowed.  Only the paid aggregate matters. -/
+theorem splitResidualBudget_lt_margin
+    {structuredResidual farResidual structuredBudget farBudget margin : ℝ}
+    (hStructured : structuredResidual ≤ structuredBudget)
+    (hFar : farResidual ≤ farBudget)
+    (hPaid : structuredBudget + farBudget < margin) :
+    structuredResidual + farResidual < margin :=
+  lt_of_le_of_lt (add_le_add hStructured hFar) hPaid
+

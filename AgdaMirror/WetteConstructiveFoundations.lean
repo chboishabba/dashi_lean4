@@ -47,7 +47,8 @@ structure GoldenBoundaryReceipt where
   canonicalP145PremisesFixed : Bool
   generatedScaffoldCompleteExceptMajors : Bool
   sharedPremises1015ProducedOnce : Bool
-  premise18ClosedAfterMatched9323 : Bool
+  premise18Selected9323RouteCloses : Bool
+  selected9323RouteKnownCompleteForPremise18 : Bool
   premise27ClosedAfterDirectionalLeaves : Bool
   scaffoldAloneClosesMajor : Bool
   documentationCreatesMajorProof : Bool
@@ -59,7 +60,8 @@ def canonicalGoldenBoundary : GoldenBoundaryReceipt :=
   { canonicalP145PremisesFixed := true
     generatedScaffoldCompleteExceptMajors := true
     sharedPremises1015ProducedOnce := true
-    premise18ClosedAfterMatched9323 := true
+    premise18Selected9323RouteCloses := true
+    selected9323RouteKnownCompleteForPremise18 := false
     premise27ClosedAfterDirectionalLeaves := true
     scaffoldAloneClosesMajor := false
     documentationCreatesMajorProof := false
@@ -74,6 +76,9 @@ theorem generatedScaffoldLeavesTwoMajorBranches :
 
 theorem shared1015IsSingleReusableScaffold :
     canonicalGoldenBoundary.sharedPremises1015ProducedOnce = true := rfl
+
+theorem selected9323RouteIsNotPromotedToComplete :
+    canonicalGoldenBoundary.selected9323RouteKnownCompleteForPremise18 = false := rfl
 
 theorem scaffoldDoesNotCloseMajor :
     canonicalGoldenBoundary.scaffoldAloneClosesMajor = false := rfl
@@ -127,8 +132,8 @@ def canonicalZKPFrame : ZKPFrame :=
     C := "Agda golden owner: Wette1969Rule915MajorDerivationProblemExact"
     S := "27 source slots fixed; non-major scaffold generated; D18 and D27 leaves remain explicit"
     L := "finite historical derivation context with monotone certified replay"
-    P := "pay only the matched 9.3.23 D18 leaves and two D27 directional leaves"
+    P := "search the general D18 trace; treat matched 9.3.23 as one sufficient route; use the selected two-leaf D27 route"
     G := "certified historical 9.1.5 application at the joined target"
-    F := "first missing major-leaf receipt; status and planning metadata are non-authoritative" }
+    F := "first missing general D18/D27 trace receipt; selected routes and planning metadata are non-authoritative" }
 
 end AgdaMirror.WetteConstructiveFoundations

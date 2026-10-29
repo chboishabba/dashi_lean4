@@ -28,6 +28,10 @@ def gaussianFirstVariation : String :=
 def finiteGLowerBound : String :=
   "beta >= b_fixed - C_beta * gamma^4"
 
+def gate4FormalGapCount : Nat := 58
+
+theorem gate4FormalGapCount_eq_fiftyEight : gate4FormalGapCount = 58 := rfl
+
 def frozenResearchCount : Nat := 4
 
 theorem frozenResearchCount_eq_four : frozenResearchCount = 4 := rfl

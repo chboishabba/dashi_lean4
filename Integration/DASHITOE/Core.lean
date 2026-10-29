@@ -157,6 +157,21 @@ theorem pnfAnaphorRecursiveSelfUpdateImpossible :
   intro h
   cases h
 
+structure SoundAffectedKeySelection (Delta Key : Type) where
+  requiredAffected : Delta → Key → Prop
+  selectedAffected : Delta → Key → Prop
+  noMissingAffectedKey :
+    ∀ delta key, requiredAffected delta key → selectedAffected delta key
+
+theorem requiredAffectedKeyCannotBeMissing
+    {Delta Key : Type}
+    (selection : SoundAffectedKeySelection Delta Key)
+    (delta : Delta)
+    (key : Key)
+    (required : selection.requiredAffected delta key) :
+    selection.selectedAffected delta key :=
+  selection.noMissingAffectedKey delta key required
+
 structure SentenceAnaphorProjectionZKPFrame
     (SourceDelta ProjectionRelation AffectedKeys Authority State : Type) where
   projectionSystem :

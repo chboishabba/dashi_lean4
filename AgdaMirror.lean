@@ -1,3 +1,4 @@
+import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation
 import AgdaMirror.StageTwelveGrothendieckRelation
 import AgdaMirror.JInvariantSheafDescent
 import AgdaMirror.Moonshine

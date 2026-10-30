@@ -54,7 +54,7 @@ theorem cutWeight_le_total (partition : Partition)
     (edges : List NativeWeightedEdge) :
     cutWeight partition edges ≤ totalWeight edges := by
   induction edges with
-  | nil => rfl
+  | nil => exact Nat.le_refl 0
   | cons edge rest ih =>
     simp only [cutWeight, totalWeight]
     exact Nat.add_le_add (edgeScore_le partition edge) ih

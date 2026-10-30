@@ -192,4 +192,47 @@ def recolourByFlip {Colour : Type} {different : Colour → Colour → Prop}
   intro u v h
   exact proper (flip_second_preserves h)
 
+
+/-- The six distinct permutations of the three labelled coordinates. -/
+def swapXY : PantsPath3 → PantsPath3
+  | (a,b,c) => (b,a,c)
+
+theorem swap_xy_preserves {p q : PantsPath3}
+    (h : PantsAdjacent p q) :
+    PantsAdjacent (swapXY p) (swapXY q) := by
+  cases h with
+  | x step => exact PantsAdjacent.y step
+  | y step => exact PantsAdjacent.x step
+  | z step => exact PantsAdjacent.z step
+
+inductive S3Code where
+  | abc | bca | cab | bac | cba | acb
+  deriving DecidableEq, Repr
+
+def actS3 : S3Code → PantsPath3 → PantsPath3
+  | .abc, p => p
+  | .bca, p => rotatePants p
+  | .cab, p => rotatePants (rotatePants p)
+  | .bac, p => swapXY p
+  | .cba, p => swapXY (rotatePants p)
+  | .acb, p => swapXY (rotatePants (rotatePants p))
+
+theorem act_s3_preserves (code : S3Code) {p q : PantsPath3}
+    (h : PantsAdjacent p q) :
+    PantsAdjacent (actS3 code p) (actS3 code q) := by
+  cases code with
+  | abc => exact h
+  | bca => exact rotate_pants_preserves h
+  | cab => exact rotate_pants_preserves (rotate_pants_preserves h)
+  | bac => exact swap_xy_preserves h
+  | cba => exact swap_xy_preserves (rotate_pants_preserves h)
+  | acb => exact swap_xy_preserves (rotate_pants_preserves (rotate_pants_preserves h))
+
+def distinctAnchor : PantsPath3 :=
+  (.slot3,.slot6,.slot9)
+
+theorem six_anchor_images_distinct (a b : S3Code) :
+    actS3 a distinctAnchor = actS3 b distinctAnchor → a = b := by
+  cases a <;> cases b <;> decide
+
 end AgdaMirror.Reasoning.GraphColouring369PantsGridAdjacency

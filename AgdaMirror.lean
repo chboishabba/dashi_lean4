@@ -1,3 +1,4 @@
+import AgdaMirror.Reasoning.GraphColouring369PantsMaxCutQid
 import AgdaMirror.Reasoning.TrialecticSelectedFaceMediation369
 import AgdaMirror.Reasoning.GraphColouring369PantsGridAdjacency
 import AgdaMirror.Reasoning.TrialecticWeightedDirectedGraph369

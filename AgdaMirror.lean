@@ -1,3 +1,4 @@
+import AgdaMirror.Reasoning.GraphColouring369PantsSymmetryCutInvariant
 import AgdaMirror.Reasoning.TrialecticDirectedSourceTargetHyperfabric
 import AgdaMirror.Reasoning.GraphColouring369PantsMaxCutQid
 import AgdaMirror.Reasoning.TrialecticSelectedFaceMediation369

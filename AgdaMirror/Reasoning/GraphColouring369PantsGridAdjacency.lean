@@ -159,7 +159,7 @@ theorem flip_second_preserves {p q : PantsPath3}
 abbrev GraphHom {V W : Type}
     (adjV : V → V → Prop) (adjW : W → W → Prop)
     (f : V → W) : Prop :=
-  ∀ ⦃u v : V⦄, adjV u v → adjW (f u) (f v)
+  ∀ u v : V, adjV u v → adjW (f u) (f v)
 
 theorem voxel_to_pants_graph_hom :
     GraphHom VoxelAdjacent PantsAdjacent voxelToPants := by
@@ -184,13 +184,13 @@ theorem seam_flip_graph_hom :
 /-- Pull an arbitrary palette colouring back along any pants graph endomorphism. -/
 def recolourByFlip {Colour : Type} {different : Colour → Colour → Prop}
     (colouring : PantsPath3 → Colour)
-    (proper : ∀ ⦃u v⦄, PantsAdjacent u v →
+    (proper : ∀ u v : PantsPath3, PantsAdjacent u v →
       different (colouring u) (colouring v)) :
-    ∀ ⦃u v⦄, PantsAdjacent u v →
+    ∀ u v : PantsPath3, PantsAdjacent u v →
       different ((colouring ∘ flipSecond) u)
                 ((colouring ∘ flipSecond) v) := by
   intro u v h
-  exact proper (flip_second_preserves h)
+  exact proper (flipSecond u) (flipSecond v) (flip_second_preserves h)
 
 
 /-- The six distinct permutations of the three labelled coordinates. -/
@@ -234,5 +234,53 @@ def distinctAnchor : PantsPath3 :=
 theorem six_anchor_images_distinct (a b : S3Code) :
     actS3 a distinctAnchor = actS3 b distinctAnchor → a = b := by
   cases a <;> cases b <;> decide
+
+
+/-- A real 2-colour checkerboard rather than the tautological 27-label palette. -/
+def middle : TriTruth → Bool
+  | .low => false
+  | .mid => true
+  | .high => false
+
+def checkerboard : Voxel → Bool
+  | (x,y,z) => Bool.xor (Bool.xor (middle x) (middle y)) (middle z)
+
+/-- Exhaustive finite case proof for the exact geometric adjacency, not an
+    appeal to a graph-colouring paper. -/
+theorem checkerboard_proper {u v : Voxel}
+    (h : VoxelAdjacent u v) :
+    checkerboard u ≠ checkerboard v := by
+  rcases u with ⟨a,b,c⟩
+  rcases v with ⟨d,e,f⟩
+  cases a <;> cases b <;> cases c <;>
+    cases d <;> cases e <;> cases f <;>
+    cases h <;> decide
+
+theorem pants_two_colour_proper {p q : PantsPath3}
+    (h : PantsAdjacent p q) :
+    checkerboard (pantsToVoxel p) ≠ checkerboard (pantsToVoxel q) :=
+  checkerboard_proper (pants_to_voxel_preserves h)
+
+/-- A nonempty nearest-neighbour edge forbids singleton palettes. -/
+def origin : Voxel := (.mid,.mid,.mid)
+def xNeighbour : Voxel := (.high,.mid,.mid)
+
+theorem singleton_palette_impossible (f : Voxel → Unit)
+    (proper : ∀ u v : Voxel, VoxelAdjacent u v → f u ≠ f v) :
+    False := by
+  have edge : VoxelAdjacent origin xNeighbour :=
+    VoxelAdjacent.x TritGridStep.midHigh
+  exact proper origin xNeighbour edge (Subsingleton.elim _ _)
+
+/-- Thus the selected finite graph is exactly two-colourable:
+    a 2-colour witness exists, and no 1-colour witness exists. -/
+theorem pants_singleton_palette_impossible (f : PantsPath3 → Unit)
+    (proper : ∀ p q : PantsPath3, PantsAdjacent p q → f p ≠ f q) :
+    False := by
+  let vf : Voxel → Unit := f ∘ voxelToPants
+  apply singleton_palette_impossible vf
+  intro u v edge
+  exact proper (voxelToPants u) (voxelToPants v)
+    (voxel_to_pants_preserves edge)
 
 end AgdaMirror.Reasoning.GraphColouring369PantsGridAdjacency

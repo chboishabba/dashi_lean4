@@ -136,4 +136,39 @@ structure SourceAuthorityBoundary where
 def canonicalBoundary : SourceAuthorityBoundary :=
   ⟨false, false, false, true, false⟩
 
+
+/-- Typed roles are distinct: the same QID navigation syntax does NOT
+    identify a discipline, a directed graph, a problem, or a proof. -/
+inductive KnowledgeRole where
+  | discipline | graphStructure | graphClass | representation
+  | graphMorphism | computationalProblem | higherArity | theorem
+  deriving DecidableEq, Repr
+
+structure TypedConcept (role : KnowledgeRole) where
+  identity : ConceptCoordinate
+  note : String
+
+def typedGraphTheory : TypedConcept .discipline :=
+  ⟨graphTheory, "graph theory field, not a graph fixture"⟩
+def typedDirectedGraph : TypedConcept .graphStructure :=
+  ⟨directedGraph, "directed edge graph"⟩
+def typedAdjacency : TypedConcept .representation :=
+  ⟨adjacencyMatrix, "matrix representation, not same object"⟩
+def typedGraphIsomorphism : TypedConcept .graphMorphism :=
+  ⟨graphIsomorphism, "preserved native adjacency"⟩
+def typedGraphHomomorphism : TypedConcept .graphMorphism :=
+  ⟨graphHomomorphism, "edge preserving map"⟩
+def typedMaximumCut : TypedConcept .computationalProblem :=
+  ⟨maximumCut, "the cut optimization problem"⟩
+def typedHypergraph : TypedConcept .higherArity :=
+  ⟨hypergraph, "not a dyadic directed graph"⟩
+def typedFourColourTheorem : TypedConcept .theorem :=
+  ⟨fourColourTheorem, "a theorem distinct from the 2026 publication"⟩
+
+def directedGraphDewey : String := "511.54"
+def graphTheoryDewey : String := "511.5"
+
+theorem directedAndGeneralDeweyDistinct :
+    directedGraphDewey ≠ graphTheoryDewey := by decide
+
 end AgdaMirror.Reasoning.GraphColouring369PantsMaxCutQid

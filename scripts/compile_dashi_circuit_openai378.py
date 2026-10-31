@@ -150,12 +150,15 @@ def compile_and_report(data):
     assert all(0 <= literal < 2 * nvars for c in canonical for literal in c)
     upper = nvars + 2 + (24 * nvars + 28) * (3 * g + 1)
     assert len(bits) <= upper
+    quadratic_upper = 72 * (nvars + 1) ** 2
+    assert len(bits) <= quadratic_upper
     return {
         "input_count": data["input_count"], "gate_count": g,
         "num_variables": nvars, "source_clause_count": len(source_clauses),
         "normalized_clause_count": len(canonical),
         "normalized_literal_codes": canonical,
         "bit_length": len(bits), "formal_target_upper_bound": upper,
+        "quadratic_source_variable_upper_bound": quadratic_upper,
         "bits": "".join("1" if b else "0" for b in bits),
         "source_status": "executable Python, not Agda/Lean kernel proof",
     }

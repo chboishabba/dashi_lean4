@@ -134,19 +134,19 @@ theorem sourceListExactCountMachine :
             (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedInit machine
               (Encoding.encodeCNF (toUpstreamCNF clauses))) final ∧
           final.config.tapes countTape =
-            OAI.Algorithms.SubexponentialSAT.Turing.Tape.mk₁
+            Turing.Tape.mk₁
               ((OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
                 (ListFinsetCNFTransport.countedListModels n
                   (fun literal assignment => literal.eval assignment) clauses)).map some) ∧
           final.config.tapes answerTape =
-            OAI.Algorithms.SubexponentialSAT.Turing.Tape.mk₁
+            Turing.Tape.mk₁
               [some (decide (0 <
                 ListFinsetCNFTransport.countedListModels n
                   (fun literal assignment => literal.eval assignment) clauses))] ∧
           final.config.state = Sum.inl (decide (0 <
             ListFinsetCNFTransport.countedListModels n
               (fun literal assignment => literal.eval assignment) clauses)) ∧
-          OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.BinaryArithmetic.toNat
+          OAI.Algorithms.SubexponentialSAT.BinaryArithmetic.toNat
             (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
               (ListFinsetCNFTransport.countedListModels n
                 (fun literal assignment => literal.eval assignment) clauses)) =

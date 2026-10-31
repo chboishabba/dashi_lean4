@@ -76,9 +76,36 @@ def compile_original_circuit(data):
     return n + len(gates), clauses
 
 
-def canonical_clause_codes(clauses):
-    return sorted(set(tuple(sorted({2 * v + int(sign) for v, sign in clause}))
-                      for clause in clauses))
+def _insert_ordered_unique(items, value, counters, counter_name):
+    """Explicit linear scan: <=len(items) lexicographic comparisons.
+
+    Each clause has <=3 literals; integer codes are bounded by 2*num_variables.
+    This avoids unmodelled Python set hashing and sorting complexity.
+    """
+    for index, old in enumerate(items):
+        counters[counter_name] += 1
+        if value == old:
+            return
+        if value < old:
+            items.insert(index, value)
+            return
+    items.append(value)
+
+
+def canonical_clause_codes(clauses, counters=None):
+    """Exact OAI Finset normalization via explicit bounded insertion scans."""
+    if counters is None:
+        counters = {"literal_comparisons": 0, "clause_comparisons": 0}
+    result = []
+    for clause in clauses:
+        literal_codes = []
+        for v, sign in clause:
+            _insert_ordered_unique(
+                literal_codes, 2 * v + int(sign),
+                counters, "literal_comparisons")
+        _insert_ordered_unique(
+            result, tuple(literal_codes), counters, "clause_comparisons")
+    return result
 
 
 def encode_nat(n):
@@ -104,8 +131,8 @@ def encode_list(values, encoder):
     return result
 
 
-def encode_upstream_cnf(num_variables, clauses):
-    codes = canonical_clause_codes(clauses)
+def encode_upstream_cnf(num_variables, clauses, counters=None):
+    codes = canonical_clause_codes(clauses, counters)
     bits = encode_nat(num_variables)
     bits.extend(encode_list(codes, lambda clause: encode_list(clause, encode_nat)))
     return codes, bits
@@ -142,7 +169,8 @@ def evaluate_circuit(data, inputs):
 
 def compile_and_report(data):
     nvars, source_clauses = compile_original_circuit(data)
-    canonical, bits = encode_upstream_cnf(nvars, source_clauses)
+    comparisons = {"literal_comparisons": 0, "clause_comparisons": 0}
+    canonical, bits = encode_upstream_cnf(nvars, source_clauses, comparisons)
     g = len(data["gates"])
     assert len(source_clauses) <= 3 * g + 1
     assert all(len(c) <= 3 for c in source_clauses)
@@ -152,6 +180,11 @@ def compile_and_report(data):
     assert len(bits) <= upper
     quadratic_upper = 72 * (nvars + 1) ** 2
     assert len(bits) <= quadratic_upper
+    m = len(source_clauses)
+    # Each source clause has <=3 literal inserts (each scan <=2 comparisons);
+    # each source clause insert scans at most all previously seen clauses.
+    comparison_budget = 6 * m + m * (m - 1) // 2
+    assert sum(comparisons.values()) <= comparison_budget
     return {
         "input_count": data["input_count"], "gate_count": g,
         "num_variables": nvars, "source_clause_count": len(source_clauses),
@@ -159,6 +192,8 @@ def compile_and_report(data):
         "normalized_literal_codes": canonical,
         "bit_length": len(bits), "formal_target_upper_bound": upper,
         "quadratic_source_variable_upper_bound": quadratic_upper,
+        "normalization_comparisons": comparisons,
+        "normalization_comparison_budget": comparison_budget,
         "bits": "".join("1" if b else "0" for b in bits),
         "source_status": "executable Python, not Agda/Lean kernel proof",
     }

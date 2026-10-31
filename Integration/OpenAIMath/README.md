@@ -42,3 +42,6 @@ Usage: `python scripts/compile_dashi_circuit_openai378.py circuit.json --out enc
 
 The outstanding theorem is now exactly the same-object equivalence between this executable frontend, Agda's source `optCircuitCNF` and the updated `OAI.Algorithms.SubexponentialSAT.SAT.CNF` AND a certified cost-preserving compiler into the fixed primitive machine of `SqrtLogSpace.Final`. Lean4 4.28/DASHI old vendor pin versus upstream 4.34.1 remains unresolved; do not import staged `Upstream378FiniteCNFBridge` until compiled with its actual dependencies.
 
+
+**Last quantitative source cut:** upstream exact encoding bound can be simplified using `g≤n` to
+`Encoding.formulaBitLength(toUpstreamCNF clauses) ≤ 72*(n+1)^2` for n = total input+gate variable count, provided `clauses.length≤3*g+1` and width≤3. Source-written Lean declaration: `Upstream378FiniteCNFBridge.upstreamQuadraticBitLengthBound`; **kernel NOT run**. Executable Python frontend now also asserts the quadratic bound for each actual generated bitstring. Independent local audit rerun PASS 1,485 circuits/104,720 full assignments, including exact framing decode. This bounds **input encoding length** only, not the fixed primitive machine's uniform construction time, square-root-log runtime or prefix space.

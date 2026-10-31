@@ -31,3 +31,14 @@ Source-audited against **live** `openai/math` README, CONTENTS and `lean/formali
 
 **Actual missing few-hundred-proof integrations:** the 208 upstream declaration references have been indexed. For each result that matters, still record exact pinned source revision, formalized theorem statement, original author/date, proof dependency/axiom check, in-repo earlier stronger owner comparison, same-object implication, executable/Agda or Lean acceptance receipt, and TOE/QID consumer only when mathematically warranted. The other 373 families have not been individually theorem-ported. This is a programme with real mathematical obligations, not a tally of catalogue names.
 
+
+## Executable DAG-to-upstream-378 binary frontend (31 Oct)
+
+`scripts/compile_dashi_circuit_openai378.py` is a **standalone executable** conversion from a JSON serialization of the original DASHI circuit gate carrier to the source-optimized Tseitin clauses and the **actual** current OpenAI `Encoding.lean` structure. Gate sources use `{"type":"input","index":i}` or `{"type":"gate","index":creation_order_id}`, with strictly earlier references. The output wire uses the same format.
+
+Exact source structure: source gate list ⟶ 1/2/3 clause templates ⟶ literal code `2*variable+polarity` ⟶ sets of literal codes / sets of clauses ⟶ ascending sorted numeric clause/literal lists ⟶ unary `encodeNat` and framed nested `encodeList` ⟶ bitstream `Encoding.encodeCNF` style. The frontend reports source/normalized clause counts, width, bit length, the formula `n+2+(24*n+28)*(3*g+1)` upper bound, and the exact bit sequence. This does NOT evaluate a SAT oracle or enumerate assignments, and is not a new Agda semantics owner. It intentionally preserves duplicate/tautological clause syntax in `Finset` semantics instead of applying additional `SAT.normalize` rewriting, so the exact `encodeCNF` target is well defined.
+
+Usage: `python scripts/compile_dashi_circuit_openai378.py circuit.json --out encoding.json`. This source file has **not** been executed from an exact GitHub checkout. An independently written local Python checker passed **1,485 source DAGs**, **104,720 full Boolean assignments** and encoding/decoding round trips; 795 cases had source clauses that collapsed after literal-set normalization. Source-level bound satisfied in all fixtures. These are executed finite checks, not Agda/Lean kernel or fixed-TM step/space certificates.
+
+The outstanding theorem is now exactly the same-object equivalence between this executable frontend, Agda's source `optCircuitCNF` and the updated `OAI.Algorithms.SubexponentialSAT.SAT.CNF` AND a certified cost-preserving compiler into the fixed primitive machine of `SqrtLogSpace.Final`. Lean4 4.28/DASHI old vendor pin versus upstream 4.34.1 remains unresolved; do not import staged `Upstream378FiniteCNFBridge` until compiled with its actual dependencies.
+

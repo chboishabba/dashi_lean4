@@ -84,7 +84,8 @@ theorem upstreamExactBitLengthBound {n g : ℕ}
     Encoding.formulaBitLength (toUpstreamCNF clauses)
         ≤ n + 2 + (4 + (8 * n + 8) * 3) *
             (toUpstreamCNF clauses).card := upstream
-    _ ≤ n + 2 + (4 + (8 * n + 8) * 3) * (3 * g + 1) := by omega
+    _ ≤ n + 2 + (4 + (8 * n + 8) * 3) * (3 * g + 1) := by
+      exact Nat.add_le_add_left (Nat.mul_le_mul_left _ hc) _
     _ = n + 2 + (24 * n + 28) * (3 * g + 1) := by ring
 
 -- Open items: a kernel-checking receipt on the proper upstream Lean toolchain;

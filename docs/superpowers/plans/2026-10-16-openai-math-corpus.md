@@ -426,3 +426,16 @@ Exact **conditional** scope of OpenAI Encoding.formulaBitLength_upper (actual so
 
 Pareto next: exact Agda kernel; global-bit-vector -> original evaluateProgram reification and original #SAT cardinality equality; Finset CNF normalization and binary length source theorem; new source Agda -> Lean verified consumer; uniform machine cost. Do not treat current finite-bipartite-grid maximum-cut optimality as general approximation hardness or conditional Guo TSP as proven from family 378.
 
+
+
+## 31 October 2026 — actual golden Agda count normalization donor, Lean still downstream
+
+New source in the EXISTING Agda OpenAIMath optional 3-CNF module on #1212:
+- `optCircuitCountEqualsOriginal`: source-writes a Nat-valued exact count of **all** satisfying finite global input/gate assignments in the optimized vs unoptimized whole CNF by transporting earlier pointwise source evaluation equivalence through `sumFiniteBitsExt`. This pays numerical equality **between two CNF compilers**, NOT count equality with the original input-only accepted circuit. Agda kernel pending; new opt-in file is not part of the import spine.
+- Source local normalization generators: `duplicateLiteralPreserves`, `duplicateClausePreserves`, `swapAdjacentLiteralsPreserves`, `swapAdjacentClausesPreserves`, `tautologicalClauseTrue`; and `countFromPointwise`, `duplicateLiteralCountInvariant`, `duplicateClauseCountInvariant`, `swapClauseCountInvariant`, `tautologyRemovalCountInvariant`. These establish ordered List-CNF Boolean-evaluation and Nat-cardinality invariance for exactly the elementary rewrites that turn List clauses into deduplicated Finset clauses. They DO NOT yet construct the real Lean `Finset (Finset Literal)` map, prove clause width cardinality, or import the later upstream family-378 module into the pinned vendor.
+- Independent executable local clause minimum proof search across all 26 nonempty non-tautological clauses on the 3 local Boolean coordinates finds minimum 1 constant, 2 NOT, 3 AND/OR. This is a finite computational result with no extra variables, not a Lean/Agda kernel result or universal source-to-machine optimality claim. Original existing Python regression script extended in place, not replaced.
+
+**Fresh test receipt:** the earlier full suite replay exceeded execution limit this turn; do NOT record it as rerun. Fresh bounded deterministic local verification passed 375 circuit/output fixtures and 10,850 complete assignment checks, plus 176 elementary CNF normalization checks and 26-clause exhaustive finite optimality check. Historical prior-turn 62,493 circuit results remain separately labelled; exact-head GitHub script execution and Agda/Lean compilation not performed.
+
+**Next Pareto donor**: after the original Agda gate-value reification and List normalization are truly kernel-accepted, mirror their same-source statements into Lean, prove concrete canonical CNF Finset evaluation/cardinality and apply original OpenAI `Encoding.formulaBitLength_upper` with width k=3 and m≤3g+1, then compose machine steps and prefix tape-space. The already-pinned vendor lacks Oct 26 family-378 source. Do NOT silently mutate that pin or claim a faster ETH/P=NP/Max-Cut algorithm, and do not reown original Cook/Tseitin, #1040, #1438 QID, #1414 orbit, Ibrahim Monster 3B or ESD surfaces.
+

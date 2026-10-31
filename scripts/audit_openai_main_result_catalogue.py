@@ -13,17 +13,17 @@ import sys
 from collections import Counter
 
 YAML_ENTRY = re.compile(
-    r"^    - comparator_config: (\\S+)\\r?\\n"
-    r"      declaration: ([^\\r\\n]+)\\r?\\n"
-    r"      file: ([^\\r\\n]+)", re.M)
+    r"^    - comparator_config: (\S+)\r?\n"
+    r"      declaration: ([^\r\n]+)\r?\n"
+    r"      file: ([^\r\n]+)", re.M)
 LEAN_ENTRY = re.compile(
-    r'\\{ comparator := ("(?:[^"\\\\]|\\\\.)*"), '
-    r'declaration := ("(?:[^"\\\\]|\\\\.)*"), '
-    r'file := ("(?:[^"\\\\]|\\\\.)*") \\}')
+    r'\{ comparator := ("(?:[^"\\]|\\.)*"), '
+    r'declaration := ("(?:[^"\\]|\\.)*"), '
+    r'file := ("(?:[^"\\]|\\.)*") \}')
 
 
 def parse_yaml(source: str):
-    if "status:\\n  scope: \"Partial progress.\"" not in source:
+    if "status:\n  scope: \"Partial progress.\"" not in source:
         raise ValueError("Upstream YAML scope changed; manual audit required")
     entries = YAML_ENTRY.findall(source)
     if not entries:

@@ -35,11 +35,11 @@ theorem exactAssignmentTruth {n : ℕ}
     (toUpstreamCNF clauses).eval assignment = true ↔
     ListFinsetCNFTransport.listCNFSatisfied
       (fun literal => literal.eval assignment) clauses := by
-  rw [SAT.CNF.eval_eq_true]
-  change (∀ C ∈ toUpstreamCNF clauses,
-    (∃ literal ∈ C, literal.eval assignment = true)) ↔ _
-  exact (ListFinsetCNFTransport.cnfSemanticsExact
-    (fun literal => literal.eval assignment) clauses).symm
+  -- Use the exact upstream satisfaction APIs, not a fragile
+  -- definitional reduction of nested decide clauses.
+  simpa only [SAT.CNF.eval_eq_true, SAT.Clause.eval_eq_true] using
+    (ListFinsetCNFTransport.cnfSemanticsExact
+      (fun literal => literal.eval assignment) clauses).symm
 
 /-- No duplicates or tautologies can increase the number of upstream clauses. -/
 theorem originalClauseBound {n : ℕ}

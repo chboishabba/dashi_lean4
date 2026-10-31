@@ -1,5 +1,8 @@
 # OpenAI Math Corpus Integration Implementation Plan
 
+**CURRENT EXACT-LEMMA AUTHORITY (39 obligations):** [Golden Agda source-indexed lemma and certificate ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md). This register supersedes stale per-section “remaining” bullets in this accumulated historical plan. It explicitly distinguishes source-written P1/P2, partial generic/OAI378 Lean and missing current-vendor kernel receipts, actual executable frontend and its polynomial comparison bound, external mathematical (RH/twin/YM/Pickover) certificates, corpus catalogue metadata vs ports, and native graph/QID vs C3 orbit/Monster boundaries. No change to old 4.28 vendor or false formal-acceptance assertion.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Pin OpenAI's mathematics corpus as a hermetic, attributed theorem source and expose safe Lean/Agda ingress layers plus an initial DASHI relevance atlas.

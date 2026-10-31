@@ -88,6 +88,29 @@ theorem upstreamExactBitLengthBound {n g : ℕ}
       exact Nat.add_le_add_left (Nat.mul_le_mul_left _ hc) _
     _ = n + 2 + (24 * n + 28) * (3 * g + 1) := by ring
 
+/-- A closed quadratic source-variable bound, obtained from the
+actual upstream length theorem, NOT a runtime estimate. For real source DAGs
+the gate count is ≤ the complete variable count `n=inputs+g`. -/
+theorem upstreamQuadraticBitLengthBound {n g : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n))))
+    (width : ∀ clause ∈ clauses, clause.length ≤ 3)
+    (clauseCount : clauses.length ≤ 3 * g + 1)
+    (gateCountBound : g ≤ n) :
+    Encoding.formulaBitLength (toUpstreamCNF clauses)
+      ≤ 72 * (n + 1) ^ 2 := by
+  have base := upstreamExactBitLengthBound
+    (n := n) (g := g) clauses width clauseCount
+  have hg : 3 * g + 1 ≤ 3 * n + 1 := by omega
+  have hmul :
+      (24 * n + 28) * (3 * g + 1) ≤
+        (24 * n + 28) * (3 * n + 1) :=
+    Nat.mul_le_mul_left _ hg
+  have hstep :
+      Encoding.formulaBitLength (toUpstreamCNF clauses)
+        ≤ n + 2 + (24 * n + 28) * (3 * n + 1) :=
+    base.trans (Nat.add_le_add_left hmul _)
+  nlinarith
+
 -- Open items: a kernel-checking receipt on the proper upstream Lean toolchain;
 -- Agda source literal/Fin/polarity mapping as an imported SAME-OBJECT theorem;
 -- a verified uniform compiler to this list; its bit-time and all-prefix space

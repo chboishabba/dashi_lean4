@@ -113,6 +113,43 @@ theorem upstreamQuadraticBitLengthBound {n g : ℕ}
   nlinarith
 
 
+/-- Compose the SAME upstream runtime formula with the concrete
+quadratic bit-length envelope. This changes ONLY the stated input-length
+argument; the exponential-in-n term and original machine are unchanged. -/
+theorem sourceRuntimeWithinQuadraticInputBudget
+    {n g : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n))))
+    (width : ∀ clause ∈ clauses, clause.length ≤ 3)
+    (clauseCount : clauses.length ≤ 3 * g + 1)
+    (gateBound : g ≤ n)
+    {C A : ℝ} (hC : 0 ≤ C) (d : ℕ) :
+    OAI.Algorithms.SubexponentialSAT.SqrtLog.Statement.runtimeBound C A d
+      (Encoding.formulaBitLength (toUpstreamCNF clauses)) n
+      ≤ OAI.Algorithms.SubexponentialSAT.SqrtLog.Statement.runtimeBound C A d
+        (72 * (n + 1) ^ 2) n := by
+  have hbits := upstreamQuadraticBitLengthBound
+    clauses width clauseCount gateBound
+  unfold OAI.Algorithms.SubexponentialSAT.SqrtLog.Statement.runtimeBound
+  gcongr
+  exact_mod_cast hbits
+
+/-- Prefix visited-space polynomial remains polynomial when replacing
+actual encoded length by the explicit quadratic envelope. No front-end
+preprocessing memory is assumed free; that cost remains a separate cut. -/
+theorem sourceVisitedSpaceWithinQuadraticInputBudget
+    {n g : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n))))
+    (width : ∀ clause ∈ clauses, clause.length ≤ 3)
+    (clauseCount : clauses.length ≤ 3 * g + 1)
+    (gateBound : g ≤ n)
+    {S : ℝ} (hS : 0 ≤ S) (e : ℕ) :
+    S * ((Encoding.formulaBitLength (toUpstreamCNF clauses) : ℝ) + 1) ^ e
+    ≤ S * (((72 * (n + 1) ^ 2 : ℕ) : ℝ) + 1) ^ e := by
+  have hbits := upstreamQuadraticBitLengthBound
+    clauses width clauseCount gateBound
+  gcongr
+  exact_mod_cast hbits
+
 /-- SAME-MACHINE list-of-clauses consumer of the ACTUAL 378 theorem.
 No fabricated fast SAT oracle or new machine: the upstream machine remains
 fixed and its original complexity bounds are retained byte-for-byte.

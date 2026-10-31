@@ -1,0 +1,506 @@
+# OpenAI Math Corpus Integration Implementation Plan
+
+**CURRENT EXACT-LEMMA AUTHORITY (39 obligations):** [Golden Agda source-indexed lemma and certificate ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md). This register supersedes stale per-section “remaining” bullets in this accumulated historical plan. It explicitly distinguishes source-written P1/P2, partial generic/OAI378 Lean and missing current-vendor kernel receipts, actual executable frontend and its polynomial comparison bound, external mathematical (RH/twin/YM/Pickover) certificates, corpus catalogue metadata vs ports, and native graph/QID vs C3 orbit/Monster boundaries. No change to old 4.28 vendor or false formal-acceptance assertion.
+
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Pin OpenAI's mathematics corpus as a hermetic, attributed theorem source and expose safe Lean/Agda ingress layers plus an initial DASHI relevance atlas.
+
+**Architecture:** Keep `openai/math` at immutable commit `1581d4cbdd69a0faf34b2089614fe2a814316a6a` outside DASHI's normal Lean dependency graph. Add proof-status and authority firewalls in Lean, mirror them as cross-prover source receipts in Agda, and route likely useful mathematics into existing DASHI programmes without claiming same-object theorem promotion.
+
+**Tech Stack:** Lean 4, Agda, Git/GitHub, YAML metadata, Apache-2.0 provenance.
+
+**Spec:** `docs/superpowers/specs/2026-10-16-openai-math-corpus-design.md`
+
+## Global Constraints
+
+- Upstream repository is exactly `openai/math` at commit `1581d4cbdd69a0faf34b2089614fe2a814316a6a`.
+- Upstream Lean toolchain is exactly `leanprover/lean4:v4.34.1`.
+- Do not retarget DASHI's Lean toolchain or mathlib to the upstream environment.
+- Preserve Apache-2.0 attribution and distinguish upstream work from DASHI synthesis.
+- Manuscript, catalogue, upstream declaration, upstream kernel receipt, DASHI port, DASHI kernel receipt and Agda theorem status remain distinct.
+- No CI/kernel-green claim is made without execution evidence.
+
+## Review Focus
+
+- Upstream `main` moving must not alter the pinned receipt.
+- A catalogue entry without a declaration/kernel receipt must not be promoted.
+- A Lean theorem receipt must not become an Agda theorem by metadata alone.
+- A research-topic match must not become same-object theorem transport.
+- The vendor helper must reject or visibly expose a checkout whose HEAD differs from the declared pin.
+
+---
+
+### Task 1: Lean source-level regression contract
+
+**Files:**
+- Create: `Integration/OpenAIMath/OpenAIMathCorpusRegression.lean`
+
+**Interfaces:**
+- Consumes: future `Integration.OpenAIMath.Everything`.
+- Produces: compile-time assertions for pin, toolchain, authority firewall and relevance classes.
+
+- [ ] **Step 1:** Create the regression owner importing `Integration.OpenAIMath.Everything` and asserting exact pin/toolchain values plus non-promotion booleans.
+- [ ] **Step 2:** Verify RED by confirming the production rollup does not yet exist.
+- [ ] **Step 3:** Commit the regression owner.
+
+### Task 2: Lean upstream pin and status model
+
+**Files:**
+- Create: `Integration/OpenAIMath/UpstreamPin.lean`
+- Create: `Integration/OpenAIMath/FormalizationStatus.lean`
+
+**Interfaces:**
+- Produces: `upstreamCommit`, `upstreamLeanToolchain`, `UpstreamAuthorityLevel`, `PromotionStatus`, and firewall theorems/booleans consumed by Tasks 3-5.
+
+- [ ] **Step 1:** Implement immutable upstream metadata and license/toolchain/catalogue paths.
+- [ ] **Step 2:** Implement distinct upstream/DASHI promotion-status constructors with no automatic promotion function.
+- [ ] **Step 3:** Add explicit negative/inequality-style firewall facts consumed by regression.
+- [ ] **Step 4:** Commit.
+
+### Task 3: Lean relevance atlas and vendor contract
+
+**Files:**
+- Create: `Integration/OpenAIMath/PriorityAtlas.lean`
+- Create: `scripts/materialize_openai_math_vendor.sh`
+- Create: `vendor/openai-math/README.md`
+
+**Interfaces:**
+- Consumes: Task 2 metadata.
+- Produces: `DASHIProgramme`, `RelevanceClass`, initial priority entries, and an executable checkout contract pinned to the exact upstream SHA.
+
+- [ ] **Step 1:** Add coarse routing classes and named DASHI programmes without theorem promotion.
+- [ ] **Step 2:** Add the vendor helper that clones/fetches `openai/math`, checks out the exact pin, and fails if the resulting HEAD differs.
+- [ ] **Step 3:** Add vendor README documenting hermetic upstream environment and Apache-2.0 retention.
+- [ ] **Step 4:** Commit.
+
+### Task 4: Lean focused rollup
+
+**Files:**
+- Create: `Integration/OpenAIMath/Everything.lean`
+
+**Interfaces:**
+- Consumes: Tasks 2-3.
+- Produces: one import target for regression and downstream theorem-specific adapters.
+
+- [ ] **Step 1:** Export the pin, status and atlas modules.
+- [ ] **Step 2:** Source-audit the regression contract against the exported names.
+- [ ] **Step 3:** Commit.
+
+### Task 5: Agda source-level regression contract
+
+**Files:**
+- Create: `DASHI/Research/OpenAIMath/OpenAIMathCorpusRegression.agda`
+
+**Interfaces:**
+- Consumes: future `DASHI.Research.OpenAIMath.Everything`.
+- Produces: exact upstream pin/status assertions and cross-kernel non-promotion assertions.
+
+- [ ] **Step 1:** Create the regression owner first.
+- [ ] **Step 2:** Verify RED by confirming the production rollup does not yet exist.
+- [ ] **Step 3:** Commit.
+
+### Task 6: Agda upstream receipt and priority atlas
+
+**Files:**
+- Create: `DASHI/Research/OpenAIMath/OpenAIMathUpstreamReceiptExact.agda`
+- Create: `DASHI/Research/OpenAIMath/OpenAIMathPriorityAtlasExact.agda`
+- Create: `DASHI/Research/OpenAIMath/Everything.agda`
+
+**Interfaces:**
+- Produces: immutable upstream source receipt, cross-prover status vocabulary, relevance routing and focused rollup.
+
+- [ ] **Step 1:** Encode the exact upstream repository/SHA/toolchain/catalogue and Apache-2.0 attribution.
+- [ ] **Step 2:** Encode `manuscript != upstream Lean != Agda theorem` and local promotion boundaries.
+- [ ] **Step 3:** Mirror the named DASHI programme/relevance atlas without importing Lean proof authority.
+- [ ] **Step 4:** Export through a focused rollup.
+- [ ] **Step 5:** Commit.
+
+### Task 7: Repository integration and PRs
+
+**Files:**
+- Modify: nearest existing Lean integration rollup if one canonical root is present and safe.
+- Modify: nearest existing Agda research/global rollup if one canonical root is present and safe.
+
+**Interfaces:**
+- Consumes: all previous tasks.
+- Produces: discoverable integration branches and draft PRs with attribution/verification boundaries.
+
+- [ ] **Step 1:** Inspect canonical rollups and add only minimal imports where appropriate.
+- [ ] **Step 2:** Re-read changed source for exact pin consistency and absence of automatic promotion.
+- [ ] **Step 3:** Open Lean and Agda draft PRs documenting source-written status and kernel-pending boundary.
+
+---
+
+## 29 October 2026 continuation — full ingestion, reuse-first max-cut
+
+**Provenance:** This continuation is independently authored DASHI planning over OpenAI's Apache-2.0 released source (original authorship OpenAI and credited source authors), not proof of any OpenAI manuscript, Lean kernel rerun, or new mathematical theorem. Do not modify protected ESD modules. Preserve earlier DASHI/Ibrahim ownership and dated source priority. An externally known theorem is not newly invented by DASHI; a new repository proof is not automatically first publication. Never infer a Monster same-object representation from a character fingerprint or arithmetic coincidence.
+
+### Verified current PR owners and boundaries
+
+- Lean #78 (`integration/openai-math-corpus`): genuine **git submodule** `vendor/openai-math-src` pinned at `1581d4cbdd69a0faf34b2089614fe2a814316a6a`; `.gitmodules`, `PIN.json`, vendor materialization script, status model, priority atlas, four source-precise Lean donors (003,102,362,376). Open / not merged; source-written, kernel pending.
+- Agda #1212 (same branch name in Agda): source receipt and provenance-only atlas. Open / not merged; source-written, kernel pending. 002 and 032 manuscript-only. Do not treat cross-prover receipts as theorem proofs.
+- Agda #772: existing recursive Pareto / dependency-derived truth maintenance / selective invalidation. Reuse; do not create duplicate L40 owner.
+- Agda #697: history-indexed proof/experiment/action loop; #672: BIDI residual-fibre and provenance; #1266: factorisation collision and source-first proof-search; #1001: explicit distributed epistemic attribution. Reuse before extension.
+- Agda #1217 and Lean #80: existing TOE integration owners. Import qualified proof terms only, not source catalogue metadata as physical claims.
+- Upstream `openai/math/history.md` lists changes on 2026-10-26 including two new manuscripts with Lean formalizations; source pins must be compared, never silently moved. Latest catalogue `lean/formalization.yaml` schema v0.4. Counts require pinned exact-tree census, not memory.
+- The older checkboxes above are a historical implementation plan; actual files exist in PR #78. Do **not** interpret unchecked boxes as missing implementations.
+
+### Acceptance obligations, mapped to existing machinery
+
+| Group | Obligations | Existing owner / unpaid frontier |
+| --- | --- | --- |
+| Acquisition | L01–L08 immutable SHA, blob identity, parsed catalogue, coverage, revision delta, round-trip | #78 pin/vendor; **unpaid** full exact-source census/diff |
+| Source identity | L09–L16 unique identities, challenge/solution, statement fidelity, dep closure, environment, withdrawal, provenance | #78 Lean atlas, #1212 Agda receipt; **unpaid** exhaustive per-declaration census |
+| Lean verification | L17–L24 verifier binding, isolation, checking, escapes/axioms, statement fidelity, replay, statuses | upstream Comparator; **unpaid** exact-head run receipts; not required to write source but required to assert kernel acceptance |
+| Cross-prover | L25–L32 same-object and hypothesis/conclusion/definition-preserving transport, cross-kernel firewall | #78/#1212 firewalls; **unpaid** target-specific exact bridges |
+| Search/residual | L33–L40 corpus search, ranking nonauthority, decomposition, reverse trace, residual preservation, refinement, collision, selective invalidation | #672/#697/#772/#1266; **unpaid** wiring source dependency identity into already existing machinery, NOT reconstructing L40 |
+| Final | L41–L48 canonical ownership, attribution, TOE reachability, unpaid-leaf conservation, valid transfer, coverage/replay/completion | #1217/#80; **unpaid** precise regression and target theorem receipts |
+
+### Source-first Pareto / snowball / Ibrahim worklist
+
+1. **P0: do not duplicate.** Compare exact current branch symbols/PR diffs against #78, #1212, #772, #697, #672, #1266. Record the canonical owner and distinct source-written/kernel-accepted states per declaration.
+2. **P1: source-delta census.** Read exact upstream historical and current manifests. Preserve per-entry family, manuscript, dated revision, formalization statement, solution declaration, challenge declaration, dependency closure, license, status and withdrawn/superseded lineage. Produce one machine-readable reconciliation manifest; source-only checks cannot award theorem authority.
+3. **P2: donor 102 / Max-Cut.** Compare `OAI.OptimalMaxCut.main` exact hypotheses and conclusion with DASHI graph/C3/fibre Max-Cut targets. An approximation-hardness result and a finite fibre reduction are not the same theorem. Build a bridge only after identifying a same-problem objective-preserving reduction and complexity-preserving map; record any irreducible approximation-gap/complexity assumption as residual.
+4. **P3: donor 003 / quasi-RH.** Compare `OAI.riemannZeta_ne_zero_of_seven_eighths_lt_re` to DASHI G21 exact zeta and zero-free corridor. Obtain explicit same-zeta and domain inclusion maps, preserving strict inequalities, pole exclusions and dependency/axiom provenance. No RH promotion.
+5. **P4: donors 362 / Vlasov–Maxwell and 376 / forced-NS.** Match same physical fields, function spaces, time intervals, forcing and smoothness, not merely PDE vocabulary. No YM/Clay promotion without same-object analytical transport.
+6. **P5: manuscripts 002 / 032 and subsequent catalogue entries.** Only catalogue and research-route until exact proof declarations/receipts exist; preserve BSD/Hodge source owners and dated priority.
+7. **P6: symmetry / fabric / hyperfabric.** Admit a new join only with an explicit map preserving the theorem's typed invariants (group action equivariance, boundary and energy constraints, objective or analytic estimates). Require a commuting square or a counterexample. Numerical 3/6/9 matches, dimension coincidences, Monster fingerprints, and descriptive analogies have zero proof weight.
+8. **P7: recursion and invalidation.** Feed source revision differences into canonical #772 dependency graph. Check both reachability invalidation and retention for dependencies + environment + verification-policy pins. Existing general L40 proof stays owned by #772. Expand fixtures rather than invent another calculus.
+9. **P8: reverse BIDI.** Given one target obligation, return exact source revision/declaration, the accepted proof receipt if any, all transported assumptions, and unpaid residuals. Given a donor, enumerate candidate consumers without asserting theorem reuse.
+10. **P9: TOE.** Export only kernel-supported or explicitly conditional theorem terms into existing root graph; a source citation/metadata/atlas belongs in the research index, not in a theorem-bearing TOE claim.
+
+### Explicit irreducible leaves
+
+- Complete current-versus-pinned catalogue and dependency closure, including withdrawn items.
+- Real upstream verifier/kernel receipts for every promoted declaration (if no executable runtime: status stays pending).
+- Same-object, assumption-preserving bridges for each adopted DASHI theorem.
+- Existing truth-maintenance integration of source revisions (not a new general invalidation lemma).
+- Exact proof of objective/action compatibility for any proposed fibre/fabric/hyperfabric symmetry bridge.
+- Per-target previous-prior-art/priority ledger: dated published theorem; original source author; older DASHI proof/PR and timestamp; new source code author; executed check; kernel verifier; allowed claim.
+
+### Mandatory evidence row (per donor and consumer)
+
+`upstream_commit | family | manuscript_revision | published_author_and_date | prior_published_result | formal_solution_module | theorem | proof_dependencies | upstream_accepted? | earlier_DASHI_declaration/PR/date | DASHI_proof_owner | DASHI_kernel_accepted? | target | exact_transport_lemma | remaining_residual | invalidation_dependents`.
+
+Statuses: `MANUSCRIPT_ONLY`, `FORMAL_SOURCE_IDENTIFIED`, `SOURCE_WRITTEN`, `EXECUTED_CHECK`, `KERNEL_ACCEPTED`, `TRANSPORT_VERIFIED`, `WITHDRAWN`, `UNKNOWN`. They are non-interchangeable.
+
+### Stop condition
+
+Source admission completes only after every pinned manuscript and every catalogue entry has a row and revision policy; formal theorem promotion completes only for named entries with adequate kernel and target transport receipts. Research into every remaining unformalized manuscript and general Clay problems is **not** silently included in ingestion completion. Record all walls in the evidence row; never fake completion.
+
+
+### 29 October — Max-Cut terminology correction and original owner reuse
+
+**Confirmed two different senses of “max-cut”:**
+1. OpenAI family 102 is the actual graph-optimization/approximation-hardness theorem `OAI.OptimalMaxCut.main` in `OAI.Computability.MaxCut.Main` (source-owned OpenAI `openai/math`, pinned above). Independent mathvet review lists `OptimalMaxCut` among built/audited solutions and Comparator-accepted challenges. Verify actual target statement directly before adapting it.
+2. DASHI's “max-cut” often names a *frontier/obligation partition*, not the graph optimization problem. Existing Agda `DASHI.Unified.TOE369MaxCutKernelBidiTernaryExact` is a theorem reuse / nonpromotion aggregate, not a Max-Cut graph-hardness proof.
+
+**Recent reuse:** Agda #1407 owns 27/9 antipodal orbit symmetry, Hermitian Q(omega) reconstruction and 729-contribution finite convolution (source-written; kernel pending); #1390/#1336 converge finite-ternary/kernel-BIDI/Ibrahim nonpromotion; #1249 owns distinct path/periodic cube graph/Fourier geometry. Keep these mathematical owners separate from OpenAI family 102 and from graph-hardness claims.
+
+**Corrected P2 max-cut:** First inspect the **actual** type and assumptions of `OAI.OptimalMaxCut.main`. Identify its graph classes, weighted/unweighted convention, approximation ratio, Unique Games assumptions, reduction and complexity model. Separately audit DASHI for any existing *actual graph-cut objective* and corresponding algorithm/reduction. Only then attempt a graph-morphism or group-orbit quotient with an exact weighted edge-count/objective identity and polynomial-time construction. The necessary condition for orbit compression is that edge weights are invariant under the acting graph automorphism group (or that a more general equitable quotient preserves the relevant weighted cut), not that a 27- or 9-element orbit count merely matches. If group-invariant cuts are only a restricted subclass, their quotient optimum need not equal unrestricted Max-Cut; retain this as an explicit counterexample/negative-control task. In particular, no hardness transfer from general graphs to fixed 27-vertex finite graphs can exist under standard variable-input complexity definitions; a finite fixed graph has constant-size exhaustive search. Require a *uniform variable-size graph family* plus polynomial reduction and objective/approximation-preserving correspondence.
+
+**Attribution:** Goemans–Williamson SDP approximation, Unique Games hardness source authors, OpenAI released formalization, and previous DASHI ternary/orbit theorem owners are separate. A new exact graph quotient proof by DASHI, if supplied, is attributable to its repository implementation, not original invention of the general method.
+
+**Immediate blocker:** exact upstream family-102 Lean theorem signature and direct same-problem DASHI graph objective owner not yet source-verified in this pass; do not declare reduction complete.
+
+
+### 29 October — actual finite Max-Cut orbit regression committed
+
+Lean #78 branch commit `796781ba2decdb66b00e1243e3dfba5817e15797` adds `scripts/check_openai_maxcut_orbit_objective.py`. An equivalent locally executed Python script passed finite graph/orbit/counterexample tests in this session. The committed script itself has not been independently re-executed by a connected checkout or CI; mark **SOURCE-WRITTEN**, with local algorithmic-equivalent **EXECUTED CHECK**, not kernel-accepted.
+
+Precise result: for any undirected nonnegative weighted finite graph and vertex partition (orbits of a weight-preserving automorphism action), sum inter-orbit edge weights. Each Boolean quotient assignment lifts to a vertex-orbit-constant cut with **identical** weighted objective; every invariant cut descends. Thus `maxCutInvariant(G,H) = maxCut(quotientWeighted(G,H)) <= maxCut(G)`. The inequality is strict for a one-edge two-vertex graph with vertex-swap symmetry, and a four-cycle with transitive rotation. This finite proof idea is classical; source regression code ownership is DASHI.
+
+**New proof target:** Re-express this theorem over upstream `OAI.OptimalMaxCut.Graph.cutSize` (simple unweighted graph, edges exactly once), rather than inventing a second graph ontology. Verify the actual upstream pinned solution theorem `OAI.OptimalMaxCut.main` separately. State weighted orbit aggregation as a target interface and prove an objective-preserving graph-reduction law plus a polynomial encoding/runtime bound only when the quotient graph family grows with input. Do not claim general Max-Cut hardness for fixed 9/27 sites or on symmetry-restricted cuts. Compare with #1407 mathematical 13/27–5/9 involution, but do not identify its signed Fourier coefficient involution with graph automorphism without a concrete action on the graph edges.
+
+**Highest-alpha follow-up:** (1) Lean native exact cut/quotient theorem on pinned upstream graph type; (2) source-verified uniform complexity transport, preserving thresholds and output scale; (3) graph family/action witness from existing finite fibre owners; (4) reverse BIDI and prior-art ledger with Ibrahim Pareto/snowball source custody; (5) optional lifted symmetry QAOA orbit-state reduction, maintaining the distinction between invariant *assignments* and invariant *linear subspaces*.
+
+
+## 29 October 2026 — OpenAI 26 October ETH / P-versus-NP source-delta acquisition
+
+**Original source:** https://github.com/openai/math/blob/main/history.md (October 26, 2026). Announces two new manuscripts and accompanying Lean formalizations: (i) **The Exponential Time Hypothesis is False** (deterministic subexponential-time, polynomial-space exact counting for fixed-width CNF; claimed 3-SAT consequence refutes ETH); (ii) **Local smoothing for the Euclidean wave equation** (claimed implications for Kakeya and restriction). Also reports an added Lean formalization for **the rational Hodge conjecture for CM abelian varieties**, improved Lean formalizations/Comparator configurations, and restored dimension-six mutually unbiased bases C++/records/Python checker. Reconfirm source bytes and current commit before copying identities or asserting kernel status. This is dated 2026-10-26, not a claim of a 2026-10-29 new result.
+
+**Semantics correction:** `P = NP => not ETH` but `not ETH` does **not** entail `P = NP`. A deterministic subexponential algorithm may remain superpolynomial. Counterexample to the invalid inference is the asymptotic cost shape `2^(sqrt(n))`, which is subexponential but exceeds every fixed polynomial; this is a cost-function illustration, not a statement about the announced algorithm. An exact model is `ETH := there exists epsilon>0 such that 3-SAT requires 2^(epsilon*n) time` (with exact quantifiers/model fixed to source); distinguish ETH, #ETH, SETH, counting vs decision, randomized vs deterministic, uniform vs nonuniform, size vs variables, worst-case vs average-case, and polynomial-space vs polynomial-time.
+
+### P0–P7 source-first obligations
+
+- [ ] **P0 source identity:** Diff pinned `openai/math@1581d4c` against the exact Oct-26+ head, identify the ETH manuscript path, Lean formalization catalogue entry, complete declaration names, dependencies, source SHA, changed/withdrawn status, Lean toolchain, Comparator configuration, and exact mathematical statement. Do not assume family ID or local kernel acceptance.
+- [ ] **P1 original source audit:** Read the actual ETH proof and accompanying Lean source; extract width `k`, variable count `n`, `#SAT_k` count output and any integer bit-size costs, uniformity, machine model, polynomial space and subexponential runtime definition. Record which headline assertions are formally represented versus manuscript-only.
+- [ ] **P2 current canonical DASHI P-vs-NP owners:** Reuse Agda #1040 `PNotEqualsNPDirectSATLowerBoundExact` (literal BooleanFormula, PolynomialCostModel, universal polynomial-SAT decision failure frontier), #1129 resource-closing semantic-quotation actual coded TM/compiler frontier, #1006 `RSAQuantumShorPvsNPCrossPollinationExact`, #1366 Millennium cross-prover nonpromotion, Lean #45 upstream acceptance audit. Search other in-repo direct SAT/Cook/complexity owners before construction.
+- [ ] **P3 exact counting-to-decision bridge:** On the *same* CNF encoding and machine model, show `countSat(F)>0 <-> satisfiable(F)`; establish overhead bound in the chosen bit-complexity model. The reverse decision-to-exact-counting implication is **not** free.
+- [ ] **P4 quantified runtime bridge:** Prove formal source subexponential bound and `poly(n)*2^o(n)=2^o(n)`; distinguish fixed width / encoding length / clause count / output bit length. Do not promote an asymptotic statement to a polynomial-time decision algorithm.
+- [ ] **P5 ETH refutation semantic bridge:** Specify source's actual ETH variant and its reduction to 3-SAT; only infer its negation from same-model deterministic exact-counting/subexponential algorithms with the required quantifiers. Keep #ETH and SETH claims separate.
+- [ ] **P6 conflict / residual reconciliation:** A proposed universal polynomial SAT lower bound is **compatible** with a subexponential 3-SAT algorithm. Check any DASHI P9 / self-reference / diagonalization / quotation assertion for stronger universal exponential lower-bound claims. Run dependency-derived selective invalidation through the existing Agda #772 owner only where source semantics actually conflict. Never relabel source announcements as proof contradictions.
+- [ ] **P7 research snowball:** Route new local-smoothing, Kakeya and restriction donors to existing harmonic/Fourier/NS/YM analytical owners after verifying their exact hypotheses; route newly formalized CM Hodge to existing #002/#032 source atlas with upgraded **source status only**, not automatic Agda proof; route dimension-six MUB checker as computational evidence, not kernel theorem. Maintain prior published/older DASHI/original OpenAI authorship and independent referee status.
+
+**Priority:** P0→P1→P3→P4→P5 before a cross-domain theorem transport. Reuse #1040/#1129/#772 for P2/P6, and the original OpenAI corpus vendor (#78) rather than a second source store. A successful ETH formalization may offer algorithmic machinery but does not pay the remaining universal polynomial SAT lower-bound theorem or prove P=NP. No Lean/Agda kernel run is claimed by this roadmap update.
+
+
+## 29 October 2026 — transcript-led TSP / A* / RSA / tetration / 9999 cross-pollination
+
+**User-supplied secondary source**: ThePrimeTime, *This is Crazy*, 2026-10-29, https://www.youtube.com/watch?v=Ka0p5tUUmgg ; transcript supplied in conversation. Source is a discussion of OpenAI's 26 October release, not an original proof or verifier receipt. Inspect primary OpenAI `math/preprints/The-Exponential-Time-Hypothesis-is-False-October-25-2026/build/main_full_version.tex` and `math/lean/docs/378.md`, plus OpenAI 26 October announcement, for exact claims. Avoid the transcript's misleading shortcuts: ETH-false ≠ P=NP; P=NP does not by itself establish efficient recovery of arbitrary existing secret keys without encoding/representation/runtime detail; factoring is not established NP-complete; neither SHA-256/HMAC nor practical protein-folding applications follow from the ETH claim; a 2^o(n) SAT solver does not uniformly transfer to every NP problem under arbitrary polynomial reductions.
+
+**Primary theorem reconciliation:** OpenAI's Oct-25 manuscript states exact fixed-width CNF counting and polynomial space; the paper's main theorem gives `(n+m)^{O_k(1)} 2^{O_k(n loglog n / sqrt(log n))}` bit time and sharper sparse-clause bound, while the Lean formalization note `378.md` states `(L+1)^{O_k(1)} 2^{O_k(n (loglog n)^2/sqrt(log n))}` for canonical encoded input length L, with polynomial tape-cell space. Keep these distinct; do not silently copy the manuscript's sharper exponent into the Lean theorem, or mistake the video's shorthand `2^{n/sqrt(log n)}` for the fully checked general theorem. The paper expressly states that general polynomial-time reductions can destroy the subexponential parameter bound and considers graph-coloring / matching consequences separately.
+
+### Existing owners confirmed in Agda current default branch
+
+- `DASHI.Computation.PathfindingFibreFamilyExact`: BFS, Dijkstra, Bellman-Ford, A*, bidirectional and BMSSP as distinct residual/scheduling fibres. Explicit `quotientAloneProvesAlgorithmCorrectness=false`.
+- `DASHI.Computation.AStarPlateauFibreExact`: A* f-plateau and residual semantics. Reuse; do not create another algorithm identity.
+- `DASHI.ComputerScience.RSA260BidiSignedResidualAStarSearchExact`: RSA generator-coefficient residual A* scheduling donor, explicitly no established admissible heuristic or optimality certificate. Companion `RSA260BidiAStarEncodingGeneratorCollisionExact`, `RSA260BidiAStarRelationAugmentedEncodingCollisionExact`, and production diagnostic adapter retain coarse/fine identity-loss controls.
+- Agda #839 `FibreProgramComplexityExact`: transition, storage, head movement and physical-cost consumers distinct.
+- Agda #104, #1000, #1006 and #875: Shor order-to-factor certificates, classical/quantum distinctions and RSA original-source snowball provenance. No transfer from SAT-ETH to polynomial classical factoring is permitted without a real reduction and a polynomial bound.
+- `DASHI.Topology.TetrationalGateField` and `Ontology.DNA.FixedPointTernaryAndTetration`: height/size recurrence; `DASHI.Foundations.DecimalNonaryRefinementBridgeExact`: decimal/nonary exact finite accounting. Agda #1260 owns `9999` factorial/CRT and Eisenstein `lambda^9` arithmetic. Tetration height is a growth representation, **not** an integer factoring algorithm; modular congruences/CRT witnesses do not by themselves give a factor-finding speedup.
+- Agda #772: canonical selective invalidation / Pareto / worklist. Reuse historical Ibrahim source/prior-art custody and no-promotion owners.
+
+### Specific reusable theorem obligations — no false welding
+
+- [ ] **TSP1 decision-language identity:** State weighted directed/undirected TSP, Hamiltonian cycle, threshold decision `exists tour, cost<=B`, cost encoding (binary weights), and tour certificate verifier. Distinguish exact optimization, approximate optimization, decision and enumeration.
+- [ ] **TSP2 reduction direction:** Prove actual TSP-decision → canonical k-CNF via a polynomial-size Cook encoding, with an explicit input-variable blow-up `N(n,logW)`. Do not silently infer `2^{o(n)}` TSP from `2^{o(N)}` SAT when `N` is superlinear.
+- [ ] **TSP3 parameter-preserving route:** If aiming for true 2^o(n) TSP, prove a *linear-variable* (or otherwise sufficient subexponential-preserving) source reduction and include the polynomial overhead. If not, retain the exact derived upper bound `poly(input)*2^{o(N)}` only.
+- [ ] **TSP4 reconstruction:** Convert SAT decision into a witness using a bounded sequence of queries; show objective/binary-search overhead and output encoding cost, including false-positive/false-negative proof guards.
+- [ ] **ASTAR1 state fibre:** Reuse `PathfindingFibreFamilyExact` and `AStarPlateauFibreExact`. Encode TSP partial tour `(visited,current,cost)` with sound transitions, visited-set identity, terminal-return edge, invariant of remaining vertices and cycle closure.
+- [ ] **ASTAR2 lower bound:** Define a genuinely admissible heuristic on the same TSP graph (e.g. relaxation / MST plus entry/exit bounds where applicable). Prove `h(s)<=remainingOptimalCost(s)`, nonnegative weights and consistent/reopening rules where needed.
+- [ ] **ASTAR3 search correctness:** Prove invariant preservation, termination on finite states, returned-tour validity, goal optimality under precise A* policy. Distinguish exponential worst-case exploration from good-instance pruning and do not equate A* scheduling with complexity-class collapse.
+- [ ] **ASTAR4 fibre quotient:** Prove quotient-state simulation and cost compatibility before deduplication; demonstrate collision counterexamples when visited set / last city / cumulative cost / predecessor changes optimal future.
+- [ ] **FACT1 counting→decision / factoring:** Keep exact #SAT→SAT decision bridge separate from classical integer factoring. Factoring witness `1<d<N and d|N` is efficiently verified; factoring is not known NP-complete. Actual SAT encodings of multiplication can grow with bit-length; track length and machine cost.
+- [ ] **FACT2 RSA/Shor:** Reuse #1000 order-extraction and #1006 classical/quantum distinction, with RSA-260 diagnostic A* separate from a certified classical factor algorithm. Preserve provenance #875.
+- [ ] **FACT3 tetration/9999:** Audit #1260 exact `9999` CRT residues, #772 growth-worklist and canonical tetration recurrence. Require a reproducible new *uniform factoring algorithm*, sound divisor certificate, and proven runtime/space bound before claiming complexity gain. Tetrational state counts may make algorithms worse. Never infer factorization from a base-9/decimal pattern or residue match.
+- [ ] **VIDEO1 claim matrix:** Timestamp/source excerpt -> original paper/Lean statement -> actual implication -> disproved overreach. Distinguish SHA-256 preimage/collision, HMAC unforgeability, RSA factor security and PQ protocols; do not state all encryption broken.
+- [ ] **FIBRE1 qualified joins:** Only connect 27/9, hyperfabric or ternary symmetry to SAT/TSP/factoring if an actual computable map preserves witnesses, objectives, transition costs and asymptotic input length; provide an explicit nonfactorability counterexample otherwise.
+- [ ] **BIDI1 source/ownership receipt:** Record historical Cook–Levin, Held–Karp dynamic programming, Hart–Nilsson–Raphael A*, Dijkstra, Shor, ETH (Impagliazzo–Paturi), OpenAI 2026 original authors, prior DASHI PR and exact declarations, new repository code, executed checks, and kernel receipt separately.
+- [ ] **PARETO1 ranked source-faithful tests:** First: TSP→SAT variable blow-up; A* admissibility; exact ETH theorem type. Next: RSA factor certificate and Shor source identity. Finally: tetration/9999 as counterexample-backed complexity diagnostic. Reuse #772 recursive selective invalidation without duplicate owner.
+
+**Roadmap cut:** No kernel-verified TSP→SAT complexity transfer, admissible TSP A* heuristic, or uniform tetration-based factoring improvement is claimed in this tranche. Existing source-written finite arithmetic, pathfinding and RSA owners are useful donors but not same-object proof receipts.
+
+
+## 29 October 2026 — CORRECTION: Pickover sine `99^(9999!)`, not factoring/tetration
+
+**User correction accepted.** The relevant challenge is `sign(sin(99^(9999!)))`, with **postfix factorial**. The prefix `!9999` is the unrelated subfactorial/derangement count. Previous `FACT3` tetration-to-factoring framing must NOT be represented as the user's intended 9999 task. Treat the previous FACT3 as an optional independently gated arithmetic experiment, not a motivating source or necessary ETH/P-vs-NP bridge.
+
+**Actual repository owners verified in Agda PR #1414, head `b87483e44d5fef456c0aa081b957f0d736873e51`:**
+- `DASHI/Foundations/PolynomialPickoverFactorialGammaDegreeExact.agda` defines `factorialIndex9999 = 9999 !` and `pickoverInteger = 99 ^ factorialIndex9999`. It distinguishes degree-angle reduction and radian analytic authority, includes factorial vs subfactorial typed differentiation, modular cycle witnesses, and makes `isRadianAngleSolvedHere = false`. Historical Euler/Legendre Gamma and classical Euler phase law have their own attribution. Analytic Gamma interpolation is conditional.
+- Agda #1260 owns the pre-existing exact `9999` CRT / factorial and Machin-rational sign-probe machinery on an independent branch; import only once merge/reconciliation allows; do not copy/reassign its source proof ownership.
+- Primary mathematical search: https://math.stackexchange.com/questions/5152905/determining-the-sign-of-sin999999-is-straightforward-with-the-angle-in . This is **discussion**, not an accepted mathematical proof or original Pickover publication. Degrees: `pow(99, factorial(9999), 360) = 81`, so sine positive. Radians: cannot reduce integer argument modulo 360; needs rigorously certified distance from nearest multiple of `pi`, with enough precision to settle sign. Neither tetration, CRT residue nor finite decimal coincidence by itself solves this analytical sign.
+
+**Confirmed PR #1414 27→11→7 reusable owner and proof status:**
+- `PolynomialC3S3TwentySevenOrbitQuotientExact.agda`: C3 conjugation on the **27 functions** of three-valued truth set, 11 orbit classes (three fixed plus eight triples), actual classifier/representatives/witnesses, induced reflection, map to seven S3 classes, orbit-iff equivalence and invariant-function factorization. SOURCE-WRITTEN, no Agda kernel receipt.
+- `PolynomialC3S3OrbitFieldVectorAtlasExact.agda`: 7/11/27 length field codecs with 3^7/3^11/3^27 counts and 11=7+4 residual coordinates. No Fourier-eigenspace or Monster identification inferred.
+- `PolynomialC3S3OrbitSamplingProjectionExact.agda`: selected-representative projections `P_C3`/`P_S3` idempotent with nested absorption, not Fourier averaging or orthogonal projection.
+- Non-equivariance: conjugation C3 has fixed points; free output-phase C3 has none. No equivariant identification. **Separate quotients**: conjugation 27→11→7; output phase 27→9; unrelated horn five-orbit quotient in Agda #1244.
+- Dedicated original Agda roadmap `Docs/papers/PolynomialVideoTernaryOrbitInvariantFieldsRoadmap20261029.md` tracks O01–O24 and later O25–O26 at #1414; keep its detailed algebraic ownership, status and independent geometric/Spin/Galois boundaries there. No new duplicate orbit theorem belongs in Lean ingestion branch.
+
+### New priority ledger and false-weld guards
+
+- [x] **PICK0 expression identity:** `99^(9999!)` distinguished from `99^(!9999)`, `(99^9999)!` and tetration. Paid at source level in Agda #1414.
+- [x] **PICK1 degree sign:** exact residue `81 mod 360` and positive sine in degrees; Agda source and cited independent finite run. Local Agda kernel pending.
+- [ ] **PICK2 radians sign:** need an actually checkable interval enclosure for `99^(9999!) / pi` or the equivalent rational enclosure of `pi` with precision sufficient to determine which sine half-period contains the huge integer; computing a decimal approximation with ordinary precision is not evidence. Complexity and rational-interval bit lengths may be astronomical.
+- [ ] **PICK3 prior art:** confirm original Pickover publication (if any); record existing math discussion as secondary source only, original historical modular periodicity and Gamma authorship separately; do not claim original discovery.
+- [x] **ORB1 existing quotient:** reuse #1414 27→11→7 with exact 27 classifiers, source-only proof and finite tests; different from phase 27→9 and horn five-orbit.
+- [x] **ORB2 non-equivalence:** no fixed-point-preserving equivariant identification of conjugation action with free output-phase action.
+- [ ] **ORB3 kernel:** typecheck exact #1414 Agda checkout and imports; retain kernel pending until receipt.
+- [ ] **ORB4 Fourier extension:** only attempt actual C3/S3 representation-equivariant character/Fourier intertwiner on typed invariant fields; sampling projectors are not averages. Check characteristic and inner product before claiming orthogonality.
+- [ ] **ORB5 cross-domain search:** mathematical joining to OpenAI ETH SAT counting/TSP/Max-Cut requires explicit graph/constraint action, orbit-preserved objective or counting-weight identity, and complexity/encoding bounds. Bare 27/11/7 counts or parity cannot transfer hardness or SAT speedup.
+- [ ] **SOURCE1 updated original attribution:** separate historic finite-group/orbit/Galois mathematics, PR #1414 original Agda proof authoring, PR #1260 arithmetic owners, external OpenAI ETH/Max-Cut formalizer, executed Python and Agda-kernel status, and Ibrahim Monster 3B original ownership. No coincidental numerical or character fingerprints become a same-object representation.
+
+**Pareto order:** first preserve already-paid #1414/#1260 owners, then obtain PICK2 analytic sign bounds if feasible, then exact ORB4 Fourier proof; only after actual same-object coupling should OpenAI SAT/graph complexity receive a bridge. No CI edit required; missing compiler receipts remain explicit.
+
+
+## 29 October — ACTUAL Agda/Lean repository archaeology: concrete pre-OpenAI donors and source proof comparison
+
+**Search-before-write performed for both real repositories:** actual master source for `PNotEqualsNPConcreteCircuitSharedSemanticsExact`, `PNotEqualsNPConcreteCircuitSharedUpperBoundExact`, `PNotEqualsNPRestrictionQuotientSATAuthorityExact`, `SATDecisionToWitnessSelfReductionExact`, prior 11-orbit and 2-point parity owners, and current #1414 branch; Lean #78 `Integration/OpenAIMath/SourceAtlas.lean`; `openai/math` original `OptimalMaxCut.Main`, family 378 Comparator and `SqrtLogSpace.Final`. Compared with exact early Agda PR changed-file patches, not just titles.
+
+**Proven prior DASHI repository-file introduction chronology** (NOT independent worldwide priority or Agda kernel receipts):
+- [Agda #437](https://github.com/chboishabba/dashi_agda/pull/437), **opened 2026-08-06**, patch adds `DASHI/Biology/MoonshineOrbifoldSectorProjectorExact.agda` (C2 rational positive/negative projector, parity, reconstruction and idempotence via rational solver). Mathematically inherited Reynolds/finite character theory and orbifold authors retain historical authorship.
+- [Agda #514](https://github.com/chboishabba/dashi_agda/pull/514), **opened 2026-08-10**, actual patches introduce `NormalizedFibreAveragingExact` and `GlassesProjectionInvolutionExact`, exact 2-fibre averaging/retraction and projector exchange, without asserting abstract analytic disintegration.
+- [Agda #1040](https://github.com/chboishabba/dashi_agda/pull/1040), **opened 2026-09-24 and merged by 2026-10-04**, exact patch introduces `PNotEqualsNPConcreteCircuitSharedUpperBoundExact` with `gateConstraintNodeCountAtMostThirteen`, `programSharedConstraintNodeCountUpper`, `sharedAcceptanceFormulaNodeCountUpper`, and `PNotEqualsNPRestrictionQuotientSATAuthorityExact` with `rootSatisfiableGivesQuotientAuthoritySatisfiable` and reverse. This predates ETH discovery Oct 16 / formalization Oct 17; these are **semantic and formula-node complexity** results, not an ETH subexponential machine theorem.
+- Existing `SATDecisionToWitnessSelfReductionExact.recoverWitness` counts **one oracle decision query per variable**, but explicitly leaves actual formula-substitution instantiation unconstructed; a call count is not Turing runtime.
+
+**OpenAI actual solution declaration, not comparator:** family 102 `OAI.OptimalMaxCut.main` in `lean/OAI/Computability/MaxCut/Main.lean` proves a variable-size simple-unweighted graph polynomial-time 3SAT gap reduction at all ratios strictly above GW; comparator `OptimalMaxCut.lean` contains a target `sorry` by design. Family 378 `OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.exact_count_and_sat` in `lean/OAI/Algorithms/SubexponentialSAT/SqrtLogSpace/Final.lean`, with `compiled_exact_count_and_sat`, actual canonical bounded-width CNF encoding and primitive machine, an exact count+SAT output, polynomial visited tape **at every prefix**, and `poly(L) × 2^O(n(loglog n)^2/sqrt(log n))` time. Its `Interfaces.scan_calls_le_length` is only a leaf-call bound and explicitly not machine step cost. This is not P=NP and is not a direct logical generalization of Agda #1040.
+
+**New precise reuse-first mathematical gap:** compare DASHI Cook `BooleanFormula` / Tseitin syntax-node counts with upstream `SAT.CNF (Fin n)` and `Encoding.formulaBitLength`; prove a computable semantics-preserving **bounded-width, bit-encoded** transformation and count preservation (or document that Tseitin only proves satisfiability, not #SAT), plus exact parameter `n` growth and runtime/space. Any statement `#SAT(F)=#SAT(Tseitin(F))` requires unique extension of auxiliary gate variables with exact finite support, not just bidirectional satisfiability. Only then can one claim a transfer, no automatic stronger result.
+
+**Actual #1414 work reused the already-proved parity owner rather than duplicate it:** `PolynomialC3S3RationalCharacterAlgebraExact` now uses `MoonshineOrbifoldSectorProjectorExact`, derives rational eleven-orbit reflection-invariant positive and odd negative modes, positive projector idempotence by inherited theorem and actual eleven-class involution. These are SOURCE-WRITTEN only; no Agda kernel receipt. Its own roadmap now tracks through O52. No ESD files modified, no prior Ibrahim Monster 3B action re-owned.
+
+**Two newly updated code artifacts:** Lean source atlas commit `ac33b9662c7603126d78e87b817d20cbfbfbff52` introduces `LaterUpstreamReceipt` for family 378 and **explicitly marks absent at pinned vendor SHA `1581d4...`** (upstream new inspected revision `7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a`); Agda #1414 added same-carrier borrowed parity consequences. This avoids silently equating live OpenAI main with pinned vendor content.
+
+**Updated Pareto:** (1) exact-head Agda and Lean compile if environment permits; (2) upstream revision/manifest to source-typed vendor accounting without mutation of incompatible Lean toolchain; (3) source type/encoded input mapping and parsimonious count bridge; (4) uniform machine runtime/space and 3SAT/TSP parameter preservation; (5) only if strict implication, priority-certified stronger-than-OpenAI claim; (6) original-owner and selective invalidation receipts via Agda #772. Status is truthful: commits/source inspected and authored, no local kernel run, no arbitrary Monster/SAT/graph equivariance or novel mathematical prior-art priority claimed.
+
+
+## 29 October follow-on: Agda #1212 original-source parsimonious Tseitin bridge
+
+**Actually inspected** the Agda default repository files `PNotEqualsNPConcreteCircuitSharedSemanticsExact` (including `sharedConstraintsGiveRealization`, `assignmentFromProgram`, input/gate correctness, and acceptance theorem), `PNotEqualsNPConcreteCircuitSharedCompilerExact`, `PNotEqualsNPConcreteBooleanCircuitDAGExact`, `PNotEqualsNPConcreteCircuitSharedUpperBoundExact`, current Agda OpenAIMath #1212 research rollup, and the actual upstream OpenAI `SqrtLogSpace/Final.lean` and `Interfaces.lean` source, not just comparator/challenge stubs. Reviewed current relevant PR heads #1407, #1414, #1129, #1434 and Lean #80/#78 for sibling/nonpromotion work. #1407's 27/729 convolution and #1414's 27/11/7 parity are distinct finite carriers: no gratuitous same-object SAT/Max-Cut attribution.
+
+**NEW CODE** in existing [Agda PR #1212](https://github.com/chboishabba/dashi_agda/pull/1212), branch `integration/openai-math-corpus`:
+- `DASHI/Research/OpenAIMath/OpenAIMathSharedTseitinUniqueExtensionExact.agda`: `UsedCircuitCoordinate`, `coordinateIndex`, `canonicalAgreementOnUsedCoordinates`, `uniqueAuxiliaryGateValues`, `uniqueUsedCoordinates`, `acceptedFormulaRealization`, `uniqueAcceptedFormulaModelsOnUsedCoordinates`. These are thin proof compositions of *existing* #1040 Agda gate semantics and canonical assignment constructions, not a new compiler. The mathematical content is uniqueness of auxiliary Tseitin gate values on the finite used-variable support for a fixed input, and the source-level extension to the actual shared acceptance formula.
+- Focused research `DASHI/Research/OpenAIMath/Everything.agda` imports that owner; no global TOE root touched before kernel evidence.
+- `scripts/check_openai_shared_tseitin_parsimonious.py`: independent finite executable regression committed. A locally executed equivalent exact program passed **59,290** exhaustively enumerated small DAG/output cases, and negative controls for one-way gate constraints and unconstrained Nat→Bool tails. The checked-out GitHub script has NOT itself been executed; Agda compiler unavailable, so no kernel-green receipt.
+- Commits: `537d8b2` source, `13b64a8` input implicit index correction, `c635b17` executable regression, `931cd5f` research rollup, `3c0a067` actual accepted-formula extension; the Agda roadmap was separately extended with precise unpaid leaves.
+
+**Mathematical qualification:** In original Agda Cook carrier, `Assignment = Nat → Bool`; the shared Tseitin constraints allow unconstrained values beyond the first `inputs + gates` variables. Therefore neither a global unique assignment nor a cardinality of all such assignments is legitimate. The proven-at-source uniqueness is for **finite USED coordinates**, which is a needed but not sufficient *parsimonious* theorem. The next actual Agda task is a finite-support valuation bijection from `Vec Bool inputs` to satisfying used support `Fin (inputs + gates)` (or a canonically enumerated finite-assignment carrier), including the output literal. Even after that, OpenAI 378 requires an actual bounded-width `CNF (Fin n)` translation preserving exact counts, followed by uniform canonical bit length and Turing-machine step/space transport.
+
+**Why this matters for the ETH #378 source:** its `exact_count_and_sat` reports a true machine with exact count, explicit encoding bits, and an all-prefix visited-space bound. It is strictly stronger in computational commitments than a mere syntactic shared-SAT model count. We do NOT claim to strengthen its complexity theorem or refute P-vs-NP. Classical Tseitin/Cook-Levin/finite counting precede both DASHI and OpenAI and retain their authorship; Agda #1040 earlier repository source retains original proof ownership, and Ibrahim 3B is independently protected.
+
+**Priority:** exact-head Agda kernel; explicit finite-support count equality; verified bit encoding width and length; uniform parameter/time/space transport; dependency-derived invalidation via prior #772 when real source change affects an earlier theorem. Do not create a duplicate SAT compiler or parity owner.
+
+
+### 29 October — additional precise graph-model reuse audit (not name-only "max-cut")
+
+Direct source inspection:
+- OpenAI family-102 **actual Lean** `lean/OAI/Computability/MaxCut/Model.lean` declares `OptimalMaxCut.Graph` with `vertices : Nat`, symmetric loopless Boolean adjacency `Fin n → Fin n → Bool`. Its `Graph.cutSize` is `∑ u ∑ v if u<v ∧ adj u v ∧ cut u != cut v then 1 else 0`; `Graph.maxCut` is the maximum over all cuts. A `ScaledGraph` carries positive scale, output `ScaledGraph.bits` prints the full adjacency table, and `GapReduction` specifies a polynomial-time TM and scaled YES/NO gap for every fixed `alphaGW < α ≤ 1`. This is the graph objective and complexity model that any honest transfer MUST use.
+- DASHI actual `DASHI/Core/FiniteWeightedThresholdGraph.agda` exists and was source-read. It has `FiniteWeightedGraph X R` with `nodes : List X`, `ScalarStructure`, `adjacency/baseline : X→X→R`, `embedTrit` and `localResidual` over finite neighbours. It does **NOT** by itself define `Graph.cutSize`, prove symmetric Boolean simple adjacency, or encode the upstream bit printer. Do not relabel the weighted-threshold kernel as an unweighted Max-Cut graph theorem.
+- DASHI `DASHI/Interop/PNFSpectralFieldGraph.agda` also has typed weighted residual edges, but their evidence/provenance semantics differ. Do not bridge purely because both have the word graph.
+- Required exact adapter: nodes are a duplicate-free `Fin n` enumeration; boolean adjacency is faithfully embedded as 0/1 weights; symmetric and loopless proofs are retained; `u<v` is the orientation guard; cut objective counts each undirected edge **once**; `ScaledGraph.bits` size and polynomial printer runtime remain explicit. Orbit aggregation is allowed only for invariant cuts with exact objective, and full-maximum equality must be proved separately (two-vertex swap demonstrates failure). Uniform graph families, not fixed 27-element graphs, are required for hardness.
+
+This source-first comparison takes precedence over generating another graph carrier. Historical graph theory/optimization authorship, OpenAI's actual Lean solution, existing DASHI threshold graph owners, and new DASHI reduction contributions must be separated in every receipt.
+
+
+## 30 October Agda source-written finite SAT support and conditional TSP snowball
+
+Verified at source level against actual prior #1040 files (original owners unchanged): `PNotEqualsNPConcreteBooleanCircuitDAGExact`, `PNotEqualsNPConcreteCircuitSharedSemanticsExact`, `PNotEqualsNPConcreteCircuitSharedCompilerExact`, `PNotEqualsNPConcreteCircuitSharedUpperBoundExact`, and proximal prior Q1 `PNotEqualsNPQ1TruthTableRepairGeneratorExact.vecExtensionality`. The direct source of family-378 ETH formalization is `OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.Final.exact_count_and_sat`, while family-102 Max-Cut's actual graph is simple loopless symmetric 0/1 adjacency with `cutSize` `u<v` and explicit polynomial binary printer. Checked current heads Agda #1212, #1414, #1407 and Lean #78, not just PR summaries.
+
+[Agda #1212](https://github.com/chboishabba/dashi_agda/pull/1212) has new `DASHI/Research/OpenAIMath/OpenAIMathFiniteSupportedTseitinModelsExact.agda`: an explicit finite input/auxiliary vector normal form, canonical accepted-input encodings, exact input/gate-vector round trips, and a bridge to the ORIGINAL Cook shared formula using earlier semantics proofs. The duplicate local vector-extensionality proof was replaced by direct import of the existing Q1 theorem. Focused OpenAI Research rollup updated; no new SAT compiler, no protected ESD edit. This is SOURCE WRITTEN, Agda KERNEL PENDING. A locally executed independent enumeration passed 59,293 circuit/output cases plus a one-way-constraint nonunique-extension control. No full numeric cardinality identity or complexity transfer has been kernel-accepted.
+
+Newest independent source: Jizhou Guo, `tensor-contraction-consequences`, 29 October 2026, https://github.com/aster2024/openai-math-followups . It conditionally derives 2^O(n/sqrt(log n)) algorithms with witness recovery for sparse-graph TSP and other NP graph problems **assuming OpenAI manuscript Theorem D.1**. Its README expressly says that the publicly listed Lean family-378 formalization proves the bounded-width counting theorem, **not Theorem D.1**. Do not misattribute this extension to OpenAI formalization, and do not promote conditional TSP or a new A* heuristic to a DASHI theorem.
+
+**Outstanding:** pinned Agda kernel acceptance; true Nat-count equality for finite supported models (proof field irrelevance and canonical enumeration), parsimonious bounded-width canonical CNF conversion, exact bit-length/variable growth, machine runtime and all-prefix tape space, and actual Max-Cut unrestricted gap-preservation. Check independent Ibrahim/snowball theorem custody and run dependency-derived #772 selective invalidation only for real broken assumptions, not name matches.
+
+
+## 30 October — numerical finite supported Tseitin #SAT, original Agda first
+
+Actual [Agda PR #1212](https://github.com/chboishabba/dashi_agda/pull/1212) now source-writes in its already existing `OpenAIMathFiniteSupportedTseitinModelsExact.agda` a **Nat-valued count preservation statement** `finiteSupportedTseitinCountExact`, not merely existential satisfiability or pointwise data uniqueness. Exact finite enumeration `sumBoolVectors` computes two independent numbers `countAcceptedCircuitInputs` and `countFiniteSupportedTseitin`; `sumExactlyOneEqualVector` and `countAcceptedAuxiliaries` pay the one-canonical-gate-extension theorem; the numeric equality is by structural Boolean-vector sums. `equalBoolVectorsSound` and `countedPairGivesFiniteSupportedModel` link the executable Boolean predicate to the actual already-proved supported-model witness carrier, in addition to the reverse `finiteSupportedModelIsCounted`. Reused the prior P-vs-NP circuit evaluator and auxiliary semantics, not a new logical compiler. Both Agda source and current Lean this branch remain KERNEL PENDING for these NEW cross-system declarations.
+
+An independent Python implementation **executed 59,293 exhaustive finite circuit/output cases**, including zero-gate circuits, and a one-way-gate negative control. This finite test does NOT stand in for the Agda kernel, and the checked-in standalone script has no exact-head execution receipt. Agda commit sequence `65fea890`, `d3c1719f`, documentation receipt `343d98ec`.
+
+The remaining crucial interface to OpenAI 378 is the original DAG-Tseitin formula `Cook.BooleanFormula` → canonical fixed-width `OAI.Algorithms.SubexponentialSAT.SAT.CNF (Fin n)` with **parsimonious** clause semantics and explicit encoded bit length. The new count theorem supplies the counting side but **does not infer** a polynomial-time or subexponential bound for source circuits, nor any unrestricted Max-Cut approximation hardness result. Use the actual OpenAI source proof `SqrtLogSpace.Final.exact_count_and_sat` with its machine/space bound rather than a Comparator challenge with `sorry`. Keep historical Cook/Tseitin, #1040 first author, #1212 new source, OpenAI and Guo separate; preserve earlier Ibrahim/Monster 3B ownership.
+
+
+## 30 October latest Agda golden source improvements for the ETH/Max-Cut ingress
+
+The existing [Agda OpenAI Math PR #1212](https://github.com/chboishabba/dashi_agda/pull/1212) now adds source-written and kernel-pending ORIGINAL-CARRIER proofs in two existing module owners:
+
+**1. Numeric parsimony:** `OpenAIMathFiniteSupportedTseitinModelsExact.finiteSupportedTseitinCountExact` computes both the accepting-input count and the finite input-plus-gate model count as separate Nats via structural Boolean-vector enumeration and proves their equality. `equalBoolVectorsSound` and `countedPairGivesFiniteSupportedModel` connect this literal counted predicate to the already existing finite supported model carrier; no full infinite `Nat -> Bool` model count is asserted.
+
+**2. Local bounded-width CNF:** Reused actual older Agda `FixedWidthTruthTableCNFExact`, `CNFVariableRenamingExact`, `CNFPlacedConstraintConjunctionExact`, `CookLevinGridReplicationExact.listLength`, `PNotEqualsNPConcreteCircuitSharedCompilerExact.gateVariableIndex`, and earlier numbered-gate bound proof. `OpenAIMathSharedTseitinGateCNFExact` specializes the **original** DAG's constant, NOT, AND and OR gates to three-bit local truth-table CNF, proves local and globally placed gate soundness/completeness, matches global Fin indices to original Tseitin variable numbers, and source-writes **four clauses per gate** with a separate, structurally proven renaming-preserves-clause-count lemma. This is NOT yet a recursively assembled global CNF or a transfer of OpenAI 378.
+
+**Independent finite computational checks executed:** 59,293 whole finite DAG count equivalences; 40 local three-bit gate/CNF evaluations; 2,164 placed-gate global index/CNF evaluations, including repeated wires and dummy operands. Separate computational and source-written receipts; **Agda/Lean kernel unverified**, exact-head GitHub script not yet run. No historical priority over Cook/Levin/Tseitin or scientific ownership over OpenAI claimed.
+
+**Pareto next:** global GateProgram CNF assembly using existing placed-constraint conjunction; fixed `n+g` variable and (4g+1) clause accounting; source-level parsimonious global CNF count; canonical OpenAI width-k `SAT.CNF(Fin n)` and `Encoding.formulaBitLength`, then actual machine time and all-prefix space. The degree of polynomial bit-length growth determines whether any claimed subexponential original-parameter transfer is valid. OpenAI 102 unweighted `Graph.cutSize`/polynomial graph-printer and external Guo conditional TSP stay independent; prior Ibrahim Monster 3B original custody unaffected.
+
+
+## 30 October final source-first cut — globally assembled original DAG CNF, exact 4g+1 syntax
+
+Source-read actual Agda `GateProgram`, `Compiler.gateVariableIndex`, `Semantics.gateVariableIndexBelowNext`, prior Cook-indexed `Fin.fromℕ<` proof, existing `FixedWidthTruthTableCNFExact`, `CNFVariableRenamingExact`, `CNFPlacedConstraintConjunctionExact`, `CookLevinGridReplicationExact`, and live Agda #1212/#1414/#1407 + Lean #78/#80 actual files. The proximal earlier tools already implement all core CNF semantics; the newly authored surface is the missing glue for the SAME original circuit carrier, not a second compiler.
+
+Agda #1212 source now contains `OpenAIMathSharedTseitinGateCNFExact.programPlacedCNF` and `circuitPlacedCNF`: direct recursive assembly of the original gate DAG with original variable positions; each gate's **four** local forbidden-row 3CNF clauses are placed by certified `Fin` indices; older clauses are renamed into the one-variable-larger universe by the older `renameCNF`; the original final `outputWire` becomes a single unit clause. `programPlacedCNFClauseCount` and `circuitPlacedCNFClauseCount` source-write an exact **4g+1** clause count with precisely `inputs+gates` finite variables. `placedAppendLength` is necessary because the earlier `Grid.append` and actual `Placed.append` are separate, not definitionally equal on arbitrary lists; that proof was corrected before completion. Source commit `b6cf62fd668650133a35c7515dddcd7b69be2761`, source correction `67db57f7e07ad5907cb85684c6961786c24c1951`.
+
+Independent Python full-CNF exact counting enumeration EXECUTED successfully for **59,293** DAG/output cases, including source newest-first gate numbering, repeated references and all finite global assignments; each case verified the full compiled CNF count equals the original input acceptance count, and `4g+1` literal clause count. Existing Agda PR #1212 script was updated in place (`6f2337defbe9ea4c3644212f0a9d76ddae6fe0d4`) to check the same third count for its existing 59,293 cases, but has NOT been executed from the exact GitHub checkout. The earlier 40 local and 2,164 placed gate independent tests also passed.
+
+**Trust cap / next mathematical wall:** This is an Agda **source-written whole-program CNF syntax and clause-count proof, NOT yet kernel checked**, and the globally assembled CNF **semantic equivalence and parsimonious #SAT bijection** have only computational regressions, not a source-written global semantics proof. This distinction overrides older roadmaps that said global syntax was unpaid. Actual remaining mandatory transports: `CNF.evaluateCNF(circuitPlacedCNF c) bits` ↔ source `Shared.sharedAcceptanceFormula c`; preserve finite multiplicities and all gate-input relations; translate finite list-based CNF into OpenAI `SAT.CNF (Fin n)` with canonical sorted Finset encoding and exact variable/bit-size bounds; then machine-level time, visited-space and uniform complexity. Do not equate four local 3-clauses/gate with constant binary bit length, nor infer general graph Max-Cut hardness or conditional TSP from a SAT encoding. Original authorship Cook/Tseitin, #1040, existing CNF proof owners, newly written #1212 source, OpenAI 378/102, Guo, and Ibrahim Monster 3B all remain distinct. ESD and CI unchanged.
+
+
+## 2026-10-30 follow-on cross-kernel exact joins: global gate semantics, Finset vs List cardinality, QID and true local Python receipts
+
+Actual Agda golden PR #1212 has **new source-written global semantic decomposition** in the original `OpenAIMathSharedTseitinGateCNFExact`: `ProgramPlacedGatesValid`, `programPlacedCNFSound`, `programPlacedCNFComplete`, `outputUnitEvaluation`, `WholeCircuitPlacedMeaning`, `wholeCircuitPlacedCNFSound` and `wholeCircuitPlacedCNFComplete` (commit `aff3b15810b099823b1fa8d80265981be9d965f0`). They invoke existing CNF append/renaming and original per-gate source predicate results, and prove the **actual whole-CNF formula iff conjunction of all source gate relations and final output literal** at source level. They do **not yet** formally identify the global-bit-vector gate values with `Circuit.evaluateProgram`; thus no source-written global #SAT count theorem follows without that bridge. All new Agda declarations are KERNEL PENDING. Earlier #1040 DAG, #1212 numeric finite input/Tseitin count, and prior Cook/Levin fixed-width CNF keep their original proof ownership.
+
+The *existing* branch script `scripts/check_openai_shared_tseitin_parsimonious.py` was strengthened in-place (commit `bb51f1450f1cce9b9e718cf32922cbe2177cca58`) to compare compiled CNF satisfaction against the original gate/output semantics for **each full assignment**, in addition to count equality. Locally executed **independent Python** code passed **59,293 exhaustive 0–3-gate DAG/output cases plus 3,200 seeded 0–8-gate cases**, all finite assignments, explicit newest-first gate-reference numbering, exact (4g+1) source clauses and non-parsimonious one-way implication control. The changed exact-head GitHub script itself was not run locally. Separate tests of the actual Lean `SAT.CNF` concept using Python Finsets on all **59,293** exhaustive cases passed, including every finite assignment; the `formulaBitLength_lower` and `formulaBitLength_upper` arithmetic was computed numerically from **upstream `Encoding.lean`'s actual nested unary/framed encoding**. SOURCE-TO-FINSET DISCRIMINATOR: 45,932 cases contain **different ordered source clauses collapsing to the same Finset clause** after literal-set normalization; **zero** cases contained two literally identical ordered source clauses. 53,326 cases contained repeated literals and a tautological opposite-polarity pair within at least one source clause. The Agda list (4g+1) count is **not** the upstream `Finset.card`, which is ≤(4g+1) after dedup, although evaluations/counts agree in tested cases. Neither this equivalence nor the source-to-upstream encoding-length bound is yet kernel-verified in DASHI.
+
+**Exact upstream quantitative theorem checked at source:**
+- `OAI.Algorithms.SubexponentialSAT.SAT.Clause (Fin v) := Finset (SAT.Literal (Fin v))`; `SAT.CNF := Finset Clause`; `SAT.count` counts finite satisfying functions;
+- `OAI.Algorithms.SubexponentialSAT.Encoding.formulaBitLength_upper` states for width ≤k:
+`L ≤ v + 2 + (4 + (8*v + 8)*k) * F.card`. For the *conditional* source-to-upstream bridge with k=3, v=inputs+gates, F.card ≤4g+1, one gets the explicit candidate bound
+`L ≤ v + 2 + (4 + (8*v + 8)*3) * (4g + 1)`.
+- The overhead is polynomial in v+g, but not constant bits per clause: unary coding of literal numbers makes that distinction essential. A missing computational finite-support transformer and its fixed-TM bit/time cost still prohibit promoting this conditional upper bound to a DASHI verified theorem or a stronger-than-OpenAI ETH result.
+
+**Other latest PRs directly inspected:** Agda #1438 owns the native 27-vertex/54-edge **bipartite grid** max-cut for *all nonnegative Nat edge weights*, the selected S3/reflection-invariant checkerboard, and an existing typed **QID concept role** atlas. Lean #103 mirrors it. Agda #1414 owns the **different** 27-function C3 conjugacy quotient and has an F3 11=7+4 reflection Fourier coordinate theorem; do not reimplement older even/odd algebra or identify the two carriers. Original QIDs maximum cut **Q942557** and bipartite graph **Q174733** were confirmed from Wikidata concept pages, but the exact DASHI fixture QID remains unresolved, and QIDs do not create theorem, proof/algorithm, paper or Monster identity.
+
+Locally executed independent graph Python tests passed 27 vertices, 54 undirected edges, 6 coordinate permutations, 3 coordinate flips and 150,000 challenger cuts over 750 nonnegative-weight assignments; graph connectedness implies exactly two saturating cuts for **strictly positive weights**. The original #1438 script was extended with deterministic BFS and both forced root-colourings; exact-head checkout execution not claimed, and its new Agda uniqueness theorem remains unpaid. This finite class is **not** the unrestricted simple unweighted Max-Cut hardness family of OpenAI 102. No QID/path/author/source equivalence is inferred.
+
+**Priority after this cut:** Agda exact-head typecheck/transitive trust; finish finite-bits→original gate evaluator global lemma; numeric CNF count and Finset conversion with duplications handled; Lean actual `formulaBitLength_upper` transfer and machine-level cost; preserve both directions and nonfactorability for graph Max-Cut/Guo TSP; historical authors, original DASHI PR dates and Ibrahim Monster3B remain distinct. Work status: source-authored proofs, executed independent finite tests, kernel-pending. No ESD/CI edits.
+
+
+## 31 October — Agda golden optimization / exact upstream bit-bound transport ledger
+
+Agda #1212 added OPTIONAL OpenAIMathSharedTseitinOptimizedCNFExact.agda, implementing standard same-variable Tseitin clauses: constant 1, NOT 2, AND/OR 3, plus 1 output clause. It imports original PNotEqualsNPConcreteBooleanCircuitDAGExact, existing OpenAIMathSharedTseitinGateCNFExact, and old CNF renaming/placement. Source-written optCircuitEqualsOriginal is a pointwise Boolean-equivalence transport from the optimized entire circuit to the original entire circuit; optCircuitSound/Complete reuses prior WholeCircuitPlacedMeaning rather than cloning the proof owner. Source cost is at most 3*g+1 clauses, not the older 4*g+1. Commits 0f41e8edf3a376b2bcad0dfa4e3ead2b8a7a5779 and aca79b0c3ee3f8ce265f7ea77484762073505b86; Agda exact-head KERNEL PENDING, staged outside Everything import until acceptance.
+
+Local Python actually executed, independently of GitHub checkout: 62,493 circuit/output cases (59,293 exhaustive small + 3,200 seeded deeper), 3,135,224 exhaustive per-assignment evaluations, 257,012 saved ordered clauses across cases. Python reproduction of upstream actual Encoding.lean unary/framed encoding gave 49,838,961 aggregate old bits and 29,634,737 optimized bits (20,204,224 saved); 62,111 shorter, zero longer, 382 ties. This is a FINITE TEST RECEIPT, not a universal monotonic improvement or theorem on real machine steps. Existing Agda original test was extended in place at d23956c954db776680b7898c3f8e74d25e2e2eab. Corrected standalone Finset auditor's absolute import in the local package and reran all 59,293 cases; exact checked-out GitHub test was not executed.
+
+Exact **conditional** scope of OpenAI Encoding.formulaBitLength_upper (actual source inspected): for nvars v=originalInputs+gateCount, k=3, and deduplicated Finset clause cardinal m<=3g+1, L <= v+2+(24v+28)*m <= v+2+(24v+28)*(3g+1). The previous upper bound with 4g+1 is higher by (24v+28)*g. This is an explicit arithmetic bound conditional on a verified LIST-to-FINSET map; that map, Finset.width, numerical cross-kernel #SAT correspondence, source compiler execution-time and actual upstream primitive runtime/visited-space transport remain UNPAID. Source and historical attribution: classic Cook/Levin/Tseitin, original DASHI Agda #1040 and #1212, OpenAI ETH family 378 independent authors, Ibrahim Monster3B custody and #1438 native 27-grid/QID separately owned. No ESD edit or CI changes.
+
+Pareto next: exact Agda kernel; global-bit-vector -> original evaluateProgram reification and original #SAT cardinality equality; Finset CNF normalization and binary length source theorem; new source Agda -> Lean verified consumer; uniform machine cost. Do not treat current finite-bipartite-grid maximum-cut optimality as general approximation hardness or conditional Guo TSP as proven from family 378.
+
+
+
+## 31 October 2026 — actual golden Agda count normalization donor, Lean still downstream
+
+New source in the EXISTING Agda OpenAIMath optional 3-CNF module on #1212:
+- `optCircuitCountEqualsOriginal`: source-writes a Nat-valued exact count of **all** satisfying finite global input/gate assignments in the optimized vs unoptimized whole CNF by transporting earlier pointwise source evaluation equivalence through `sumFiniteBitsExt`. This pays numerical equality **between two CNF compilers**, NOT count equality with the original input-only accepted circuit. Agda kernel pending; new opt-in file is not part of the import spine.
+- Source local normalization generators: `duplicateLiteralPreserves`, `duplicateClausePreserves`, `swapAdjacentLiteralsPreserves`, `swapAdjacentClausesPreserves`, `tautologicalClauseTrue`; and `countFromPointwise`, `duplicateLiteralCountInvariant`, `duplicateClauseCountInvariant`, `swapClauseCountInvariant`, `tautologyRemovalCountInvariant`. These establish ordered List-CNF Boolean-evaluation and Nat-cardinality invariance for exactly the elementary rewrites that turn List clauses into deduplicated Finset clauses. They DO NOT yet construct the real Lean `Finset (Finset Literal)` map, prove clause width cardinality, or import the later upstream family-378 module into the pinned vendor.
+- Independent executable local clause minimum proof search across all 26 nonempty non-tautological clauses on the 3 local Boolean coordinates finds minimum 1 constant, 2 NOT, 3 AND/OR. This is a finite computational result with no extra variables, not a Lean/Agda kernel result or universal source-to-machine optimality claim. Original existing Python regression script extended in place, not replaced.
+
+**Fresh test receipt:** the earlier full suite replay exceeded execution limit this turn; do NOT record it as rerun. Fresh bounded deterministic local verification passed 375 circuit/output fixtures and 10,850 complete assignment checks, plus 176 elementary CNF normalization checks and 26-clause exhaustive finite optimality check. Historical prior-turn 62,493 circuit results remain separately labelled; exact-head GitHub script execution and Agda/Lean compilation not performed.
+
+**Next Pareto donor**: after the original Agda gate-value reification and List normalization are truly kernel-accepted, mirror their same-source statements into Lean, prove concrete canonical CNF Finset evaluation/cardinality and apply original OpenAI `Encoding.formulaBitLength_upper` with width k=3 and m≤3g+1, then compose machine steps and prefix tape-space. The already-pinned vendor lacks Oct 26 family-378 source. Do NOT silently mutate that pin or claim a faster ETH/P=NP/Max-Cut algorithm, and do not reown original Cook/Tseitin, #1040, #1438 QID, #1414 orbit, Ibrahim Monster 3B or ESD surfaces.
+
+
+
+## 31 October — original Cook-Levin finite source bits/vector reification donor
+
+Agda #1212 has new source-written `OpenAIMathFiniteSupportedTseitinModelsExact` exact data adapters `bitsToFiniteVec`/`finiteVecToBits`, `bitsVecRoundTrip`/`vecBitsRoundTrip`, `lookupCNFToVec`, and `inputVectorLookupExact`. Rather than regenerate a global block slicing proof, it directly imports older `ConcreteTapeCanonicalCellBitsExact.takeBits/dropBits/appendBits`, `ConcreteTapeCanonicalWindowPlacementExact.finLeft`, and `ConcreteTapeGlobalBlockSliceConsistencyExact.lookupTakeBits`. It also source-writes `globalBitsFromFiniteVectors`, `inputVectorSplitRoundTrip`, `gateVectorSplitRoundTrip`, `reassembleTakeDrop` and `globalFiniteVectorsRoundTrip` for full finite `CNF.Bits (inputs+gates)` input/gate data isomorphism. This isolates original global input and gate bit prefixes/suffixes without an infinite Cook.Assignment or duplicate CNF compiler.
+
+**Important remaining semantic condition:** Original `Circuit.evaluateProgram` stores computed gates **newest-first**, whereas original creation-time CNF index `inputs+g` yields a globally **oldest-first gate suffix**. Their bridge must prove index-correct reversal as part of the source original program induction. Data split/reassembly is not that theorem. New Agda source has no kernel typecheck. Fresh Python PASS: 511 CNF.Bits/Vec finite round trips (lengths 0–8) plus 961 input/gate prefix/suffix split-reassembly cases (each dimension 0–4); only executable evidence.
+
+On the Lean side, preserve pinned OpenAI vendor and original family-378 ownership. The existing source-written optimized-vs-original CNF count theorem and numeric Agda List normalization invariants become downstream donors ONLY when kernel acceptance and the actual Finset conversion are proved. Upstream `Encoding.formulaBitLength_upper`, machine-step and visited-space results cannot be claimed from data codec alone. Prior Cook/Levin/Tseitin, DASHI #1040 source owner, #1438 finite grid/QID, #1414 C3 orbit and Ibrahim 3B stay separate. No protected ESD/CI changes.
+
+
+
+## 31 October handoff: actual P0-P7 max-cut ledger and upstream ETH bridge reuse
+
+The **authoritative short proof-state roadmap** is on the Agda golden-first PR #1212: [2026-10-31-max-cut-status-dependency-ledger.md](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-max-cut-status-dependency-ledger.md). It lists actual owner declarations, proof status, and P0 kernel → P1 newest-first chronological gate reification → P2 source #SAT equality → P3 List-to-Finset semantics and width/cardinality → P4 binary encoding/machine runtime/space, with independent graph Max-Cut/QID/Ibrahim obligations P6–P7.
+
+Three newly authored original-owner Agda commits `52a1481`, `740a468`, `e2d969a` source-write both directions between the SAT-placed gate relation and the source gate's literal fresh-output bit equality, including extraction from the whole ProgramPlacedGatesValid proof. This pays the **one-gate functional induction step**. It does NOT pay the all-previous-gates chronological/newest-first transport, nor original circuit input count = global CNF count. Agda typecheck pending. Independently executed local Python: PASS 22,500 finite gate/assignment cases (4,784 alias/dummy cases) and PASS 375 bounded circuits/10,850 finite global assignments. Not an Agda/Lean kernel receipt.
+
+**High-value previous global cross-machine proof donor:** the public `TSavo/eth-bridge` (original authorship retained), verified by directly reading `bridge/Bridge/BitLength.lean`, `FrontEnd.lean`, and `Main.lean`: `formulaBitLength_poly`, `pre_polyT`, `ethIsFalse_of_claim`. It connects OpenAI's verified Claim to Anthropic's `ETHIsFalse` on another machine model; source notes and README give the 2026-10-27 build/check. This means DASHI should **import or adapt these actual prior proofs** for standard 3-CNF front-end and machine-cost conversion rather than rebuilding them. They do not prove the distinct DASHI original DAG→canonical Finset correspondence or establish a stronger-than-OpenAI theorem. Preserve original contributor, Anthropic, OpenAI, historical Cook/Levin/Tseitin, preexisting DASHI #1040/#1212, Ibrahim Monster3B and QID/graph ownership separately. No ESD/CI edits.
+
+**Actual Lean acceptance status:** no exact-head Lean build in this tool environment, source import does not imply accepted. Only promote an updated same-object theorem when the Agda origin and independent Lean downstream are independently checked.
+
+
+## 31 October — actual same-circuit model-count source and generic Lean Finset consumer
+
+The Agda **golden-first source branch #1212** was updated by inspecting/fixing actual prior proofs, not PR summaries. Original `PNotEqualsNPConcreteCircuitSharedSemanticsExact.gateExpressionCorrect` had an unbound `realization` name in its dependent result type (fixed on branch at `f99f250d43d189984951b29672cc83929f353af1`). Existing optional `optProgramEqualsOriginal` had an unmatched closing parenthesis (fixed at `fb8a7945bfd94d94b4c0c157e94c8dacc7e3a1f5`). No Agda compiler installed here: both fixes are source-level and kernel pending.
+
+The existing Agda `OpenAIMathFiniteSupportedTseitinModelsExact.agda` now source-writes a COMPLETE same-object P1 **both directions** from the literal assembled 3-CNF to the original `ConcreteBooleanCircuit` accepted input using the actual earlier `ProgramAssignmentRealizes` and `assignmentFromProgram`; `Fin.opposite` and standard Fin split/join account for chronological vs newest-first indices. `originalPlacedCNFModelCanonical` and `originalPlacedCNFModelsUniqueForInputs` source-write the **canonical finite gate-extension uniqueness**. Importantly, it also now contains the structural finite CNF sum/Fubini and exact-one-extension induction, culminating in `originalGlobalCNFCountExact : originalCompiledCNFModelCount c ≡ countAcceptedCircuitInputs c`. Optional Agda `OpenAIMathSharedTseitinOptimizedCNFExact.optGlobalCNFCountExact` transports this exact numeric source-count theorem via its already-authored all-assignment equivalence to the 1/2/3-clause gate compiler. All these are **SOURCE-WRITTEN, AGDA KERNEL UNCHECKED**. Do not conflate an Agda source theorem declaration with a proof accepted by the kernel.
+
+**NEW Lean generic adapter** in this existing #78 branch: `Integration/OpenAIMath/ListFinsetCNFTransport.lean` (commit `32a9c24eb700a4a197b2dd4b184fb585e15dfc4e`). It source-writes `clauseSemanticsExact`, `cnfSemanticsExact`, `clauseNumberUpper`, `normalizedClauseWidthUpper`, and `normalizedModelCountExact`: finite List-of-List literal clauses can be normalized to Finset-of-Finset without losing **any per-assignment truth or numerical model count**, while duplicate collapsing yields an **upper** bound on Finset clauses. It intentionally uses a generic literal type with an evaluation function, **NOT** a replacement for OpenAI `SAT.Literal`. It is intentionally NOT imported into authoritative `Integration/OpenAIMath/Everything.lean` until a Lean 4.28/mathlib kernel build; the pinned vendor revision predates OpenAI's later family 378. At this point the generic P3 source is written, but the actual `OAI.Algorithms.SubexponentialSAT.SAT.Literal (Fin v)` specialization is **not written or kernel-checked**, and the canonical encoding / uniform primitive-machine transport is outstanding.
+
+Conditional actual upstream encoding bound: for `v=inputs+gates`, width ≤3 and normalized m≤3g+1,
+`L ≤ v+2+(24v+28)(3g+1)`.
+This is from OpenAI's own `Encoding.formulaBitLength_upper` only if the source literal and variable/polarity mapping is formally transported; we have not established a new ETH exponent or a stronger SAT result. External original `TSavo/eth-bridge` already proves a different OpenAI→Anthropic machine-model relation; preserve their original source/author ownership when importing, never overwrite it.
+
+**Actual local executed receipts in this turn:** finite Cook/CNF 7,938 assignments / 72,954 indexed lookups; 375 bounded circuits / 10,850 assignments; 22,500 placed gate checks; 59,293 source List→Finset checks. The larger optimized 62,493-case replay **timed out in this turn** and is not counted as a fresh pass. No Agda/Lean executables or external git DNS in local container, so NO new kernel receipts. No CI/ESD modifications.
+
+**Current canonical P0–P7 state:** [Agda source truth ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-max-cut-status-dependency-ledger.md). P1/P2 source-written; P0 exact Agda/Lean kernel acceptance next; P3 generic source-written but OpenAI-specific specialization unpaid; P4 encoded bit + machine resource transport unpaid; P5 external reuse donor; P6 native #1438 weighted 27-grid cut is independent of unrestricted Max-Cut family 102; P7 Ibrahim Monster3B/QID/symmetry attribution rules retained. No protected ESD edits and no premature TOE roots.
+
+## 31 October 2026 — actual latest upstream source / whole-corpus and machine-frontend max-cut
+
+- **Full actual source index**: 721 manuscripts/373 families upstream, 208 `main_results` declaration rows across 192 distinct comparator configs in `lean/formalization.yaml` blob `372bcd714cd3a186a9139ac8e0f3318961fb2df1`. `FullUpstreamMainResultsCatalogue.lean` mirrors every reference, exact ordered 208/208; `scripts/audit_openai_main_result_catalogue.py` checks drift offline against a chosen upstream checkout. This is metadata provenance, NOT hundreds of independently imported accepted theorems. Earlier `SourceAtlas` six curated routes remain semantics owners. The newer upstream formalization file records CM Hodge `HodgeCM.hodge_conjecture_for_cm_abelian_varieties`, but current older DASHI vendor pin predates source; the old `manuscript` receipt remains historical, not silently promoted.
+- **Same-object P3 source**: `ListFinsetCNFTransport` gives generic per-assignment CNF equivalence, finite `Finset` count equality and upper width/cardinality transport; `Upstream378FiniteCNFBridge` now cites the actual later `SAT.Literal (Fin n)` /`SAT.count` /`SAT.WidthAtMost 3` /`Encoding.formulaBitLength_upper` with `L≤n+2+(24n+28)(3g+1)`, conditional on matching Agda original-gate literal maps and source clause count. Both SOURCE-WRITTEN/KERNEL PENDING; 4.28 installed project's vendor is older than upstream 4.34.1. Neither is imported into authority spine.
+- **Executable P4 frontend**: `scripts/compile_dashi_circuit_openai378.py` serializes original gate indices, optimizes each gate into 1/2/3 clauses, maps literals to `2*v+polarity`, dedups/sorts Finset-equivalent clauses, outputs exact nested `encodeList`/`frame`/`encodeNat` bitstream structure (without truth-table enumeration). Independent local Python PASS 1,485 circuits/104,720 assignments, count and semantic equality, independent encoder/decoder, bound and source-width checks; exact GitHub file not run from checkout. Still need P0 Lean 4.34.1 acceptance, Agda source-to-Python/Lean proof and fixed-machine time/space composition.
+- **Source reuse**: earlier Agda #1212 `OpenAIMathSharedTseitinUniqueExtensionExact.uniqueUsedCoordinates` and `uniqueAuxiliaryGateValues` were read and the newer P1 uniqueness corollaries refactored to import, not re-prove, them. Original #1040 circuit gate evaluator and #1212 same-count source remain Agda-owned; no Agda kernel receipt.
+- **Surrounding live problems**: RH #1434 A1/A2/B signed correlation payment, twin primes #1408 genuine late pair count jumps, Pickover #1260 real base99 phase-digit enclosure, YM #1440 physical continuum measure/OS reconstruction, and graph #1438 native 27-node checkerboard vs arbitrary Max-Cut #102 continue as nontrivial independent proof leaves. This project has not formally solved these harder mathematical problems; neither upstream route strings nor numerological symmetry furnish their missing certificates. No protected ESD/CI changes; Ibrahim Monster3B same-object restrictions retained.
+
+**Latest machine count source closure:** `Integration/OpenAIMath/Upstream378FiniteCNFBridge.lean` now contains `sourceListExactCountMachine`, a source-written specialization of **the original** OpenAI `SqrtLogSpace.exact_count_and_sat 3` to normalized input source clause lists. It rewrites exact primitive-machine count-word, SAT-answer tape/state, decoded count and count-word bit length to the original finite `countedListModels` via previously source-written `exactUpstreamCount`, and preserves actual time/space trace constraints. Actual upstream namespace files for `Computation`, `BinaryArithmetic`, `Turing.Tape`, `LocatedCfg`, `countWord`, `visitedSpace` were read and names corrected. **No Lean 4.34.1 compiler receipt**, staging is outside authoritative import spine. The remaining source-specific SAME-OBJECT issue is connecting serialized original Agda `ConcreteBooleanCircuit` and this list emitter through a verified executable frontend, then proving its bit-time and all-prefix space composition. A formal generic source-list machine theorem does NOT give a new unconditional circuit runtime or improve OpenAI's theorem without that bridge.
+
+
+### 31 October — new concrete P4/routed graph verification
+
+Same original DAG `scripts/compile_dashi_circuit_openai378.py` now has deterministic ordered insertion (≤`6m+m(m−1)/2` comparison calls) rather than Python `sorted(set(...))` hash sorting; independent local Python passed 10,735 bounded width clauses + 2,430 original-gate templates. New checked-in checkout-native regression `scripts/check_openai378_frontend_exact.py` available, **not run from a GitHub checkout**. Additional original #1438 27-grid `unitNativeGridEdges` → actual 27-input, 242-gate, 700-clause source 3CNF fixture, `scripts/check_openai378_27grid_maxcut_bridge.py`: independent Python checked 27 vertices, 54 edges, two connected checkerboard proper colourings and 2,502 input colourings, normalized 700 clauses, 1,515,935 framed bits and ≤248,850 comparisons. Agda exact graph-to-circuit semantic theorem plus source #SAT=2 kernel acceptance still required; this fixture is **not** a proof of arbitrary graph Max-Cut/UGC, Monster same-object or a faster ETH exponent.
+
+P4 Lean source-only now includes runtime and visited-space envelopes at the exact actual 378 machine (`sourceRuntimeWithinQuadraticInputBudget`, `sourceVisitedSpaceWithinQuadraticInputBudget`), retaining source `exact_count_and_sat` theorem and `72(v+1)^2` bit envelope. No compiler available; neither Lean P3/P4 nor Golden Agda P1/P2 is kernel accepted. The authoritative per-lemma statuses are in the [39-item exact ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md).
+
+
+## 31 Oct — local native symbol-similarity snowball for the next implementation worker
+
+The Golden Agda #1212 branch now owns a ready-to-run local-agent **175 terms / 13 lanes** query pack and Python driver, reusing existing `dashi-repo` semantic discovery and signature/body comparison rather than creating a separate index. See [local agent instructions](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-local-symbol-snowball-agent.md) and [exact 39-lemma register](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md). Local test suite `scripts/test_openai_math_symbol_snowball.py` is committed but **not executed in this GitHub-only continuation**.
+
+Lean P3/P4 must **reuse actual upstream SAT.CNF.eval_eq_true and SAT.Clause.eval_eq_true**; source `Upstream378FiniteCNFBridge.exactAssignmentTruth` has been simplified to invoke these original OAI378 lemmas rather than depend on an uncertain nested `decide` unfolding. No Lean kernel receipt yet. Native Agda resource donors for M02/M03 include local semantic compiler, executed construction trace, streaming residency and standard machine; they are candidates requiring an actual typed simulation, not a substitute for the original OAI machine.

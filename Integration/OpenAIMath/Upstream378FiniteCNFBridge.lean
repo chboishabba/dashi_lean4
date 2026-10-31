@@ -1,6 +1,7 @@
 import Integration.OpenAIMath.ListFinsetCNFTransport
 import OAI.Algorithms.SubexponentialSAT.SAT
 import OAI.Algorithms.SubexponentialSAT.Encoding
+import OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.Final
 
 /-!
 # Version-gated same-object OpenAI 378 SAT/encoding consumer
@@ -110,6 +111,85 @@ theorem upstreamQuadraticBitLengthBound {n g : ℕ}
         ≤ n + 2 + (24 * n + 28) * (3 * n + 1) :=
     base.trans (Nat.add_le_add_left hmul _)
   nlinarith
+
+
+/-- SAME-MACHINE list-of-clauses consumer of the ACTUAL 378 theorem.
+No fabricated fast SAT oracle or new machine: the upstream machine remains
+fixed and its original complexity bounds are retained byte-for-byte.
+The count word is rewritten to the exact finite SOURCE LIST model count
+using the earlier per-assignment List/Finset normalization bridge. -/
+theorem sourceListExactCountMachine :
+    ∃ (machine : OAI.Algorithms.SubexponentialSAT.Computation.PrimitiveMachine)
+      (countTape answerTape : Fin machine.tapeCount)
+      (C A S : ℝ) (d e : ℕ),
+      0 < C ∧ 0 < A ∧ 0 < S ∧ 0 < d ∧ 0 < e ∧
+      ∀ (n : ℕ)
+        (clauses : List (List (SAT.Literal (Fin n)))),
+        (∀ clause ∈ clauses, clause.length ≤ 3) →
+        ∃ (time : ℕ)
+          (final : OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.LocatedCfg machine),
+          OAI.Algorithms.SubexponentialSAT.Computation.Trace
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedStep machine)
+            time
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedInit machine
+              (Encoding.encodeCNF (toUpstreamCNF clauses))) final ∧
+          final.config.tapes countTape =
+            OAI.Algorithms.SubexponentialSAT.Turing.Tape.mk₁
+              ((OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+                (ListFinsetCNFTransport.countedListModels n
+                  (fun literal assignment => literal.eval assignment) clauses)).map some) ∧
+          final.config.tapes answerTape =
+            OAI.Algorithms.SubexponentialSAT.Turing.Tape.mk₁
+              [some (decide (0 <
+                ListFinsetCNFTransport.countedListModels n
+                  (fun literal assignment => literal.eval assignment) clauses))] ∧
+          final.config.state = Sum.inl (decide (0 <
+            ListFinsetCNFTransport.countedListModels n
+              (fun literal assignment => literal.eval assignment) clauses)) ∧
+          OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.BinaryArithmetic.toNat
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+              (ListFinsetCNFTransport.countedListModels n
+                (fun literal assignment => literal.eval assignment) clauses)) =
+            ListFinsetCNFTransport.countedListModels n
+              (fun literal assignment => literal.eval assignment) clauses ∧
+          (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+            (ListFinsetCNFTransport.countedListModels n
+              (fun literal assignment => literal.eval assignment) clauses)).length ≤ n + 1 ∧
+          (time : ℝ) ≤
+            OAI.Algorithms.SubexponentialSAT.SqrtLog.Statement.runtimeBound C A d
+              (Encoding.formulaBitLength (toUpstreamCNF clauses)) n ∧
+          ∀ (prefixSteps : ℕ)
+            (intermediate : OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.LocatedCfg machine),
+            prefixSteps ≤ time →
+            OAI.Algorithms.SubexponentialSAT.Computation.Trace
+              (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedStep machine)
+              prefixSteps
+              (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedInit machine
+                (Encoding.encodeCNF (toUpstreamCNF clauses))) intermediate →
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.visitedSpace intermediate : ℝ) ≤
+              S * ((Encoding.formulaBitLength (toUpstreamCNF clauses) : ℝ) + 1) ^ e := by
+  obtain ⟨machine, countTape, answerTape, C, A, S, d, e,
+    hC, hA, hS, hd, he, run⟩ :=
+    OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.exact_count_and_sat 3 (by decide)
+  refine ⟨machine, countTape, answerTape, C, A, S, d, e,
+    hC, hA, hS, hd, he, ?_⟩
+  intro n clauses width
+  have hw : SAT.WidthAtMost 3 (toUpstreamCNF clauses) :=
+    exactWidthAtMostThree clauses width
+  obtain ⟨time, final, trace, outputCount, outputAnswer,
+    finalState, countWordCorrect, countWordLength, timeBound, prefixSpace⟩ :=
+    run n (toUpstreamCNF clauses) hw
+  have countId :
+      SAT.count (toUpstreamCNF clauses) =
+        ListFinsetCNFTransport.countedListModels n
+          (fun literal assignment => literal.eval assignment) clauses :=
+    exactUpstreamCount clauses
+  refine ⟨time, final, trace, ?_, ?_, ?_, ?_, ?_, timeBound, prefixSpace⟩
+  · simpa only [countId] using outputCount
+  · simpa only [countId] using outputAnswer
+  · simpa only [countId] using finalState
+  · simpa only [countId] using countWordCorrect
+  · simpa only [countId] using countWordLength
 
 -- Open items: a kernel-checking receipt on the proper upstream Lean toolchain;
 -- Agda source literal/Fin/polarity mapping as an imported SAME-OBJECT theorem;

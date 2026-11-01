@@ -147,6 +147,8 @@ def main():
         "exact_framed_length_certificate"]
     assert sum(report["normalization_comparisons"].values()) <= report[
         "normalization_comparison_budget"]
+    assert sum(report["normalization_list_shifts"].values()) <= report[
+        "normalization_shift_budget"]
     return {
         "status": "PASS",
         "native_vertices": 27,

@@ -26,7 +26,18 @@ import json
 from pathlib import Path
 
 
+def _require_exact_fields(value, fields, owner):
+    """A unique JSON representation for each source constructor.
+
+    Reject silent extension fields: the serializer must not identify two
+    distinct JSON objects with one Agda wire/gate/circuit term.
+    """
+    if not isinstance(value, dict) or set(value) != set(fields):
+        raise ValueError(f"{owner} requires exactly {sorted(fields)}")
+
+
 def wire_number(wire, n, earlier):
+    _require_exact_fields(wire, ("type", "index"), "wire")
     kind = wire["type"]
     index = wire["index"]
     if type(index) is not int or index < 0:
@@ -39,6 +50,7 @@ def wire_number(wire, n, earlier):
 
 
 def compile_original_circuit(data):
+    _require_exact_fields(data, ("input_count", "gates", "output"), "circuit")
     n = data["input_count"]
     if type(n) is not int or n < 0:
         raise ValueError("input_count must be a natural number")
@@ -48,17 +60,22 @@ def compile_original_circuit(data):
     clauses = []
     for i, gate in enumerate(gates):
         out = n + i
-        op = gate["op"]
+        if not isinstance(gate, dict):
+            raise ValueError("gate must be an object")
+        op = gate.get("op")
         if op == "const":
+            _require_exact_fields(gate, ("op", "value"), "constant gate")
             value = gate["value"]
             if type(value) is not bool:
                 raise ValueError("constant requires Boolean value")
             clauses.append(((out, value),))
         elif op == "not":
+            _require_exact_fields(gate, ("op", "source"), "NOT gate")
             x = wire_number(gate["source"], n, i)
             clauses.extend([((out, False), (x, False)),
                             ((out, True), (x, True))])
         elif op in ("and", "or"):
+            _require_exact_fields(gate, ("op", "left", "right"), "binary gate")
             x = wire_number(gate["left"], n, i)
             y = wire_number(gate["right"], n, i)
             if op == "and":
@@ -176,6 +193,16 @@ def compile_and_report(data):
     assert all(len(c) <= 3 for c in source_clauses)
     assert all(len(c) <= 3 for c in canonical)
     assert all(0 <= literal < 2 * nvars for c in canonical for literal in c)
+    # Exact closed form for *actual OAI* unary/framed nested-list encoding.
+    # Outer formula: v+2 + sum over canonical clauses of
+    # (4 + sum over literal codes of (4*code+8)).
+    exact_bit_length = nvars + 2 + sum(
+        4 + sum(4 * code + 8 for code in clause) for clause in canonical)
+    assert len(bits) == exact_bit_length
+    # Every code is < 2*v, and each canonical clause has <=3 literals.
+    # This strengthens (but does not replace) the upstream width-3 bound.
+    sharper_upper = nvars + 2 + (24 * nvars + 16) * (3 * g + 1)
+    assert len(bits) <= sharper_upper
     upper = nvars + 2 + (24 * nvars + 28) * (3 * g + 1)
     assert len(bits) <= upper
     quadratic_upper = 72 * (nvars + 1) ** 2
@@ -190,7 +217,10 @@ def compile_and_report(data):
         "num_variables": nvars, "source_clause_count": len(source_clauses),
         "normalized_clause_count": len(canonical),
         "normalized_literal_codes": canonical,
-        "bit_length": len(bits), "formal_target_upper_bound": upper,
+        "bit_length": len(bits),
+        "exact_framed_length_certificate": exact_bit_length,
+        "sharper_source_clause_upper_bound": sharper_upper,
+        "formal_target_upper_bound": upper,
         "quadratic_source_variable_upper_bound": quadratic_upper,
         "normalization_comparisons": comparisons,
         "normalization_comparison_budget": comparison_budget,

@@ -10,6 +10,7 @@ import itertools
 import json
 import pathlib
 import random
+from io import StringIO
 
 HERE = pathlib.Path(__file__).resolve().parent
 SPEC = importlib.util.spec_from_file_location(
@@ -124,6 +125,14 @@ def check_one(c):
     assert len(stream) == exact_length
     assert diagnostics["exact_framed_length_certificate"] == exact_length
     assert len(stream) <= diagnostics["sharper_source_clause_upper_bound"]
+    # Distinct bounded-prefix emitter shares exactly the OAI encoding.
+    for chunk_size in (1, 2, 7, 31):
+        sink = StringIO()
+        receipt = frontend.stream_original_circuit(c, sink, chunk_size)
+        assert sink.getvalue() == diagnostics["bits"]
+        assert receipt["bit_length"] == exact_length
+        assert receipt["exact_framed_length_certificate"] == exact_length
+        assert 0 < receipt["max_buffered_output_bits"] <= chunk_size
     assert len(stream) <= diagnostics["formal_target_upper_bound"]
     assert len(stream) <= diagnostics["quadratic_source_variable_upper_bound"]
     counts = diagnostics["normalization_comparisons"]
@@ -182,6 +191,16 @@ def main():
             pass
         else:
             raise AssertionError("invalid original DAG was accepted")
+
+    for chunk in (0, -1, True):
+        try:
+            frontend.stream_original_circuit(
+                {"input_count": 1, "gates": [],
+                 "output": wire("input", 0)}, StringIO(), chunk)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("invalid chunk size accepted")
 
     report = {
         "status": "PASS",

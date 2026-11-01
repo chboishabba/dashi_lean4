@@ -85,6 +85,54 @@ def families(contents):
         raise ValueError(f"Expected 373 family headings, found {len(unique)}")
     return unique
 
+
+def manuscripts(contents):
+    """Extract all paper references from family-bounded Markdown sections.
+
+    A single URL contains 'CAT(0)' in its directory; simplistic
+    /preprints...[^)]/ matching therefore silently loses one paper.
+    Balanced parenthesis matching keeps all 721 manuscript references.
+    """
+    source = contents.read_text(encoding="utf-8")
+    headers = list(FAMILY.finditer(source))
+    result = []
+    for i, match in enumerate(headers):
+        number = match.group(1)
+        end = headers[i + 1].start() if i + 1 < len(headers) else len(source)
+        block = source[match.end():end]
+        start = 0
+        while True:
+            opener = block.find("](preprints/", start)
+            if opener < 0:
+                break
+            k = opener + 2
+            depth = 1
+            j = k
+            while j < len(block):
+                if block[j] == "(":
+                    depth += 1
+                elif block[j] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                j += 1
+            if depth != 0:
+                raise ValueError(f"Unbalanced manuscript link in family {number}")
+            url = block[k:j]
+            if not url.lower().endswith(".pdf"):
+                raise ValueError(f"Not a PDF manuscript link: {url}")
+            title_start = block.rfind("[", 0, opener)
+            title = (block[title_start + 1:opener].strip()
+                     if title_start >= 0 else "")
+            result.append({"family_id": number, "title": title,
+                           "manuscript_path": url,
+                           "formal_theorem": "NOT_ESTABLISHED",
+                           "dashi_owner": "NOT_ESTABLISHED"})
+            start = j + 1
+    if len(result) != 721:
+        raise ValueError(f"Expected 721 manuscript references, found {len(result)}")
+    return result
+
 def source_paths(root, subtree):
     src = root / subtree
     if not src.is_dir():
@@ -142,6 +190,7 @@ def main():
     cat = args.lean_root / "Integration/OpenAIMath/FullUpstreamMainResultsCatalogue.lean"
     data = catalog(cat)
     family_map = families(args.upstream_root / "CONTENTS.md")
+    paper_rows = manuscripts(args.upstream_root / "CONTENTS.md")
     inverted = owner_index(args.agda_root, args.lean_root)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     allrows = []
@@ -208,6 +257,7 @@ def main():
                             row["stronger_or_equivalent"], row["agda_kernel"]])
     summary = {
         "declarations": len(allrows), "families": len(frows),
+        "manuscripts": len(paper_rows),
         "declarations_with_candidate": sum(bool(x["candidates"]) for x in allrows),
         "same_object_verified": 0, "kernel_ports_verified": 0,
         "notes": "Coverage is metadata/candidate discovery, not proof import",

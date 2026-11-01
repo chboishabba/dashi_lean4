@@ -243,6 +243,8 @@ def main():
         json.dumps(allrows, indent=2, ensure_ascii=False) + "\n")
     (args.out_dir / "families.json").write_text(
         json.dumps(frows, indent=2, ensure_ascii=False) + "\n")
+    (args.out_dir / "manuscripts.json").write_text(
+        json.dumps(paper_rows, indent=2, ensure_ascii=False) + "\n")
     with (args.out_dir / "declarations.tsv").open("w", newline="") as f:
         w = csv.writer(f, delimiter="\t")
         w.writerow(["i", "comparator", "declaration", "source",

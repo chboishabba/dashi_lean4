@@ -17,6 +17,8 @@ spec.loader.exec_module(routing)
 
 
 def main():
+    assert {"rh", "cm", "ym", "ns", "np"} <= routing.words(
+        "RH_CMYM_NSNP") | routing.words("RH_CM_YM_NS_NP")
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         agda = root / "dashi_agda"

@@ -124,3 +124,8 @@ In this branch, the version-gated `Upstream378FiniteCNFBridge.lean` now has the 
 The corpus source-integrity checker now distinguishes arbitrary identifier text from lexical Lean declaration headers, retaining source-content SHA-256 and exact source line numbers for each of the 208 catalogue entries. It does not infer namespace-qualified declaration identity or theorem trust from source text. The synthetic header test was source-written and staged in the local A+B driver; the actual 208-row audit and Lean kernels have not been executed here.
 
 The actual remaining terminal obligations are K00–K02, M00b/M01 actual identity, M02/M03 primitive-time/all-prefix-space simulation, M04 machine theorem acceptance, M05 composition and C01/C02 individual theorem ports. Never describe discovery catalogue counts as verified ports.
+
+
+### Golden M01 finite literal code correspondence
+
+Golden PR #1212 now stages `OpenAIMathLiteralCodeTransportExact.agda`. It maps the original `CNF.positive/negative (Fin n)` to a typed, finite index/polarity mirror; proves two-sided literal, clause and CNF-list round trips; establishes the *raw list* literal-code equation `negative i ↦ 2*i`, `positive i ↦ 2*i+1`; and applies the transport directly to the **original optimized DAG CNF** via `optCircuitEqualsOriginal`. This is source-written Agda, not an imported Lean theorem. The A+B driver now stages its standalone Agda check. Lean `SAT.Literal` identity, sorted/deduplicated OAI `Encoding.cnfNumbers`, byte-for-byte encoder equality and the fixed machine's primitive frontend trace remain open.

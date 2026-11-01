@@ -39,7 +39,9 @@ run corpus_matrix python "$repo_root/scripts/build_openai_math_same_object_matri
   --agda-root "$agda_root" --lean-root "$repo_root" --upstream-root "$upstream" \
   --out-dir "$out/corpus"
 run corpus_catalogue python "$repo_root/scripts/audit_openai_main_result_catalogue.py" \
-  --help
+  --upstream "$upstream/lean/formalization.yaml" \
+  --catalogue "$repo_root/Integration/OpenAIMath/FullUpstreamMainResultsCatalogue.lean" \
+  --json-out "$out/catalogue_audit.json"
 printf '\nSUMMARY failures=%s\n' "$failures"
 printf 'Receipt manifest: %s\n' "$result"
 if [[ "$failures" -ne 0 ]]; then

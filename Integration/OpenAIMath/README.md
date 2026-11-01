@@ -1,0 +1,149 @@
+# OpenAI Math integration
+
+This namespace is DASHI's attribution-safe ingress for the pinned `openai/math` corpus.
+
+It does **not** import the upstream Lean project into DASHI's normal package graph. The upstream project is pinned at commit `1581d4cbdd69a0faf34b2089614fe2a814316a6a` and retains its own Lean 4.34.1 environment. Use `scripts/materialize_openai_math_vendor.sh` to create a hermetic checkout when upstream verification or theorem-specific porting is required.
+
+The public boundary is `Integration.OpenAIMath.Everything`.
+
+Promotion order is deliberately explicit:
+
+```text
+manuscript -> catalogue -> upstream declaration -> upstream kernel receipt
+           -> DASHI same-object port -> DASHI kernel receipt
+           -> Agda imported-formal-source receipt -> Agda theorem
+```
+
+Arrows are obligations, not automatic conversions.
+
+## 31 October 2026 — Complete indexed upstream inventory, NOT complete theorem ports
+
+Source-audited against **live** `openai/math` README, CONTENTS and `lean/formalization.yaml`: **721 manuscripts, 373 result families**. The upstream machine-readable `status.main_results` list has **208 individual declaration entries across 192 comparator configuration identifiers**; these are not one-to-one family counts and the YAML itself says `scope: Partial progress.` Upstream README warns that not every result is formalized, and not every formalization should be confused with its broader paper.
+
+`FullUpstreamMainResultsCatalogue.lean` now indexes **all 208 actual upstream declarations** with exact comparator, declared symbol and file under current YAML blob `372bcd714cd3a186a9139ac8e0f3318961fb2df1`. An independent same-turn GitHub-source readback compared every row to upstream: **208/208 exact, 0 omissions, 0 extras, identical order**. This does not imply 208 independent DAG-proof ports; the original small `SourceAtlas` remains the curated semantic-routing owner. Do NOT insert the complete index into `Everything.lean` before an exact toolchain build. `scripts/audit_openai_main_result_catalogue.py` runs offline against an explicit upstream `lean/formalization.yaml` checkout and detects drift; its regex parser was checked locally against a representative YAML/Lean pair. The index source itself has not been typechecked.
+
+**Math integration (P3) source-only:** `ListFinsetCNFTransport.lean` generically preserves clause truth, global CNF truth, finite model counts, normalized clause upper count and width. **NEW separate upstream-378 staging** `Upstream378FiniteCNFBridge.lean` binds that generic result to the ACTUAL upstream `SAT.Literal (Fin n)`, `SAT.count`, `SAT.WidthAtMost 3`, and `Encoding.formulaBitLength_upper`, with an explicit bound
+`L ≤ n+2+(24*n+28)*(3*g+1)`. This module REQUIRES the newer original OpenAI Lean4.34.1 source; our pinned vendor at `1581d4cb...` predates it and DASHI's mathlib still targets 4.28. This is not imported and has **NO Lean kernel receipt**. Its source does not finish the executable source circuit→Lean normalization adapter, actual fixed-machine time or all-prefix visited space.
+
+**High-alpha existing owners without semantic conflation:** original #1040 Agda circuit semantics, #1212 finite counting + #1212 earlier `OpenAIMathSharedTseitinUniqueExtensionExact` (the canonical uniqueness owner, now reused instead of a duplicate), #1438 native 27-node bipartite grid/54-edge weighted Max-Cut and QID firewall, #1414 distinct 27-functions/11-orbit/7-even+4-odd Fourier chart; external OAI comparators `SubexponentialSAT`, `OptimalMaxCut`, `UniqueGamesTheorem`, `ExactFourier`, `UniformFourier`, `QuasiRiemannHypothesis`, `HodgeConjectureCMAbelianVarieties`, `VlasovMaxwell` are **separate source routes**. Mathematical parallels, numerology, and shared labels do not imply same-object ports, solutions to RH/Clay YM/twin-prime infinitude, or an identified Monster action.
+
+**Attention:** the current upstream YAML now records `HodgeCM.hodge_conjecture_for_cm_abelian_varieties` at `ComparatorChallenges/HodgeConjectureCMAbelianVarieties/Solution.lean`, which was directly inspected. The older pinned `SourceAtlas.hodgeCM` is `manuscript` on that earlier vendor; that historic state should not be silently rewritten as a pinned theorem. Current unpinned upstream proof status is tracked separately pending vendor update and kernel checks.
+
+**Actual missing few-hundred-proof integrations:** the 208 upstream declaration references have been indexed. For each result that matters, still record exact pinned source revision, formalized theorem statement, original author/date, proof dependency/axiom check, in-repo earlier stronger owner comparison, same-object implication, executable/Agda or Lean acceptance receipt, and TOE/QID consumer only when mathematically warranted. The other 373 families have not been individually theorem-ported. This is a programme with real mathematical obligations, not a tally of catalogue names.
+
+
+## Executable DAG-to-upstream-378 binary frontend (31 Oct)
+
+`scripts/compile_dashi_circuit_openai378.py` is a **standalone executable** conversion from a JSON serialization of the original DASHI circuit gate carrier to the source-optimized Tseitin clauses and the **actual** current OpenAI `Encoding.lean` structure. Gate sources use `{"type":"input","index":i}` or `{"type":"gate","index":creation_order_id}`, with strictly earlier references. The output wire uses the same format.
+
+Exact source structure: source gate list ⟶ 1/2/3 clause templates ⟶ literal code `2*variable+polarity` ⟶ sets of literal codes / sets of clauses ⟶ ascending sorted numeric clause/literal lists ⟶ unary `encodeNat` and framed nested `encodeList` ⟶ bitstream `Encoding.encodeCNF` style. The frontend reports source/normalized clause counts, width, bit length, the formula `n+2+(24*n+28)*(3*g+1)` upper bound, and the exact bit sequence. This does NOT evaluate a SAT oracle or enumerate assignments, and is not a new Agda semantics owner. It intentionally preserves duplicate/tautological clause syntax in `Finset` semantics instead of applying additional `SAT.normalize` rewriting, so the exact `encodeCNF` target is well defined.
+
+Usage: `python scripts/compile_dashi_circuit_openai378.py circuit.json --out encoding.json`. This source file has **not** been executed from an exact GitHub checkout. An independently written local Python checker passed **1,485 source DAGs**, **104,720 full Boolean assignments** and encoding/decoding round trips; 795 cases had source clauses that collapsed after literal-set normalization. Source-level bound satisfied in all fixtures. These are executed finite checks, not Agda/Lean kernel or fixed-TM step/space certificates.
+
+The outstanding theorem is now exactly the same-object equivalence between this executable frontend, Agda's source `optCircuitCNF` and the updated `OAI.Algorithms.SubexponentialSAT.SAT.CNF` AND a certified cost-preserving compiler into the fixed primitive machine of `SqrtLogSpace.Final`. Lean4 4.28/DASHI old vendor pin versus upstream 4.34.1 remains unresolved; do not import staged `Upstream378FiniteCNFBridge` until compiled with its actual dependencies.
+
+
+**Last quantitative source cut:** upstream exact encoding bound can be simplified using `g≤n` to
+`Encoding.formulaBitLength(toUpstreamCNF clauses) ≤ 72*(n+1)^2` for n = total input+gate variable count, provided `clauses.length≤3*g+1` and width≤3. Source-written Lean declaration: `Upstream378FiniteCNFBridge.upstreamQuadraticBitLengthBound`; **kernel NOT run**. Executable Python frontend now also asserts the quadratic bound for each actual generated bitstring. Independent local audit rerun PASS 1,485 circuits/104,720 full assignments, including exact framing decode. This bounds **input encoding length** only, not the fixed primitive machine's uniform construction time, square-root-log runtime or prefix space.
+
+**Further actual fixed-machine interface**: version-gated `Upstream378FiniteCNFBridge.sourceListExactCountMachine` now source-writes the actual current upstream `SqrtLogSpace.exact_count_and_sat 3` *fixed-machine witness* restricted to source **lists of clauses**, rewrites its output count/SAT tapes to our generic `countedListModels` by `exactUpstreamCount`, and retains the SAME primitive execution trace, exact `runtimeBound` and every-prefix `visitedSpace` constraint. It does NOT assert a new machine, change the exponent, or invent runtime from an oracle. Inspected actual upstream `Computation.lean`, `BinaryArithmetic.lean`, `VisitedTape.lean`, `EncodingBounds.lean` and `Final.lean` to correct namespace spellings. This is SOURCE-WRITTEN, **Lean kernel NOT RUN**. Combining this with DASHI Agda P2 still requires exact type-and-program identity and a formal executable frontend transducer with resource bounds; the Python emitter alone is not an Agda/Lean proof.
+
+
+## 31 October — fixed comparator budget and native ternary-grid SAT test
+
+The executable original-DAG frontend `scripts/compile_dashi_circuit_openai378.py` now canonicalizes literal lists and clauses using **explicit deterministic ordered insertion**, with no Python hashing/sorting oracle. For `m` source 3-CNF clauses, it reports `literal_comparisons` and `clause_comparisons` and checks their sum is ≤`6m+m(m−1)/2`; each compared tuple has ≤3 codes <`2v`. The actual checkout-native deterministic `scripts/check_openai378_frontend_exact.py` regression now exercises the exact script. That regression was committed but **not executed from GitHub checkout**. Independent local Python PASS compared to canonical `sorted(set())` semantics in 10,735 arbitrary bounded-width CNFs + 2,430 original-source gate-template cases, including matching bitstreams and the same bound. This is a comparison-operation count, not a primitive TM bit-comparison resource proof.
+
+`scripts/check_openai378_27grid_maxcut_bridge.py` is a genuine **cross-owner reuse** fixture: the native #1438 27-vertex / 54-edge `unitNativeGridEdges` adjacency is compiled as a shared original source Boolean DAG (27 inputs, 27 shared NOT gates, 3×54 per-edge XOR gates and 53 shared AND gates), giving 242 gates and 700 three-literal-or-less CNF clauses. Connected bipartiteness gives precisely two proper colourings; the independent local Python check PASS produced 700 normalized clauses, a 1,515,935-bit actual encoded string, 188,225 ordered insertion comparisons (budget 248,850) and two witnessed accepted inputs among 2,502 checked colourings. This is **not** arbitrary graph Max-Cut hardness, nor the unrelated #1414 27-function/11-orbit Fourier carrier. Formal Agda same-object graph→DAG theorem and exact #SAT=2 proof are outstanding.
+
+The newer-upstream-only `Upstream378FiniteCNFBridge` also contains `sourceRuntimeWithinQuadraticInputBudget` and `sourceVisitedSpaceWithinQuadraticInputBudget`, direct source-written envelopes for the **same original 378 machine** with `L≤72(v+1)^2`. No exact 4.34.1 Lean kernel acceptance or fixed-machine frontend preprocessing trace. This source remains excluded from the Lean 4.28 authority spine.
+
+
+## 1 November — canonical source contract, exact framed length, bounded streaming
+
+The actual original-DAG JSON frontend now rejects *ignored fields*: circuits require exactly `input_count,gates,output`, each wire exactly `type,index`, and each gate exactly the field set of its constructor. This enforces a one-constructor/one-schema **executable** serialization discipline. The missing Golden theorem remains an explicit typed equivalence between Agda `Circuit.GateProgram` and these accepted objects; Python checking is not that theorem.
+
+For canonical sorted deduplicated OAI literal-code lists `C`, with `v = inputs+gates`, the unary/framed `encodeCNF` length has the **exact** structural identity
+
+```text
+L = v + 2 + Σ_(clause in C) (4 + Σ_(code in clause) (4*code + 8)).
+```
+
+The old upstream bound `L ≤ v+2+(24v+28)(3g+1) ≤ 72(v+1)^2` remains intact; direct code-range reasoning also yields the sharper **executed Python** envelope `L ≤ v+2+(24v+16)(3g+1)`. The new Lean `Upstream378EncodingLengthExact.exactFormulaBitLength` and `Upstream378FiniteCNFBridge.sourceListExactBitLength` are *source-written* structural length proofs against the original OAI `Encoding.encodeNat/frame/encodeList/encodeCNF` declarations. **No Lean 4.34.1 kernel receipt yet.** The `Upstream378FiniteCNFBridge` remains excluded from the 4.28 normal import spine.
+
+The ordered-insertion normalizer now separately charges Python list-element shifts, not only lexicographic comparison calls: for `m` source clauses of width ≤3, comparisons ≤`6m+m(m−1)/2` and shifts ≤`3m+m(m−1)/2`. These are structural source operation budgets, **not** primitive-TM time costs.
+
+The original executable frontend also now provides `stream_original_circuit(data, sink, chunk_bits=4096)` and `--stream-bits-out`. It emits the **same** canonical bit order as the eager function through the same normalized clauses, while retaining at most `chunk_bits` *logical output bits* at any output prefix, in addition to parsed input and the source/normalized clause lists. This pays an executable bounded-output-buffer mechanism rather than assuming a free output-sized `List Bool`. It does **not** bound Python heap object overhead, input parsing, primitive multitape TM visited cells, or every-prefix machine runtime. No such stronger claim is promoted.
+
+`scripts/check_openai378_frontend_exact.py` now additionally tests strict serialization rejection, exact closed-form lengths, and *every bit* of the streaming/eager correspondence across chunk sizes 1,2,7,31. The new checkout-native test edits have **not been executed on this GitHub head**; a small separate mathematical length-formula fixture was executed, but is not an exact-checkout receipt. Earlier fixture counts are historical and must not be relabelled fresh.
+
+**Remaining max-cut:** Agda K00 acceptance; Lean K01/4.34.1 K02 acceptance; Agda/Lean typed source circuit+literal same-object mapping; a source→bits primitive-machine compiler with uniform time and all-prefix visited-space proof; composition to the original fixed exact-count machine. The streaming program, numeric certificates and these source-written lemmas are useful prerequisites, not the final TM theorem.
+
+### Separate exact OAI378 toolchain pin (1 November)
+
+The newer source for the actual 378 solver is **pinned independently** at upstream `7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a` in `vendor/openai-math/PIN_378.json`. This does not change the original vendor Git submodule `1581d4cb...` or DASHI's Lean 4.28 default.
+
+```bash
+bash scripts/materialize_openai378_toolchain.sh
+bash scripts/check_openai378_staged_lean.sh
+```
+
+The second command locally builds the upstream OAI dependency and elaborates the three staged bridge modules in the **upstream 4.34.1** environment. These scripts and this pin are committed, **not executed** in this session. A compiler or axioms receipt must actually be obtained before changing K02 to accepted. The new exact-length adapter is deliberately reduced to composition of OpenAI's already-proved `Encoding.length_encodeNat` and `Encoding.length_encodeList_cons` lemmas.
+
+## 1 November — A+B corpus-wide source census and reviewed routes
+
+**Full upstream source inventory committed:** `corpus_manuscripts_source_index_20261101.json` contains all 721 manuscript PDF references with their source family ID, `corpus_families_source_index_20261101.json` contains all 373 distinct numbered result families, and `corpus_declarations_source_index_20261101.json` contains all 208 main-result theorem declaration references. Inputs are actual `openai/math` 7ef5c0c `CONTENTS.md` and `lean/formalization.yaml`. The source-manuscript parser correctly treats `CAT(0)` inside a PDF URL as part of the URL; naïve regex returned 720 rather than 721. Index metadata contains **no** kernel proof promotion, no manuscript-as-proof promotion and no false authorship.
+
+**Owner discovery, not proof transport:** `scripts/build_openai_math_same_object_matrix.py` traverses complete local Agda/Lean source trees, derives comparator-subject candidate owners, recovers earliest git file-addition traces, and emits 208 declaration/373 family/721 manuscript matrix entries plus explicit unresolved typed-equivalence, source priority and kernel gates. The initial GitHub-tree source scan covers 22,761 Agda and 4,661 Lean files (the Lean API tree was reported truncated): the conservative subject-anchored lexical snapshot `corpus_candidate_owner_routes_20261101.json` has 101/208 theorem declarations with at least one filename candidate and 107 without. Every automatic candidate is explicitly `NOT_ESTABLISHED`; the scanner is a lead finder only.
+
+**Actual inspected comparator source:** `reviewed_cross_corpus_same_object_boundaries_20261101.json` records six direct statement comparisons: OAI378 vs original source-DAG count, unrestricted Max-Cut gap theorem vs native 27-grid optimality, 7/8 zeta zero-free vs RH, CM abelian Hodge vs universal Hodge, classical Vlasov–Maxwell vs quantum YM OS mass gap, finite Fourier-circuit complexity vs a generic analytic Fourier donor. These are first-pass *non-equivalence or missing-transport assessments*, NOT six DASHI imports or kernel-verified reproductions.
+
+**Original SAT indexing correction:** Golden `Circuit.GateProgram` keeps predecessor `gateWire (Fin g)` **newest-first**, while the Python JSON frontend keeps gate `index` in **creation order**. The mapping is `creation = g−1−FinIndex`, already owned by `FiniteSource.chronologicalGateNumberExact`/stdlib `Fin.opposite`. `agda_fin_wire_to_json`/inverse and finite regression now implement that concrete M00 data law. Agda↔JSON source-well-typedness, same-object clause/polarity identity, original primitive-TM compiler and M05 terminal proof all remain unaccepted.
+
+**M02 source-operation correction:** An ordered-insertion *probe* performs equality and potentially less-than tests, so the original budget `6m+m(m−1)/2` bounds probes, NOT all Python comparison calls. The actual frontend now separately counts equality calls, ordering calls, list shifts, and literal output bits, bounding total equality+ordering calls by `2*(6m+m(m−1)/2)`, and shifts by `3m+m(m−1)/2`. These are Python-source operation upper bounds, not a completed primitive-Turing-machine bit-cost certificate.
+
+Local no-CI A+B receipt driver: `scripts/run_openai_math_ab_acceptance_local.sh`, with separate per-stage logs and fail-closed status TSV. **Not executed here** (no Agda/Lean executables or GitHub DNS in tool environment). `K00/K01/K02` remain unaccepted. Any source-only proof term or simulation is an obligation, not a theorem receipt.
+
+See [Golden Agda exact 39-obligation ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md) for every remaining source proof, kernel, same-object, and analytic terminal certificate.
+
+
+## 1 November 2026 — parser integrity and native theorem-owner search (source-only)
+
+M00's Python JSON frontend now rejects duplicate object keys at **every nesting level**, in addition to exact constructor fields. `parse_original_circuit_json` checks the original finite DAG reference discipline; `canonical_original_circuit_json` defines a deterministic output spelling, including sorted keys. The parser does **not** reject legitimate alternative whitespace/key orders. The added source-level regression covers canonical roundtrips and duplicate-key/NaN rejection, but a type-preserving Agda `GateProgram` ↔ serialized JSON theorem remains unproved and no Agda/Lean kernel was run here.
+
+C01 candidate search now indexes native Agda/Lean declaration identifiers in source files as well as path tokens, with `scripts/test_openai_math_owner_discovery.py` ensuring that a filename-invisible owner can be found. Candidate retrieval is **not** a proof comparison. C02 has a distinct `scripts/check_openai_math_decl_sources.py` audit: inspect all 208 indexed upstream files, record file-content SHA-256 and identifier line locations, report textual identifier presence, fail on missing source files/identifiers, and *never* mark textual presence as proof acceptance. This also makes the pinned-vs-current upstream revision difference executable rather than a silent assumption.
+
+The A+B local driver includes these tests. They are **committed but not executed in this environment**. They do not settle K00–K02, M00–M05, any of the 208 same-object imports, or the 721 manuscript-level research obligations.
+
+
+## 1 November — second proof-boundary cut (M00/M01/C02)
+
+Golden Agda PR #1212 source-writes `OpenAIMathCreationOrderSerializationExact.agda`, a typed creation-order finite AST transport for the **existing** original GateProgram. Both wire/gate/program/circuit round trips are present, and original variable numbering, circuit evaluation and accepted-input count are preserved by reuse of existing owners. This is **not** a kernel receipt or a proof that Python's concrete JSON bytes parse to that AST; the source-to-byte layer is still M00b.
+
+In this branch, the version-gated `Upstream378FiniteCNFBridge.lean` now has the explicit source-written equivalences `sourceListEncodedBitsIffSameNormalizedCNF` and `sourceListCanonicalCodeListsIffSameCNF`, using *the original OAI* injectivity theorems. It separately states `sourceListCountAfterUpstreamNormalize`, since upstream semantic SAT normalization can preserve counts while changing encoding bits. These theorems remain **unverified** pending the separate Lean 4.34.1 kernel environment and do not alone connect the actual Agda-generated clauses.
+
+The corpus source-integrity checker now distinguishes arbitrary identifier text from lexical Lean declaration headers, retaining source-content SHA-256 and exact source line numbers for each of the 208 catalogue entries. It does not infer namespace-qualified declaration identity or theorem trust from source text. The synthetic header test was source-written and staged in the local A+B driver; the actual 208-row audit and Lean kernels have not been executed here.
+
+The actual remaining terminal obligations are K00–K02, M00b/M01 actual identity, M02/M03 primitive-time/all-prefix-space simulation, M04 machine theorem acceptance, M05 composition and C01/C02 individual theorem ports. Never describe discovery catalogue counts as verified ports.
+
+
+### Golden M01 finite literal code correspondence
+
+Golden PR #1212 now stages `OpenAIMathLiteralCodeTransportExact.agda`. It maps the original `CNF.positive/negative (Fin n)` to a typed, finite index/polarity mirror; proves two-sided literal, clause and CNF-list round trips; establishes the *raw list* literal-code equation `negative i ↦ 2*i`, `positive i ↦ 2*i+1`; and applies the transport directly to the **original optimized DAG CNF** via `optCircuitEqualsOriginal`. This is source-written Agda, not an imported Lean theorem. The A+B driver now stages its standalone Agda check. Lean `SAT.Literal` identity, sorted/deduplicated OAI `Encoding.cnfNumbers`, byte-for-byte encoder equality and the fixed machine's primitive frontend trace remain open.
+
+
+## 1 November 2026 — M02 JSON byte-size counterexample and resource-faithful profile
+
+**Do not use legacy decimal-arity JSON as the input-length carrier for a polynomial source-to-machine complexity theorem.** An original circuit may encode its input dimension `n` in only `O(log n)` decimal characters, while the actual upstream OAI `Encoding.encodeNat n` begins with `n+1` bits. A gate-free `input_count=10000` circuit takes only 68 canonical compact JSON UTF-8 bytes, but requires over 10000 output bits.
+
+New `canonical_machine_circuit_json` adds an `input_unary` field of exactly `n` ASCII `1` characters; `parse_machine_circuit_json` accepts only the strict constructor-specific profile with exact arity and valid original DAG. The `--machine-profile` CLI requires this source and reports a size certificate with actual input bytes `B`, `n+g=v≤B`, and original framed output size `L≤72(B+1)^2`. Legacy input remains supported outside the machine profile. Regression exercises valid circuits, malformed unary arity, duplicate keys, the 10000-input compression witness, and the actual CLI streaming output.
+
+Version-gated Lean `sourceByteQuadraticBitLengthBound` states the corresponding algebraic theorem with **explicit** source-representation-size hypothesis. `OriginalCircuitCountIngress` makes the original Agda-source-to-upstream-model-count equality an outstanding typed premise; `originalCountAtUpstreamCNF` proves the downstream count consequence *given that premise*. Source-written only; no Agda/Lean kernel or actual primitive-machine time/prefix-space proof was executed here.
+
+**M02 still requires a fixed primitive front-end machine and bit-step trace**, not a Python runtime statement. **M03 still requires every-prefix visited tape-space including input, output and preprocessing**; a bounded Python output chunk does not prove it. **M05 still requires an actual inhabited count-ingress witness and composition with the same fixed OAI machine.** The wider corpus import programme is also incomplete.
+
+
+### Conditional M05 count/SAT-tape join and local K02 trust gate
+
+Golden creation-order AST transport now source-writes original and optimized source-CNF exact counts by composing previously owned N03/N04 with the new structural roundtrip. The pinned-4.34.1-only Lean theorem `originalCircuitExactCountMachineOfIngress` specializes the **same original OAI machine** to an explicit `OriginalCircuitCountIngress` count-correspondence witness, and carries through its count tape, SAT tape, final state, decoder, time bound and **every-prefix** visited-space bound. That witness is **not yet inhabited for an actual Agda circuit** and no uniform primitive frontend has been constructed. This is an intentional conditional result, not unconditional M05.
+
+`scripts/check_openai378_staged_lean.sh` now builds the staged adapters and writes `.build/openai378-staged/axiom_audit.txt` with pinned Lean `#print axioms` for the new source theorem owners, failing on `sorryAx`. No runner or kernel execution occurred here; audit receipts must be reviewed before any promotion. The full 721/373/208 corpus integration remains a separately tracked programme.

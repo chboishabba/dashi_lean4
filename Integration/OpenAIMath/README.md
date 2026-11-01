@@ -140,3 +140,10 @@ New `canonical_machine_circuit_json` adds an `input_unary` field of exactly `n` 
 Version-gated Lean `sourceByteQuadraticBitLengthBound` states the corresponding algebraic theorem with **explicit** source-representation-size hypothesis. `OriginalCircuitCountIngress` makes the original Agda-source-to-upstream-model-count equality an outstanding typed premise; `originalCountAtUpstreamCNF` proves the downstream count consequence *given that premise*. Source-written only; no Agda/Lean kernel or actual primitive-machine time/prefix-space proof was executed here.
 
 **M02 still requires a fixed primitive front-end machine and bit-step trace**, not a Python runtime statement. **M03 still requires every-prefix visited tape-space including input, output and preprocessing**; a bounded Python output chunk does not prove it. **M05 still requires an actual inhabited count-ingress witness and composition with the same fixed OAI machine.** The wider corpus import programme is also incomplete.
+
+
+### Conditional M05 count/SAT-tape join and local K02 trust gate
+
+Golden creation-order AST transport now source-writes original and optimized source-CNF exact counts by composing previously owned N03/N04 with the new structural roundtrip. The pinned-4.34.1-only Lean theorem `originalCircuitExactCountMachineOfIngress` specializes the **same original OAI machine** to an explicit `OriginalCircuitCountIngress` count-correspondence witness, and carries through its count tape, SAT tape, final state, decoder, time bound and **every-prefix** visited-space bound. That witness is **not yet inhabited for an actual Agda circuit** and no uniform primitive frontend has been constructed. This is an intentional conditional result, not unconditional M05.
+
+`scripts/check_openai378_staged_lean.sh` now builds the staged adapters and writes `.build/openai378-staged/axiom_audit.txt` with pinned Lean `#print axioms` for the new source theorem owners, failing on `sorryAx`. No runner or kernel execution occurred here; audit receipts must be reviewed before any promotion. The full 721/373/208 corpus integration remains a separately tracked programme.

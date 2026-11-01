@@ -35,6 +35,10 @@ run agda_original bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/Everything.
 run agda_opt bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/OpenAIMathSharedTseitinOptimizedCNFExact.agda' _ "$agda_root"
 run lean_428_generic bash -c 'cd "$1" && lake env lean Integration/OpenAIMath/ListFinsetCNFTransport.lean' _ "$repo_root"
 run lean_434_adapter bash "$repo_root/scripts/check_openai378_staged_lean.sh" "$upstream"
+run corpus_owner_discovery python "$repo_root/scripts/test_openai_math_owner_discovery.py"
+run corpus_declaration_source python "$repo_root/scripts/check_openai_math_decl_sources.py" \
+  --catalogue "$repo_root/Integration/OpenAIMath/FullUpstreamMainResultsCatalogue.lean" \
+  --upstream-root "$upstream" --json-out "$out/corpus_source_integrity.json"
 run corpus_matrix python "$repo_root/scripts/build_openai_math_same_object_matrix.py" \
   --agda-root "$agda_root" --lean-root "$repo_root" --upstream-root "$upstream" \
   --out-dir "$out/corpus"

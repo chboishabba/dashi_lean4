@@ -34,6 +34,26 @@ SKIP = {
     "finite", "properties", "all", "test", "types", "native",
 }
 SOURCE_SUFFIXES = {".agda", ".lean"}
+# Source declaration names provide independent search evidence when the
+# filename is generic (e.g. AlgebraicHierarchyExact.agda). A name match is a
+# discovery lead only; it does not identify the same mathematical object.
+AGDA_DECL = re.compile(r"(?m)^([A-Za-z_][A-Za-z0-9_'-]*)\\s*:")
+LEAN_DECL = re.compile(
+    r"(?m)^\\s*(?:(?:private|protected|noncomputable|unsafe)\\s+)*"
+    r"(?:theorem|lemma|def|abbrev|structure|class)\\s+"
+    r"([A-Za-z_][A-Za-z0-9_.']*)\\b"
+)
+
+def declaration_words(path):
+    """Search actual top-level Agda signatures and Lean declaration headers.
+
+    Read-only, deterministic, index-only: the tool never assumes the
+    declarations compile, own an upstream theorem, or preserve its statement.
+    """
+    source = path.read_text(encoding="utf-8", errors="replace")
+    grammar = AGDA_DECL if path.suffix == ".agda" else LEAN_DECL
+    return {word for symbol in grammar.findall(source) for word in words(symbol)}
+
 REVIEWED_SEEDS = {
     # These are real source-path discoveries / previous provenance owners.
     # They are candidate interfaces, NOT verified theorem equivalences.
@@ -154,7 +174,11 @@ def owner_index(agda, lean):
             if "/OpenAIMath/" in rel:
                 # Prevent catalogue metadata echoing back as proof evidence.
                 continue
-            for w in words(rel):
+            # Path tokens are cheap first-stage search evidence. Index real
+            # source declaration identifiers too, so differently named
+            # theorem owners are not completely invisible to discovery.
+            candidate_tokens = words(rel) | declaration_words(path)
+            for w in candidate_tokens:
                 index[w].add((str(root), rel))
     return index
 

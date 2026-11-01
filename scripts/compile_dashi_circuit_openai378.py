@@ -104,6 +104,11 @@ def _insert_ordered_unique(items, value, counters, counter_name):
         if value == old:
             return
         if value < old:
+            # Python list insertion shifts exactly the following elements.
+            # Charge this *in addition* to comparison calls, not for free.
+            shift_name = counter_name.replace("comparisons", "shifts")
+            counters[shift_name] = (
+                counters.get(shift_name, 0) + len(items) - index)
             items.insert(index, value)
             return
     items.append(value)
@@ -282,7 +287,15 @@ def compile_and_report(data):
     # Each source clause has <=3 literal inserts (each scan <=2 comparisons);
     # each source clause insert scans at most all previously seen clauses.
     comparison_budget = 6 * m + m * (m - 1) // 2
-    assert sum(comparisons.values()) <= comparison_budget
+    actual_comparisons = {k: comparisons.get(k, 0) for k in
+                          ("literal_comparisons", "clause_comparisons")}
+    actual_shifts = {k: comparisons.get(k, 0) for k in
+                     ("literal_shifts", "clause_shifts")}
+    assert sum(actual_comparisons.values()) <= comparison_budget
+    # Literal lists have size <=3: at most 3 element shifts per source
+    # clause; earlier normalized clauses contribute <= m*(m-1)/2.
+    shift_budget = 3 * m + m * (m - 1) // 2
+    assert sum(actual_shifts.values()) <= shift_budget
     return {
         "input_count": data["input_count"], "gate_count": g,
         "num_variables": nvars, "source_clause_count": len(source_clauses),
@@ -293,8 +306,10 @@ def compile_and_report(data):
         "sharper_source_clause_upper_bound": sharper_upper,
         "formal_target_upper_bound": upper,
         "quadratic_source_variable_upper_bound": quadratic_upper,
-        "normalization_comparisons": comparisons,
+        "normalization_comparisons": actual_comparisons,
         "normalization_comparison_budget": comparison_budget,
+        "normalization_list_shifts": actual_shifts,
+        "normalization_shift_budget": shift_budget,
         "bits": "".join("1" if b else "0" for b in bits),
         "source_status": "executable Python, not Agda/Lean kernel proof",
     }

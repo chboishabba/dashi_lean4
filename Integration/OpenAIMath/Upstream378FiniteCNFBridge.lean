@@ -321,6 +321,71 @@ theorem sourceListExactCountMachine :
   · simpa only [countId] using countWordCorrect
   · simpa only [countId] using countWordLength
 
+/-- Conditional M05 last-mile: if the actual Golden circuit's accepted
+    input count is identified with the exact OAI source-list model count
+    (the inhabited `OriginalCircuitCountIngress` obligation), this is the
+    SAME fixed upstream machine's final count tape, SAT tape, state, runtime
+    and every-prefix visited-space certificate. No SAT oracle is fabricated.
+
+    The missing work is constructing that ingress from the *actual* original
+    Agda circuit/optimized CNF across the two proof kernels, plus proving the
+    uniform primitive frontend's preprocessing time and prefix space.
+    This conditional theorem is NOT the unconditional terminal M05 result. -/
+theorem originalCircuitExactCountMachineOfIngress {n g : ℕ}
+    (ingress : OriginalCircuitCountIngress n g) :
+    ∃ (machine : OAI.Algorithms.SubexponentialSAT.Computation.PrimitiveMachine)
+      (countTape answerTape : Fin machine.tapeCount)
+      (C A S : ℝ) (d e : ℕ),
+      0 < C ∧ 0 < A ∧ 0 < S ∧ 0 < d ∧ 0 < e ∧
+      ∃ (time : ℕ)
+        (final : OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.LocatedCfg machine),
+        OAI.Algorithms.SubexponentialSAT.Computation.Trace
+          (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedStep machine)
+          time
+          (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedInit machine
+            (Encoding.encodeCNF (toUpstreamCNF ingress.clauses))) final ∧
+        final.config.tapes countTape =
+          Turing.Tape.mk₁
+            ((OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+              ingress.originalAcceptedInputCount).map some) ∧
+        final.config.tapes answerTape =
+          Turing.Tape.mk₁ [some (decide (0 < ingress.originalAcceptedInputCount))] ∧
+        final.config.state =
+          Sum.inl (decide (0 < ingress.originalAcceptedInputCount)) ∧
+        OAI.Algorithms.SubexponentialSAT.BinaryArithmetic.toNat
+          (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+            ingress.originalAcceptedInputCount) =
+          ingress.originalAcceptedInputCount ∧
+        (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.countWord
+          ingress.originalAcceptedInputCount).length ≤ n + 1 ∧
+        (time : ℝ) ≤
+          OAI.Algorithms.SubexponentialSAT.SqrtLog.Statement.runtimeBound C A d
+            (Encoding.formulaBitLength (toUpstreamCNF ingress.clauses)) n ∧
+        ∀ (prefixSteps : ℕ)
+          (intermediate : OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.LocatedCfg machine),
+          prefixSteps ≤ time →
+          OAI.Algorithms.SubexponentialSAT.Computation.Trace
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedStep machine)
+            prefixSteps
+            (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.locatedInit machine
+              (Encoding.encodeCNF (toUpstreamCNF ingress.clauses))) intermediate →
+          (OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.visitedSpace intermediate : ℝ) ≤
+            S * ((Encoding.formulaBitLength
+              (toUpstreamCNF ingress.clauses) : ℝ) + 1) ^ e := by
+  obtain ⟨machine, countTape, answerTape, C, A, S, d, e,
+    hC, hA, hS, hd, he, run⟩ := sourceListExactCountMachine
+  obtain ⟨time, final, trace, outputCount, outputAnswer, finalState,
+    wordCorrect, wordLength, timeBound, prefixSpace⟩ :=
+    run n ingress.clauses ingress.sourceWidthThree
+  refine ⟨machine, countTape, answerTape, C, A, S, d, e,
+    hC, hA, hS, hd, he, time, final,
+    trace, ?_, ?_, ?_, ?_, ?_, timeBound, prefixSpace⟩
+  · simpa only [ingress.originalFiniteModelCount] using outputCount
+  · simpa only [ingress.originalFiniteModelCount] using outputAnswer
+  · simpa only [ingress.originalFiniteModelCount] using finalState
+  · simpa only [ingress.originalFiniteModelCount] using wordCorrect
+  · simpa only [ingress.originalFiniteModelCount] using wordLength
+
 -- Open items: a kernel-checking receipt on the proper upstream Lean toolchain;
 -- Agda source literal/Fin/polarity mapping as an imported SAME-OBJECT theorem;
 -- a verified uniform compiler to this list; its bit-time and all-prefix space

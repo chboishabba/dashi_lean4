@@ -57,5 +57,24 @@ The executable original-DAG frontend `scripts/compile_dashi_circuit_openai378.py
 
 The newer-upstream-only `Upstream378FiniteCNFBridge` also contains `sourceRuntimeWithinQuadraticInputBudget` and `sourceVisitedSpaceWithinQuadraticInputBudget`, direct source-written envelopes for the **same original 378 machine** with `L≤72(v+1)^2`. No exact 4.34.1 Lean kernel acceptance or fixed-machine frontend preprocessing trace. This source remains excluded from the Lean 4.28 authority spine.
 
+
+## 1 November — canonical source contract, exact framed length, bounded streaming
+
+The actual original-DAG JSON frontend now rejects *ignored fields*: circuits require exactly `input_count,gates,output`, each wire exactly `type,index`, and each gate exactly the field set of its constructor. This enforces a one-constructor/one-schema **executable** serialization discipline. The missing Golden theorem remains an explicit typed equivalence between Agda `Circuit.GateProgram` and these accepted objects; Python checking is not that theorem.
+
+For canonical sorted deduplicated OAI literal-code lists `C`, with `v = inputs+gates`, the unary/framed `encodeCNF` length has the **exact** structural identity
+
+```text
+L = v + 2 + Σ_(clause in C) (4 + Σ_(code in clause) (4*code + 8)).
+```
+
+The old upstream bound `L ≤ v+2+(24v+28)(3g+1) ≤ 72(v+1)^2` remains intact; direct code-range reasoning also yields the sharper **executed Python** envelope `L ≤ v+2+(24v+16)(3g+1)`. The new Lean `Upstream378EncodingLengthExact.exactFormulaBitLength` and `Upstream378FiniteCNFBridge.sourceListExactBitLength` are *source-written* structural length proofs against the original OAI `Encoding.encodeNat/frame/encodeList/encodeCNF` declarations. **No Lean 4.34.1 kernel receipt yet.** The `Upstream378FiniteCNFBridge` remains excluded from the 4.28 normal import spine.
+
+The original executable frontend also now provides `stream_original_circuit(data, sink, chunk_bits=4096)` and `--stream-bits-out`. It emits the **same** canonical bit order as the eager function through the same normalized clauses, while retaining at most `chunk_bits` *logical output bits* at any output prefix, in addition to parsed input and the source/normalized clause lists. This pays an executable bounded-output-buffer mechanism rather than assuming a free output-sized `List Bool`. It does **not** bound Python heap object overhead, input parsing, primitive multitape TM visited cells, or every-prefix machine runtime. No such stronger claim is promoted.
+
+`scripts/check_openai378_frontend_exact.py` now additionally tests strict serialization rejection, exact closed-form lengths, and *every bit* of the streaming/eager correspondence across chunk sizes 1,2,7,31. The new checkout-native test edits have **not been executed on this GitHub head**; a small separate mathematical length-formula fixture was executed, but is not an exact-checkout receipt. Earlier fixture counts are historical and must not be relabelled fresh.
+
+**Remaining max-cut:** Agda K00 acceptance; Lean K01/4.34.1 K02 acceptance; Agda/Lean typed source circuit+literal same-object mapping; a source→bits primitive-machine compiler with uniform time and all-prefix visited-space proof; composition to the original fixed exact-count machine. The streaming program, numeric certificates and these source-written lemmas are useful prerequisites, not the final TM theorem.
+
 See [Golden Agda exact 39-obligation ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md) for every remaining source proof, kernel, same-object, and analytic terminal certificate.
 

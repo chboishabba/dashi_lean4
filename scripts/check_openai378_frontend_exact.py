@@ -219,6 +219,45 @@ def main():
                 checks += check_one(fixture(n, g))
                 cases += 1
 
+    # M00 executable ingress: canonical serialization and exact parse
+    # round-trip, independently of the SAT/counting test below. In particular
+    # duplicate names at ANY depth cannot be erased by json.loads.
+    for n in range(4):
+        for g in range(5):
+            if n + g == 0:
+                continue
+            source_circuit = fixture(n, g)
+            canonical = frontend.canonical_original_circuit_json(source_circuit)
+            decoded = frontend.parse_original_circuit_json(canonical)
+            assert decoded == source_circuit
+            assert frontend.canonical_original_circuit_json(decoded) == canonical
+            # Alternative legal whitespace and key order describe same DAG.
+            assert frontend.parse_original_circuit_json(
+                json.dumps(source_circuit, indent=2)) == source_circuit
+
+    ambiguous_json = (
+        '{"input_count":1,"input_count":2,"gates":[],'
+        '"output":{"type":"input","index":0}}',
+        '{"input_count":1,"gates":[],'
+        '"output":{"type":"input","type":"gate","index":0}}',
+        '{"input_count":1,"gates":[{"op":"const",'
+        '"value":true,"value":false}],'
+        '"output":{"type":"gate","index":0}}',
+        '{"input_count":1,"gates":[],'
+        '"output":{"type":"input","index":0,"index":0}}',
+        '{"input_count":NaN,"gates":[],'
+        '"output":{"type":"input","index":0}}',
+        '{"input_count":1,"gates":[],'
+        '"output":{"type":"input","index":0},"irrelevant":null}',
+    )
+    for invalid in ambiguous_json:
+        try:
+            frontend.parse_original_circuit_json(invalid)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("invalid/ambiguous JSON circuit accepted")
+
     for malformed in (
         {"input_count": 1, "gates": [{"op": "not",
           "source": wire("gate", 0)}], "output": wire("gate", 0)},
@@ -263,6 +302,8 @@ def main():
         "cases": cases,
         "finite_assignments": checks,
         "original_agda_fin_indices_checked": agda_wire_indices,
+        "ambiguous_json_rejections_checked": len(ambiguous_json),
+        "canonical_json_roundtrip_cases": 19,
         "source_module": "scripts/compile_dashi_circuit_openai378.py",
         "source_status": "actual-checkout Python only; exact framed length and canonical schema tested; Agda/Lean kernel and TM costs outstanding",
     }

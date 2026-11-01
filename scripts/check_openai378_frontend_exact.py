@@ -137,6 +137,13 @@ def check_one(c):
     assert len(stream) <= diagnostics["quadratic_source_variable_upper_bound"]
     counts = diagnostics["normalization_comparisons"]
     assert sum(counts.values()) <= diagnostics["normalization_comparison_budget"]
+    assert diagnostics["normalization_equality_calls"] == sum(counts.values())
+    assert diagnostics["normalization_ordering_calls"] <= sum(counts.values())
+    assert diagnostics["normalization_total_python_comparison_calls"] == (
+        diagnostics["normalization_equality_calls"]
+        + diagnostics["normalization_ordering_calls"])
+    assert diagnostics["normalization_total_python_comparison_calls"] <= (
+        diagnostics["normalization_python_comparison_call_budget"])
     shifts = diagnostics["normalization_list_shifts"]
     assert sum(shifts.values()) <= diagnostics["normalization_shift_budget"]
     accepted = 0

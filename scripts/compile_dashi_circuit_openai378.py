@@ -36,6 +36,48 @@ def _require_exact_fields(value, fields, owner):
         raise ValueError(f"{owner} requires exactly {sorted(fields)}")
 
 
+
+def _unique_json_object(pairs):
+    """Do not discard duplicate members before validating constructor fields.
+
+    Standard json.loads overwrites duplicate names, making different source
+    byte strings silently denote one object. That is not a faithful ingress
+    boundary for the proposed M00 serialization theorem.
+    """
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON member: {key!r}")
+        result[key] = value
+    return result
+
+
+def _reject_json_constant(token):
+    raise ValueError(f"non-JSON numeric constant: {token}")
+
+
+def parse_original_circuit_json(source):
+    """Parse one well-formed JSON circuit without loss of duplicate keys.
+
+    The returned dict is validated against the original DAG's finite wire
+    constraints. This is executable parser evidence, not an Agda proof.
+    """
+    data = json.loads(source, object_pairs_hook=_unique_json_object,
+                      parse_constant=_reject_json_constant)
+    compile_original_circuit(data)
+    return data
+
+
+def canonical_original_circuit_json(data):
+    """Deterministic JSON representation of a validated original DAG.
+
+    This defines one canonical *output* string; the parser accepts alternative
+    whitespace/key ordering but rejects ambiguous repeated members.
+    """
+    compile_original_circuit(data)
+    return json.dumps(data, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=True)
+
 def wire_number(wire, n, earlier):
     _require_exact_fields(wire, ("type", "index"), "wire")
     kind = wire["type"]
@@ -380,7 +422,7 @@ def main():
                         "omit the giant bit string from the JSON receipt")
     p.add_argument("--chunk-bits", type=int, default=4096)
     args = p.parse_args()
-    source = json.loads(args.circuit_json.read_text())
+    source = parse_original_circuit_json(args.circuit_json.read_text())
     if args.stream_bits_out is None:
         result = compile_and_report(source)
     else:

@@ -471,6 +471,23 @@ def main():
     else:
         with args.stream_bits_out.open("w") as sink:
             result = stream_original_circuit(source, sink, args.chunk_bits)
+    if args.machine_profile:
+        # Strictly distinguish source-serialized byte cost from output bits.
+        # 1 unary input byte per source input and >=1 JSON byte per gate
+        # ensure v <= input_bytes. This is a finite resource inequality,
+        # NOT a primitive-machine trace/time or every-prefix space theorem.
+        input_bytes = len(source_text.encode("utf-8"))
+        v = result["num_variables"]
+        assert v <= input_bytes
+        source_size_bit_upper = 72 * (input_bytes + 1) ** 2
+        assert result["bit_length"] <= source_size_bit_upper
+        result["resource_faithful_input_bytes"] = input_bytes
+        result["source_byte_quadratic_encoding_bound"] = source_size_bit_upper
+        result["size_bridge_v_le_input_bytes"] = True
+        result["machine_resource_status"] = (
+            "Exact byte-length envelope; uniform primitive TM runtime "
+            "and all-prefix visited-space proofs remain OPEN"
+        )
     serial = json.dumps(result, indent=2) + "\n"
     if args.out:
         args.out.write_text(serial)

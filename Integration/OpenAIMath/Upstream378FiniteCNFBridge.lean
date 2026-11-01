@@ -1,4 +1,5 @@
 import Integration.OpenAIMath.ListFinsetCNFTransport
+import Integration.OpenAIMath.Upstream378EncodingLengthExact
 import OAI.Algorithms.SubexponentialSAT.SAT
 import OAI.Algorithms.SubexponentialSAT.Encoding
 import OAI.Algorithms.SubexponentialSAT.SqrtLogSpace.Final
@@ -67,6 +68,15 @@ theorem exactUpstreamCount {n : ℕ}
   ext assignment
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact exactAssignmentTruth clauses assignment
+
+/-- Exact bit length, not only a quadratic envelope. The normalized
+    upstream Finset carrier and its canonical literal order are preserved. -/
+theorem sourceListExactBitLength {n : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n)))) :
+    Encoding.formulaBitLength (toUpstreamCNF clauses) =
+      n + 2 + ((Encoding.cnfNumbers (toUpstreamCNF clauses)).map
+        Upstream378EncodingLengthExact.clauseBitCost).sum :=
+  Upstream378EncodingLengthExact.exactFormulaBitLength _
 
 /-- Explicit numerical instance of original OpenAI bit-length theorem.
     `n` is the complete number of finite input+gate variables. -/

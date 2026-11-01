@@ -105,3 +105,12 @@ Local no-CI A+B receipt driver: `scripts/run_openai_math_ab_acceptance_local.sh`
 
 See [Golden Agda exact 39-obligation ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md) for every remaining source proof, kernel, same-object, and analytic terminal certificate.
 
+
+## 1 November 2026 — parser integrity and native theorem-owner search (source-only)
+
+M00's Python JSON frontend now rejects duplicate object keys at **every nesting level**, in addition to exact constructor fields. `parse_original_circuit_json` checks the original finite DAG reference discipline; `canonical_original_circuit_json` defines a deterministic output spelling, including sorted keys. The parser does **not** reject legitimate alternative whitespace/key orders. The added source-level regression covers canonical roundtrips and duplicate-key/NaN rejection, but a type-preserving Agda `GateProgram` ↔ serialized JSON theorem remains unproved and no Agda/Lean kernel was run here.
+
+C01 candidate search now indexes native Agda/Lean declaration identifiers in source files as well as path tokens, with `scripts/test_openai_math_owner_discovery.py` ensuring that a filename-invisible owner can be found. Candidate retrieval is **not** a proof comparison. C02 has a distinct `scripts/check_openai_math_decl_sources.py` audit: inspect all 208 indexed upstream files and report textual identifier presence, fail on missing source files/identifiers, and *never* mark textual presence as proof acceptance. This also makes the pinned-vs-current upstream revision difference executable rather than a silent assumption.
+
+The A+B local driver includes these tests. They are **committed but not executed in this environment**. They do not settle K00–K02, M00–M05, any of the 208 same-object imports, or the 721 manuscript-level research obligations.
+

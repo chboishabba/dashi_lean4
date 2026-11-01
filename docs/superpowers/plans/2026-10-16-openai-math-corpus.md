@@ -13,6 +13,12 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-16-openai-math-corpus-design.md`
 
+## 1 November 2026 — source/eager/streaming exactness cut
+
+**Implemented on PR #78, kernel pending:** strict original circuit JSON grammar (no ignored fields); canonical OAI `Encoding.encodeCNF` eager/streaming emitters sharing normalized source clauses; exact Python unary/framed length assertion `L=v+2+Σ_c(4+Σ_k(4k+8))`; new version-gated Lean structural theorem `Upstream378EncodingLengthExact.exactFormulaBitLength`; exact source-list instantiation `Upstream378FiniteCNFBridge.sourceListExactBitLength`; small-fixture and 27-grid streaming regression extensions. `--stream-bits-out` bounds pending logical output bits by `--chunk-bits`, while input and normalized clauses remain in memory.
+
+The sharper arithmetic bound `L≤v+2+(24v+16)(3g+1)` is a Python executable assertion; the existing OAI inequality with `24v+28` remains the original **source-written Lean** bound. All exact-checkout tests, Agda P1/P2 kernel checks, Lean generic 4.28 and OAI 378 4.34.1 kernel checks are **NOT RUN** here. The original Agda typed `GateProgram`↔JSON↔upstream CNF and a primitive transducer with every-prefix visited-cell and time proofs remain outstanding. Consult the 39-ID Golden lemma ledger for M00–M05 statuses, not an earlier historical appendix.
+
 ## Global Constraints
 
 - Upstream repository is exactly `openai/math` at commit `1581d4cbdd69a0faf34b2089614fe2a814316a6a`.

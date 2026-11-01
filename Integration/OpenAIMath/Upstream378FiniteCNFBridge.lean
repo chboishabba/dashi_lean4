@@ -161,6 +161,51 @@ theorem upstreamQuadraticBitLengthBound {n g : ℕ}
   nlinarith
 
 
+/-- M02 source-size obligation, with its missing premise kept explicit:
+    the actual machine-profile serialization has at least as many UTF-8 input
+    bytes as original circuit input+gate variables. This follows for the
+    executable unary-arity JSON profile, but the cross-language parser and
+    its primitive implementation must still be formally simulated.
+    Never replace this with the unrestricted decimal-arity JSON profile. -/
+theorem sourceByteQuadraticBitLengthBound {n g inputBytes : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n))))
+    (width : ∀ clause ∈ clauses, clause.length ≤ 3)
+    (clauseCount : clauses.length ≤ 3 * g + 1)
+    (gateBound : g ≤ n)
+    (sourceRepresentationBound : n ≤ inputBytes) :
+    Encoding.formulaBitLength (toUpstreamCNF clauses)
+      ≤ 72 * (inputBytes + 1) ^ 2 := by
+  have h := upstreamQuadraticBitLengthBound
+    clauses width clauseCount gateBound
+  calc
+    Encoding.formulaBitLength (toUpstreamCNF clauses)
+        ≤ 72 * (n + 1) ^ 2 := h
+    _ ≤ 72 * (inputBytes + 1) ^ 2 := by
+      gcongr
+
+/-- M05's exact SAME-OBJECT assumption is named and typed, not imported
+    by analogy: a future Golden Agda source-circuit transport must supply
+    this count equality for the actual optimized source clauses. -/
+structure OriginalCircuitCountIngress (n g : ℕ) where
+  clauses : List (List (SAT.Literal (Fin n)))
+  originalAcceptedInputCount : ℕ
+  sourceWidthThree : ∀ clause ∈ clauses, clause.length ≤ 3
+  sourceClauseCount : clauses.length ≤ 3 * g + 1
+  originalFiniteModelCount :
+    ListFinsetCNFTransport.countedListModels n
+      (fun literal assignment => literal.eval assignment) clauses =
+        originalAcceptedInputCount
+
+/-- The exact upstream count is the source input count if, and only if,
+    the required original Agda-to-actual-Lean count correspondence is paid.
+    This lemma does NOT construct a witness to that missing correspondence. -/
+theorem originalCountAtUpstreamCNF {n g : ℕ}
+    (ingress : OriginalCircuitCountIngress n g) :
+    SAT.count (toUpstreamCNF ingress.clauses) =
+      ingress.originalAcceptedInputCount := by
+  exact (exactUpstreamCount ingress.clauses).trans
+    ingress.originalFiniteModelCount
+
 /-- Compose the SAME upstream runtime formula with the concrete
 quadratic bit-length envelope. This changes ONLY the stated input-length
 argument; the exponential-in-n term and original machine are unchanged. -/

@@ -33,6 +33,11 @@ SKIP = {
     "new", "conjecture", "general", "paper", "local", "global",
     "finite", "properties", "all", "test", "types", "native",
 }
+# Preserve mathematically discriminative 2-letter abbreviations. The older
+# three-letter filter accidentally erased RH/CM/YM/NS/NP owner leads.
+# Retain the >=2 independent-token and comparator-subject anchoring in
+# proposals() so one short acronym never certifies a theorem relationship.
+SHORT_SUBJECTS = {"rh", "cm", "ym", "ns", "np", "os", "so", "su"}
 SOURCE_SUFFIXES = {".agda", ".lean"}
 # Source declaration names provide independent search evidence when the
 # filename is generic (e.g. AlgebraicHierarchyExact.agda). A name match is a
@@ -83,7 +88,8 @@ def words(s):
     parts = []
     for part in re.split(r'[^a-zA-Z0-9]+', s):
         parts.extend(CAMEL.findall(part))
-    return {x.lower() for x in parts if len(x) > 2 and x.lower() not in SKIP}
+    return {x.lower() for x in parts if (len(x) > 2 or x.lower() in SHORT_SUBJECTS)
+            and x.lower() not in SKIP}
 
 def catalog(path):
     source = path.read_text(encoding="utf-8")

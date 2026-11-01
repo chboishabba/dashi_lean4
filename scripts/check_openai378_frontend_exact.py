@@ -235,6 +235,48 @@ def main():
             assert frontend.parse_original_circuit_json(
                 json.dumps(source_circuit, indent=2)) == source_circuit
 
+    # M02 source-size firewall. Without this profile the decimal arity is
+    # logarithmic in n, but the OpenAI bitstream contains n unary digits.
+    machine_profile_cases = 0
+    for n in range(6):
+        for g in range(5):
+            if n + g == 0:
+                continue
+            circuit = fixture(n, g)
+            machine_input = frontend.canonical_machine_circuit_json(circuit)
+            parsed = frontend.parse_machine_circuit_json(machine_input)
+            assert parsed == circuit
+            assert frontend.canonical_machine_circuit_json(parsed) == machine_input
+            assert len(machine_input.encode("utf-8")) >= n + g
+            assert frontend.compile_original_circuit(parsed) == (
+                frontend.compile_original_circuit(circuit))
+            machine_profile_cases += 1
+    compressed = {"input_count": 10000, "gates": [],
+                  "output": wire("input", 0)}
+    legacy = frontend.canonical_original_circuit_json(compressed)
+    assert len(legacy.encode("utf-8")) < compressed["input_count"]
+    machine = frontend.canonical_machine_circuit_json(compressed)
+    assert len(machine.encode("utf-8")) >= compressed["input_count"]
+    assert frontend.parse_machine_circuit_json(machine) == compressed
+    assert "input_unary" not in legacy
+    for invalid in (
+        '{"input_count":2,"input_unary":"1","gates":[],'
+        '"output":{"type":"input","index":0}}',
+        '{"input_count":2,"input_unary":"111","gates":[],'
+        '"output":{"type":"input","index":0}}',
+        '{"input_count":2,"input_unary":"1\\u0030","gates":[],'
+        '"output":{"type":"input","index":0}}',
+        '{"input_count":2,"input_unary":"11","input_unary":"11",'
+        '"gates":[],"output":{"type":"input","index":0}}',
+        legacy,
+    ):
+        try:
+            frontend.parse_machine_circuit_json(invalid)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("compressed, malformed or ambiguous machine arity accepted")
+
     ambiguous_json = (
         '{"input_count":1,"input_count":2,"gates":[],'
         '"output":{"type":"input","index":0}}',
@@ -304,6 +346,8 @@ def main():
         "original_agda_fin_indices_checked": agda_wire_indices,
         "ambiguous_json_rejections_checked": len(ambiguous_json),
         "canonical_json_roundtrip_cases": 19,
+        "unary_arity_machine_profile_cases": machine_profile_cases,
+        "decimal_arity_counterexample_checked": True,
         "source_module": "scripts/compile_dashi_circuit_openai378.py",
         "source_status": "actual-checkout Python only; exact framed length and canonical schema tested; Agda/Lean kernel and TM costs outstanding",
     }

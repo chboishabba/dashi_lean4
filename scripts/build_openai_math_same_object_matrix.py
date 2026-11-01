@@ -168,14 +168,20 @@ def first_addition(root, rel):
     except (OSError, subprocess.SubprocessError):
         return ""
 
-def proposals(index, query, limit):
+def proposals(index, query, comparator, limit):
+    """Must share an actual subject token, not only domain/generic terms."""
+    subject = words(comparator)
+    allterms = words(query)
     score = Counter()
-    for w in words(query):
+    anchored = set()
+    for w in allterms:
         for source in index.get(w, set()):
             score[source] += 1
+            if w in subject:
+                anchored.add(source)
     return [(root, path, val) for (root, path), val
             in sorted(score.items(), key=lambda t: (-t[1], t[0][1]))
-            if val >= 2][:limit]
+            if val >= 2 and (root, path) in anchored][:limit]
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -199,7 +205,7 @@ def main():
         if comp_name == "main" and "/" in comp:
             comp_name = comp.split("/")[-2]
         candidate_query = " ".join((comp_name, decl, source))
-        suggested = proposals(inverted, candidate_query, args.topk)
+        suggested = proposals(inverted, candidate_query, comp_name, args.topk)
         # Historical proof-owner seeds are separately labelled and never
         # allowed to upgrade to an established same-object relationship.
         seeds = []

@@ -10,6 +10,9 @@ import itertools
 import json
 import pathlib
 import random
+import subprocess
+import sys
+import tempfile
 from io import StringIO
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -288,6 +291,47 @@ def main():
         else:
             raise AssertionError("compressed, malformed or ambiguous machine arity accepted")
 
+    # Exercise the *actual CLI* and streaming output path, including the
+    # source-size receipt, rather than just calling pure helper functions.
+    with tempfile.TemporaryDirectory() as td:
+        test_dir = pathlib.Path(td)
+        circuit = fixture(3, 4)
+        profiled_file = test_dir / "machine.json"
+        profiled_file.write_text(
+            frontend.canonical_machine_circuit_json(circuit),
+            encoding="utf-8")
+        bit_file = test_dir / "cnf.bits"
+        receipt_file = test_dir / "certificate.json"
+        subprocess.run([
+            sys.executable,
+            str(HERE / "compile_dashi_circuit_openai378.py"),
+            str(profiled_file), "--machine-profile",
+            "--stream-bits-out", str(bit_file),
+            "--chunk-bits", "13",
+            "--out", str(receipt_file),
+        ], check=True, capture_output=True, text=True)
+        receipt = json.loads(receipt_file.read_text(encoding="utf-8"))
+        assert receipt["size_bridge_v_le_input_bytes"] is True
+        assert receipt["resource_faithful_input_bytes"] == len(
+            profiled_file.read_bytes())
+        assert receipt["bit_length"] == len(
+            bit_file.read_text(encoding="utf-8"))
+        assert receipt["bit_length"] <= receipt[
+            "source_byte_quadratic_encoding_bound"]
+        assert receipt["max_buffered_output_bits"] <= 13
+
+        # The old compact JSON syntax remains usable for compatibility,
+        # but it cannot pass the uniform source-size machine profile.
+        profiled_file.write_text(
+            frontend.canonical_original_circuit_json(circuit),
+            encoding="utf-8")
+        rejected = subprocess.run([
+            sys.executable,
+            str(HERE / "compile_dashi_circuit_openai378.py"),
+            str(profiled_file), "--machine-profile",
+        ], capture_output=True, text=True)
+        assert rejected.returncode != 0
+
     ambiguous_json = (
         '{"input_count":1,"input_count":2,"gates":[],'
         '"output":{"type":"input","index":0}}',
@@ -359,6 +403,7 @@ def main():
         "canonical_json_roundtrip_cases": 19,
         "unary_arity_machine_profile_cases": machine_profile_cases,
         "decimal_arity_counterexample_checked": True,
+        "machine_profile_cli_streaming_checked": True,
         "source_module": "scripts/compile_dashi_circuit_openai378.py",
         "source_status": "actual-checkout Python only; exact framed length and canonical schema tested; Agda/Lean kernel and TM costs outstanding",
     }

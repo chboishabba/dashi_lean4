@@ -33,6 +33,7 @@ run python_frontend python "$repo_root/scripts/check_openai378_frontend_exact.py
 run python_graph python "$repo_root/scripts/check_openai378_27grid_maxcut_bridge.py"
 run agda_original bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/Everything.agda' _ "$agda_root"
 run agda_creation_order bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/OpenAIMathCreationOrderSerializationExact.agda' _ "$agda_root"
+run agda_literal_code bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/OpenAIMathLiteralCodeTransportExact.agda' _ "$agda_root"
 run agda_opt bash -c 'cd "$1" && agda DASHI/Research/OpenAIMath/OpenAIMathSharedTseitinOptimizedCNFExact.agda' _ "$agda_root"
 run lean_428_generic bash -c 'cd "$1" && lake env lean Integration/OpenAIMath/ListFinsetCNFTransport.lean' _ "$repo_root"
 run lean_434_adapter bash "$repo_root/scripts/check_openai378_staged_lean.sh" "$upstream"

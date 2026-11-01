@@ -148,11 +148,82 @@ def encode_list(values, encoder):
     return result
 
 
+def iter_encode_nat(n):
+    """Emit unary n without allocating a unary list of length n."""
+    if type(n) is not int or n < 0:
+        raise ValueError("natural number expected")
+    for _ in range(n):
+        yield True
+    yield False
+
+
+def iter_frame(bits):
+    for bit in bits:
+        yield True
+        yield bit
+    yield False
+
+
+def iter_encode_list(values, encoder):
+    for value in values:
+        yield True
+        yield from iter_frame(encoder(value))
+    yield False
+
+
+def iter_canonical_cnf_bits(num_variables, canonical):
+    """Same OAI encodeCNF order, with O(1) additional encoder buffers."""
+    yield from iter_encode_nat(num_variables)
+    yield from iter_encode_list(
+        canonical, lambda clause:
+        iter_encode_list(clause, iter_encode_nat))
+
+
 def encode_upstream_cnf(num_variables, clauses, counters=None):
     codes = canonical_clause_codes(clauses, counters)
-    bits = encode_nat(num_variables)
-    bits.extend(encode_list(codes, lambda clause: encode_list(clause, encode_nat)))
-    return codes, bits
+    # Preserve the previous list API while sharing its actual emitter with
+    # the bounded-buffer streaming output path.
+    return codes, list(iter_canonical_cnf_bits(num_variables, codes))
+
+
+def stream_original_circuit(data, sink, chunk_bits=4096):
+    """Emit the same canonical bits to a text sink in bounded chunks.
+
+    No bitstream-sized list or string is constructed. The input JSON,
+    compiled source clauses, normalized clauses and a <=chunk_bits output
+    buffer remain live. This is a Python logical-buffer certificate, NOT a
+    primitive-TM visited-space or elapsed-step proof.
+    """
+    if type(chunk_bits) is not int or chunk_bits <= 0:
+        raise ValueError("chunk_bits must be positive")
+    num_variables, clauses = compile_original_circuit(data)
+    canonical = canonical_clause_codes(clauses)
+    exact = num_variables + 2 + sum(
+        4 + sum(4 * code + 8 for code in clause) for clause in canonical)
+    pending = []
+    count = 0
+    max_pending = 0
+    for bit in iter_canonical_cnf_bits(num_variables, canonical):
+        pending.append("1" if bit else "0")
+        count += 1
+        max_pending = max(max_pending, len(pending))
+        if len(pending) == chunk_bits:
+            sink.write("".join(pending))
+            pending.clear()
+    if pending:
+        sink.write("".join(pending))
+    assert count == exact
+    return {
+        "num_variables": num_variables,
+        "gate_count": len(data["gates"]),
+        "source_clause_count": len(clauses),
+        "normalized_clause_count": len(canonical),
+        "bit_length": count,
+        "exact_framed_length_certificate": exact,
+        "max_buffered_output_bits": max_pending,
+        "configured_output_chunk_bits": chunk_bits,
+        "source_status": "executed Python streaming emitter; TM proof pending",
+    }
 
 
 def evaluate_clauses(clauses, valuation):
@@ -233,8 +304,17 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("circuit_json", type=Path)
     p.add_argument("--out", type=Path)
+    p.add_argument("--stream-bits-out", type=Path,
+                   help="write canonical bits separately using bounded chunks; "
+                        "omit the giant bit string from the JSON receipt")
+    p.add_argument("--chunk-bits", type=int, default=4096)
     args = p.parse_args()
-    result = compile_and_report(json.loads(args.circuit_json.read_text()))
+    source = json.loads(args.circuit_json.read_text())
+    if args.stream_bits_out is None:
+        result = compile_and_report(source)
+    else:
+        with args.stream_bits_out.open("w") as sink:
+            result = stream_original_circuit(source, sink, args.chunk_bits)
     serial = json.dumps(result, indent=2) + "\n"
     if args.out:
         args.out.write_text(serial)

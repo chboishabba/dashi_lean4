@@ -18,10 +18,10 @@ from build_openai_math_same_object_matrix import catalog
 # A source-level hint that the symbol occurs at a Lean declaration header.
 # Not namespace resolution, typechecking, proof checking or axiom closure.
 LEAN_HEAD = re.compile(
-    r"^\\s*(?:@\\[[^\\n]*\\]\\s*)?"
-    r"(?:(?:private|protected|noncomputable|unsafe|partial|opaque)\\s+)*"
-    r"(?:theorem|lemma|def|abbrev|opaque|structure|class|instance)\\s+"
-    r"([A-Za-z_][A-Za-z0-9_.']*)\\b"
+    r"^\s*(?:@\[[^\n]*\]\s*)?"
+    r"(?:(?:private|protected|noncomputable|unsafe|partial|opaque)\s+)*"
+    r"(?:theorem|lemma|def|abbrev|opaque|structure|class|instance)\s+"
+    r"([A-Za-z_][A-Za-z0-9_.']*)\b"
 )
 
 

@@ -16,6 +16,7 @@ Agda/Lean-kernel theorem acceptance.
 import importlib.util
 import itertools
 import json
+from io import StringIO
 from collections import deque
 from pathlib import Path
 from random import Random
@@ -135,6 +136,15 @@ def main():
     assert report["source_clause_count"] == 700
     assert report["normalized_clause_count"] <= 700
     assert report["bit_length"] <= 72 * 270**2
+    # The native 27-grid fixture also exercises the entire ~1.5M-bit
+    # streaming path with no eager output buffer inside the emitter.
+    streamed = StringIO()
+    stream_receipt = frontend.stream_original_circuit(circuit, streamed, 997)
+    assert stream_receipt["bit_length"] == report["bit_length"]
+    assert stream_receipt["max_buffered_output_bits"] <= 997
+    assert streamed.getvalue() == report["bits"]
+    assert stream_receipt["exact_framed_length_certificate"] == report[
+        "exact_framed_length_certificate"]
     assert sum(report["normalization_comparisons"].values()) <= report[
         "normalization_comparison_budget"]
     return {

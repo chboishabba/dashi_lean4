@@ -181,7 +181,7 @@ theorem sourceByteQuadraticBitLengthBound {n g inputBytes : ℕ}
     Encoding.formulaBitLength (toUpstreamCNF clauses)
         ≤ 72 * (n + 1) ^ 2 := h
     _ ≤ 72 * (inputBytes + 1) ^ 2 := by
-      gcongr
+      gcongr <;> omega
 
 /-- M05's exact SAME-OBJECT assumption is named and typed, not imported
     by analogy: a future Golden Agda source-circuit transport must supply

@@ -155,8 +155,55 @@ def check_one(c):
     return 2 ** v
 
 
+def check_agda_original_newest_first_wire_bridge():
+    """Same finite index law as Golden Agda chronologicalGateNumberExact.
+
+    This tests the actual Python conversion, with an independent arithmetic
+    oracle for the original Compiler.gateVariableIndex constructor recursion.
+    """
+    tested = 0
+    for n in range(6):
+        for earlier in range(9):
+            for i in range(n):
+                jsonwire = frontend.agda_fin_wire_to_json(
+                    "input", i, n, earlier)
+                assert jsonwire == wire("input", i)
+                assert frontend.json_wire_to_agda_fin(
+                    jsonwire, n, earlier) == ("input", i)
+                assert frontend.agda_fin_wire_number(
+                    "input", i, n, earlier) == i
+                tested += 1
+            for i in range(earlier):
+                jsonwire = frontend.agda_fin_wire_to_json(
+                    "gate", i, n, earlier)
+                # Original Agda indices are newest-first.
+                expected_creation_index = earlier - 1 - i
+                original_gate_variable_index = n + expected_creation_index
+                assert jsonwire == wire("gate", expected_creation_index)
+                assert frontend.json_wire_to_agda_fin(
+                    jsonwire, n, earlier) == ("gate", i)
+                assert frontend.wire_number(
+                    jsonwire, n, earlier) == original_gate_variable_index
+                assert frontend.agda_fin_wire_number(
+                    "gate", i, n, earlier) == original_gate_variable_index
+                tested += 1
+    for args in (("gate", 0, 0, 0),
+                 ("input", 0, 0, 0),
+                 ("gate", -1, 1, 1),
+                 ("input", True, 1, 1),
+                 ("gate", 1, 1, 1)):
+        try:
+            frontend.agda_fin_wire_to_json(*args)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("out-of-bounds/non-Fin index was accepted")
+    return tested
+
+
 def main():
     cases = checks = 0
+    agda_wire_indices = check_agda_original_newest_first_wire_bridge()
     for n in range(4):
         for g in range(6):
             if n + g == 0:
@@ -208,6 +255,7 @@ def main():
         "status": "PASS",
         "cases": cases,
         "finite_assignments": checks,
+        "original_agda_fin_indices_checked": agda_wire_indices,
         "source_module": "scripts/compile_dashi_circuit_openai378.py",
         "source_status": "actual-checkout Python only; exact framed length and canonical schema tested; Agda/Lean kernel and TM costs outstanding",
     }

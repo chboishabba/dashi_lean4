@@ -137,6 +137,8 @@ def check_one(c):
     assert len(stream) <= diagnostics["quadratic_source_variable_upper_bound"]
     counts = diagnostics["normalization_comparisons"]
     assert sum(counts.values()) <= diagnostics["normalization_comparison_budget"]
+    shifts = diagnostics["normalization_list_shifts"]
+    assert sum(shifts.values()) <= diagnostics["normalization_shift_budget"]
     accepted = 0
     models = 0
     for input_bits in itertools.product((False, True), repeat=c["input_count"]):

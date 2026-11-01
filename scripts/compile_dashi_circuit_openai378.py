@@ -78,6 +78,45 @@ def canonical_original_circuit_json(data):
     return json.dumps(data, sort_keys=True, separators=(",", ":"),
                       ensure_ascii=True)
 
+
+# M02 input-cost firewall. A JSON decimal input_count has logarithmic length,
+# although OpenAI's exact encoding begins with n UNARY bits. Consequently a
+# polynomial in n+g is NOT a polynomial in unrestricted legacy JSON byte size.
+# The explicit machine profile forces >=n source bytes without changing the
+# original circuit, clause list, or existing legacy import boundary.
+def canonical_machine_circuit_json(data):
+    """Canonical resource-faithful source serialization (ASCII input arity).
+
+    input_unary is a literal n-character string of 1s. This ensures the
+    serialized UTF-8 byte length is at least the original input dimension n;
+    the overall input length additionally contains each gate constructor.
+    This is a syntax/size witness, not yet a primitive Turing-machine trace.
+    """
+    compile_original_circuit(data)
+    profiled = dict(data)
+    profiled["input_unary"] = "1" * data["input_count"]
+    return json.dumps(profiled, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=True)
+
+
+def parse_machine_circuit_json(source):
+    """Reject compressed-arity inputs at the uniform M02 machine boundary."""
+    raw = json.loads(source, object_pairs_hook=_unique_json_object,
+                     parse_constant=_reject_json_constant)
+    _require_exact_fields(raw, ("input_count", "input_unary", "gates", "output"),
+                          "resource-faithful machine circuit")
+    unary = raw["input_unary"]
+    n = raw["input_count"]
+    if type(n) is not int or n < 0 or type(unary) is not str:
+        raise ValueError("machine input arity must be a unary-encoded Nat")
+    if len(unary) != n or any(symbol != "1" for symbol in unary):
+        raise ValueError("input_unary must be precisely n ASCII ones")
+    data = {key: raw[key] for key in ("input_count", "gates", "output")}
+    compile_original_circuit(data)
+    assert len(source.encode("utf-8")) >= n
+    return data
+
+
 def wire_number(wire, n, earlier):
     _require_exact_fields(wire, ("type", "index"), "wire")
     kind = wire["type"]
@@ -421,8 +460,12 @@ def main():
                    help="write canonical bits separately using bounded chunks; "
                         "omit the giant bit string from the JSON receipt")
     p.add_argument("--chunk-bits", type=int, default=4096)
+    p.add_argument("--machine-profile", action="store_true",
+                   help="require unary-arity serialization for a source-size faithful machine input")
     args = p.parse_args()
-    source = parse_original_circuit_json(args.circuit_json.read_text())
+    source_text = args.circuit_json.read_text()
+    source = (parse_machine_circuit_json(source_text) if args.machine_profile
+              else parse_original_circuit_json(source_text))
     if args.stream_bits_out is None:
         result = compile_and_report(source)
     else:

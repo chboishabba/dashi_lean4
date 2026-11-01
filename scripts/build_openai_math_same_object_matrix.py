@@ -145,7 +145,9 @@ def source_paths(root, subtree):
 
 def owner_index(agda, lean):
     index = defaultdict(set)
-    roots = ((agda, "DASHI"), (lean, "Integration"))
+    # The original Lean theorem owner may live outside Integration/.
+    # Search the full Lean source tree (excluding vendor/generated dirs).
+    roots = ((agda, "DASHI"), (lean, "."))
     for root, sub in roots:
         for path in source_paths(root, sub):
             rel = path.relative_to(root).as_posix()

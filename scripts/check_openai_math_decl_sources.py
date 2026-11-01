@@ -15,6 +15,25 @@ from pathlib import Path
 from build_openai_math_same_object_matrix import catalog
 
 
+# A source-level hint that the symbol occurs at a Lean declaration header.
+# Not namespace resolution, typechecking, proof checking or axiom closure.
+LEAN_HEAD = re.compile(
+    r"^\\s*(?:@\\[[^\\n]*\\]\\s*)?"
+    r"(?:(?:private|protected|noncomputable|unsafe|partial|opaque)\\s+)*"
+    r"(?:theorem|lemma|def|abbrev|opaque|structure|class|instance)\\s+"
+    r"([A-Za-z_][A-Za-z0-9_.']*)\\b"
+)
+
+
+def declaration_header_lines(source_text, name):
+    result = []
+    for i, line in enumerate(source_text.splitlines(), start=1):
+        hit = LEAN_HEAD.search(line)
+        if hit and hit.group(1).split(".")[-1] == name:
+            result.append(i)
+    return result
+
+
 def inspect(catalogue, upstream_root):
     results = []
     for i, (comparator, declaration, source_path) in enumerate(
@@ -23,6 +42,7 @@ def inspect(catalogue, upstream_root):
         name = declaration.split(".")[-1]
         digest = None
         line_numbers = []
+        header_lines = []
         if not path.is_file():
             status = "SOURCE_FILE_MISSING"
         else:
@@ -38,6 +58,7 @@ def inspect(catalogue, upstream_root):
                 i for i, line in enumerate(source_text.splitlines(), start=1)
                 if matcher.search(line)
             ]
+            header_lines = declaration_header_lines(source_text, name)
             status = ("IDENTIFIER_TEXT_FOUND_UNVERIFIED" if line_numbers
                       else "DECLARATION_IDENTIFIER_NOT_FOUND")
         results.append({
@@ -46,6 +67,10 @@ def inspect(catalogue, upstream_root):
             "source_file_present": path.is_file(),
             "source_content_sha256": digest,
             "identifier_text_line_numbers": line_numbers,
+            "declaration_header_line_numbers": header_lines,
+            "declaration_header_status": (
+                "LEXICAL_HEADER_UNVERIFIED" if header_lines
+                else "NOT_IDENTIFIED_BY_HEADER_SCAN"),
             "source_text_status": status,
             "source_statement_match": "NOT_CHECKED",
             "upstream_kernel_acceptance": "NOT_CHECKED",
@@ -58,6 +83,8 @@ def inspect(catalogue, upstream_root):
         "catalogue_rows": len(results),
         "source_identifiers_seen": len(results) - len(bad),
         "source_integrity_blockers": len(bad),
+        "lexical_declaration_headers_seen": sum(
+            bool(x["declaration_header_line_numbers"]) for x in results),
         "status": "SOURCE_TEXT_ONLY_NEVER_KERNEL",
         "rows": results,
     }

@@ -141,8 +141,13 @@ def _insert_ordered_unique(items, value, counters, counter_name):
     """
     for index, old in enumerate(items):
         counters[counter_name] += 1
+        # Charge each *actual* Python equality/order call separately.
+        # One insertion probe can issue BOTH comparisons, unlike the
+        # earlier optimistic single-probe operation budget.
+        counters["equality_calls"] = counters.get("equality_calls", 0) + 1
         if value == old:
             return
+        counters["ordering_calls"] = counters.get("ordering_calls", 0) + 1
         if value < old:
             # Python list insertion shifts exactly the following elements.
             # Charge this *in addition* to comparison calls, not for free.
@@ -332,6 +337,13 @@ def compile_and_report(data):
     actual_shifts = {k: comparisons.get(k, 0) for k in
                      ("literal_shifts", "clause_shifts")}
     assert sum(actual_comparisons.values()) <= comparison_budget
+    assert comparisons.get("equality_calls", 0) == sum(
+        actual_comparisons.values())
+    assert comparisons.get("ordering_calls", 0) <= comparisons[
+        "equality_calls"]
+    actual_python_comparisons = (comparisons["equality_calls"]
+                                 + comparisons["ordering_calls"])
+    assert actual_python_comparisons <= 2 * comparison_budget
     # Literal lists have size <=3: at most 3 element shifts per source
     # clause; earlier normalized clauses contribute <= m*(m-1)/2.
     shift_budget = 3 * m + m * (m - 1) // 2
@@ -348,6 +360,10 @@ def compile_and_report(data):
         "quadratic_source_variable_upper_bound": quadratic_upper,
         "normalization_comparisons": actual_comparisons,
         "normalization_comparison_budget": comparison_budget,
+        "normalization_equality_calls": comparisons["equality_calls"],
+        "normalization_ordering_calls": comparisons["ordering_calls"],
+        "normalization_total_python_comparison_calls": actual_python_comparisons,
+        "normalization_python_comparison_call_budget": 2 * comparison_budget,
         "normalization_list_shifts": actual_shifts,
         "normalization_shift_budget": shift_budget,
         "bits": "".join("1" if b else "0" for b in bits),

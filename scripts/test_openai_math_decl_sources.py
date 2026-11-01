@@ -33,6 +33,9 @@ def main():
         assert result["catalogue_rows"] == 208
         assert result["source_identifiers_seen"] == 208
         assert result["source_integrity_blockers"] == 0
+        assert all(x["source_content_sha256"] is not None
+                   and x["identifier_text_line_numbers"] == [2]
+                   for x in result["rows"])
         assert all(x["upstream_kernel_acceptance"] == "NOT_CHECKED"
                    and x["same_object_transport"] == "NOT_ESTABLISHED"
                    for x in result["rows"])

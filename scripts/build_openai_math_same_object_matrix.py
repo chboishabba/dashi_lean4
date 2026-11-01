@@ -37,11 +37,11 @@ SOURCE_SUFFIXES = {".agda", ".lean"}
 # Source declaration names provide independent search evidence when the
 # filename is generic (e.g. AlgebraicHierarchyExact.agda). A name match is a
 # discovery lead only; it does not identify the same mathematical object.
-AGDA_DECL = re.compile(r"(?m)^([A-Za-z_][A-Za-z0-9_'-]*)\\s*:")
+AGDA_DECL = re.compile(r"(?m)^([A-Za-z_][A-Za-z0-9_'-]*)\s*:")
 LEAN_DECL = re.compile(
-    r"(?m)^\\s*(?:(?:private|protected|noncomputable|unsafe)\\s+)*"
-    r"(?:theorem|lemma|def|abbrev|structure|class)\\s+"
-    r"([A-Za-z_][A-Za-z0-9_.']*)\\b"
+    r"(?m)^\s*(?:(?:private|protected|noncomputable|unsafe)\s+)*"
+    r"(?:theorem|lemma|def|abbrev|structure|class)\s+"
+    r"([A-Za-z_][A-Za-z0-9_.']*)\b"
 )
 
 def declaration_words(path):

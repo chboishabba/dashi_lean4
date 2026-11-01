@@ -147,6 +147,10 @@ def main():
         "exact_framed_length_certificate"]
     assert sum(report["normalization_comparisons"].values()) <= report[
         "normalization_comparison_budget"]
+    assert report["normalization_equality_calls"] == sum(
+        report["normalization_comparisons"].values())
+    assert report["normalization_total_python_comparison_calls"] <= report[
+        "normalization_python_comparison_call_budget"]
     assert sum(report["normalization_list_shifts"].values()) <= report[
         "normalization_shift_budget"]
     return {

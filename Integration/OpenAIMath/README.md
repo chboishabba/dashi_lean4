@@ -129,3 +129,14 @@ The actual remaining terminal obligations are K00–K02, M00b/M01 actual identit
 ### Golden M01 finite literal code correspondence
 
 Golden PR #1212 now stages `OpenAIMathLiteralCodeTransportExact.agda`. It maps the original `CNF.positive/negative (Fin n)` to a typed, finite index/polarity mirror; proves two-sided literal, clause and CNF-list round trips; establishes the *raw list* literal-code equation `negative i ↦ 2*i`, `positive i ↦ 2*i+1`; and applies the transport directly to the **original optimized DAG CNF** via `optCircuitEqualsOriginal`. This is source-written Agda, not an imported Lean theorem. The A+B driver now stages its standalone Agda check. Lean `SAT.Literal` identity, sorted/deduplicated OAI `Encoding.cnfNumbers`, byte-for-byte encoder equality and the fixed machine's primitive frontend trace remain open.
+
+
+## 1 November 2026 — M02 JSON byte-size counterexample and resource-faithful profile
+
+**Do not use legacy decimal-arity JSON as the input-length carrier for a polynomial source-to-machine complexity theorem.** An original circuit may encode its input dimension `n` in only `O(log n)` decimal characters, while the actual upstream OAI `Encoding.encodeNat n` begins with `n+1` bits. A gate-free `input_count=10000` circuit takes only 68 canonical compact JSON UTF-8 bytes, but requires over 10000 output bits.
+
+New `canonical_machine_circuit_json` adds an `input_unary` field of exactly `n` ASCII `1` characters; `parse_machine_circuit_json` accepts only the strict constructor-specific profile with exact arity and valid original DAG. The `--machine-profile` CLI requires this source and reports a size certificate with actual input bytes `B`, `n+g=v≤B`, and original framed output size `L≤72(B+1)^2`. Legacy input remains supported outside the machine profile. Regression exercises valid circuits, malformed unary arity, duplicate keys, the 10000-input compression witness, and the actual CLI streaming output.
+
+Version-gated Lean `sourceByteQuadraticBitLengthBound` states the corresponding algebraic theorem with **explicit** source-representation-size hypothesis. `OriginalCircuitCountIngress` makes the original Agda-source-to-upstream-model-count equality an outstanding typed premise; `originalCountAtUpstreamCNF` proves the downstream count consequence *given that premise*. Source-written only; no Agda/Lean kernel or actual primitive-machine time/prefix-space proof was executed here.
+
+**M02 still requires a fixed primitive front-end machine and bit-step trace**, not a Python runtime statement. **M03 still requires every-prefix visited tape-space including input, output and preprocessing**; a bounded Python output chunk does not prove it. **M05 still requires an actual inhabited count-ingress witness and composition with the same fixed OAI machine.** The wider corpus import programme is also incomplete.

@@ -49,6 +49,46 @@ def wire_number(wire, n, earlier):
     raise ValueError("invalid, future, or out-of-range wire reference")
 
 
+
+def agda_fin_wire_to_json(kind, fin_index, inputs, earlier):
+    """Transport the ORIGINAL Agda WireRef's newest-first Fin index.
+
+    In PNotEqualsNPConcreteBooleanCircuitDAGExact.agda the Fin gates
+    index 0 names the newest predecessor; the Python JSON index 0 names
+    the earliest created gate. This is precisely Fin.opposite, with
+    Compiler.gateVariableIndex inputs (Fin.opposite j) = inputs+j,
+    proved in OpenAIMathFiniteSupportedTseitinModelsExact.agda.
+    This function is the executable side of that previously existing
+    Golden coordinate theorem, NOT a cross-language kernel proof.
+    """
+    for name, value in (("fin_index", fin_index), ("inputs", inputs),
+                        ("earlier", earlier)):
+        if type(value) is not int or value < 0:
+            raise ValueError(f"{name} must be a natural number")
+    if kind == "input" and fin_index < inputs:
+        return {"type": "input", "index": fin_index}
+    if kind == "gate" and fin_index < earlier:
+        return {"type": "gate", "index": earlier - 1 - fin_index}
+    raise ValueError("invalid Agda Fin wire reference")
+
+
+def json_wire_to_agda_fin(wire, inputs, earlier):
+    """Inverse of the original Agda Fin.opposite index mapping."""
+    number = wire_number(wire, inputs, earlier)
+    if wire["type"] == "input":
+        return "input", number
+    return "gate", earlier - 1 - wire["index"]
+
+
+def agda_fin_wire_number(kind, fin_index, inputs, earlier):
+    """Original Compiler.gateVariableIndex on a concrete Fin address."""
+    if kind == "input":
+        return agda_fin_wire_to_json(kind, fin_index, inputs, earlier)["index"]
+    return wire_number(
+        agda_fin_wire_to_json(kind, fin_index, inputs, earlier),
+        inputs, earlier)
+
+
 def compile_original_circuit(data):
     _require_exact_fields(data, ("input_count", "gates", "output"), "circuit")
     n = data["input_count"]

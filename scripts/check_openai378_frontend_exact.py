@@ -117,6 +117,13 @@ def check_one(c):
     stream = [x == "1" for x in diagnostics["bits"]]
     assert decode_cnf(stream) == (v, [list(c) for c in codes])
     assert len(stream) == diagnostics["bit_length"]
+    # Independent arithmetic certificate for the *nested framed unary*
+    # encoder. This is stronger than an asymptotic bound or a round trip.
+    exact_length = v + 2 + sum(
+        4 + sum(4 * literal + 8 for literal in clause) for clause in codes)
+    assert len(stream) == exact_length
+    assert diagnostics["exact_framed_length_certificate"] == exact_length
+    assert len(stream) <= diagnostics["sharper_source_clause_upper_bound"]
     assert len(stream) <= diagnostics["formal_target_upper_bound"]
     assert len(stream) <= diagnostics["quadratic_source_variable_upper_bound"]
     counts = diagnostics["normalization_comparisons"]
@@ -152,6 +159,22 @@ def main():
           "source": wire("gate", 0)}], "output": wire("gate", 0)},
         {"input_count": 1, "gates": [], "output": wire("input", 1)},
         {"input_count": -1, "gates": [], "output": wire("input", 0)},
+        {"input_count": True, "gates": [], "output": wire("input", 0)},
+        {"input_count": 1, "gates": [], "output": wire("input", 0),
+         "ignored_semantic_field": False},
+        {"input_count": 1, "gates": [], "output":
+         {"type": "input", "index": 0, "alias": 1}},
+        {"input_count": 1, "gates": [{"op": "const", "value": True,
+         "source": wire("gate", 300)}], "output": wire("gate", 0)},
+        {"input_count": 1, "gates": [{"op": "not",
+         "source": wire("input", 0), "right": wire("input", 0)}],
+         "output": wire("gate", 0)},
+        {"input_count": 1, "gates": [{"op": "or",
+         "left": wire("input", 0), "right": wire("input", 0),
+         "unused": 3}], "output": wire("gate", 0)},
+        {"input_count": 1, "gates": [{}], "output": wire("input", 0)},
+        {"input_count": 1, "gates": "not-a-list",
+         "output": wire("input", 0)},
     ):
         try:
             frontend.compile_original_circuit(malformed)
@@ -165,7 +188,7 @@ def main():
         "cases": cases,
         "finite_assignments": checks,
         "source_module": "scripts/compile_dashi_circuit_openai378.py",
-        "source_status": "actual-checkout Python only; Agda/Lean kernel and TM costs outstanding",
+        "source_status": "actual-checkout Python only; exact framed length and canonical schema tested; Agda/Lean kernel and TM costs outstanding",
     }
     print(json.dumps(report, indent=2))
 

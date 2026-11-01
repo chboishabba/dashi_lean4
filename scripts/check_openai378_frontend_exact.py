@@ -248,6 +248,15 @@ def main():
             assert parsed == circuit
             assert frontend.canonical_machine_circuit_json(parsed) == machine_input
             assert len(machine_input.encode("utf-8")) >= n + g
+            # Quadratic bound is now in the actual serialized input size,
+            # not just the mathematical parameter n+g.
+            v, clauses = frontend.compile_original_circuit(parsed)
+            code_lists = frontend.canonical_clause_codes(clauses)
+            encoded_bits = sum(4 + sum(4 * code + 8 for code in row)
+                               for row in code_lists) + v + 2
+            input_bytes = len(machine_input.encode("utf-8"))
+            assert encoded_bits <= 72 * (input_bytes + 1) ** 2
+
             assert frontend.compile_original_circuit(parsed) == (
                 frontend.compile_original_circuit(circuit))
             machine_profile_cases += 1
@@ -258,6 +267,8 @@ def main():
     machine = frontend.canonical_machine_circuit_json(compressed)
     assert len(machine.encode("utf-8")) >= compressed["input_count"]
     assert frontend.parse_machine_circuit_json(machine) == compressed
+    assert len(machine.encode("utf-8")) >= 10000
+    assert 10000 + 2 <= 72 * (len(machine.encode("utf-8")) + 1) ** 2
     assert "input_unary" not in legacy
     for invalid in (
         '{"input_count":2,"input_unary":"1","gates":[],'

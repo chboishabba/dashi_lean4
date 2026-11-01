@@ -7,6 +7,7 @@ or type-preserving imported proof. This script fails closed on source drift.
 Historical credit: original upstream openai/math formalization authors.
 """
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -20,21 +21,31 @@ def inspect(catalogue, upstream_root):
             catalog(catalogue), start=1):
         path = upstream_root / "lean" / source_path
         name = declaration.split(".")[-1]
+        digest = None
+        line_numbers = []
         if not path.is_file():
             status = "SOURCE_FILE_MISSING"
         else:
-            text = path.read_text(encoding="utf-8", errors="replace")
+            raw = path.read_bytes()
+            digest = hashlib.sha256(raw).hexdigest()
+            source_text = raw.decode("utf-8", errors="replace")
             # A textual identifier might occur in a comment or a reference.
             # Never promote a lexical hit to a theorem or verified type.
-            if re.search(r"(?<![A-Za-z0-9_'])" + re.escape(name)
-                         + r"(?![A-Za-z0-9_'])", text):
-                status = "IDENTIFIER_TEXT_FOUND_UNVERIFIED"
-            else:
-                status = "DECLARATION_IDENTIFIER_NOT_FOUND"
+            matcher = re.compile(
+                r"(?<![A-Za-z0-9_'])" + re.escape(name)
+                + r"(?![A-Za-z0-9_'])")
+            line_numbers = [
+                i for i, line in enumerate(source_text.splitlines(), start=1)
+                if matcher.search(line)
+            ]
+            status = ("IDENTIFIER_TEXT_FOUND_UNVERIFIED" if line_numbers
+                      else "DECLARATION_IDENTIFIER_NOT_FOUND")
         results.append({
             "index": i, "comparator": comparator,
             "declaration": declaration, "source_file": source_path,
             "source_file_present": path.is_file(),
+            "source_content_sha256": digest,
+            "identifier_text_line_numbers": line_numbers,
             "source_text_status": status,
             "source_statement_match": "NOT_CHECKED",
             "upstream_kernel_acceptance": "NOT_CHECKED",

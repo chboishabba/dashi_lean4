@@ -42,6 +42,33 @@ theorem exactAssignmentTruth {n : ℕ}
     (ListFinsetCNFTransport.cnfSemanticsExact
       (fun literal => literal.eval assignment) clauses).symm
 
+/-- The SAME canonical upstream Finset of clauses determines the exact
+    OpenAI-378 encoded bits. This proves the reverse implication too:
+    matching bitstreams cannot hide a different normalized Finset formula.
+    It does NOT yet prove Agda's Python source compiler produces this Finset. -/
+theorem sourceListEncodedBitsIffSameNormalizedCNF {n : ℕ}
+    (left right : List (List (SAT.Literal (Fin n)))) :
+    Encoding.encodeCNF (toUpstreamCNF left) =
+        Encoding.encodeCNF (toUpstreamCNF right) ↔
+      toUpstreamCNF left = toUpstreamCNF right := by
+  constructor
+  · exact Encoding.encodeCNF_injective
+  · intro h
+    exact congrArg Encoding.encodeCNF h
+
+/-- Equality of canonical literal-code lists is exactly equality of the
+    finite OAI CNFs. This turns source-list comparison into a concrete
+    normalization obligation rather than an informal ordering assertion. -/
+theorem sourceListCanonicalCodeListsIffSameCNF {n : ℕ}
+    (left right : List (List (SAT.Literal (Fin n)))) :
+    Encoding.cnfNumbers (toUpstreamCNF left) =
+        Encoding.cnfNumbers (toUpstreamCNF right) ↔
+      toUpstreamCNF left = toUpstreamCNF right := by
+  constructor
+  · exact Encoding.cnfNumbers_injective
+  · intro h
+    exact congrArg Encoding.cnfNumbers h
+
 /-- No duplicates or tautologies can increase the number of upstream clauses. -/
 theorem originalClauseBound {n : ℕ}
     (clauses : List (List (SAT.Literal (Fin n)))) :
@@ -68,6 +95,17 @@ theorem exactUpstreamCount {n : ℕ}
   ext assignment
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact exactAssignmentTruth clauses assignment
+
+/-- Upstream's separate tautology-removal/absorption normalization can be
+    used for counting, but it can CHANGE the binary bitstream. Keep the
+    semantic count equality distinct from the canonical encoding identity. -/
+theorem sourceListCountAfterUpstreamNormalize {n : ℕ}
+    (clauses : List (List (SAT.Literal (Fin n)))) :
+    SAT.count (SAT.normalize (toUpstreamCNF clauses)) =
+      ListFinsetCNFTransport.countedListModels n
+        (fun literal assignment => literal.eval assignment) clauses := by
+  rw [SAT.count_normalize]
+  exact exactUpstreamCount clauses
 
 /-- Exact bit length, not only a quadratic envelope. The normalized
     upstream Finset carrier and its canonical literal order are preserved. -/

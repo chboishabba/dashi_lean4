@@ -114,3 +114,13 @@ C01 candidate search now indexes native Agda/Lean declaration identifiers in sou
 
 The A+B local driver includes these tests. They are **committed but not executed in this environment**. They do not settle K00–K02, M00–M05, any of the 208 same-object imports, or the 721 manuscript-level research obligations.
 
+
+## 1 November — second proof-boundary cut (M00/M01/C02)
+
+Golden Agda PR #1212 source-writes `OpenAIMathCreationOrderSerializationExact.agda`, a typed creation-order finite AST transport for the **existing** original GateProgram. Both wire/gate/program/circuit round trips are present, and original variable numbering, circuit evaluation and accepted-input count are preserved by reuse of existing owners. This is **not** a kernel receipt or a proof that Python's concrete JSON bytes parse to that AST; the source-to-byte layer is still M00b.
+
+In this branch, the version-gated `Upstream378FiniteCNFBridge.lean` now has the explicit source-written equivalences `sourceListEncodedBitsIffSameNormalizedCNF` and `sourceListCanonicalCodeListsIffSameCNF`, using *the original OAI* injectivity theorems. It separately states `sourceListCountAfterUpstreamNormalize`, since upstream semantic SAT normalization can preserve counts while changing encoding bits. These theorems remain **unverified** pending the separate Lean 4.34.1 kernel environment and do not alone connect the actual Agda-generated clauses.
+
+The corpus source-integrity checker now distinguishes arbitrary identifier text from lexical Lean declaration headers, retaining source-content SHA-256 and exact source line numbers for each of the 208 catalogue entries. It does not infer namespace-qualified declaration identity or theorem trust from source text. The synthetic header test was source-written and staged in the local A+B driver; the actual 208-row audit and Lean kernels have not been executed here.
+
+The actual remaining terminal obligations are K00–K02, M00b/M01 actual identity, M02/M03 primitive-time/all-prefix-space simulation, M04 machine theorem acceptance, M05 composition and C01/C02 individual theorem ports. Never describe discovery catalogue counts as verified ports.

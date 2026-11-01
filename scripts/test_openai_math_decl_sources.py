@@ -36,6 +36,10 @@ def main():
         assert all(x["source_content_sha256"] is not None
                    and x["identifier_text_line_numbers"] == [2]
                    for x in result["rows"])
+        assert result["lexical_declaration_headers_seen"] == 208
+        assert all(x["declaration_header_line_numbers"] == [2]
+                   and x["declaration_header_status"] == "LEXICAL_HEADER_UNVERIFIED"
+                   for x in result["rows"])
         assert all(x["upstream_kernel_acceptance"] == "NOT_CHECKED"
                    and x["same_object_transport"] == "NOT_ESTABLISHED"
                    for x in result["rows"])
@@ -43,6 +47,7 @@ def main():
                           encoding="utf-8")
         result = mod.inspect(catalogue, upstream)
         assert result["source_integrity_blockers"] == 208
+        assert result["lexical_declaration_headers_seen"] == 0
         source.unlink()
         result = mod.inspect(catalogue, upstream)
         assert result["source_integrity_blockers"] == 208

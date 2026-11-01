@@ -76,5 +76,16 @@ The original executable frontend also now provides `stream_original_circuit(data
 
 **Remaining max-cut:** Agda K00 acceptance; Lean K01/4.34.1 K02 acceptance; Agda/Lean typed source circuit+literal same-object mapping; a source→bits primitive-machine compiler with uniform time and all-prefix visited-space proof; composition to the original fixed exact-count machine. The streaming program, numeric certificates and these source-written lemmas are useful prerequisites, not the final TM theorem.
 
+### Separate exact OAI378 toolchain pin (1 November)
+
+The newer source for the actual 378 solver is **pinned independently** at upstream `7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a` in `vendor/openai-math/PIN_378.json`. This does not change the original vendor Git submodule `1581d4cb...` or DASHI's Lean 4.28 default.
+
+```bash
+bash scripts/materialize_openai378_toolchain.sh
+bash scripts/check_openai378_staged_lean.sh
+```
+
+The second command locally builds the upstream OAI dependency and elaborates the three staged bridge modules in the **upstream 4.34.1** environment. These scripts and this pin are committed, **not executed** in this session. A compiler or axioms receipt must actually be obtained before changing K02 to accepted. The new exact-length adapter is deliberately reduced to composition of OpenAI's already-proved `Encoding.length_encodeNat` and `Encoding.length_encodeList_cons` lemmas.
+
 See [Golden Agda exact 39-obligation ledger](https://github.com/chboishabba/dashi_agda/blob/integration/openai-math-corpus/docs/superpowers/plans/2026-10-31-openai-math-exact-lemma-maxcut-ledger.md) for every remaining source proof, kernel, same-object, and analytic terminal certificate.
 

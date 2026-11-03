@@ -150,6 +150,42 @@ theorem sourceMachinPiEvaluatesToClassicalPi
     eval (sourceMachinPi A B) = Real.pi :=
   eval_machinPi_eq_real_pi A (machinMirror A B)
 
+
+/-- Terminal π characterization on the *same* source-faithful
+Round11 series: its Machin real is a positive zero, and every
+positive sine zero has angle at least that Machin real (under
+faithful evaluation). This discharges the classical LEAST ZERO
+semantic leaf in Lean without assuming a nonminimal period.
+
+A distinct Agda-native constructive sine-positive-on-(0,pi_M)
+theorem or verified semantic importer remains a golden obligation. -/
+theorem sourceMachinPi_is_first_positive_sine_zero
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A) :
+    0 < eval (sourceMachinPi A B) ∧
+    Equiv (B.sinB (sourceMachinPi A B)) A.zero ∧
+    (∀ x : RegularRatReal,
+      0 < eval x →
+      Equiv (B.sinB x) A.zero →
+      eval (sourceMachinPi A B) ≤ eval x) := by
+  have hPi := sourceMachinPiEvaluatesToClassicalPi A B
+  constructor
+  · rw [hPi]
+    exact Real.pi_pos
+  constructor
+  · apply eval_eq_iff_equiv.mp
+    rw [eval_sinB, hPi, Real.sin_pi, A.eval_zero]
+  · intro x hx hzero
+    rw [hPi]
+    have hs : Real.sin (eval x) = 0 := by
+      have heq := eval_respects_equiv hzero
+      rwa [eval_sinB, A.eval_zero] at heq
+    by_contra h
+    have hlt : eval x < Real.pi := lt_of_not_ge h
+    have hspos : 0 < Real.sin (eval x) :=
+      Real.sin_pos_of_pos_of_lt_pi hx hlt
+    linarith
+
 end
 
 end Integration.BishopRound11ImaginaryProductSemanticReflection

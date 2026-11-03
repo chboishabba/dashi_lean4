@@ -61,3 +61,7 @@ requiring a full build of unrelated Integration modules.
 
 #print axioms Integration.BishopPureImaginaryFiniteCauchyCoefficientsExact.factorialCauchyCoefficient
 #print axioms Integration.BishopPureImaginaryFiniteCauchyCoefficientsExact.imaginaryCauchyCoefficient_eq_add
+
+#print axioms Integration.BishopNegativeLogNativeRound11Semantics.canonicalNegativeLog_converges
+#print axioms Integration.BishopNegativeLogNativeRound11Semantics.canonicalNatSuccessorExpInverse
+#print axioms Integration.BishopNegativeLogNativeRound11Semantics.anyOriginalNatSuccessorExpInverse

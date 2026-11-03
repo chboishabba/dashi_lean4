@@ -58,8 +58,7 @@ theorem eval_negativeLogTerm (A : VendoredArithmeticMirror)
     eval (negativeLogTerm A x n) =
       (eval x) ^ (n + 1) / ((n + 1 : ℕ) : ℝ) := by
   rw [negativeLogTerm, A.eval_mul, eval_sourcePow, eval_rational]
-  norm_cast
-  ring
+  norm_cast <;> ring
 
 /-- Finite prefixes use the vendored resampled Bishop real addition. -/
 def negativeLogPartial (A : VendoredArithmeticMirror)
@@ -140,9 +139,7 @@ theorem eval_nativeNatLog_successor (A : VendoredArithmeticMirror)
   have hsub :
       1 - (((n + 1 : ℕ) : ℝ) / ((n + 2 : ℕ) : ℝ)) =
         (((n + 2 : ℕ) : ℝ))⁻¹ := by
-    field_simp [ne_of_gt hden]
-    push_cast
-    ring
+    field_simp [ne_of_gt hden] <;> push_cast <;> ring
   rw [hsub, Real.log_inv] at hlog
   linarith
 

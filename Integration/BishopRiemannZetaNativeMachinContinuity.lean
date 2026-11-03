@@ -62,7 +62,7 @@ theorem originalDirichletTerm_eq_cpow (n : ℕ) (s : ℂ) :
   rw [one_div, Complex.cpow_def_of_ne_zero hn s, ← Complex.exp_neg]
   unfold originalDirichletTerm
   congr 1
-  rw [Complex.natCast_log]
+  rw [← Complex.natCast_log]
   ring
 
 /-- The genuine complex series, not an abstract zeta-like function. -/

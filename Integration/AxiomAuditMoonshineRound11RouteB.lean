@@ -65,3 +65,4 @@ requiring a full build of unrelated Integration modules.
 #print axioms Integration.BishopNegativeLogNativeRound11Semantics.canonicalNegativeLog_converges
 #print axioms Integration.BishopNegativeLogNativeRound11Semantics.canonicalNatSuccessorExpInverse
 #print axioms Integration.BishopNegativeLogNativeRound11Semantics.anyOriginalNatSuccessorExpInverse
+#print axioms Integration.BishopRiemannZetaNativeMachinContinuity.originalDirichletValue_continuousAt

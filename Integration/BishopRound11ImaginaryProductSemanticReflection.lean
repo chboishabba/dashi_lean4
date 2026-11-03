@@ -141,6 +141,48 @@ theorem sourceMachinQuarterCosineEqualsSine
   rw [eval_cosB, eval_sinB, eval_sourceMachinQuarter]
   rw [Real.cos_pi_div_four, Real.sin_pi_div_four]
 
+/-- The actual original Agda quarter expression is
+    4 atan_B(1/5) - atan_B(1/239), not an arbitrary pi/4 object.
+This source-faithful expression uses the same Bishop input limits. -/
+def originalSourceMachinAtanQuarter
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A) : RegularRatReal :=
+  A.add
+    (A.mul (rational (4 : ℚ)) B.atanOneFifth)
+    (A.neg B.atanOneTwoHundredThirtyNinth)
+
+/-- Same-object quarter transport: actual arctangent construction
+agrees in the vendored Bishop setoid with 1/4 of its Machin real.
+Only original resampled ring operations and faithful evaluation used. -/
+theorem originalAtanQuarter_equiv_MachinPiQuarter
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A) :
+    Equiv (originalSourceMachinAtanQuarter A B)
+      (sourceMachinQuarter A B) := by
+  apply eval_eq_iff_equiv.mp
+  simp only [originalSourceMachinAtanQuarter, sourceMachinQuarter,
+    sourceMachinPi, machinPiB, eval_sub, A.eval_add, A.eval_neg,
+    A.eval_mul, eval_rational]
+  ring
+
+/-- K05 quarter sine/cosine equality at the ACTUAL source
+arctangent expression (not only the synthetically written pi/4). -/
+theorem originalAtanQuarterCosineEqualsSine
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A) :
+    Equiv (B.cosB (originalSourceMachinAtanQuarter A B))
+      (B.sinB (originalSourceMachinAtanQuarter A B)) := by
+  apply eval_eq_iff_equiv.mp
+  have hquarter :
+      eval (originalSourceMachinAtanQuarter A B) = Real.pi / 4 := by
+    calc
+      eval (originalSourceMachinAtanQuarter A B)
+          = eval (sourceMachinQuarter A B) :=
+            eval_respects_equiv (originalAtanQuarter_equiv_MachinPiQuarter A B)
+      _ = Real.pi / 4 := eval_sourceMachinQuarter A B
+  rw [eval_cosB, eval_sinB, hquarter,
+    Real.cos_pi_div_four, Real.sin_pi_div_four]
+
 /-- Source Machin's pi is classically the true pi under the
 proved faithful evaluator, and this implication is independent
 of the native source quarter-angle route. -/

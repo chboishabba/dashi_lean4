@@ -7,6 +7,7 @@ on:
       - "Integration/BishopVendored**"
       - "Integration/BishopNegativeLog**"
       - "Integration/BishopRiemannZeta**"
+      - "Integration/BishopPureImaginary**"
       - "Integration/MoonshineEisenstein**"
       - "Integration/MoonshineDelta**"
       - "scripts/verify_round11_machin_route_b.py"
@@ -61,6 +62,7 @@ jobs:
           lake env lean Integration/BishopNegativeLogNativeRound11Semantics.lean
           lake env lean Integration/BishopRound11ImaginaryProductSemanticReflection.lean
           lake env lean Integration/BishopRiemannZetaNativeMachinContinuity.lean
+          lake env lean Integration/BishopPureImaginaryFiniteCauchyCoefficientsExact.lean
 
       - name: Print focused route-B axiom audit
         run: lake env lean Integration/AxiomAuditMoonshineRound11RouteB.lean

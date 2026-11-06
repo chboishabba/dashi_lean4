@@ -264,6 +264,79 @@ theorem anyOriginalNatSuccessorExpInverse
       (canonicalNegativeLog (rational (natLogArgument n)))]
   exact hmain
 
+
+/-!
+## General K04d negative-log exponential inverse, same source terms
+
+This is not limited to Nat successor arguments. For every original
+Bishop-real x with 0 < eval x < 1, and the original negative-log
+literal series limit L(x), exp_B(-L(x)) ~ 1-x. The complex/real
+completion evaluator is faithful to the selected Bishop setoid.
+The native Agda source owner still requires Agda-kernel acceptance.
+-/
+
+/-- The full original source-series K04d inverse at any positive
+unit-ball input; no free logarithm axiom, no new expB definition. -/
+theorem originalNegativeLogExpInverse
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A)
+    (L : NativeNegativeLogSourceConvergence A)
+    (x : RegularRatReal)
+    (hzero : 0 < eval x)
+    (hone : eval x < 1) :
+    Equiv
+      (B.expB (A.neg (L.negativeLog x)))
+      (A.add A.one (A.neg x)) := by
+  apply eval_eq_iff_equiv.mp
+  rw [eval_exp_eq_real_exp A (expMirror A B),
+      A.eval_neg,
+      eval_nativeNegativeLog_eq_classical A L x hzero hone,
+      A.eval_add, A.eval_one, A.eval_neg]
+  have hpositive : 0 < 1 - eval x := by linarith
+  simpa only [neg_neg] using (Real.exp_log hpositive)
+
+/-- No auxiliary source-convergence input: the original literal
+Bishop coefficient series constructs its canonical limit itself. -/
+theorem canonicalNegativeLogExpInverse
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A)
+    (x : RegularRatReal)
+    (hzero : 0 < eval x)
+    (hone : eval x < 1) :
+    Equiv
+      (B.expB (A.neg (canonicalNegativeLog x)))
+      (A.add A.one (A.neg x)) :=
+  originalNegativeLogExpInverse A B
+    (canonicalNativeNegativeLogSourceConvergence A)
+    x hzero hone
+
+/-- Any original Bishop Sequence.lim value of the SAME native
+coefficients satisfies exp_B(-L(x)) ~ 1-x by its own source
+convergence, not by substituting the canonical limit definition. -/
+theorem anyOriginalNegativeLogExpInverse
+    (A : VendoredArithmeticMirror)
+    (B : Round11MachinSourceBinding A)
+    (x sourceLimit : RegularRatReal)
+    (hzero : 0 < eval x)
+    (hone : eval x < 1)
+    (sourceConverges :
+      BishopConvergesTo A (negativeLogPartial A x) sourceLimit) :
+    Equiv
+      (B.expB (A.neg sourceLimit))
+      (A.add A.one (A.neg x)) := by
+  apply eval_eq_iff_equiv.mp
+  rw [eval_exp_eq_real_exp A (expMirror A B),
+      A.eval_neg, A.eval_add, A.eval_one, A.eval_neg]
+  have sameValue := eval_respects_equiv
+    (anyOriginalNegativeLogLimit_equiv_canonical A x
+      sourceLimit hzero hone sourceConverges)
+  rw [sameValue,
+      eval_nativeNegativeLog_eq_classical A
+        (canonicalNativeNegativeLogSourceConvergence A) x hzero hone]
+  have hpositive : 0 < 1 - eval x := by linarith
+  simpa only [neg_neg] using (Real.exp_log hpositive)
+
+
 end
 
 end Integration.BishopNegativeLogNativeRound11Semantics

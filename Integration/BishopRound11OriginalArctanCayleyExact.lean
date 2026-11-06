@@ -63,10 +63,11 @@ theorem realArctanExponentialCayley (x : ℝ) :
   apply (div_eq_iff hx).2
   rw [Complex.exp_ofReal_mul_I, arctan_cos_double, arctan_sin_double]
   push_cast
-  have hq : (1 + x ^ 2 : ℝ) ≠ 0 := by positivity
-  field_simp
-  simp only [Complex.I_mul_I]
-  ring
+  have hq : (((1 + x ^ 2 : ℝ) : ℂ)) ≠ 0 := by
+    exact_mod_cast (show (1 + x ^ 2 : ℝ) ≠ 0 by positivity)
+  field_simp [hq]
+  ring_nf
+  simp [Complex.I_sq] <;> ring
 
 /-- Exact original first Machin Bishop source limit, evaluated
 through its proven source-series semantics: x = 1/5. -/

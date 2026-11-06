@@ -1,4 +1,5 @@
 import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopPureImaginaryInfiniteCauchyProductExact
 import Integration.BishopVendoredMachinPiSemantics
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Tactic

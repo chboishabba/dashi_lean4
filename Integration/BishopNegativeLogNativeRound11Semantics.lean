@@ -293,7 +293,7 @@ theorem originalNegativeLogExpInverse
       eval_nativeNegativeLog_eq_classical A L x hzero hone,
       A.eval_add, A.eval_one, A.eval_neg]
   have hpositive : 0 < 1 - eval x := by linarith
-  simpa only [neg_neg] using (Real.exp_log hpositive)
+  simpa [sub_eq_add_neg] using (Real.exp_log hpositive)
 
 /-- No auxiliary source-convergence input: the original literal
 Bishop coefficient series constructs its canonical limit itself. -/
@@ -334,7 +334,7 @@ theorem anyOriginalNegativeLogExpInverse
       eval_nativeNegativeLog_eq_classical A
         (canonicalNativeNegativeLogSourceConvergence A) x hzero hone]
   have hpositive : 0 < 1 - eval x := by linarith
-  simpa only [neg_neg] using (Real.exp_log hpositive)
+  simpa [sub_eq_add_neg] using (Real.exp_log hpositive)
 
 
 end

@@ -149,6 +149,8 @@ def nodes_from_export(path):
                 raise ValueError(f"Malformed lean4export NDJSON at {path}:{n}") from exc
             if not isinstance(obj,dict):
                 raise ValueError("Export entry must be an object")
+            if meta is None and n>1:
+                raise ValueError("Exporter metadata must be first")
             if "meta" in obj:
                 if meta is not None or n!=1:
                     raise ValueError("Duplicate or misplaced exporter metadata")
@@ -157,7 +159,7 @@ def nodes_from_export(path):
                     raise ValueError("Unsupported lean4export serialization version")
             elif "in" in obj:
                 idx=int(obj["in"])
-                info=obj.get("str")
+                info=obj.get("str",obj.get("num"))
                 if idx<=0 or idx in names or not isinstance(info,dict):
                     raise ValueError("Invalid name-trie node")
                 parent=int(info["pre"])
@@ -302,7 +304,7 @@ def import_export(conn, row):
             _,value_refs=reachable(value_root,ast["exprs"],ast["names"])
         # Checked-environment AST fingerprint; candidate-only.
         conn.execute("""INSERT INTO jmd_lean_world_declarations
-          VALUES(?,?,?,?,?,'exporter-ast')""",
+          VALUES(?,?,?,?,?,?,'exporter-ast')""",
           (export_id,name,kind,root,value_root,expression_fingerprint(root,ast["exprs"],ast["names"])))
         conn.executemany("INSERT OR IGNORE INTO jmd_lean_world_refs VALUES(?,?,?,?)",
           ((export_id,name,ref,"type") for ref in sorted(type_refs)))

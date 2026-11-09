@@ -47,6 +47,7 @@ def connect(path: Path):
         github_id INTEGER PRIMARY KEY, full_name TEXT NOT NULL,
         default_branch TEXT NOT NULL, primary_language TEXT NOT NULL,
         starred INTEGER NOT NULL DEFAULT 0 CHECK(starred IN (0,1)),
+        global_discovered INTEGER NOT NULL DEFAULT 0 CHECK(global_discovered IN (0,1)),
         corpus_snapshot TEXT NOT NULL, stage TEXT NOT NULL DEFAULT 'metadata'
           CHECK(stage IN ('metadata','exported-ast'))
     );
@@ -93,10 +94,20 @@ def connect(path: Path):
     return conn
 
 def import_repositories(conn, csv_path, snapshot, starred_path=None):
-    star_ids = set()
+    star_rows={}
     if starred_path:
         with Path(starred_path).open(newline="", encoding="utf8") as fh:
-            star_ids = {int(r["github_id"]) for r in csv.DictReader(fh)}
+            reader=csv.DictReader(fh)
+            if not reader.fieldnames or not {"github_id","full_name"} <= set(reader.fieldnames):
+                raise ValueError("Star inventory must have GitHub numeric identity and name")
+            for row in reader:
+                ident=int(row["github_id"])
+                name=row["full_name"].strip()
+                if ident<=0 or ident in star_rows or len(name.split("/"))!=2:
+                    raise ValueError("Duplicate/invalid starred repository")
+                if row.get("language","Lean") != "Lean":
+                    raise ValueError("Pass only the primary-language Lean starred export")
+                star_rows[ident]=row
     count=0
     seen=set()
     with Path(csv_path).open(newline="", encoding="utf8") as fh:
@@ -115,18 +126,30 @@ def import_repositories(conn, csv_path, snapshot, starred_path=None):
                 # Record renames only with a separate authenticated rename receipt.
                 raise ValueError("Repository numeric identity has changed name: "+str(ident))
             conn.execute("""INSERT INTO jmd_lean_world_repositories
-                (github_id,full_name,default_branch,primary_language,starred,corpus_snapshot)
-                VALUES(?,?,?,?,?,?)
+                (github_id,full_name,default_branch,primary_language,starred,global_discovered,corpus_snapshot)
+                VALUES(?,?,?,?,?,?,?)
                 ON CONFLICT(github_id) DO UPDATE SET
                   default_branch=excluded.default_branch,
                   primary_language=excluded.primary_language,
-                  starred=excluded.starred,corpus_snapshot=excluded.corpus_snapshot""",
-                (ident,name,r["default_branch"],r.get("language",""),int(ident in star_ids),snapshot))
+                  starred=excluded.starred,
+                  global_discovered=1,corpus_snapshot=excluded.corpus_snapshot""",
+                (ident,name,r["default_branch"],r.get("language",""),int(ident in star_rows),1,snapshot))
             count+=1
-    if star_ids and not star_ids <= seen:
-        # Star inventory includes repositories outside the global Lean corpus:
-        # those are separate, NOT silently inserted as Lean source repositories.
-        pass
+    # Preserve starred Lean repositories missed by GitHub's search snapshot.
+    # Numeric ID is the primary key; conflicting names require review.
+    for ident,row in sorted(star_rows.items()):
+        if ident in seen:
+            if row["full_name"].casefold()!=conn.execute(
+                "SELECT full_name FROM jmd_lean_world_repositories WHERE github_id=?",
+                (ident,)).fetchone()[0].casefold():
+                raise ValueError("Star/global repository identity disagrees")
+            continue
+        conn.execute("""INSERT INTO jmd_lean_world_repositories
+          (github_id,full_name,default_branch,primary_language,
+           starred,global_discovered,corpus_snapshot)
+          VALUES(?,?,?,?,1,0,?)
+          ON CONFLICT(github_id) DO UPDATE SET starred=1""",
+          (ident,row["full_name"],row.get("default_branch",""),"Lean",snapshot))
     return count
 
 def nodes_from_export(path):
@@ -321,6 +344,12 @@ def report(conn):
             "declarations":"jmd_lean_world_declarations",
             "dependency_edges":"jmd_lean_world_refs"}
     out={k:conn.execute("SELECT count(*) FROM "+v).fetchone()[0] for k,v in tables.items()}
+    out["global_discovered"]=conn.execute(
+        "SELECT count(*) FROM jmd_lean_world_repositories WHERE global_discovered=1").fetchone()[0]
+    out["starred_lean"]=conn.execute(
+        "SELECT count(*) FROM jmd_lean_world_repositories WHERE starred=1").fetchone()[0]
+    out["starred_only"]=conn.execute(
+        "SELECT count(*) FROM jmd_lean_world_repositories WHERE starred=1 AND global_discovered=0").fetchone()[0]
     out["metadata_only_repositories"]=conn.execute(
         "SELECT count(*) FROM jmd_lean_world_repositories WHERE stage='metadata'").fetchone()[0]
     out["authority"]="native Lean AST candidate index; no theorem equivalence or kernel proof inferred"

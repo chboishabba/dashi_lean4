@@ -25,7 +25,7 @@ private def constantKind (info : ConstantInfo) : String :=
   | .ctorInfo _ => "ctor"
   | .recInfo _ => "rec"
 
-private unsafe def inspectModule (moduleString : String) : IO Unit := do
+unsafe def inspectModule (moduleString : String) : IO Unit := do
   if moduleString.isEmpty || moduleString.startsWith "-" then
     throw <| IO.userError "Module names must be nonempty and not flags"
   let moduleName := moduleString.toName

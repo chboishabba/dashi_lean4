@@ -54,7 +54,9 @@ class QueryWorldTests(unittest.TestCase):
                                  "commit":"a"*40,"module":"Donor",
                                  "path":str(self.data)})
         rows=query.queue(self.conn)
-        self.assertEqual([r["github_id"] for r in rows],[3])
+        self.assertEqual([r["github_id"] for r in rows],[4,3])
+        self.assertEqual(rows[0]["next_action"],
+                         "expand-native-lean4export-coverage")
 
     def test_shared_native_ast_fingerprint_is_only_candidate(self):
         with self.conn:

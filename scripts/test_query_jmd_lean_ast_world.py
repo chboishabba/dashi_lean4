@@ -68,6 +68,29 @@ class QueryWorldTests(unittest.TestCase):
         self.assertEqual(len(groups[0]["candidates"]),2)
         self.assertFalse(groups[0]["establishes_equivalence"])
 
+    def test_same_repo_reexports_are_not_cross_repo_duplicates(self):
+        with self.conn:
+            for module in ("Donor","Donor.Other"):
+                world.import_export(self.conn,{"github_id":3,
+                    "full_name":"lean/alfa","commit":"a"*40,
+                    "module":module,"path":str(self.data)})
+        self.assertEqual(query.equivalent_type_candidates(self.conn),[])
+
+    def test_distinct_lean_revisions_do_not_share_structural_group(self):
+        with self.conn:
+            world.import_export(self.conn,{"github_id":3,
+                "full_name":"lean/alfa","commit":"a"*40,
+                "module":"Donor","path":str(self.data)})
+        changed=[json.loads(line) for line in self.data.read_text().splitlines()]
+        changed[0]["meta"]["lean"]["githash"]="d"*40
+        different=self.root/"other-revision.ndjson"
+        different.write_text("".join(json.dumps(row)+"\n" for row in changed))
+        with self.conn:
+            world.import_export(self.conn,{"github_id":4,
+                "full_name":"lean/beta","commit":"a"*40,
+                "module":"Donor","path":str(different)})
+        self.assertEqual(query.equivalent_type_candidates(self.conn),[])
+
     def test_reference_relatedness_is_nonproof(self):
         with self.conn:
             world.import_export(self.conn,{"github_id":3,"full_name":"lean/alfa",

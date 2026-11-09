@@ -11,8 +11,11 @@ not a claim that either real compiler has discharged it.
 
 namespace Integration.JMD.RoundTrip
 
+universe u v w
+variable {A : Type u} {B : Type v} {C : Type w}
+
 /-- Evidence needed to transport a mathematical object without semantic drift. -/
-structure CertifiedRoundTrip (A B : Type u) where
+structure CertifiedRoundTrip (A : Type u) (B : Type v) where
   toB : A → B
   toA : B → A
   leftInverse : ∀ a : A, toA (toB a) = a

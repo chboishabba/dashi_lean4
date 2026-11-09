@@ -21,19 +21,18 @@ def queue(conn,limit=0):
        FROM jmd_lean_world_repositories
        ORDER BY starred DESC,
          CASE stage WHEN 'source-inventory' THEN 0
-                    WHEN 'metadata' THEN 1 ELSE 2 END,
+                    WHEN 'exported-ast' THEN 1 ELSE 2 END,
          github_id"""
     result=[]
     for ident,name,branch,star,global_seen,stage in conn.execute(sql):
-        if stage=="exported-ast":
-            continue
         result.append({
             "github_id":ident,"repository":name,
             "default_branch_at_harvest":branch,
             "jmd_starred":bool(star),"global_corpus":bool(global_seen),
             "stage":stage,
-            "next_action":"native-lean4export" if stage=="source-inventory"
-                          else "acquire-pinned-local-git-source",
+            "next_action":("expand-native-lean4export-coverage" if stage=="exported-ast"
+                           else "native-lean4export" if stage=="source-inventory"
+                           else "acquire-pinned-local-git-source"),
             "establishes_proof":False,
             "authority":"discovery-work-queue",
         })

@@ -86,3 +86,28 @@ Run test files by `python -m unittest discover -s scripts -p 'test_*jmd*ast*worl
 Given a pinned source theorem P and an unpaid original DASHI goal Q, automatically retrieve P's actual native AST/type/axiom context; distinguish exact matching, structural candidate, and missing implication; if applicable create an independently checked Lean proof of `P → Q`, preserve attribution, and only then update original proof debt. Without an actual full-corpus AST coverage record, **absence means `index-incomplete`, not `no mathematical candidate exists`.**
 
 **Safety and governance:** no unpublished DASHI sources sent upstream, no ESD edits, no automatic GitHub clone/publish, no Docker or CI requirement. The AO fleet/LLM system is not invoked; ITIR gap finding is a downstream read-only consumer.
+
+## Source acquisition gate — completes the missing metadata-to-checkout connector in source
+
+`scripts/jmd_lean_public_source_acquisition.py` consumes the **existing** `query_jmd_lean_ast_world.py --queue` JSONL, deduplicates numeric repository IDs, and emits `(github_id, repository, commit, checkout)` for already-pinned checkouts or an opt-in bounded public `git clone`. The default is **dry-run**. Neither action builds Lean or launches AO/LLM workers. Git identity, dirty tracked source, duplicate IDs, timeouts and failed clones have explicit residuals. Seven offline unit tests were added.
+
+```sh
+# Default: inspect existing local checkouts; no network.
+python scripts/jmd_lean_public_source_acquisition.py \
+  --queue /tmp/jmd-lean-ast-work.jsonl \
+  --checkout-root /path/to/lean-checkouts \
+  --output /tmp/jmd-source-acquisition --limit 20
+
+# Optional network acquisition: deliberately bounded and rate limited.
+python scripts/jmd_lean_public_source_acquisition.py \
+  --queue /tmp/jmd-lean-ast-work.jsonl \
+  --checkout-root /path/to/lean-checkouts \
+  --output /tmp/jmd-source-acquisition --limit 20 --acquire --delay 1.5
+
+# The resulting /tmp/jmd-source-acquisition/pinned_checkouts.jsonl
+# is the exact input to scripts/jmd_lean_ast_world_batch.py.
+```
+
+**W02 expanded exact residual:** entire global corpus source acquisition is a substantial network, storage and licensing operation; its 21,481 entries are not claimed cloned or elaborated. A completed source manifest must record successes, explicit failures and the pinned original commit. Running third-party `lake` commands remains a *separate* opt-in action inside an isolated Nix environment.
+
+**Runtime verification:** the acquisition and AST-world scripts were committed with tests; those tests and the full source scan have not been run from the assistant's environment. No full AST coverage is yet established.

@@ -61,6 +61,13 @@ def connect(path: Path):
     );
     CREATE INDEX IF NOT EXISTS idx_jmd_lean_world_source_modules
         ON jmd_lean_world_source_files(module_hint);
+    CREATE TABLE IF NOT EXISTS jmd_lean_world_source_attestations (
+        github_id INTEGER NOT NULL REFERENCES jmd_lean_world_repositories(github_id),
+        source_commit TEXT NOT NULL, origin TEXT NOT NULL,
+        verification_method TEXT NOT NULL
+          CHECK(verification_method='pinned-clean-local-git'),
+        PRIMARY KEY(github_id,source_commit)
+    );
     CREATE TABLE IF NOT EXISTS jmd_lean_world_exports (
         export_id INTEGER PRIMARY KEY,
         github_id INTEGER NOT NULL REFERENCES jmd_lean_world_repositories(github_id),
@@ -425,6 +432,15 @@ def report(conn):
     out["repositories_with_some_ast"]=conn.execute(
         "SELECT COUNT(DISTINCT github_id) FROM jmd_lean_world_exports").fetchone()[0]
     out["repositories_certified_ast_complete"]=0
+    out["pinned_source_attestations"]=conn.execute(
+        "SELECT count(*) FROM jmd_lean_world_source_attestations").fetchone()[0]
+    out["ast_exports_with_git_source_attestation"]=conn.execute(
+        """SELECT count(*) FROM jmd_lean_world_exports e
+           JOIN jmd_lean_world_source_attestations a
+           ON a.github_id=e.github_id AND a.source_commit=e.source_commit"""
+    ).fetchone()[0]
+    out["ast_exports_without_git_source_attestation"]=(
+        out["native_ast_exports"]-out["ast_exports_with_git_source_attestation"])
     out["metadata_only_repositories"]=conn.execute(
         "SELECT count(*) FROM jmd_lean_world_repositories WHERE stage='metadata'").fetchone()[0]
     out["authority"]="native Lean AST candidate index; no theorem equivalence or kernel proof inferred"

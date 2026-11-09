@@ -8,6 +8,7 @@
 - JMD reported **17.9k** matches on 2026-11-09; this is a changing GitHub search estimate, not 17.9k downloaded repositories.
 - JMD's **~1,242 starred Lean repositories**: https://github.com/jmikedupont2?language=lean&tab=stars (personal curated subset).
 - **Implemented exporter (this PR):** [`scripts/export_jmd_stars.py`](../../scripts/export_jmd_stars.py). Run `python scripts/export_jmd_stars.py` (optionally set `GITHUB_TOKEN`). Outputs `scripts/jmd_starred_all.csv`, `scripts/jmd_starred_primary_lean.csv` and `scripts/jmd_starred_summary.json`. This exports public starred repositories only, not the GitHub-wide 17.9k search. No live harvest is claimed.
+- **Independent global collector (this PR):** [`scripts/collect_github_lean_corpus.py`](../../scripts/collect_github_lean_corpus.py). Run `GITHUB_TOKEN=... python scripts/collect_github_lean_corpus.py`. It recursively partitions `language:Lean` by creation date, checkpoints raw pages, deduplicates by numeric GitHub repository ID, and writes `docs/roadmap/jmd_lean_corpus/github_lean_repositories.csv` plus `summary.json`. This is a GitHub language-classifier corpus, not a Lean 4 kernel-checked corpus.
 - JMD's earlier **~21k** was an independent approximate global estimate. Do not merge the three counts.
 - JMD's canonical references: https://github.com/meta-introspector/solfunmeme-metameme/issues/1 (not the global Lean manifest).
 
@@ -19,7 +20,7 @@
 |---|---|---|
 | P0 image source IDs | Consume Agda-side image manifest; use SHA-256 as image attribution/reference, not proof authority | corresponding Agda branch contains manifest |
 | P0 declaration ownership | Check existing `dashi_lean4` owners and prior mappings before new port | OPEN |
-| P0 global corpus harvest | partitioned GitHub source enumeration with timestamp, repo ID, clone URL, commit, licence, language, fork/archived state | OPEN |
+| P0 global corpus harvest | partitioned GitHub source enumeration with timestamp, repo ID, clone URL, commit, licence, language, fork/archived state | collector implemented; live harvest OPEN |
 | P1 CFSG selected map | `AxiomMath/CFSG` → Agda original Monster/Y443 selected nonabelian generator-action correspondence | OPEN |
 | P1 VOA selected map | `Fedor-Popov/Lean_VOA` → existing Agda graded VOA selected sector and all-mode operations | OPEN |
 | P1 Stacks selected map | `AxiomMath/Stacks` → Agda Grothendieck category-of-elements / fibration / sheaf owners | OPEN |

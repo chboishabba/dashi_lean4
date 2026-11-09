@@ -21,13 +21,18 @@ class Client:
     def __init__(self):
         self.token = os.environ.get("GITHUB_TOKEN") or os.popen("gh auth token 2>/dev/null").read().strip()
         self.root = "https://api.github.com/search/repositories"
+        self.last_request = 0.0
     def get(self, query, page=1, per_page=100):
+        wait = 2.25 - (time.monotonic() - self.last_request)
+        if wait > 0:
+            time.sleep(wait)
         qs = urllib.parse.urlencode({"q": query, "sort": "updated", "order": "desc",
                                      "per_page": per_page, "page": page})
         req = urllib.request.Request(self.root + "?" + qs,
           headers={"Accept":"application/vnd.github+json", "User-Agent":"dashi-jmd-lean-corpus/1.0",
                    "X-GitHub-Api-Version":"2022-11-28", **({"Authorization":"Bearer "+self.token} if self.token else {})})
         while True:
+            self.last_request = time.monotonic()
             try:
                 with urllib.request.urlopen(req, timeout=60) as r:
                     return json.load(r)

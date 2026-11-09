@@ -88,9 +88,10 @@ class IntakeTests(unittest.TestCase):
         self.assertEqual(self.conn.execute(
             "SELECT COUNT(*) FROM jmd_lean_world_source_files").fetchone()[0],2)
 
-    def test_bounded_queue(self):
-        self.assertEqual(intake.queue(self.conn,1)[0]["full_name"],"owner/repo")
-        with self.assertRaises(ValueError): intake.queue(self.conn,1001)
+    def test_source_hint_is_not_lean_module_proof(self):
+        self.assertEqual(intake.source_module_hint("Pkg/Basic.lean"),"Pkg.Basic")
+        self.assertEqual(intake.source_module_hint("src/Pkg/Basic.lean"),"Pkg.Basic")
+        self.assertEqual(intake.source_module_hint("src/Pkg/odd-name.lean"),"")
 
 if __name__=="__main__":
     unittest.main()

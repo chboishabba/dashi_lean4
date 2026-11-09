@@ -97,24 +97,6 @@ def scan(db:sqlite3.Connection,root:Path,github_id:int,commit:str)->dict:
             "source_module_names_are_hints":True}
 
 
-def queue(db:sqlite3.Connection,limit:int=50,include_starred:bool=True)->list[dict]:
-    if not 1<=limit<=1000:raise ValueError("Limit must be 1..1000")
-    rows=db.execute("""SELECT r.github_id,r.full_name,r.default_branch,
-         r.stage,r.starred,r.global_discovered,
-         count(DISTINCT f.source_path),count(DISTINCT e.export_id)
-         FROM jmd_lean_world_repositories r
-         LEFT JOIN jmd_lean_world_source_files f ON r.github_id=f.github_id
-         LEFT JOIN jmd_lean_world_exports e ON r.github_id=e.github_id
-         GROUP BY r.github_id
-         ORDER BY CASE WHEN r.stage='source-inventory' THEN 0
-                       WHEN r.stage='metadata' THEN 1 ELSE 2 END,
-                  r.starred DESC, r.github_id ASC
-         LIMIT ?""",(limit,)).fetchall()
-    keys=("github_id","full_name","default_branch","stage","starred",
-          "global_discovered","source_files","native_exports")
-    return [dict(zip(keys,r)) for r in rows]
-
-
 def source_worklist(db:sqlite3.Connection,ident:int,commit:str)->list[dict]:
     """Return remaining *candidate* module names for external Lean kernel export.
 
@@ -140,8 +122,6 @@ def main(argv=None):
     scan_args.add_argument("--checkout",required=True,type=Path)
     scan_args.add_argument("--github-id",type=int,required=True)
     scan_args.add_argument("--commit",required=True)
-    q=sub.add_parser("queue")
-    q.add_argument("--limit",type=int,default=50)
     w=sub.add_parser("modules")
     w.add_argument("--github-id",type=int,required=True)
     w.add_argument("--commit",required=True)

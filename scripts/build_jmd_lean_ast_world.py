@@ -27,7 +27,7 @@ from pathlib import Path
 
 SHA = re.compile(r"[a-f0-9]{40}\Z")
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_'.]*\Z")
-DECL_KINDS = ("thm", "def", "opaque", "axiom", "ind", "quot", "ctor", "rec")
+DECL_KINDS = ("thm", "def", "opaque", "axiom", "inductive", "quot", "ctor", "rec")
 ROOT_KEYS = ("type", "value")
 MAX_EXPORT_BYTES = 200_000_000
 
@@ -74,6 +74,12 @@ def connect(path: Path):
           ON DELETE CASCADE,
         name_id INTEGER NOT NULL, qualified TEXT NOT NULL,
         PRIMARY KEY(export_id,name_id)
+    );
+    CREATE TABLE IF NOT EXISTS jmd_lean_world_levels (
+        export_id INTEGER NOT NULL REFERENCES jmd_lean_world_exports(export_id)
+          ON DELETE CASCADE,
+        level_id INTEGER NOT NULL, node_json TEXT NOT NULL,
+        PRIMARY KEY(export_id,level_id)
     );
     CREATE TABLE IF NOT EXISTS jmd_lean_world_ast (
         export_id INTEGER NOT NULL REFERENCES jmd_lean_world_exports(export_id)
@@ -168,6 +174,7 @@ def nodes_from_export(path):
         raise ValueError("Export exceeds per-artifact memory/size policy")
     names={0:""}
     exprs={}
+    levels={}
     decls=[]
     meta=None
     content_sha=hashlib.sha256()
@@ -198,8 +205,13 @@ def nodes_from_export(path):
                 parent=int(info["pre"])
                 if parent not in names:
                     raise ValueError("Unresolved name trie parent")
-                segment=str(info.get("str",info.get("num","")))
+                segment=str(info.get("str",info.get("i","")))
                 names[idx]=(names[parent]+"." if names[parent] else "")+segment
+            elif "il" in obj:
+                idx=int(obj["il"])
+                if idx<=0 or idx in levels:
+                    raise ValueError("Duplicate/negative universe-level index")
+                levels[idx]={k:v for k,v in obj.items() if k!="il"}
             elif "ie" in obj:
                 idx=int(obj["ie"])
                 if idx<0 or idx in exprs:
@@ -208,19 +220,28 @@ def nodes_from_export(path):
             else:
                 kinds=[k for k in DECL_KINDS if k in obj]
                 if len(kinds)==1:
-                    decls.append((kinds[0],obj[kinds[0]]))
+                    kind=kinds[0]
+                    if kind=="inductive":
+                        block=obj[kind]
+                        if not isinstance(block,dict):
+                            raise ValueError("Malformed inductive declaration group")
+                        for family,label in (("types","inductive"),("ctors","ctor"),("recs","rec")):
+                            for member in block.get(family,[]):
+                                decls.append((label,member))
+                    else:
+                        decls.append((kind,obj[kind]))
                 # Other Lean levels/metadata are retained by the export file
                 # SHA but are not expression-index nodes.
     if meta is None:
         raise ValueError("No lean4export metadata")
-    return {"names":names,"exprs":exprs,"decls":decls,"meta":meta,
+    return {"names":names,"levels":levels,"exprs":exprs,"decls":decls,"meta":meta,
             "sha":content_sha.hexdigest()}
 
 def _expr_children(node):
     for kind,data in node.items():
         if not isinstance(data,dict):
             continue
-        for field in ("type","body","fn","arg","value","expr","proof","motive"):
+        for field in ("type","body","fn","arg","value","expr","proof","motive","struct"):
             if field in data and type(data[field]) is int:
                 yield data[field]
 
@@ -246,13 +267,39 @@ def reachable(root, exprs, names):
         pending.extend(_expr_children(node))
     return seen,consts
 
-def expression_fingerprint(root, exprs, names):
+def expression_fingerprint(root, exprs, names, levels=None):
     """Bottom-up bounded DAG digest, not an exponentially expanded tree.
 
     Node IDs and binder variable names are intentionally omitted; binder info,
     constants, universe arguments and constructor roles are preserved.
     This is a *candidate fingerprint*, never a verified equivalence.
     """
+    levels=levels or {}
+    level_cache={0:"zero"}
+    def level_hash(idx, stack=None):
+        idx=int(idx)
+        if idx in level_cache:
+            return level_cache[idx]
+        if idx not in levels:
+            raise ValueError("Missing universe level node")
+        stack=stack or set()
+        if idx in stack:
+            raise ValueError("Cyclic universe level graph")
+        stack.add(idx)
+        node=levels[idx]
+        if "param" in node:
+            raw={"param":names[int(node["param"])]}
+        elif "succ" in node:
+            raw={"succ":level_hash(node["succ"],stack)}
+        elif "max" in node or "imax" in node:
+            kind="max" if "max" in node else "imax"
+            raw={kind:[level_hash(x,stack) for x in node[kind]]}
+        else:
+            raise ValueError("Unknown Lean universe-level constructor")
+        stack.remove(idx)
+        result=digest(raw)
+        level_cache[idx]=result
+        return result
     todo=[(root,False)]
     memo={}
     active=set()
@@ -281,6 +328,10 @@ def expression_fingerprint(root, exprs, names):
             for key,value in sorted(data.items()):
                 if key=="name" and kind=="const":
                     fields[key]=names[int(value)]
+                elif key=="typeName" and kind=="proj":
+                    fields[key]=names[int(value)]
+                elif key=="us" and kind=="const":
+                    fields[key]=[level_hash(x) for x in value]
                 elif key=="name" and kind in ("lam","forallE","letE"):
                     fields[key]="<bound>"
                 elif key in ("type","body","fn","arg","value","expr","proof","motive") and type(value) is int:
@@ -288,6 +339,8 @@ def expression_fingerprint(root, exprs, names):
                 else:
                     fields[key]=value
             form[kind]=fields
+        if "sort" in form:
+            form["sort"]=level_hash(form["sort"])
         memo[idx]=digest(form)
         active.remove(idx)
     return memo[root]
@@ -320,6 +373,8 @@ def import_export(conn, row):
     export_id=conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     conn.executemany("INSERT INTO jmd_lean_world_names VALUES(?,?,?)",
         ((export_id,i,name) for i,name in ast["names"].items()))
+    conn.executemany("INSERT INTO jmd_lean_world_levels VALUES(?,?,?)",
+        ((export_id,i,canonical(node)) for i,node in ast["levels"].items()))
     conn.executemany("INSERT INTO jmd_lean_world_ast VALUES(?,?,?)",
         ((export_id,i,canonical(node)) for i,node in ast["exprs"].items()))
     for kind,decl in ast["decls"]:
@@ -338,7 +393,7 @@ def import_export(conn, row):
         # Checked-environment AST fingerprint; candidate-only.
         conn.execute("""INSERT INTO jmd_lean_world_declarations
           VALUES(?,?,?,?,?,?,'exporter-ast')""",
-          (export_id,name,kind,root,value_root,expression_fingerprint(root,ast["exprs"],ast["names"])))
+          (export_id,name,kind,root,value_root,expression_fingerprint(root,ast["exprs"],ast["names"],ast["levels"])))
         conn.executemany("INSERT OR IGNORE INTO jmd_lean_world_refs VALUES(?,?,?,?)",
           ((export_id,name,ref,"type") for ref in sorted(type_refs)))
         conn.executemany("INSERT OR IGNORE INTO jmd_lean_world_refs VALUES(?,?,?,?)",
@@ -351,6 +406,7 @@ def report(conn):
     tables={"repositories":"jmd_lean_world_repositories",
             "native_ast_exports":"jmd_lean_world_exports",
             "native_ast_nodes":"jmd_lean_world_ast",
+            "native_universe_nodes":"jmd_lean_world_levels",
             "git_tracked_lean_sources":"jmd_lean_world_source_files",
             "declarations":"jmd_lean_world_declarations",
             "dependency_edges":"jmd_lean_world_refs"}

@@ -94,6 +94,8 @@ class WorldTests(unittest.TestCase):
             self.assertEqual(world.import_export(self.con,self.row()),0)
         r=world.report(self.con)
         self.assertEqual(r["native_ast_exports"],1)
+        self.assertEqual(r["ast_exports_without_git_source_attestation"],1)
+        self.assertEqual(r["ast_exports_with_git_source_attestation"],0)
         self.assertEqual(r["native_ast_nodes"],3)
         self.assertEqual(r["declarations"],1)
         self.assertEqual(r["metadata_only_repositories"],1)

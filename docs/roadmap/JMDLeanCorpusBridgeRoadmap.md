@@ -339,3 +339,12 @@ selective reopening with the existing ITIR gap script only.
 
 A generic conditional inverse-law theorem is NOT a proof that either
 translator preserves arbitrary declarations. No such claim is made.
+
+
+## 2026-11-09 superseding P0 — the entire harvested Lean corpus becomes ONE native AST world
+
+**The first task is repository-to-AST world ingestion, not theorem translation or AO.** See the canonical execution and exact-lemma ledger: [JMDLeanASTWorldMaxCut.md](JMDLeanASTWorldMaxCut.md).
+
+P0 source owners now committed on this PR branch: `scripts/build_jmd_lean_ast_world.py` (one shared `.dashi/repository.sqlite3` with native lean4export v3 name/universe/expression AST, type/value roots), `scripts/query_jmd_lean_ast_world.py` (only queue and structural discovery owner), `scripts/jmd_lean_world_intake_queue.py` (pinned tracked local source inventory), `scripts/jmd_lean_ast_batch_capture.py` (actual Lean #check then lean4export), and `scripts/jmd_lean_ast_world_batch.py` (bounded deterministic local-checkout ingestion).
+
+The 21,481 global and 1,996 Lean-starred entries are **source rosters only** until actual pinned repositories and native Lean exports are processed; no full AST census or proof reuse has yet been executed. AO gap finding and ITIR `itir.formal.route` consume this world only *after* it exists. No orchestration, external PRs, or LLM are required.

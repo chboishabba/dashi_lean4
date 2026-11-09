@@ -52,6 +52,7 @@ class IntakeTests(unittest.TestCase):
         with self.conn:
             out=intake.scan(self.conn,self.repo,9,self.sha)
         self.assertEqual(out["tracked_lean_sources"],2)
+        self.assertEqual(world.report(self.conn)["pinned_source_attestations"],1)
         rows=self.conn.execute("""SELECT source_path,sha256,git_blob_sha
             FROM jmd_lean_world_source_files ORDER BY source_path""").fetchall()
         self.assertEqual(len(rows),2)

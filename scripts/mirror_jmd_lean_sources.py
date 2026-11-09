@@ -107,7 +107,8 @@ def read_queue(path):
                 raise ValueError("Duplicate GitHub ID in queue")
             seen.add(ident)
             if obj.get("next_action") not in (
-                    "acquire-pinned-local-git-source","native-lean4export"):
+                    "acquire-pinned-local-git-source","native-lean4export",
+                    "expand-native-lean4export-coverage"):
                 raise ValueError("Bad queued work stage")
             records.append(obj)
     return records

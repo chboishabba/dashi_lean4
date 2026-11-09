@@ -119,18 +119,21 @@ def main(argv=None):
     p.add_argument("--out-checkouts",type=Path,required=True)
     p.add_argument("--out-failures",type=Path,required=True)
     p.add_argument("--max-repos",type=int,default=20)
+    p.add_argument("--offset",type=int,default=0,
+                   help="Zero-based offset into deterministic world queue")
     p.add_argument("--allow-network",action="store_true")
     p.add_argument("--sleep-seconds",type=float,default=2.25)
     args=p.parse_args(argv)
-    if args.sleep_seconds<0:
-        p.error("Negative sleep forbidden")
-    jobs=read_queue(args.queue)
+    if args.sleep_seconds<0 or args.offset<0 or args.max_repos<1:
+        p.error("Negative offset/sleep or unbounded batch forbidden")
+    jobs=read_queue(args.queue)[args.offset:]
     success,failed=acquire(jobs,args.mirror_root,allow_network=args.allow_network,
                            max_repos=args.max_repos,sleep_seconds=args.sleep_seconds)
     for dest,records in ((args.out_checkouts,success),(args.out_failures,failed)):
         dest.parent.mkdir(parents=True,exist_ok=True)
         dest.write_text("".join(json.dumps(x,sort_keys=True)+"\n" for x in records))
-    print(json.dumps({"jobs_considered":min(len(jobs),args.max_repos),
+    print(json.dumps({"queue_offset":args.offset,
+       "jobs_considered":min(len(jobs),args.max_repos),
        "local_pinned_checkouts":len(success),"unacquired_or_failed":len(failed),
        "network_allowed":args.allow_network,
        "compiled":0,"ast_exports_generated":0,"proofs_verified":0},sort_keys=True))

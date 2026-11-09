@@ -111,3 +111,9 @@ python scripts/jmd_lean_public_source_acquisition.py \
 **W02 expanded exact residual:** entire global corpus source acquisition is a substantial network, storage and licensing operation; its 21,481 entries are not claimed cloned or elaborated. A completed source manifest must record successes, explicit failures and the pinned original commit. Running third-party `lake` commands remains a *separate* opt-in action inside an isolated Nix environment.
 
 **Runtime verification:** the acquisition and AST-world scripts were committed with tests; those tests and the full source scan have not been run from the assistant's environment. No full AST coverage is yet established.
+
+## Real v3 export format cross-check (not a mathematical proof)
+
+`docs/roadmap/JMDLeanASTV3RealCorpusAudit.json` records an independent read-only inspection of the actual upstream artifact `formalverification/lean2agda/corpus/list-reverse-reverse/lean/term.ndjson` (GitHub blob `0361fcf36279860765d02211660b908ebe771c2b`). This is Lean 4.33.1, lean4export format 3.1.0, 1,073 NDJSON records, 195 nonroot name nodes, 14 universe nodes, 835 expression DAG nodes, and 41 declarations including the inductive group. Across every available declaration type, 21 value roots and seven recursor RHS roots, the independent walk found **zero absent expression or constant-name references**. The scan visited 1,536 expression instances across roots (not unique expression nodes).
+
+This is a **real third-party schema/closure observation**, not an execution of `build_jmd_lean_ast_world.py` or a Lean kernel check, and not evidence of any cross-prover theorem. It provides a meaningful external v3 regression target, unlike synthetic fixtures alone. The full 21,481-roster admission and AST census are still open.

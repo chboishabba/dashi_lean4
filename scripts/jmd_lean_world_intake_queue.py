@@ -131,8 +131,6 @@ def main(argv=None):
     try:
         if args.action=="inventory":
             with db:result=scan(db,args.checkout,args.github_id,args.commit)
-        elif args.action=="queue":
-            result={"work_queue":queue(db,args.limit),"authority":"repository/source-discovery-only"}
         else:
             if not SHA.fullmatch(args.commit):p.error("Full pinned commit required")
             result={"modules":source_worklist(db,args.github_id,args.commit),

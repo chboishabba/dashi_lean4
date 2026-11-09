@@ -60,6 +60,11 @@ def scan(db:sqlite3.Connection,root:Path,github_id:int,commit:str)->dict:
        FROM jmd_lean_world_repositories WHERE github_id=?""",(github_id,)).fetchone()
     if row is None or row[0].casefold()!=origin.casefold():
         raise ValueError("Source checkout identity differs from corpus GitHub numeric ID")
+    db.execute("""INSERT INTO jmd_lean_world_source_attestations
+      (github_id,source_commit,origin,verification_method)
+      VALUES(?,?,?,'pinned-clean-local-git')
+      ON CONFLICT(github_id,source_commit) DO UPDATE SET origin=excluded.origin""",
+      (github_id,commit,origin))
     tracked=subprocess.run(["git","ls-files","-z","--","*.lean"],
         cwd=root,capture_output=True,check=True).stdout
     paths=[p.decode("utf-8") for p in tracked.split(b"\0") if p]

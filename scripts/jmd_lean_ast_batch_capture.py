@@ -59,6 +59,8 @@ def source_candidates(content:str, *, module:str) -> list[str]:
         if not match:
             continue
         name=match.group(1)
+        if name=="_":
+            continue
         # A file may include multiple namespaces, and module names need not
         # be prefixes of declaration names. Exporter resolves actual owners.
         prefix=".".join(x for role,x in scopes if role=="namespace" and x)
@@ -104,8 +106,8 @@ def capture(root:Path, *, github_id:int, repo:str, commit:str, module:str,
     if not IDENT.fullmatch(module) or not 1<=limit<=2000 or not 1<=timeout<=1200:
         raise ValueError("Invalid module or resource limits")
     candidate_path=(root/source).resolve()
-    if not candidate_path.is_relative_to(root) or not candidate_path.is_file():
-        raise ValueError("Lean source path escape or missing source")
+    if not candidate_path.is_relative_to(root) or not candidate_path.is_file() or candidate_path.suffix!=".lean":
+        raise ValueError("Lean source path escape, wrong extension or missing source")
     tracked=git(root,"ls-files","--",str(source))
     if str(source) not in tracked.splitlines():
         raise ValueError("Lean source file is not tracked")
@@ -115,6 +117,8 @@ def capture(root:Path, *, github_id:int, repo:str, commit:str, module:str,
                 "status":"no-recognised-source-headers",
                 "coverage_complete":False}
     out=out.resolve()
+    if out.is_relative_to(root):
+        raise ValueError("Export observations must be written outside source checkout")
     out.mkdir(parents=True,exist_ok=True)
     receipts=[]
     manifest=[]
@@ -135,7 +139,7 @@ def capture(root:Path, *, github_id:int, repo:str, commit:str, module:str,
             continue
         code,export,stderr=run_checked(root,
             ["lake","exe","lean4export",module,"--",name],timeout)
-        if code or not export:
+        if code or not export or len(export)>200_000_000:
             receipts.append({"declaration":name,"status":"export-failed",
                              "stderr_sha256":hashlib.sha256(stderr).hexdigest()})
             continue

@@ -10,6 +10,7 @@ actual Agda source file or real line. All resulting relations are candidates.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 from pathlib import Path
 from build_jmd_lean_ast_world import connect
@@ -45,7 +46,9 @@ def projection(conn,limit=0):
           (exp,name))})
         # Discovery text is not a printed theorem type; the full native
         # AST is retained separately with exact source/exporter provenance.
-        signature="lean-native-ast-refset ["+", ".join(refs)+"]"
+        signature="lean-native-ast-fingerprint "+fingerprint+" refs ["+", ".join(refs)+"]"
+        normalized=signature.lower()
+        signature_sha=hashlib.sha256(normalized.encode("utf-8")).hexdigest()
         conn.execute("""INSERT INTO repo_files
            (path,language,module,mtime_ns,size,sha256,indexed_at)
            VALUES(?, 'lean-ast-export', ?, 0, 0, ?, 0)
@@ -73,7 +76,7 @@ def projection(conn,limit=0):
               normalized_signature=excluded.normalized_signature,
               signature_sha256=excluded.signature_sha256,
               body_sha256=excluded.body_sha256""",
-            (symbol,signature,signature.lower(),fingerprint,""))
+            (symbol,signature,normalized,signature_sha,""))
         conn.execute("DELETE FROM repo_refs WHERE from_symbol=? AND ref_kind='lean-export-type-ref'",
                      (symbol,))
         conn.executemany("""INSERT INTO repo_refs

@@ -181,31 +181,81 @@ def nodes_from_export(path):
     return {"names":names,"exprs":exprs,"decls":decls,"meta":meta,
             "sha":content_sha.hexdigest()}
 
+def _expr_children(node):
+    for kind,data in node.items():
+        if not isinstance(data,dict):
+            continue
+        for field in ("type","body","fn","arg","value","expr","proof","motive"):
+            if field in data and type(data[field]) is int:
+                yield data[field]
+
 def reachable(root, exprs, names):
-    """Visit the actual indexed expression DAG, never guessed source tokens."""
+    """Non-recursive walk over the native Lean expression DAG."""
+    pending=[root]
     seen=set()
     consts=set()
-    def visit(idx):
-        idx=int(idx)
+    while pending:
+        idx=pending.pop()
         if idx in seen:
-            return
+            continue
         if idx not in exprs:
             raise ValueError("Expression reference not in exporter AST: "+str(idx))
         seen.add(idx)
         node=exprs[idx]
         for kind,data in node.items():
-            if not isinstance(data,dict):
-                continue
-            if kind=="const":
+            if kind=="const" and isinstance(data,dict):
                 name=int(data["name"])
                 if name not in names:
                     raise ValueError("Unresolved Lean constant name")
                 consts.add(names[name])
-            for field in ("type","body","fn","arg","value","expr","proof","motive"):
-                if field in data and isinstance(data[field],int) and not isinstance(data[field],bool):
-                    visit(data[field])
-    visit(root)
+        pending.extend(_expr_children(node))
     return seen,consts
+
+def expression_fingerprint(root, exprs, names):
+    """Bottom-up bounded DAG digest, not an exponentially expanded tree.
+
+    Node IDs and binder variable names are intentionally omitted; binder info,
+    constants, universe arguments and constructor roles are preserved.
+    This is a *candidate fingerprint*, never a verified equivalence.
+    """
+    todo=[(root,False)]
+    memo={}
+    active=set()
+    while todo:
+        idx,done=todo.pop()
+        if idx in memo:
+            continue
+        if idx not in exprs:
+            raise ValueError("Expression reference absent")
+        if not done:
+            if idx in active:
+                raise ValueError("Cyclic native expression graph")
+            active.add(idx)
+            todo.append((idx,True))
+            for child in _expr_children(exprs[idx]):
+                if child not in memo:
+                    todo.append((child,False))
+            continue
+        obj=exprs[idx]
+        form={}
+        for kind,data in sorted(obj.items()):
+            if not isinstance(data,dict):
+                form[kind]=data
+                continue
+            fields={}
+            for key,value in sorted(data.items()):
+                if key=="name" and kind=="const":
+                    fields[key]=names[int(value)]
+                elif key=="name" and kind in ("lam","forallE","letE"):
+                    fields[key]="<bound>"
+                elif key in ("type","body","fn","arg","value","expr","proof","motive") and type(value) is int:
+                    fields[key]=memo[value]
+                else:
+                    fields[key]=value
+            form[kind]=fields
+        memo[idx]=digest(form)
+        active.remove(idx)
+    return memo[root]
 
 def import_export(conn, row):
     repo_id=int(row["github_id"])
@@ -250,34 +300,10 @@ def import_export(conn, row):
         value_refs=set()
         if isinstance(value_root,int):
             _,value_refs=reachable(value_root,ast["exprs"],ast["names"])
-        # Fingerprint over root's expression graph and referenced constant
-        # names, independent of exporter allocation order; candidate only.
-        def fingerprint(root_id):
-            memo={}
-            def encode(idx):
-                if idx in memo:
-                    return memo[idx]
-                node=ast["exprs"][idx]
-                out={}
-                for key,value in sorted(node.items()):
-                    if isinstance(value,dict):
-                        fields={}
-                        for fk,fv in sorted(value.items()):
-                            if fk=="name" and key=="const":
-                                fields[fk]=ast["names"][int(fv)]
-                            elif fk in ("type","body","fn","arg","value","expr","proof","motive") and type(fv) is int:
-                                fields[fk]=encode(fv)
-                            else:
-                                fields[fk]=fv
-                        out[key]=fields
-                    else:
-                        out[key]=value
-                memo[idx]=out
-                return out
-            return digest(encode(root_id))
+        # Checked-environment AST fingerprint; candidate-only.
         conn.execute("""INSERT INTO jmd_lean_world_declarations
           VALUES(?,?,?,?,?,'exporter-ast')""",
-          (export_id,name,kind,root,value_root,fingerprint(root)))
+          (export_id,name,kind,root,value_root,expression_fingerprint(root,ast["exprs"],ast["names"])))
         conn.executemany("INSERT OR IGNORE INTO jmd_lean_world_refs VALUES(?,?,?,?)",
           ((export_id,name,ref,"type") for ref in sorted(type_refs)))
         conn.executemany("INSERT OR IGNORE INTO jmd_lean_world_refs VALUES(?,?,?,?)",

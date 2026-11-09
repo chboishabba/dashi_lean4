@@ -422,6 +422,9 @@ def report(conn):
         "SELECT count(*) FROM jmd_lean_world_repositories WHERE starred=1").fetchone()[0]
     out["starred_only"]=conn.execute(
         "SELECT count(*) FROM jmd_lean_world_repositories WHERE starred=1 AND global_discovered=0").fetchone()[0]
+    out["repositories_with_some_ast"]=conn.execute(
+        "SELECT COUNT(DISTINCT github_id) FROM jmd_lean_world_exports").fetchone()[0]
+    out["repositories_certified_ast_complete"]=0
     out["metadata_only_repositories"]=conn.execute(
         "SELECT count(*) FROM jmd_lean_world_repositories WHERE stage='metadata'").fetchone()[0]
     out["authority"]="native Lean AST candidate index; no theorem equivalence or kernel proof inferred"

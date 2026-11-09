@@ -49,8 +49,18 @@ def connect(path: Path):
         starred INTEGER NOT NULL DEFAULT 0 CHECK(starred IN (0,1)),
         global_discovered INTEGER NOT NULL DEFAULT 0 CHECK(global_discovered IN (0,1)),
         corpus_snapshot TEXT NOT NULL, stage TEXT NOT NULL DEFAULT 'metadata'
-          CHECK(stage IN ('metadata','exported-ast'))
+          CHECK(stage IN ('metadata','source-inventory','exported-ast'))
     );
+    CREATE TABLE IF NOT EXISTS jmd_lean_world_source_files (
+        github_id INTEGER NOT NULL REFERENCES jmd_lean_world_repositories(github_id),
+        source_commit TEXT NOT NULL, source_path TEXT NOT NULL,
+        git_blob_sha TEXT NOT NULL, sha256 TEXT NOT NULL,
+        bytes INTEGER NOT NULL, module_hint TEXT NOT NULL,
+        authority TEXT NOT NULL CHECK(authority='git-tracked-source'),
+        PRIMARY KEY(github_id,source_commit,source_path)
+    );
+    CREATE INDEX IF NOT EXISTS idx_jmd_lean_world_source_modules
+        ON jmd_lean_world_source_files(module_hint);
     CREATE TABLE IF NOT EXISTS jmd_lean_world_exports (
         export_id INTEGER PRIMARY KEY,
         github_id INTEGER NOT NULL REFERENCES jmd_lean_world_repositories(github_id),
@@ -131,7 +141,7 @@ def import_repositories(conn, csv_path, snapshot, starred_path=None):
                 ON CONFLICT(github_id) DO UPDATE SET
                   default_branch=excluded.default_branch,
                   primary_language=excluded.primary_language,
-                  starred=excluded.starred,
+                  starred=MAX(jmd_lean_world_repositories.starred,excluded.starred),
                   global_discovered=1,corpus_snapshot=excluded.corpus_snapshot""",
                 (ident,name,r["default_branch"],r.get("language",""),int(ident in star_rows),1,snapshot))
             count+=1
@@ -341,6 +351,7 @@ def report(conn):
     tables={"repositories":"jmd_lean_world_repositories",
             "native_ast_exports":"jmd_lean_world_exports",
             "native_ast_nodes":"jmd_lean_world_ast",
+            "git_tracked_lean_sources":"jmd_lean_world_source_files",
             "declarations":"jmd_lean_world_declarations",
             "dependency_edges":"jmd_lean_world_refs"}
     out={k:conn.execute("SELECT count(*) FROM "+v).fetchone()[0] for k,v in tables.items()}

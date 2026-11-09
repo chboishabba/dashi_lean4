@@ -223,3 +223,46 @@ The script's synthetic fixtures were tested during development. **The full 21,48
 | **P3.02** | Preserve private/unpublished DASHI material: **no external PR, issue, comment, message, or upstream source upload** unless separately authorised | Mandatory invariant |
 
 These gate labels are **integration milestones**, not newly defined Agda/Lean theorem names. The mathematics should be placed with its existing closest owner in the Agda/Lean formal dependency graph, not in a competing world-index package. SLR/PNF is optional for human navigation and never proof authority.
+
+
+## 2026-11-09 implemented LLM-free formal-world spine
+
+Canonical script/Agda proof owners were added to the companion
+[dashi_agda #1477](https://github.com/chboishabba/dashi_agda/pull/1477):
+
+- \`scripts/jmd_formal_world_reconcile.py\`: single existing \`.dashi/repository.sqlite3\`
+  database; image-to-owner search on original Agda symbols; native
+  \`repo_requirements\` discovery; selected external Lean source admission
+  using the 21,481-repository CSV; candidate-only formal links; opt-in
+  \`lake env lean\` exact proof probes; changed-goal dependency closure.
+- \`scripts/jmd_attach_wikidata_oeis.py\`: detects QID/OEIS coordinates
+  only within AST-indexed Agda declaration source spans and records them
+  as evidence, **not** theorem equivalences.
+- \`DASHI/Interop/JMDFormalWorldReconciliationExact.agda\`: typed
+  candidate-vs-proof firewall; proof-term-bearing implications and
+  equivalences; composition; world-pair provenance preservation; imported
+  through the canonical Interop aggregate.
+- \`Docs/roadmap/JMDFormalWorldAutomaticExecution.md\`: executable command
+  contract, safety boundary, verification instructions and remaining
+  exact mathematical bridges.
+
+This Lean branch now includes \`scripts/extract_jmd_lean_declarations.py\`
+for pinned Lean \`#check\`/\`#print axioms\` inspection and
+\`scripts/test_extract_jmd_lean_declarations.py\` for source-revision,
+identifier and checker-failure regression fixtures. This extends existing
+PR #78's source-aware OpenAI-math owner routing; no second index or LLM
+orchestration is introduced.
+
+**Statuses:** Code and Agda definitions are source-written and committed.
+The assistant environment lacks installed Lean and Agda compilers and
+cannot execute the user's local \`.dashi/repository.sqlite3\`, so neither
+kernel acceptance nor full-corpus live world matching is claimed here.
+\`dashi_lean4\` source selection is on-demand, not a claim that 21,481
+repositories have been cloned or their declarations elaborated.
+
+**Actual remaining hard frontier:** (1) local checker/test execution,
+(2) automatic source-faithful selection and elaboration at scale, (3)
+a fully checked shared-object translation between chosen Lean and Agda
+types, (4) a real proof reuse that discharges the original Agda
+obligation, (5) incremental invalidation replay on real updated source.
+The deterministic pipeline can leave those open without false promotion.

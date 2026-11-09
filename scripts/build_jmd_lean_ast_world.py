@@ -334,7 +334,7 @@ def expression_fingerprint(root, exprs, names, levels=None):
                     fields[key]=[level_hash(x) for x in value]
                 elif key=="name" and kind in ("lam","forallE","letE"):
                     fields[key]="<bound>"
-                elif key in ("type","body","fn","arg","value","expr","proof","motive") and type(value) is int:
+                elif key in ("type","body","fn","arg","value","expr","proof","motive","struct") and type(value) is int:
                     fields[key]=memo[value]
                 else:
                     fields[key]=value
@@ -390,6 +390,11 @@ def import_export(conn, row):
         value_refs=set()
         if isinstance(value_root,int):
             _,value_refs=reachable(value_root,ast["exprs"],ast["names"])
+        # Recursor computation rules are expressions even without a value root.
+        for rule in decl.get("rules",[]):
+            if isinstance(rule,dict) and type(rule.get("rhs")) is int:
+                _,refs=reachable(rule["rhs"],ast["exprs"],ast["names"])
+                value_refs.update(refs)
         # Checked-environment AST fingerprint; candidate-only.
         conn.execute("""INSERT INTO jmd_lean_world_declarations
           VALUES(?,?,?,?,?,?,'exporter-ast')""",
@@ -426,15 +431,20 @@ def report(conn):
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--database",type=Path,default=Path(".dashi/repository.sqlite3"))
-    p.add_argument("--repositories",type=Path,required=True)
+    p.add_argument("--repositories",type=Path)
     p.add_argument("--stars",type=Path)
     p.add_argument("--exports",type=Path)
     p.add_argument("--snapshot",default="jmd-lean-global-2026-11-09")
     args=p.parse_args(argv)
+    if not args.repositories and not args.exports:
+        p.error("Specify --repositories and/or --exports")
+    if args.stars and not args.repositories:
+        p.error("--stars requires --repositories")
     conn=connect(args.database)
     try:
-        with conn:
-            import_repositories(conn,args.repositories,args.snapshot,args.stars)
+        if args.repositories:
+            with conn:
+                import_repositories(conn,args.repositories,args.snapshot,args.stars)
         if args.exports:
             with args.exports.open(encoding="utf8") as fh:
                 for n,line in enumerate(fh,1):

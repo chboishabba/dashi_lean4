@@ -48,7 +48,8 @@ def index_one(conn:sqlite3.Connection, row:dict, *,max_files:int=0)->dict:
     revision=git(root,"rev-parse","HEAD").decode().strip()
     if not SHA.fullmatch(revision):
         raise ValueError("Cannot pin checkout revision")
-    dirty=git(root,"status","--porcelain","--untracked-files=no","--","*.lean")
+    dirty=git(root,"status","--porcelain","--untracked-files=no","--",
+              "*.lean","lakefile.lean","lakefile.toml","lean-toolchain","lake-manifest.json")
     if dirty:
         raise ValueError("Tracked Lean source modified; do not claim pinned source")
     raw=git(root,"ls-files","-s","-z","--","*.lean")
@@ -90,26 +91,45 @@ def index_one(conn:sqlite3.Connection, row:dict, *,max_files:int=0)->dict:
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--database",type=Path,default=Path(".dashi/repository.sqlite3"))
-    p.add_argument("--checkouts",type=Path,required=True,help="JSONL of local pinned repositories")
+    p.add_argument("--checkouts",type=Path,help="JSONL of local pinned repositories")
+    p.add_argument("--mirrors-root",type=Path,help="Existing pinned checkouts named by numeric GitHub ID")
     p.add_argument("--max-files-per-repo",type=int,default=10000)
     p.add_argument("--max-repos",type=int,default=0,help="0 means all listed checkouts")
     args=p.parse_args(argv)
+    if bool(args.checkouts)==bool(args.mirrors_root):
+        p.error("Provide exactly one of --checkouts or --mirrors-root")
     if args.max_repos<0 or args.max_files_per_repo<0:
         p.error("Cannot configure negative limits")
     conn=connect(args.database)
     rows=[]
     try:
-        with args.checkouts.open(encoding="utf-8") as stream:
-            for line in stream:
-                if line.strip():
-                    rows.append(json.loads(line))
+        absent=0
+        if args.checkouts:
+            with args.checkouts.open(encoding="utf-8") as stream:
+                for line in stream:
+                    if line.strip():
+                        rows.append(json.loads(line))
+        else:
+            root=args.mirrors_root.resolve(strict=True)
+            for ident,name in conn.execute("""SELECT github_id,full_name
+                 FROM jmd_lean_world_repositories
+                 ORDER BY starred DESC,github_id"""):
+                checkout=root/str(ident)
+                if not checkout.is_dir():
+                    absent+=1
+                    continue
+                rows.append({"github_id":ident,"full_name":name,
+                             "checkout":str(checkout)})
+                if args.max_repos and len(rows)>=args.max_repos:
+                    break
         if args.max_repos:
             rows=rows[:args.max_repos]
         result=[]
         for row in rows:
             with conn:
                 result.append(index_one(conn,row,max_files=args.max_files_per_repo))
-        print(json.dumps({"checkouts":result,"world":report(conn)},sort_keys=True,indent=2))
+        print(json.dumps({"checkouts":result,"missing_local_mirrors":absent,
+                          "world":report(conn)},sort_keys=True,indent=2))
     finally:
         conn.close()
 

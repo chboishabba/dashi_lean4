@@ -42,13 +42,18 @@ def queue(conn,limit=0):
 
 def equivalent_type_candidates(conn,limit=30):
     """Exact AST fingerprint is not necessarily definitional equality."""
-    hashes=conn.execute("""SELECT type_fingerprint,COUNT(DISTINCT export_id)
-       FROM jmd_lean_world_declarations
-       GROUP BY type_fingerprint HAVING COUNT(DISTINCT export_id)>1
-       ORDER BY COUNT(DISTINCT export_id) DESC,type_fingerprint LIMIT ?""",
+    hashes=conn.execute("""SELECT d.type_fingerprint,e.lean_revision,
+            COUNT(DISTINCT e.github_id) AS repositories,
+            COUNT(*) AS declarations
+       FROM jmd_lean_world_declarations d
+       JOIN jmd_lean_world_exports e ON e.export_id=d.export_id
+       GROUP BY d.type_fingerprint,e.lean_revision
+       HAVING COUNT(DISTINCT e.github_id)>1
+       ORDER BY repositories DESC,declarations DESC,d.type_fingerprint LIMIT ?""",
        (limit,)).fetchall()
     return [{
-        "type_fingerprint":h,"export_count":n,
+        "type_fingerprint":h,"lean_revision":lean_revision,
+        "distinct_repositories":n,"declarations":count,
         "candidates":[{
             "repository":repo,"source_commit":rev,"module":module,
             "declaration":name,"kind":kind,"source_export":sha,
@@ -57,11 +62,12 @@ def equivalent_type_candidates(conn,limit=30):
              FROM jmd_lean_world_declarations d
              JOIN jmd_lean_world_exports e ON e.export_id=d.export_id
              JOIN jmd_lean_world_repositories r ON r.github_id=e.github_id
-             WHERE d.type_fingerprint=?
-             ORDER BY e.github_id,e.source_commit,e.module,d.name LIMIT 100""",(h,))
+             WHERE d.type_fingerprint=? AND e.lean_revision=?
+             ORDER BY e.github_id,e.source_commit,e.module,d.name LIMIT 100""",
+             (h,lean_revision))
         ],"authority":"structural-candidate-only",
         "establishes_equivalence":False
-    } for h,n in hashes]
+    } for h,lean_revision,n,count in hashes]
 
 def related_constants(conn,constant,limit=50):
     sql="""SELECT r.full_name,e.source_commit,e.module,ref.declaration,

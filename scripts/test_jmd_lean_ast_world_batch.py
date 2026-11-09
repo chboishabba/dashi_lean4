@@ -94,6 +94,7 @@ class BatchTests(unittest.TestCase):
         self.assertEqual(result["repositories_blocked"],0)
         self.assertEqual(result["ast_exports_imported"],1)
         self.assertEqual(world.report(self.db)["declarations"],1)
+        self.assertEqual(world.report(self.db)["ast_exports_with_git_source_attestation"],1)
         self.assertEqual(result["proofs_certified"],0)
 
     def test_duplicate_source_checkpoint_rejected(self):

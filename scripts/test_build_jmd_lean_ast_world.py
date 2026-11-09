@@ -69,6 +69,24 @@ class WorldTests(unittest.TestCase):
         self.assertEqual(r["metadata_only_repositories"],2)
         self.assertEqual(r["declarations"],0)
 
+    def test_global_and_starred_union_by_numeric_identity(self):
+        self.stars=pathlib.Path(self.tmp.name)/"stars.csv"
+        self.stars.write_text(
+            "github_id,full_name,default_branch,language\n"
+            "9,owner/repository,main,Lean\n"
+            "11,starred/only,main,Lean\n")
+        with self.con:
+            self.assertEqual(world.import_repositories(self.con,self.csv,
+                         "unit-test",self.stars),2)
+        result=world.report(self.con)
+        self.assertEqual(result["repositories"],3)
+        self.assertEqual(result["global_discovered"],2)
+        self.assertEqual(result["starred_lean"],2)
+        self.assertEqual(result["starred_only"],1)
+        # Repeat without the optional star file; provenance must not vanish.
+        with self.con: world.import_repositories(self.con,self.csv,"unit-test")
+        self.assertEqual(world.report(self.con)["starred_lean"],2)
+
     def test_native_ast_ingest_is_idempotent(self):
         self.setup_repos()
         with self.con:

@@ -113,7 +113,9 @@ theorem lowerMetricComparison_forces_injective
     Function.Injective encode := by
   intro x y hxy
   have h := comparison x y
-  rw [hxy, dist_self, mul_zero] at h
+  have hcode : dist (encode x) (encode y) = 0 := by
+    rw [hxy, dist_self]
+  rw [hcode, mul_zero] at h
   by_contra hne
   have hdist : 0 < dist x y := (dist_pos).2 hne
   have hpositive : 0 < lower * dist x y := mul_pos lowerPositive hdist

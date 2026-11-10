@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-EXPECTED = {
+NUMINA_REVIEWED_HEAD = "a26427e3c2fcaf9f98694fbd0d4dd49e41dcf5e3"\n\nEXPECTED = {
     "toolchain": "leanprover/lean4:v4.32.0-rc1",
     "lean_githash": "b4812ae53eea93439ad5dce5a5c26591c31cb697",
     "bytedance_commit": "42f739b484fd055e0aa29601c35677ad996f2ef2",
@@ -36,7 +36,7 @@ def inspect(root):
     upstream = root / "upstream/3d-sticky-kakeya"
     if output("git", "rev-parse", "HEAD", cwd=upstream) != EXPECTED["bytedance_commit"]:
         raise ValueError("sticky upstream revision mismatch")
-    for checkout in (root, upstream):
+    if output("git", "rev-parse", "HEAD", cwd=root) != NUMINA_REVIEWED_HEAD:\n        raise ValueError("Numina source HEAD differs from reviewed pin")\n    for checkout in (root, upstream):
         if output("git", "status", "--porcelain", "--untracked-files=normal", cwd=checkout):
             raise ValueError(f"dirty checkout: {checkout}")
     return upstream
@@ -50,7 +50,7 @@ def main():
     args = parser.parse_args()
     if args.jobs < 1:
         parser.error("jobs must be positive")
-    record = {"status": "not_run", "pins": EXPECTED,
+    record = {"status": "not_run", "pins": EXPECTED, "numina_reviewed_head": NUMINA_REVIEWED_HEAD,
               "command": ["python3", "verification/check.py", "--scope", "full",
                           "--require-clean", "--jobs", str(args.jobs)]}
     try:

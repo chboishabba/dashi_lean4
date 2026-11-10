@@ -63,3 +63,36 @@ The Agda `NSTriadKNRationalOrderedFiniteL2` Gram proof handles pairs of rational
 | L8 | Investigate claimed stronger maximal-function and 4D results as separate proof obligations | Open |
 
 Do not change the external repository's theorem statements or claim a theorem has been proved by DASHI solely because it exists in a different formal system. Distinguish external proof verification, a trusted exported receipt, and internal Agda kernel proof. Do not vendor upstream code or libraries. Do not use CI as the only proof evidence.
+
+## No-CI local verification entrypoint (2026-11-10)
+
+The repository now has `scripts/verify_external_kakeya.py`. It checks an
+**existing clean** local Project Numina checkout against the official pinned
+bridge-lock (including Mathlib manifest hash, Lean toolchain, and sticky source
+commit) and only then delegates to the upstream official verification suite.
+
+From the dashi_lean4 checkout, use:
+
+```sh
+python3 scripts/verify_external_kakeya.py /absolute/path/to/kakeya-3d \
+  --receipt /absolute/path/to/kakeya-preflight.json
+python3 scripts/verify_external_kakeya.py /absolute/path/to/kakeya-3d \
+  --execute --jobs 2 \
+  --receipt /absolute/path/to/kakeya-full-run.json
+```
+
+Prepare the external checkout using **its own** instructions, including
+`lake exe cache get` and
+`git submodule update --init upstream/3d-sticky-kakeya`.
+Do not vendor these sources or mutate the main DASHI Lean toolchain.
+The official suite writes detailed stage logs and receipts under its own
+`.verification-results/`; the launcher receipt alone is only status routing.
+
+This wrapper has **not** executed a full proof build in this conversation.
+Lean, Lake, Agda and Nix are unavailable in the current runtime, and network
+git is unavailable. The script source and the negative preflight path were
+checked with local Python tooling; that is not a successful proof receipt.
+A successful `preflight_pass` is not equivalent to `verification_pass`.
+
+The external project's full verification documentation is
+https://github.com/project-numina/kakeya-3d/blob/main/RELEASING.md .

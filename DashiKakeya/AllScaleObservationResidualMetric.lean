@@ -1,4 +1,4 @@
-import Mathlib
+import DashiKakeya.NeedleTubeTransport
 
 /-!
 # Correct all-scale quotient/residual metric bridge
@@ -19,7 +19,7 @@ Kakeya or Yang--Mills estimate.
 
 namespace DashiKakeya
 
-universe u v
+universe u v w
 
 variable {Physical : Type u} {Code : Type v}
 variable [PseudoMetricSpace Physical]
@@ -76,5 +76,59 @@ theorem allScaleDecodedMetricComparison (n : ℕ) (x y : Physical) :
 with an actual observer-state/context and prove ε_n tends to zero
 (or the weaker scale-uniform distortion needed by an application).
 Neither p-adic completion nor dimensional signature forces it. -/
+
+
+/-- A genuine metric tube at any selected scale survives lossy
+observation, with a precisely quantified 2ε_n radius inflation.
+The *decoded curve* is not automatically a Euclidean straight line. -/
+theorem needleTube_decode_radiusInflation
+    (n : ℕ) (needle : ℝ → Physical)
+    (radius : ℝ) (point : Physical)
+    (h : inNeedleTube needle radius point) :
+    inNeedleTube
+      (fun t => a.decode n (a.encode n (needle t)))
+      (radius + 2 * a.residual n)
+      (a.decode n (a.encode n point)) := by
+  obtain ⟨t, ht, hdist⟩ := h
+  refine ⟨t, ht, ?_⟩
+  have hdecoded :=
+    decodedDistance_le_physical_add_twiceResidual a n point (needle t)
+  exact hdecoded.trans (add_le_add_right hdist _)
+
+/-- The correct selected family is a UNION of tubes, and the same
+explicit radius inflation applies to whichever original direction
+witnesses the source point. -/
+theorem directionalTubeUnion_decode_radiusInflation
+    {Direction : Type w} (n : ℕ)
+    (needle : Direction → ℝ → Physical)
+    (radius : ℝ) (point : Physical)
+    (h : ∃ d : Direction, inNeedleTube (needle d) radius point) :
+    ∃ d : Direction,
+      inNeedleTube
+        (fun t => a.decode n (a.encode n (needle d t)))
+        (radius + 2 * a.residual n)
+        (a.decode n (a.encode n point)) := by
+  obtain ⟨d, hd⟩ := h
+  exact ⟨d, needleTube_decode_radiusInflation a n (needle d)
+    radius point hd⟩
+
+/-- If an independent actual geometrical source proves that the
+decoded needle is the chosen target needle at all t, the same
+quantitative tube inclusion holds around that target. -/
+theorem selectedStraightNeedle_decode_radiusInflation
+    (n : ℕ) (source target : ℝ → Physical)
+    (radius : ℝ) (point : Physical)
+    (sameOriginalNeedle : ∀ t,
+      a.decode n (a.encode n (source t)) = target t)
+    (h : inNeedleTube source radius point) :
+    inNeedleTube target
+      (radius + 2 * a.residual n)
+      (a.decode n (a.encode n point)) := by
+  obtain ⟨t, ht, hd⟩ := h
+  refine ⟨t, ht, ?_⟩
+  have hdecoded :=
+    decodedDistance_le_physical_add_twiceResidual a n point (source t)
+  rw [sameOriginalNeedle t] at hdecoded
+  exact hdecoded.trans (add_le_add_right hd _)
 
 end DashiKakeya

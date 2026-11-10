@@ -140,3 +140,41 @@ spacetime emergence, NS regularity or a Yang--Mills mass gap.
 Separate these from the formally already solved 3D dimension theorem.
 New files remain uncompiled in this interaction; keep all PRs draft
 pending Agda 2.9 and Lean build receipts, with no CI dependency.
+
+## 10 November: genuine needle and metric tube transport (source-written)
+
+`DashiKakeya/NeedleTubeTransport.lean` now proves the correct
+**original-needle containment** and **tube-union transport** boundaries.
+
+1. `inNeedleTube`: a metric closed radius-r neighbourhood of the
+   *parametrized* segment `t ∈ [0,1]`. It uses the same selected
+   metric-space distance and does not assume that every curve is straight.
+2. `needleTube_iff_of_same_metric`: exact membership iff for the
+   same source/target needle and a distance-preserving map.
+3. `needleTube_image_of_surjective`: equal neighbourhood sets
+   provided the map is surjective.
+4. `containsDirectionalNeedles`,
+   `needleContainment_image`,
+   `needleContainment_reflect`: actual Kakeya-relevant all-direction
+   containment and forward/reverse transport.
+5. `directionalTubeUnion_image`: proper **union** of direction tubes,
+   not the intersection diagnostic.
+
+Every source needle `src d t` must be proved to map to the
+**correct straight Euclidean target needle** `dst d t`.
+The previous `allDirectionalTubes_iff` is only a diagnostic about
+pointwise intersection of all tubes, not a formal Kakeya-set definition.
+
+Original physical-space-to-Euclidean isometry, same physical time/state/
+context, global coverage of every projective direction, Borel/Hausdorff
+dimension transport and admissibility of the actual original
+observer-selected set remain separate; the external theorem is still
+due to Wang--Zahl / Guth--Wang--Zahl and its formalisation teams.
+
+The companion Agda branch #1488 now introduces
+`SameObjectAllScaleComparison` and
+`UniformSameObjectComparison` for direct reuse of the original
+Balaban RG two-metric theorem at every cutoff. No standalone
+positive all-scale original-source coefficient proof has been claimed.
+
+No CI used. Lean/Agda local kernel receipts remain outstanding.

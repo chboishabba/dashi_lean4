@@ -177,3 +177,9 @@ globs = ["NSBCyclicOrbit", "NSBControl.CyclicHelicalVectorTransform", "NSBContro
 name = "QuantumMereology"
 srcDir = "DASHI/output-final_aristotle"
 globs = ["RequestProject.Mereology", "RequestProject.QuantumMereology", "RequestProject.QuantumMereologySelection", "RequestProject.QuantumMereologySelectionRegression", "RequestProject.QuantumMereologyObserverBridge", "RequestProject.QuantumMereologyFiniteLinearTPS", "RequestProject.QuantumMereologyInnerProductTPS", "RequestProject.QuantumMereologyOperatorLocality", "RequestProject.QuantumMereologyHamiltonianTransport", "RequestProject.QuantumMereologySchwingerObjective", "RequestProject.QuantumMereologyCandidatePointerObservable", "RequestProject.QuantumMereologyReducedState", "RequestProject.QuantumMereologyPointerProbability", "RequestProject.QuantumMereologyDensityEvolution", "RequestProject.QuantumMereologyEntropyAcceleration", "RequestProject.QuantumMereologySchwingerProducer", "RequestProject.QuantumMereologyHamiltonianExponential", "RequestProject.QuantumMereologyExponentialDerivative", "RequestProject.QuantumMereologyMaxCut", "RequestProject.QuantumMereologyMaxCutRegression"]
+
+# Opt-in local finite Kakeya incidence adapter. The external full Kakeya
+# formalization has a different Lean/Mathlib pin; keep it isolated.
+[[lean_lib]]
+name = "DashiKakeya"
+globs = ["DashiKakeya.*"]

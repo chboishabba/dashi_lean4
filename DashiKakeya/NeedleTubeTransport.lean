@@ -112,4 +112,61 @@ that each needle is contained in the set. Neither that selection,
 nor Hausdorff-dimension transport, is asserted in this module.
 -/
 
+
+/-- Unit needle containment: this, unlike an intersection of tubes,
+is the geometric predicate required by Kakeya. -/
+def containsDirectionalNeedles (K : Set X)
+    (needles : Direction → ℝ → X) : Prop :=
+  ∀ d t, t ∈ Set.Icc (0 : ℝ) 1 → needles d t ∈ K
+
+/-- The image of a set with all selected needles still contains them,
+provided exactly the same parametrised segments are mapped. -/
+theorem needleContainment_image
+    (F : X → Y) (K : Set X)
+    (src : Direction → ℝ → X) (dst : Direction → ℝ → Y)
+    (sameNeedles : ∀ d t, F (src d t) = dst d t)
+    (h : containsDirectionalNeedles K src) :
+    containsDirectionalNeedles (F '' K) dst := by
+  intro d t ht
+  exact ⟨src d t, h d t ht, sameNeedles d t⟩
+
+/-- If the image is transported, selected source needles can be
+recovered when the metric map is injective. -/
+theorem needleContainment_reflect
+    (F : X → Y) (K : Set X)
+    (src : Direction → ℝ → X) (dst : Direction → ℝ → Y)
+    (sameNeedles : ∀ d t, F (src d t) = dst d t)
+    (injective : Function.Injective F)
+    (h : containsDirectionalNeedles (F '' K) dst) :
+    containsDirectionalNeedles K src := by
+  intro d t ht
+  obtain ⟨x, hx, imageEq⟩ := h d t ht
+  have xEq : x = src d t :=
+    injective (imageEq.trans (sameNeedles d t).symm)
+  exact xEq ▸ hx
+
+/-- A family of tubes is naturally taken by UNION over the selected
+directions, not intersection. Exact correspondence follows from
+surjectivity and the shared direction parametrisation. -/
+theorem directionalTubeUnion_image
+    (F : X → Y)
+    (src : Direction → ℝ → X)
+    (dst : Direction → ℝ → Y)
+    (radius : ℝ)
+    (distancePreserving : ∀ x z, dist (F x) (F z) = dist x z)
+    (needlePreserving : ∀ d t, F (src d t) = dst d t)
+    (onto : Function.Surjective F) :
+    F '' {x : X | ∃ d, inNeedleTube (src d) radius x} =
+      {y : Y | ∃ d, inNeedleTube (dst d) radius y} := by
+  ext y
+  constructor
+  · rintro ⟨x, ⟨d, hx⟩, rfl⟩
+    exact ⟨d, (needleTube_iff_of_same_metric F (src d) (dst d)
+      radius x distancePreserving (needlePreserving d)).mp hx⟩
+  · rintro ⟨d, hy⟩
+    obtain ⟨x, rfl⟩ := onto y
+    exact ⟨x, ⟨d, (needleTube_iff_of_same_metric
+      F (src d) (dst d) radius x
+      distancePreserving (needlePreserving d)).mpr hy⟩, rfl⟩
+
 end DashiKakeya

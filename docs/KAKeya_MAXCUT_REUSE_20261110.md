@@ -20,7 +20,7 @@ Lean compiler hash: `b4812ae53eea93439ad5dce5a5c26591c31cb697`
 Mathlib commit: `1b0782d8191b03e0001caac10e1601d17f2cd580`
 Numina manifest SHA-256: `67bbc3bdc4691e6e36325c7688e5d71dbbcf3f685e87bd94b059eb4d725f39f6`
 
-These identifiers are transcribed from the external bridge-lock. The current Numina HEAD must be captured separately when running a check; no unverified HEAD is represented as pinned here.
+Reviewed Numina source checkout commit: `a26427e3c2fcaf9f98694fbd0d4dd49e41dcf5e3` (read via GitHub and checked for the referenced proof-path/bridge-lock files). The local launcher rejects all other Numina commits rather than treating moving HEAD as reproducible evidence.\n\nThese identifiers are transcribed from the external bridge-lock. The current Numina HEAD must be captured separately when running a check; no unverified HEAD is represented as pinned here.
 
 ### Exact external proof cut
 

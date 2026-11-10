@@ -96,3 +96,47 @@ A successful `preflight_pass` is not equivalent to `verification_pass`.
 
 The external project's full verification documentation is
 https://github.com/project-numina/kakeya-3d/blob/main/RELEASING.md .
+
+## Reuse of DASHI unification and Lorentz (3,1) lane
+
+A selected, elementary 3+1-to-3 slice theorem is now in
+`DashiKakeya/LorentzSpatialSlice.lean`: on the *chosen* flat
+`ℝ × EuclideanSpace ℝ (Fin 3)`, the spacelike-positive quadratic
+form `Q(t,x)=‖x‖²−t²` restricts at `t=0` to `‖x‖²`.
+This is the correct Euclidean geometric carrier type for the
+3-dimensional Kakeya theorem, unlike a mere finite three-point
+antichain. The source's sign convention is opposite to
+`DASHI.Geometry.Signature.HyperbolicFormZ.F`, which uses
+`t²−|x|²`: the equivalence requires **negation**, not literal
+equality of their quadratic forms.
+
+The Agda companion is
+`DASHI.Geometry.KakeyaLorentzSpatialSliceExact` in PR #1485.
+It selects zero time in the *existing integer*
+`MinkowskiLimitReceipt.MinkowskiCarrier` and proves projection and
+quadratic substitution without introducing a new signature witness.
+
+Relevant unification prior art:
+- `DASHI.Geometry.Signature.HyperbolicFormZ`: actual integer hyperbolic form.
+- `DASHI.Physics.Closure.MinkowskiLimitReceipt`: selected B4 flat receipt.
+- `DASHI.Geometry.Signature31FromIntrinsicShellForcing`: signature
+  conclusion conditional on supplied strong causal/contraction data.
+- `DASHI.Geometry.LargePosetContinuumLorentz31`: explicit continuum
+  reconstruction and physical-selection *authority record*, not a
+  proof that its required assumptions have been instantiated.
+- `DASHI.Geometry.FiniteCausalDiamond`: five-event finite model, not
+  a continuum-dimensional derivation.
+- `DASHI.Physics.Signature31`: prototype-only constant witness;
+  explicitly forbidden for theorem-critical promotion.
+
+**Original physical gate**: identify the selected observed/derived
+spatial metric, its topology and measure with the Euclidean metric
+and Borel/Lebesgue geometry used by the exact Kakeya theorem, or
+prove transport along a suitable proven isometry. A bare 3+1
+signature or abstract causal cone does not supply this identification.
+Kakeya is a spatial-geometric theorem, not a proof of physical
+spacetime emergence, NS regularity or a Yang--Mills mass gap.
+
+Separate these from the formally already solved 3D dimension theorem.
+New files remain uncompiled in this interaction; keep all PRs draft
+pending Agda 2.9 and Lean build receipts, with no CI dependency.

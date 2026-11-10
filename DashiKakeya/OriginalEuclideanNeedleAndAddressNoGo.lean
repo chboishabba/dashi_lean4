@@ -152,4 +152,25 @@ theorem allScaleComparison_obstructedByAnyCollision
     (encode n) x y different collision
     lower (scales n) lowerPositive (comparisons n)
 
+
+/-- No ultrametric can be surjectively isometric to the ordinary real
+line: three collinear points at distances 1, 1, and 2 violate the
+ultrametric inequality. This is an exact metric obstruction, not a
+claim about a particular physical system or ultrametric observation. -/
+theorem no_surjective_ultrametric_isometry_to_real
+    {X : Type u} [PseudoMetricSpace X]
+    (ultra : ∀ x y z : X,
+      dist x z ≤ max (dist x y) (dist y z))
+    (F : X → ℝ)
+    (onto : Function.Surjective F)
+    (preserves : ∀ x y, dist (F x) (F y) = dist x y) :
+    False := by
+  obtain ⟨x, hx⟩ := onto (0 : ℝ)
+  obtain ⟨y, hy⟩ := onto (1 : ℝ)
+  obtain ⟨z, hz⟩ := onto (2 : ℝ)
+  have h := ultra x y z
+  rw [← preserves x z, ← preserves x y, ← preserves y z] at h
+  rw [hx, hy, hz] at h
+  norm_num [Real.dist_eq] at h
+
 end DashiKakeya

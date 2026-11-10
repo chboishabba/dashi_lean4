@@ -178,3 +178,66 @@ Balaban RG two-metric theorem at every cutoff. No standalone
 positive all-scale original-source coefficient proof has been claimed.
 
 No CI used. Lean/Agda local kernel receipts remain outstanding.
+
+## Discharged formal *mathematical* cuts, refuted original globally stronger claim
+
+**Implemented (pending Lean kernel build)** in
+`DashiKakeya/OriginalEuclideanNeedleAndAddressNoGo.lean`:
+
+- `straightNeedle_translation`: exact affine real-parameter line
+  equality in the same `EuclideanSpace ℝ (Fin 3)`.
+- `spatialTranslation_distance`,
+  `spatialTranslation_surjective`,
+  `straightNeedleTube_translation`,
+  `straightNeedles_translation`,
+  `straightNeedleTubeUnion_translation`: concrete distance-preserving
+  all-direction line/tube family under actual Euclidean translation.
+- `lowerMetricComparison_forces_injective`: a positive lower
+  comparison `c*d_physical≤a*d_code` forces the actual
+  `encode` to be injective on any genuine metric space.
+- `addressCollision_blocks_positiveComparison` and
+  `allScaleComparison_obstructedByAnyCollision`: one original
+  physical collision at any finite refinement level rules out
+  the proposed positive global lower bound at **all** levels.
+- `no_surjective_ultrametric_isometry_to_real`: impossible to map an
+  ultrametric surjectively and isometrically onto the ordinary real
+  line (explicit three-point distances 1,1,2).
+
+**Mathematically valid replacement** in
+`DashiKakeya/AllScaleObservationResidualMetric.lean`:
+
+- `physicalDistance_le_decoded_add_twiceResidual` and reverse:
+  where `dist(x,decode_n(encode_n(x)))≤ε_n`, decoded pair
+  distances differ from the original physical metric by at most
+  `2ε_n`, for **each** `n`, by triangle inequality.
+- `needleTube_decode_radiusInflation`: an original radius-`r`
+  needle tube transports into the decoded curve's radius
+  `r+2ε_n` tube.
+- `directionalTubeUnion_decode_radiusInflation`: the same
+  quantitative inclusion holds for the union of all selected
+  needle directions.
+- `selectedStraightNeedle_decode_radiusInflation`: if an independent
+  genuine geometry source shows the decoded curve is a straight
+  Euclidean unit needle, the tube comparison follows with the
+  exact same radius inflation. The straightness premise remains
+  **explicit**, not inferred from distance comparison.
+
+Actual original Agda prefix data prove distinct depth-two children
+`(digit3,digit3)` and `(digit3,digit6)` share one depth-one parent,
+with original fine distance 1 and coarse distance 0. Hence
+**a strictly positive global multiplicative lower bound through
+the actual lossy prefix map is FALSE**.
+
+The Agda source also derives the original all-depth bound
+`d(append(parent,d),append(parent,digit3))≤1`.
+This is a real original-source theorem at every finite depth, but
+its bound is in unscaled combinatorial depth units, and it
+does not imply any vanishing real physical metric error.
+
+**No new physical fact claimed:** the original selected observer/KK
+spatial metric, context-indexed physical decoder, real approximation
+rates `ε_n→0`, direction-surjectivity and exact straight-needle
+correspondence remain independent genuinely missing source-level
+premises. Typechecking source-written code is outstanding; no CI
+was used. Do not promote these to a proof of physical 3+1
+emergence or a new 3D Kakeya proof.

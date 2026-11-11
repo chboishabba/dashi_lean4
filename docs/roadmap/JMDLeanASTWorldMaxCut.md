@@ -117,3 +117,62 @@ python scripts/jmd_lean_public_source_acquisition.py \
 `docs/roadmap/JMDLeanASTV3RealCorpusAudit.json` records an independent read-only inspection of the actual upstream artifact `formalverification/lean2agda/corpus/list-reverse-reverse/lean/term.ndjson` (GitHub blob `0361fcf36279860765d02211660b908ebe771c2b`). This is Lean 4.33.1, lean4export format 3.1.0, 1,073 NDJSON records, 195 nonroot name nodes, 14 universe nodes, 835 expression DAG nodes, and 41 declarations including the inductive group. Across every available declaration type, 21 value roots and seven recursor RHS roots, the independent walk found **zero absent expression or constant-name references**. The scan visited 1,536 expression instances across roots (not unique expression nodes).
 
 This is a **real third-party schema/closure observation**, not an execution of `build_jmd_lean_ast_world.py` or a Lean kernel check, and not evidence of any cross-prover theorem. It provides a meaningful external v3 regression target, unlike synthetic fixtures alone. The full 21,481-roster admission and AST census are still open.
+
+
+## P0 implementation correction — 11 November 2026: ephemeral native AST handoff
+
+The separate `dashi_agda` worker PR
+[#1491](https://github.com/chboishabba/dashi_agda/pull/1491)
+now has source-written, selected-declaration native
+`lean4export` execution inside its ephemeral source workspace,
+before source cleanup. The worker also contains an optional verified
+local compiled-import cache keyed by pinned source hashes and Lean
+version. This is not a full Lake project builder, an untrusted
+execution sandbox, or the final kernel-proof certificate.
+
+The **single** PR #105 world importer remains
+`scripts/build_jmd_lean_ast_world.py`. Its new
+`scripts/jmd_lean_ephemeral_ast_handoff.py` is only a strict adapter:
+it takes the worker's source-bound JSON receipt, validates
+the original repository/commit, source-closure equality and
+content-addressed native NDJSON bytes, then emits the same manifest
+format already consumed by `--exports`. It does not create another
+index, rewrite native Lean expressions, or claim proof authority.
+
+```sh
+# PR #1491 worker (trusted source, matching Lean + exporter):
+bash scripts/run_lean_world_nix.sh owner/repo FULL_40_SHA Target.lean \
+  --compile-local-imports --compiled-cache-dir /path/to/cache \
+  --native-declaration Chosen.theorem \
+  --native-out /path/to/export-artifacts \
+  --export-bin /path/to/compatible/lean4export \
+  > /tmp/worker-v3-receipt.json
+
+# From PR #105 checkout:
+python scripts/jmd_lean_ephemeral_ast_handoff.py \
+  --receipt /tmp/worker-v3-receipt.json \
+  --github-id ORIGINAL_NUMERIC_REPOSITORY_ID \
+  --manifest-out /tmp/native-v3-export-manifest.jsonl
+
+python scripts/build_jmd_lean_ast_world.py \
+  --database ../dashi_agda/.dashi/repository.sqlite3 \
+  --repositories docs/roadmap/jmd_lean_corpus/github_lean_repositories.csv \
+  --exports /tmp/native-v3-export-manifest.jsonl
+```
+
+**Acceptance delta:** W02/W03 local closure assembly and W04 selected
+native producer are now source-written. W04/W05 still require an actual
+`lean4export` v3 DAG replay through the importer; W07 complete
+environment declaration enumeration remains open. W08/W09 full
+corpus coverage, W10 idempotent live replay, W11 dependency-delta
+integration, W12 first original unpaid DASHI proof reuse and W13
+kernel payment are still **OPEN**. PostgreSQL integration belongs to
+the existing PR #1484 and is not silently replaced by SQLite-only
+source admission.
+
+The first real acceptance receipt is an original pinned module,
+an original native v3 artifact, **full DAG parser acceptance**,
+persistent world counts, and a candidate query linked to the
+original declaration type. No LLM orchestration or translator
+round-trip is on this P0 path. No real Nix/Lean/PostgreSQL run is
+asserted by source-writing these changes.

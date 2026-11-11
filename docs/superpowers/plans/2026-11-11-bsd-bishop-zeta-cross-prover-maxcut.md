@@ -105,3 +105,48 @@ kernel import from matching names.
 
 Work order: B0/B1/B2 parallel with C0/Z0; B3/B4/C1/C2/F0 then Z1/Z2;
 Z3/Z4 last. No Clay result claimed.
+
+
+## 2026-11-11 continuation: real-sign candidate / torsion coset maximum cut
+
+The existing selected-curve geometric quarter-point owner proves the
+x-T-ordered global torsion values:
+ O -> (1,1), (0,0) -> (-1,-1),
+ (1,0) -> (1,2), (-1,0) -> (-1,-2).
+The raw geometric cohomology coordinates are SWAPPED before these
+x-T values are compared. Do not revert to (2,1)/(-2,-1).
+
+New source owner:
+Synthesis/MillenniumBSDCMRealSieveTorsionCosetsExact.lean
+
+Finite proved-in-source declarations (kernel execution pending):
+- cmTorsionXTCodes_card: 4 distinct bit codes;
+- cmTorsionXTCodes_realSign: every selected torsion code passes the
+  nonexceptional real-sign necessary filter;
+- cmTorsionXTCodes_iff_realSign_and_firstParityZero:
+  among the eight real-compatible bit codes, precisely the four
+  with EVEN 2-parity in their FIRST x-T coordinate are torsion codes;
+- cmRealSign_nonTorsionCodes_card: four complementary codes;
+- cmFilter_supported_on_torsion and
+  cmFilter_eq_torsion_of_local_certificate: explicitly expose exactly
+  what a genuine 2-adic exclusion certificate must supply.
+
+This is a FINITE CODE theorem, NOT an actual Q_2 Kummer theorem.
+
+Next highest-alpha producer is therefore narrow:
+P2a. Prove actual local x-T Kummer images of E(Q_2) always have
+even 2-valuation in their first coordinate, with exceptional point
+conventions. The promising local argument studies
+v_2(y^2)=v_2(x)+v_2(x-1)+v_2(x+1), showing v_2(x) is even
+for nonzero x when v_2(x) is nonzero. Formulate and prove the
+exact valuation lemmas over Q_2 and connect square-class valuation
+to the candidate first parity bit.
+P2b. Prove real-sign filter is necessary for every actual
+local Kummer class including exceptional torsion points.
+P2c. Prove the all-good-prime S-support theorem and that every
+global Selmer class is represented by these sixteen actual
+square-class pairs, and that torsion-generated codes are admitted.
+Then the finite consumer delivers precisely the four torsion codes.
+
+This does NOT discharge classical E-valued Sha exactness or the
+analytic side. Kernel acceptance requires local Lean running.

@@ -77,4 +77,37 @@ theorem cmCandidateFilter_all_negativeControl :
       (fun _ : CMSupportedSquareClassPairBits => True)).card = 16 := by
   simpa using cmSupportedSquareClassPairBits_card
 
+
+/-- Necessary real-sign filter for ordinary x-T coordinates, expressed
+on the actual finite support candidate codes. The parity bits remain free.
+Exceptional torsion conventions still require the global Kummer comparison
+before this filter is claimed to be the full real local Kummer image. -/
+def cmRealSignCompatibleCandidate
+    (c : CMSupportedSquareClassPairBits) : Prop :=
+  c.1.1 = c.2.1
+
+instance (c : CMSupportedSquareClassPairBits) :
+    Decidable (cmRealSignCompatibleCandidate c) := inferInstance
+
+/-- The sign-compatible finite candidate subset is exactly half of the
+sixteen support candidates. This is NOT the final Selmer order, because
+the 2-adic and classical cohomological image tests remain unpaid. -/
+theorem cmRealSignCompatibleCandidate_card :
+    (Finset.univ.filter cmRealSignCompatibleCandidate).card = 8 := by
+  decide
+
+/-- Opposite-sign candidate (positive first, negative second) is rejected
+by the necessary real-sign test. -/
+theorem cmRealSignCompatibleCandidate_rejects_opposite :
+    ¬ cmRealSignCompatibleCandidate
+        ((false, false), (true, false)) := by
+  decide
+
+/-- Trivial Kummer candidate is accepted: any eventual local image must
+include the identity. -/
+theorem cmRealSignCompatibleCandidate_accepts_identity :
+    cmRealSignCompatibleCandidate
+      ((false, false), (false, false)) := by
+  decide
+
 end Synthesis.Millennium.BSD

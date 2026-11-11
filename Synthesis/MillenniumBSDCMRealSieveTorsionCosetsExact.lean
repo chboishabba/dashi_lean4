@@ -60,7 +60,8 @@ theorem cmTorsionXTCodes_realSign
     (c : CMSupportedSquareClassPairBits)
     (hc : c ∈ cmTorsionXTCodes) :
     cmRealSignCompatibleCandidate c := by
-  fin_cases c <;> decide at hc ⊢
+  rcases c with ⟨⟨s₁, v₁⟩, ⟨s₂, v₂⟩⟩
+  cases s₁ <;> cases v₁ <;> cases s₂ <;> cases v₂ <;> decide at hc ⊢
 
 /-- On the eight real-sign-compatible codes, the torsion subset is
 identified by the 2-valuation parity of the *second* x-T coordinate.

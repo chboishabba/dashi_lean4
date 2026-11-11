@@ -70,4 +70,36 @@ theorem cmRealAffine_no_x_below_minus_one
   · linarith [h.1]
   · linarith
 
+
+/-- For any nonexceptional affine real point, both Stoll x-T coordinates
+x and x-1 have identical signs. This is genuine selected-curve geometry,
+not a claim about the exceptional torsion conventions or local H¹. -/
+theorem cmRealAffine_kummerCoordinateSignsAgree
+    (x y : ℝ)
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hx0 : x ≠ 0)
+    (hx1 : x ≠ 1) :
+    (x < 0 ↔ x - 1 < 0) := by
+  rcases cmRealAffine_x_locus x y hcurve with h | h
+  · have hneg : x < 0 := lt_of_le_of_ne h.2 hx0
+    constructor <;> intro _ <;> linarith
+  · have hpos : 1 < x := lt_of_le_of_ne h hx1
+    constructor <;> intro _ <;> linarith
+
+/-- The nonexceptional x-T signs cannot be opposite, on the original
+real equation rather than on a selected synthetic group carrier. -/
+theorem cmRealAffine_no_oppositeKummerSigns
+    (x y : ℝ)
+    (hcurve : y ^ 2 = x ^ 3 - x)
+    (hx0 : x ≠ 0)
+    (hx1 : x ≠ 1) :
+    ¬ ((x < 0 ∧ 0 < x - 1) ∨ (0 < x ∧ x - 1 < 0)) := by
+  have h := cmRealAffine_kummerCoordinateSignsAgree x y hcurve hx0 hx1
+  intro hbad
+  rcases hbad with ⟨hneg, hpos⟩ | ⟨hpos, hneg⟩
+  · have hminus := h.mp hneg
+    linarith
+  · have hminus : x < 0 := h.mpr hneg
+    linarith
+
 end Synthesis.Millennium.BSD

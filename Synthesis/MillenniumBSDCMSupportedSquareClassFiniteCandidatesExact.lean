@@ -86,8 +86,6 @@ def cmRealSignCompatibleCandidate
     (c : CMSupportedSquareClassPairBits) : Prop :=
   c.1.1 = c.2.1
 
-instance (c : CMSupportedSquareClassPairBits) :
-    Decidable (cmRealSignCompatibleCandidate c) := inferInstance
 
 /-- The sign-compatible finite candidate subset is exactly half of the
 sixteen support candidates. This is NOT the final Selmer order, because

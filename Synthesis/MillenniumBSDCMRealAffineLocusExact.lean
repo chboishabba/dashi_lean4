@@ -81,9 +81,15 @@ theorem cmRealAffine_kummerCoordinateSignsAgree
     (hx1 : x ≠ 1) :
     (x < 0 ↔ x - 1 < 0) := by
   rcases cmRealAffine_x_locus x y hcurve with h | h
-  · have hneg : x < 0 := lt_of_le_of_ne h.2 hx0
+  · have hneg : x < 0 := by
+    rcases lt_or_eq_of_le h.2 with hlt | heq
+    · exact hlt
+    · exact False.elim (hx0 heq)
     constructor <;> intro _ <;> linarith
-  · have hpos : 1 < x := lt_of_le_of_ne h hx1
+  · have hpos : 1 < x := by
+    rcases eq_or_lt_of_le h with heq | hlt
+    · exact False.elim (hx1 heq.symm)
+    · exact hlt
     constructor <;> intro _ <;> linarith
 
 /-- The nonexceptional x-T signs cannot be opposite, on the original

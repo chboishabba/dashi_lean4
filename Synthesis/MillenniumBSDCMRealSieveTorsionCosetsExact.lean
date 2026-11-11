@@ -9,8 +9,8 @@ Kummer square-class representatives in x-T order:
 
   O       -> (1,1)
   (0,0)   -> (-1,-1)
-  (1,0)   -> (2,1)
-  (-1,0)  -> (-2,-1).
+  (1,0)   -> (1,2)
+  (-1,0)  -> (-1,-2).
 
 The entries in this file are *finite bit encodings* of precisely those
 four pairs. The equality of the finite encodings to the original Galois
@@ -37,13 +37,13 @@ def cmInfinityXTCode : CMSupportedSquareClassPairBits :=
 def cmZeroTorsionXTCode : CMSupportedSquareClassPairBits :=
   ((true, false), (true, false))
 
-/-- Finite x-T code for (1,0): (2,1). -/
+/-- Finite x-T code for (1,0): (1,2). -/
 def cmOneTorsionXTCode : CMSupportedSquareClassPairBits :=
-  ((false, true), (false, false))
+  ((false, false), (false, true))
 
-/-- Finite x-T code for (-1,0): (-2,-1). -/
+/-- Finite x-T code for (-1,0): (-1,-2). -/
 def cmMinusOneTorsionXTCode : CMSupportedSquareClassPairBits :=
-  ((true, true), (true, false))
+  ((true, false), (true, true))
 
 /-- Precisely the four selected finite Kummer torsion codes. -/
 def cmTorsionXTCodes : Finset CMSupportedSquareClassPairBits :=
@@ -64,12 +64,12 @@ theorem cmTorsionXTCodes_realSign
   cases s₁ <;> cases v₁ <;> cases s₂ <;> cases v₂ <;> decide at hc ⊢
 
 /-- On the eight real-sign-compatible codes, the torsion subset is
-identified by the 2-valuation parity of the *second* x-T coordinate.
+identified by the 2-valuation parity of the *first* x-T coordinate.
 This is a finite identity, NOT a theorem that p=2 excludes all others. -/
-theorem cmTorsionXTCodes_iff_realSign_and_secondParityZero
+theorem cmTorsionXTCodes_iff_realSign_and_firstParityZero
     (c : CMSupportedSquareClassPairBits) :
     c ∈ cmTorsionXTCodes ↔
-      cmRealSignCompatibleCandidate c ∧ c.2.2 = false := by
+      cmRealSignCompatibleCandidate c ∧ c.1.2 = false := by
   rcases c with ⟨⟨s₁, v₁⟩, ⟨s₂, v₂⟩⟩
   cases s₁ <;> cases v₁ <;> cases s₂ <;> cases v₂ <;> decide
 
@@ -82,11 +82,11 @@ theorem cmRealSign_nonTorsionCodes_card :
           c ∉ cmTorsionXTCodes)).card = 4 := by
   decide
 
-/-- The explicit point (1,2) is merely a code witness for the second
+/-- The explicit pair (2,1) is merely a code witness for the second
 coset; it is NOT a claim that a rational elliptic point has that x-T
 Kummer image. -/
 def cmAlternativeCosetCode : CMSupportedSquareClassPairBits :=
-  ((false, false), (false, true))
+  ((false, true), (false, false))
 
 theorem cmAlternativeCosetCode_realSign :
     cmRealSignCompatibleCandidate cmAlternativeCosetCode := by

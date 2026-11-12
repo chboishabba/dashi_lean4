@@ -33,7 +33,8 @@ for module in \
   MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact \
   MillenniumBSDCMSelectedPeriodNormalizationExact \
   MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact \
-  MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
+  MillenniumBSDCMShaTwoNotFullShaNegativeControlExact \
+  MillenniumBSDCMLevel32EtaFinitePositivityExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -45,6 +46,9 @@ cat > "$tmp" <<'EOF'
 import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
 import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
 import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
+import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
+import Synthesis.MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
+import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
 #print axioms Synthesis.Millennium.BSD.cmQpOddLocalKummerImage_secondParity_zero
@@ -59,6 +63,7 @@ import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 #print axioms Synthesis.Millennium.BSD.cmSelectedBSDPeriodNormalization
 #print axioms Synthesis.Millennium.BSD.cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion
 #print axioms Synthesis.Millennium.BSD.cmVanishingTwoTorsion_doesNotForceTrivialGroup
+#print axioms Synthesis.Millennium.BSD.cmLevel32EtaProductTruncation_pos
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

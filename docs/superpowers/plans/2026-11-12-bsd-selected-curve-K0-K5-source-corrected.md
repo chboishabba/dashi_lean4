@@ -75,9 +75,19 @@ K1 — GLOBAL PART SOURCE WRITTEN, LOCAL PART OPEN:
   Existing typed records are NOT inhabited producers.
 
 K2 — CLASSICAL E-VALUED SHA[2] OPEN:
-- Construct original E(Qbar) continuous Galois TopRep,
-  equivariant geometric doubling, connecting LES and
-  localization naturality in the SAME coefficients.
+- The selected original E(Qbar) continuous Galois TopRep
+  ALREADY EXISTS as cmEllipticPointRepresentation, with
+  globalGenericE2ToEllipticPoint and global E[2]→E H¹
+  cohomology arrow in MillenniumBSDLocalKummerCohomologyReduction.
+- New MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
+  specializes rationalTateShafarevichOne and its 2-torsion
+  to the genuine cmEllipticPointRepresentation, and proves
+  the literal all-place localization-kernel membership test.
+- UNPAID: prove local E(Qbar_v) coefficient identification,
+  equivariant geometric doubling LES, connecting morphisms,
+  global/local naturality and exact cokernel comparison.
+  The restricted-global E(Qbar) coefficients alone are NOT
+  automatically classical local E(Qbar_v) coefficients.
 - Compare actual continuous Selmer with original explicit
   group and identify explicit cokernel with classical
   Sha(E/Q)[2].
@@ -94,6 +104,10 @@ K3 — CARDINALITY PART SOURCE WRITTEN, RANK OPEN:
   full selected E(Q)[2] same-object identification.
 
 K4 — ANALYTIC OPEN:
+- New MillenniumBSDCMSelectedPeriodNormalizationExact
+  proves the original-curve arithmetic ratio Omega_std*2/16
+  = Omega_half/4, with Omega_half=Omega_std/2. This is a
+  normalization IDENTITY, not a proof of original L(E,1).
 - All-n original curve Hecke coefficients, Euler factors,
   Bishop Dirichlet majorant/limit, modular/Mellin same
   object, functional equation, continuation to s=1,

@@ -191,3 +191,53 @@ Still independent: classical E-valued long exact H1 / Sha(E)[2],
 actual Selmer finrank, and original elliptic L-function central-value
 proof. The Bishop zeta commuting square is a source-preserving
 analytical donor, NOT a proof of original elliptic L(E,s).
+
+
+## 2026-11-12: original Q_2 field and original square-class parity implementation
+
+New committed Lean owners:
+* Synthesis/MillenniumBSDCMQ2ActualCurveValuationExact.lean:
+  cmQ2Affine_factorization;
+  cmQ2Affine_nonzero_factors;
+  cmQ2ValuationCurveIdentity (actual Q_[2], actual Padic.valuation : Z);
+  cmQ2Valuation_negOne and cmQ2Valuation_neg;
+  cmQ2Valuation_add_of_lt (derived from Padic.le_valuation_add);
+  cmQ2ShiftedValuationPositive and cmQ2ShiftedValuationNegative;
+  cmQ2NonexceptionalXValuationEven.
+* Synthesis/MillenniumBSDCMQ2SquareClassValuationParityExact.lean:
+  cmQ2SquareRel_preservesValuationParity (actual PadicSquareRel 2);
+  cmQ2SquareClassValuationParity (on original PadicSquareClass 2);
+  cmQ2SquareClassValuationParity_rep;
+  cmQ2SquareClassValuationParity_of_even;
+  cmQ2OrdinaryXTSquareClassParity_zero.
+
+These are theorem-shaped proof implementations on the literal existing
+Q_[2] field and square-class quotient, NOT a new abstract local carrier.
+They use the integer-valued Padic.valuation. The supplied paste's use
+of padicValNat on Q_[2] would be the wrong type and cannot express
+negative valuations.
+
+The actual nonexceptional local first-coordinate parity therefore now
+has a direct source-written proof route through the repository's local
+square-class quotient. Exact-head Lean kernel status remains PENDING;
+readback of a GitHub source file is NOT kernel checking.
+
+Remaining local cut:
+* exceptional torsion conventions (O and y=0 at x=0,+1,-1) in
+  the ACTUAL local square class, matching original geometric Kummer;
+* proof that the actual global/local Kummer diagram commutes on all
+  rational and local points, including exceptional cases;
+* real-place full local Kummer image, not only the ordinary sign filter;
+* global outside-{2,infinity} good-prime unramified support theorem;
+* identify the 16-bit candidate encoding with the original global
+  rational square-class pairs and the actual explicit Selmer carrier;
+* exact full local image and certified candidate count.
+
+After that, genuine E(Qbar)-valued Kummer long exact cohomology and
+classical Sha(E)[2] are still distinct from E[2]-coefficient Sha^1.
+If the Selmer dimension is 2 and E(Q)[2] dimension is 2, obtain
+rank 0 and Sha(E)[2]=0 (hence no 2-primary torsion), NOT full Sha(E)=0.
+
+The Bishop Riemann-zeta commuting square is an analytic METHOD donor,
+not an elliptic central-value proof; its original actual-curve L-function
+coefficient source, convergence and analytic continuation gates remain open.

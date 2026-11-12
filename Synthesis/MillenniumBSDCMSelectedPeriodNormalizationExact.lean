@@ -45,7 +45,7 @@ theorem cmSelectedBSDPeriodNormalization
 /-- The relevant scalar is one eighth of the standard full
 period, and hence positive if that period is positive.
 This does NOT assert L(E,1) equals this value. -/
-theorem cmSelectedBDSPredictedRatio_positive
+theorem cmSelectedBSDPredictedRatio_positive
     (omega : ℝ) (h : 0 < omega) :
     0 < cmSelectedRankZeroBSDRatioFullPeriod omega := by
   unfold cmSelectedRankZeroBSDRatioFullPeriod

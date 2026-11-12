@@ -425,6 +425,7 @@ import Synthesis.MillenniumBSDCMOddPrimeLocalSecondParityExact
 import Synthesis.MillenniumBSDCMOddPrimeRationalSquareSupportExact
 import Synthesis.MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact
 
+import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
 /-!
 # Cross-domain synthesis spine
 

@@ -45,19 +45,19 @@ theorem z7FinsetWitness_to_fin8 (h : Z7StatementShape) :
   · subst j
     exact ⟨⟨0, by decide⟩, by simpa using hirr⟩
   · subst j
-    exact ⟨⟨1, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨1, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨2, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨2, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨3, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨3, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨4, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨4, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨5, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨5, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨6, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨6, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
   · subst j
-    exact ⟨⟨7, by decide⟩, by norm_num at *; assumption⟩
+    exact ⟨⟨7, by decide⟩, by simpa only [Fin.val_mk, Nat.reduceMul, Nat.reduceAdd] using hirr⟩
 
 /-- Remove the free imaginary-part hypothesis from the previous
 transport, by a separate actual Mathlib zeta theorem. -/

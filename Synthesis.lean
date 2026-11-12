@@ -411,15 +411,6 @@ import Synthesis.RiemannSelectedPrimeSensitiveTwoScale
 
 
 
-/-!
-# Cross-domain synthesis spine
-
-Root module of the `Synthesis` library: a minimal, fully proved proof spine over
-the cross-domain material in this repository.
-
-See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
-obligations.
--/
 import Synthesis.MillenniumBSDTwoSelmerDimensionArithmeticMaxCut
 import Synthesis.MillenniumBSDCMSupportedSquareClassFiniteCandidatesExact
 import Synthesis.MillenniumBSDCMRealAffineLocusExact
@@ -433,3 +424,13 @@ import Synthesis.MillenniumBSDCMAllPrimeLocalFirstParityExact
 import Synthesis.MillenniumBSDCMOddPrimeLocalSecondParityExact
 import Synthesis.MillenniumBSDCMOddPrimeRationalSquareSupportExact
 import Synthesis.MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact
+
+/-!
+# Cross-domain synthesis spine
+
+Root module of the `Synthesis` library: a minimal, fully proved proof spine over
+the cross-domain material in this repository.
+
+See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
+obligations.
+-/

@@ -27,6 +27,29 @@ namespace DASHILiteralClayNS
 open ClaySpec
 open NavierStokes
 
+/-! ## Same physical velocity: spatial-slice measurability payment -/
+
+/-- The actual globally smooth LeanDojo velocity is strongly measurable on
+every fixed nonnegative-time spatial slice. This fills the logical
+measurability requirement that an arbitrary scalar finite-energy bound
+cannot supply. Reuses the existing *same-object* smooth pair/ambient weld
+and the proven ClaySpec smooth spatial-slice lemma in `Gap.lean`. -/
+theorem smoothLeanDojoVelocitySlice_aestronglyMeasurable
+    (u : VelocityField 3)
+    (hu : NavierStokes.velocity_smooth_on_global_spacetime_domain u)
+    (t : ℝ) (ht : 0 ≤ t) :
+    AEStronglyMeasurable
+      (fun x : Space3 => u (NavierStokes.spacetime_point t x)) volume := by
+  have hPair : ClaySpec.TrustBoundarySmoothOn (leanDojoFieldToPair u) :=
+    leanDojoSmooth_to_pair hu
+  have hSlice :
+      ContDiff ℝ ∞ (fun x : R3 => (leanDojoFieldToPair u) (x, t)) :=
+    SemanticGap.smooth_space_slice hPair ht
+  simpa [leanDojoFieldToPair] using
+    hSlice.continuous.aestronglyMeasurable
+
+#print axioms smoothLeanDojoVelocitySlice_aestronglyMeasurable
+
 /-! ## Data-side residuals -/
 
 /-- Condition-(4) derivative-packaging transport only. Smoothness is already a

@@ -308,4 +308,62 @@ theorem cmQpSquareClassParity_localize_rational_rep
   rw [Padic.valuation_ratCast]
   exact ZMod.intCast_mod _ _
 
+
+/-- A literal all-place local Kummer condition forces the ORIGINAL
+first rational square class to be one of [1] and [-1].
+This theorem uses all primes and Rat.isSquare_iff_even_factorization;
+no finite-code surjectivity or Selmer-cohomology equivalence is assumed. -/
+theorem cmRationalFirstSquareClass_unitSupport_of_allLocalImages
+    (c : RatSquareClass × RatSquareClass)
+    (hloc :
+      ∀ pv : Nat.Primes,
+        letI : Fact pv.1.Prime := ⟨pv.2⟩
+        localizeKummerPair pv.1 c ∈ LocalKummerImage pv.1) :
+    c.1 = squareClassOf oneNZ ∨
+      c.1 = squareClassOf negOneNZ := by
+  rcases c with ⟨first, second⟩
+  revert hloc
+  refine Quotient.inductionOn first ?_
+  intro a hloc
+  apply cmRationalSquareClass_one_or_negOne_of_allPrimeEven a
+  intro p hp
+  letI : Fact p.Prime := ⟨hp⟩
+  have hmem :
+      localizeKummerPair p (squareClassOf a, second) ∈
+        LocalKummerImage p :=
+    hloc (⟨p, hp⟩ : Nat.Primes)
+  have hval :=
+    cmQpLocalKummerImage_firstParity_zero
+      (p := p) (localizeKummerPair p (squareClassOf a, second))
+      hmem
+  change
+    cmQpSquareClassValuationParity p
+      (localizeSquareClass p (squareClassOf a)) = 0 at hval
+  have hcomm :=
+    cmQpSquareClassParity_localize_rational_rep (p := p) a
+  rw [hval] at hcomm
+  have hcast :
+      (padicValRat p (a : ℚ) : ZMod 2) = 0 := by
+    simpa using hcomm.symm
+  exact ZMod.intCast_eq_zero_iff_even.mp hcast
+
+/-- Global same-object BSD corollary:
+every member of the original explicitTwoSelmerSubgroup has
+first x-T coordinate [1] or [-1]. This is stronger than the
+previous p=2-only parity theorem. -/
+theorem cmExplicitTwoSelmer_firstSquareClass_unitSupport
+    (s : explicitTwoSelmerSubgroup) :
+    ((s : RatSquareClass × RatSquareClass).1) =
+        squareClassOf oneNZ ∨
+      ((s : RatSquareClass × RatSquareClass).1) =
+        squareClassOf negOneNZ := by
+  have hloc :
+      ∀ pv : Nat.Primes,
+        letI : Fact pv.1.Prime := ⟨pv.2⟩
+        localizeKummerPair pv.1
+          (s : RatSquareClass × RatSquareClass) ∈
+            LocalKummerImage pv.1 := s.property.2
+  exact cmRationalFirstSquareClass_unitSupport_of_allLocalImages
+    (s : RatSquareClass × RatSquareClass) hloc
+
 end Synthesis.Millennium.BSD

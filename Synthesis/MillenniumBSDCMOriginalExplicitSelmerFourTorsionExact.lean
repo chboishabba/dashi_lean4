@@ -118,27 +118,27 @@ theorem cmExplicitTwoSelmer_only_torsionKummer
         (Prod.ext hFirst hSecond))
     · have hbad : False := by
         simpa [hFirst, hSecond,
-          squareClassSignBit_mk, oneNZ, negOneNZ,
+          squareClassSignBit_mk, signBit, oneNZ, negOneNZ,
           signBit_one, signBit_neg_one] using hReal
       exact hbad.elim
     · exact Or.inr (Or.inr (Or.inl (by
         simpa [torsionKummer] using (Prod.ext hFirst hSecond))))
     · have hbad : False := by
         simpa [hFirst, hSecond,
-          squareClassSignBit_mk, oneNZ, negTwoNZ,
+          squareClassSignBit_mk, signBit, oneNZ, negTwoNZ,
           signBit_one, signBit_neg_one] using hReal
       exact hbad.elim
   · rcases hSecond with hSecond | hSecond | hSecond | hSecond
     · have hbad : False := by
         simpa [hFirst, hSecond,
-          squareClassSignBit_mk, negOneNZ, oneNZ,
+          squareClassSignBit_mk, signBit, negOneNZ, oneNZ,
           signBit_one, signBit_neg_one] using hReal
       exact hbad.elim
     · exact Or.inr (Or.inl (by
         simpa [torsionKummer] using (Prod.ext hFirst hSecond)))
     · have hbad : False := by
         simpa [hFirst, hSecond,
-          squareClassSignBit_mk, negOneNZ, twoNZ,
+          squareClassSignBit_mk, signBit, negOneNZ, twoNZ,
           signBit_one, signBit_neg_one] using hReal
       exact hbad.elim
     · exact Or.inr (Or.inr (Or.inr (by

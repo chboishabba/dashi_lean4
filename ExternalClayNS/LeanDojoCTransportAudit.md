@@ -79,3 +79,10 @@ def LeanDojoEnergyToClay : Prop :=
 ```
 
 The existing compiler now calls `w.energy sol.velocity sol.velocity_smooth henergy`. The remaining proof is genuine **same-field norm-square identity + measurability/finite-integral transport**, not a new Navier–Stokes estimate. This branch is **source-written/Lean kernel pending**; the predicate is recut, not inhabited. The other four leaves are unchanged. All results must be checked at the exact stacked head against PR #51's pinned LeanDojo vendor.
+
+
+### Positive same-source sublemma added
+
+`smoothLeanDojoVelocitySlice_aestronglyMeasurable` is now source-written directly in `LeanDojoCComparatorBridge.lean`. It consumes the **actual** `velocity_smooth_on_global_spacetime_domain` of the LeanDojo field and composes existing `leanDojoSmooth_to_pair` and `SemanticGap.smooth_space_slice`; the resulting spatial slice is continuous, hence AE strongly measurable with respect to `volume`. This discharges the *source-level measurability substep*, pending exact-head Lean elaboration and axiom inspection.
+
+The positive finite-energy transport still needs the Euclidean coordinate sum-of-squares equals vector-norm-squared identity, integrability conversion using that now available measurability, and uniform bound alignment. **Do not mark `LeanDojoEnergyToClay` inhabited from this sublemma alone.**

@@ -41,7 +41,10 @@ for module in \
   MillenniumBSDCMFGAbelianRankZeroFromModTwoExact \
   MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact \
   MillenniumBSDCMOriginalGeometricKummerGroupExact \
-  MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
+  MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact \
+  MillenniumBSDCMOriginalEbarDoublingTopRepExact \
+  MillenniumBSDCMUnitAreaTriangleCurveWeldExact \
+  MillenniumBSDCMCongruentOneRankReductionExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -60,6 +63,9 @@ import Synthesis.MillenniumBSDCMFGAbelianRankZeroFromModTwoExact
 import Synthesis.MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact
 import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
 import Synthesis.MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
+import Synthesis.MillenniumBSDCMOriginalEbarDoublingTopRepExact
+import Synthesis.MillenniumBSDCMUnitAreaTriangleCurveWeldExact
+import Synthesis.MillenniumBSDCMCongruentOneRankReductionExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
 #print axioms Synthesis.Millennium.BSD.cmQpOddLocalKummerImage_secondParity_zero
@@ -81,6 +87,9 @@ import Synthesis.MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
 #print axioms Synthesis.Millennium.BSD.cmLevel32EtaAnalyticExpression_differentiableAt
 #print axioms Synthesis.Millennium.BSD.cmSelectedGeometricKummerShortExact_group
 #print axioms Synthesis.Millennium.BSD.cmSelectedGeometricKummerShortExact_galois_equivariant
+#print axioms Synthesis.Millennium.BSD.cmEbarDoublingTopRepHom_kernel_and_surjective
+#print axioms Synthesis.Millennium.BSD.cmSelectedCongruentOne_iff_curve_nonTorsion
+#print axioms Synthesis.Millennium.BSD.cmOriginalMordellWeil_ZRank_zero_of_noUnitAreaTriangle
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

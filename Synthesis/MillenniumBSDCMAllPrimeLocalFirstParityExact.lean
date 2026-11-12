@@ -293,45 +293,18 @@ theorem cmQpLocalKummerImage_firstParity_zero
   rcases hc with ⟨P, rfl⟩
   exact cmQpTotalLocalKummer_firstParity_zero P
 
-/-- Actual rational-to-Q_p valuation parity commuting square for
-the original local and rational quotient objects. -/
-theorem cmQpSquareClassParity_localize_rational
-    (c : RatSquareClass) :
+/-- Actual rational-to-Q_p valuation parity commuting square on the
+original quotient REPRESENTATIVES. This is enough for the all-prime
+support theorem via induction on the original RatSquareClass quotient. -/
+theorem cmQpSquareClassParity_localize_rational_rep
+    (a : NonzeroRat) :
     ((cmQpSquareClassValuationParity p
-      (localizeSquareClass p c) : ℤ) : ZMod 2) =
-        ((Quotient.lift
-          (fun a : NonzeroRat => (padicValRat p (a : ℚ) : ZMod 2))
-          (fun a b h => by
-            rcases h with ⟨s, t, hst⟩
-            have hval :
-                padicValRat p (a : ℚ) +
-                  2 * padicValRat p (s : ℚ) =
-                padicValRat p (b : ℚ) +
-                  2 * padicValRat p (t : ℚ) := by
-              calc
-                padicValRat p (a : ℚ) +
-                    2 * padicValRat p (s : ℚ) =
-                    padicValRat p ((a : ℚ) * (s : ℚ) ^ 2) := by
-                      rw [padicValRat.mul a.property
-                        (pow_ne_zero 2 s.property),
-                        padicValRat.pow]
-                      ring
-                _ = padicValRat p ((b : ℚ) * (t : ℚ) ^ 2) :=
-                      congrArg (padicValRat p) hst
-                _ = padicValRat p (b : ℚ) +
-                    2 * padicValRat p (t : ℚ) := by
-                      rw [padicValRat.mul b.property
-                        (pow_ne_zero 2 t.property),
-                        padicValRat.pow]
-                      ring
-            apply congrArg (fun x : ℤ => (x : ZMod 2))
-              (show (padicValRat p (a : ℚ)) % 2 =
-                    (padicValRat p (b : ℚ)) % 2 by omega))) c) := by
-  refine Quotient.inductionOn c ?_
-  intro a
+      (localizeSquareClass p (squareClassOf a)) : ℤ) : ZMod 2) =
+        (padicValRat p (a : ℚ) : ZMod 2) := by
+  rw [localizeSquareClass_mk, cmQpSquareClassValuationParity_rep]
   change
     (((((a : ℚ) : ℚ_[p]).valuation % 2 : ℤ) : ZMod 2) =
-       (padicValRat p (a : ℚ) : ZMod 2)
+      (padicValRat p (a : ℚ) : ZMod 2)
   rw [Padic.valuation_ratCast]
   exact ZMod.intCast_mod _ _
 

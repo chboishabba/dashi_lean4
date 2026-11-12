@@ -31,7 +31,9 @@ for module in \
   MillenniumBSDCMActualE2H1ExplicitImageWeldExact \
   MillenniumBSDCMOriginalMordellWeilModTwoCardExact \
   MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact \
-  MillenniumBSDCMSelectedPeriodNormalizationExact
+  MillenniumBSDCMSelectedPeriodNormalizationExact \
+  MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact \
+  MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -55,6 +57,8 @@ import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 #print axioms Synthesis.Millennium.BSD.cmOriginalMordellWeilModuloTwo_card_eq_four
 #print axioms Synthesis.Millennium.BSD.cmSelectedEBarRestrictedShaOne_mem_iff
 #print axioms Synthesis.Millennium.BSD.cmSelectedBSDPeriodNormalization
+#print axioms Synthesis.Millennium.BSD.cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion
+#print axioms Synthesis.Millennium.BSD.cmVanishingTwoTorsion_doesNotForceTrivialGroup
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

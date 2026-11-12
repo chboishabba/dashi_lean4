@@ -73,6 +73,7 @@ import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
 #print axioms Synthesis.Millennium.BSD.cmEveryRationalPoint_eq_twoTorsion_add_double
 #print axioms Synthesis.Millennium.BSD.cmSelectedOriginalMordellWeil_ZRank_zero
 #print axioms Synthesis.Millennium.BSD.cmLevel32EtaAnalyticExpression_ne_zero
+#print axioms Synthesis.Millennium.BSD.cmLevel32EtaAnalyticExpression_differentiableAt
 #print axioms Synthesis.Millennium.BSD.cmSelectedGeometricKummerShortExact_group
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'

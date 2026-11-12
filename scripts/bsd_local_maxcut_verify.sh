@@ -29,7 +29,9 @@ for module in \
   MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact \
   MillenniumBSDCMOriginalExplicitCokernelZeroExact \
   MillenniumBSDCMActualE2H1ExplicitImageWeldExact \
-  MillenniumBSDCMOriginalMordellWeilModTwoCardExact
+  MillenniumBSDCMOriginalMordellWeilModTwoCardExact \
+  MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact \
+  MillenniumBSDCMSelectedPeriodNormalizationExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -38,6 +40,8 @@ done
 tmp="$(mktemp --suffix=.lean "$PWD/.bsd_maxcut_axioms_XXXXXXXX")"
 trap 'rm -f "$tmp"' EXIT
 cat > "$tmp" <<'EOF'
+import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
+import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
 import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
@@ -49,6 +53,8 @@ import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 #print axioms Synthesis.Millennium.BSD.cmExplicitSelmerToActualE2H1_injective
 #print axioms Synthesis.Millennium.BSD.cmActualE2H1ExplicitSelmerImage_eq_torsion
 #print axioms Synthesis.Millennium.BSD.cmOriginalMordellWeilModuloTwo_card_eq_four
+#print axioms Synthesis.Millennium.BSD.cmSelectedEBarRestrictedShaOne_mem_iff
+#print axioms Synthesis.Millennium.BSD.cmSelectedBSDPeriodNormalization
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

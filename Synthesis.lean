@@ -426,6 +426,8 @@ import Synthesis.MillenniumBSDCMOddPrimeRationalSquareSupportExact
 import Synthesis.MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact
 
 import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
+import Synthesis.MillenniumBSDCMActualE2H1ExplicitImageWeldExact
+import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 /-!
 # Cross-domain synthesis spine
 

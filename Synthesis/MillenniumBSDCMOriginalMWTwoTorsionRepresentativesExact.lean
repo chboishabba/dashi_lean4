@@ -86,4 +86,26 @@ theorem cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion
       (QuotientGroup.mk' globalDoubleSubgroup (Multiplicative.ofAdd P))
   exact ⟨T, hT, hq.symm⟩
 
+
+/-- The quotient equality is now lowered to a LITERAL equation in the
+original rational elliptic group. Every rational point P can be
+written as T + 2U where T is a genuine rational two-torsion point.
+This pays the nonabstract mod-doubling reduction needed by the
+finitely generated abelian-group structure theorem. -/
+theorem cmEveryRationalPoint_eq_twoTorsion_add_double
+    (P : RationalProjectivePoint) :
+    ∃ T U : RationalProjectivePoint,
+      (2 : ℕ) • T = 0 ∧ P = T + (2 : ℕ) • U := by
+  obtain ⟨T, hT, hQ⟩ :=
+    cmOriginalMWModTwo_has_actual_twoTorsion_representative
+      (QuotientGroup.mk' globalDoubleSubgroup
+        (Multiplicative.ofAdd P))
+  obtain ⟨z, hz, heq⟩ :=
+    (QuotientGroup.mk'_eq_mk').mp hQ
+  obtain ⟨U, hU⟩ := hz
+  have hAdd := congrArg Multiplicative.toAdd heq
+  change T + z.toAdd = P at hAdd
+  rw [hU, ← two_nsmul] at hAdd
+  exact ⟨T, U, hT, hAdd.symm⟩
+
 end Synthesis.Millennium.BSD

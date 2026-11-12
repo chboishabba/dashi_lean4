@@ -149,6 +149,12 @@ theorem cmQ2ShiftedValuationPositive
     intro h
     rw [h, cmQ2Valuation_negOne] at hx
     omega
+  have hxplus : x + 1 ≠ 0 := by
+    intro heq
+    apply hxnegone
+    calc
+      x = (x + 1) - 1 := by ring
+      _ = -1 := by rw [heq]; ring
   constructor
   · have h := cmQ2Valuation_add_of_lt
       (-1 : ℚ_[2]) x (by norm_num) hxne
@@ -157,8 +163,7 @@ theorem cmQ2ShiftedValuationPositive
     simpa [sub_eq_add_neg, add_comm, cmQ2Valuation_negOne] using h
   · have h := cmQ2Valuation_add_of_lt
       (1 : ℚ_[2]) x (by norm_num) hxne
-      (by simpa [add_comm] using (show x + 1 ≠ 0 by
-        exact add_ne_zero.mpr (by simpa using hxnegone)))
+      (by simpa [add_comm] using hxplus)
       (by simpa [Padic.valuation_one] using hx)
     simpa [add_comm, Padic.valuation_one] using h
 
@@ -177,6 +182,12 @@ theorem cmQ2ShiftedValuationNegative
     intro h
     rw [h, cmQ2Valuation_negOne] at hx
     omega
+  have hxplus : x + 1 ≠ 0 := by
+    intro heq
+    apply hxnegone
+    calc
+      x = (x + 1) - 1 := by ring
+      _ = -1 := by rw [heq]; ring
   constructor
   · have h := cmQ2Valuation_add_of_lt
       x (-1 : ℚ_[2]) hxne (by norm_num)
@@ -185,7 +196,7 @@ theorem cmQ2ShiftedValuationNegative
     simpa [sub_eq_add_neg] using h
   · have h := cmQ2Valuation_add_of_lt
       x (1 : ℚ_[2]) hxne (by norm_num)
-      (by exact add_ne_zero.mpr (by simpa using hxnegone))
+      hxplus
       (by simpa [Padic.valuation_one] using hx)
     exact h
 

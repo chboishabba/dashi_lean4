@@ -178,4 +178,27 @@ theorem cmExplicitTwoSelmer_firstRationalV2Parity_zero
   rw [hlocal] at hnat
   simpa using hnat.symm
 
+
+/-- The combined maximum-cut necessary conditions hold on the ORIGINAL
+global explicit two-Selmer subgroup (not the 16-code model):
+the two actual rational square classes have equal real sign, and
+the first has even rational 2-adic valuation. -/
+theorem cmExplicitTwoSelmer_realSign_and_firstV2Parity_zero
+    (s : explicitTwoSelmerSubgroup) :
+    squareClassSignBit
+      ((s : RatSquareClass × RatSquareClass).1) =
+        squareClassSignBit
+          ((s : RatSquareClass × RatSquareClass).2)
+    ∧
+    squareClassV2Parity
+      ((s : RatSquareClass × RatSquareClass).1) = 0 := by
+  have hreal :
+      realKummerLocalization (s : RatSquareClass × RatSquareClass) ∈
+        RealKummerImage := s.property.1
+  change
+    squareClassSignBit ((s : RatSquareClass × RatSquareClass).1) =
+      squareClassSignBit ((s : RatSquareClass × RatSquareClass).2)
+    at hreal
+  exact ⟨hreal, cmExplicitTwoSelmer_firstRationalV2Parity_zero s⟩
+
 end Synthesis.Millennium.BSD

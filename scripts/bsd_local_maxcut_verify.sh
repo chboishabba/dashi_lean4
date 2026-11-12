@@ -27,16 +27,18 @@ for module in \
   MillenniumBSDCMOddPrimeLocalSecondParityExact \
   MillenniumBSDCMOddPrimeRationalSquareSupportExact \
   MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact \
-  MillenniumBSDCMOriginalExplicitCokernelZeroExact
+  MillenniumBSDCMOriginalExplicitCokernelZeroExact \
+  MillenniumBSDCMActualE2H1ExplicitImageWeldExact \
+  MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
-  lake env lean "Synthesis/$module.lean"
+  lake build "Synthesis.$module"
 done
 
-tmp="$(mktemp "$PWD/.bsd_maxcut_axioms_XXXXXXXX.lean")"
+tmp="$(mktemp --suffix=.lean "$PWD/.bsd_maxcut_axioms_XXXXXXXX")"
 trap 'rm -f "$tmp"' EXIT
 cat > "$tmp" <<'EOF'
-import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
+import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
 #print axioms Synthesis.Millennium.BSD.cmQpOddLocalKummerImage_secondParity_zero
@@ -44,14 +46,17 @@ import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
 #print axioms Synthesis.Millennium.BSD.cmTorsionEquivOriginalExplicitSelmer
 #print axioms Synthesis.Millennium.BSD.cmGlobalKummerQuotientEquivExplicitSelmer
 #print axioms Synthesis.Millennium.BSD.cmExplicitTwoSelmerCokernel_subsingleton
+#print axioms Synthesis.Millennium.BSD.cmExplicitSelmerToActualE2H1_injective
+#print axioms Synthesis.Millennium.BSD.cmActualE2H1ExplicitSelmerImage_eq_torsion
+#print axioms Synthesis.Millennium.BSD.cmOriginalMordellWeilModuloTwo_card_eq_four
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"
 
 if [[ "${1:-}" == "--full" ]]; then
   echo 'LOCAL ROOT CHECK: Synthesis.lean'
-  lake env lean Synthesis.lean
+  lake build Synthesis
 fi
 
-echo 'KERNEL TYPECHECK COMPLETED. Inspect the axiom output before admission.'
+echo 'KERNEL MODULE BUILD AND AXIOM COMMAND COMPLETED. Inspect all axiom output before admission.'
 echo 'Classical.choice and proof irrelevance are not substitute BSD mathematical assumptions.'

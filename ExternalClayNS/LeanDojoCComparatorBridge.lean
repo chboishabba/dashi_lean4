@@ -76,10 +76,15 @@ def LeanDojoIncompressibleToClay : Prop :=
         (pairFieldToLeanDojo f))),
       ClaySpec.EquationTwo (leanDojoFieldToPair sol.velocity)
 
-/-- Translate LeanDojo's finite-energy representation (coordinate square sum)
-into ClaySpec's vector-valued `MemLp` plus norm-square integral representation. -/
+/-- Translate LeanDojo's coordinate-square finite-energy bound into
+ClaySpec's vector-valued `MemLp` bound for the SAME SMOOTH global velocity.
+The former `FiniteEnergy u` hypothesis for arbitrary u did not imply strong
+measurability of u, while `MemLp` does. In the actual target consumer,
+`GlobalSmoothSolution.velocity_smooth` supplies the missing hypothesis.
+No new fluid estimate is postulated by this recut. -/
 def LeanDojoEnergyToClay : Prop :=
   ∀ (u : VelocityField 3),
+    NavierStokes.velocity_smooth_on_global_spacetime_domain u →
     NavierStokesOnR3.FiniteEnergy u →
       ClaySpec.BoundedEnergy (leanDojoFieldToPair u)
 
@@ -125,7 +130,7 @@ theorem leanDojoSolutionToClaySpec_of_transport
     w.momentum ν ν_pos u₀ f hdiv sol,
     w.incompressible ν ν_pos u₀ f hdiv sol,
     leanDojoInitialCondition_to_clay sol,
-    w.energy sol.velocity henergy⟩
+    w.energy sol.velocity sol.velocity_smooth henergy⟩
 
 /-! ## Exact target compiler -/
 

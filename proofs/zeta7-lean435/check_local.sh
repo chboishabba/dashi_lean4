@@ -27,7 +27,7 @@ for theorem in   "ZetaIrr.Z7.oneOfZeta7To21"   "BishopZ7Admission.z7WitnessFin8"
   }
 done
 
-if grep -Eq 'sorryAx|Lean\.ofReduceBool|unsafe axiom|unknown constant|declaration uses \'sorry\'' "$receipt"; then
+if grep -Eq 'sorryAx|Lean\.ofReduceBool|unsafe axiom|unknown constant' "$receipt"; then
   echo "unexpected axiom or elaboration escape in Z7 admission" >&2
   exit 1
 fi

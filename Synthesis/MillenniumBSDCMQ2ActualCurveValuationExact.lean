@@ -38,11 +38,18 @@ theorem cmQ2Affine_nonzero_factors
   have hprod : x * (x - 1) * (x + 1) ≠ 0 := by
     rw [← hfactor]
     exact pow_ne_zero 2 hy
-  exact ⟨
-    (mul_ne_zero_iff.mp (mul_ne_zero_iff.mp hprod).1).1,
-    (mul_ne_zero_iff.mp (mul_ne_zero_iff.mp hprod).1).2,
-    (mul_ne_zero_iff.mp hprod).2
-  ⟩
+  have hx : x ≠ 0 := by
+    intro hzero
+    simp [hzero] at hprod
+  have hm : x - 1 ≠ 0 := by
+    intro hzero
+    rw [hzero] at hprod
+    simp at hprod
+  have hp : x + 1 ≠ 0 := by
+    intro hzero
+    rw [hzero] at hprod
+    simp at hprod
+  exact ⟨hx, hm, hp⟩
 
 /-- The genuine integer-valued 2-adic valuations of the original
 affine equation satisfy the exact sum relation. -/

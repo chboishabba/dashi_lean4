@@ -428,6 +428,8 @@ import Synthesis.MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact
 import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
 import Synthesis.MillenniumBSDCMActualE2H1ExplicitImageWeldExact
 import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
+import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
+import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
 /-!
 # Cross-domain synthesis spine
 

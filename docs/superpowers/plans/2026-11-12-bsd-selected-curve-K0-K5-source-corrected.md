@@ -381,3 +381,108 @@ Attribution: Mathlib elliptic point and FLT(4) theorem owners,
 the original Galois/TopRep project owners, and the prior
 Agda-Bishop analytical owners remain separate. No new axiom,
 uninhabited record, or asserted metadata substitutes for proofs.
+
+
+## 2026-11-12 current max-cut: genuine K3 donor, original K1 pointwise H1 and K2 CLM exactness
+
+SOURCE-WRITTEN ONLY. This section updates, but does not erase,
+the earlier proof-boundary ledger.
+
+K3 — actual existing external theorem located:
+- Michael Stoll, EllipticCurves/MordellWeil.lean,
+  theorem WeierstrassCurve.Affine.fg_point_of_numberField:
+  IsAddFG W.Point for arbitrary elliptic Weierstrass models
+  over number fields.
+- Primary source commit:
+  MichaelStollBayreuth/EllipticCurves @
+  bad38e242a187dea006fc302a0ef0fd53eedd4ba
+  (Apache-2.0, Lean 4.35.0, Mathlib v4.35.0).
+- The original project's
+  rationalProjectivePointAddEquivMathlib :
+  RationalProjectivePoint ≃+ cmWeierstrass.toAffine.Point
+  is already present; no invented curve or abstract carrier.
+- NEW optional source
+  Integration/MillenniumBSDStollMordellWeilAdapter.lean
+  transports Stoll's genuine MW finite-generation
+  theorem through that exact original AddEquiv and
+  consumes cmSelectedOriginalMordellWeil_ZRank_zero,
+  removing the former EXPLICIT FG hypothesis IN THE
+  OPT-IN SOURCE if all local imports elaborate.
+- NEW isolated script
+  scripts/bsd_stoll_mw_isolated_verify.sh
+  creates a detached git worktree, pins both Lean and
+  Mathlib to 4.35.0 and adds the exact Stoll donor commit,
+  builds only the optional integration module, prints
+  axioms, then removes the scratch worktree. It does
+  NOT mutate original branch pins, require CI/Docker,
+  or pretend to be a kernel receipt.
+- K0 still OPEN: root project is 4.35.0-rc3/mathlib 4.28.0.
+  The optional compatibility build has not run; all
+  original Synthesis dependencies must elaborate in the
+  newer mathlib too. DO NOT call selected K3 paid until
+  isolated local kernel and axiom audit succeed.
+
+K1 — original global point into local H1 naturality:
+- NEW Synthesis/MillenniumBSDCMOriginalRationalToPadicH1NaturalityExact.lean
+  cmOriginalPoint_E2H1Restriction_eq_localXT:
+  the literal global rational point's original E[2] H1
+  class restricted to G_Qp equals the original total
+  x-T Kummer map of its localized p-adic point.
+- It consumes paid generic group-cohomology restriction,
+  totalGlobalKummer_localizes and exact existing
+  square-class comparison. IT REQUIRES
+  h:PadicQuadraticKummerCompatibility p, which is still
+  an UNINHABITED original proof field. The scalar
+  Qp*/Qp*² ≃ Hom_cont(G_Qp,C2) is still unpaid.
+- The reverse local E[2] H1 image equality, the real
+  local cohomology weld and classical local completion
+  comparison remain OPEN.
+
+K2 — actual continuous-linear coefficient exactness:
+- NEW Synthesis/MillenniumBSDCMOriginalEbarTopRepUnderlyingExact.lean
+  reuses original localActualE2InclusionCLM and
+  cmEbarDoublingCLM to prove injective E[2] inclusion,
+  image=kernel([2]) and surjective doubling, all on
+  the original E(Qbar) Galois coefficient carrier.
+- This is the underlying ℤ-linear short exactness
+  together with the already-written actual G_Q
+  intertwining. It does NOT construct H1 connecting
+  naturality, all completion-specific E(Qbar_v)
+  coefficients, or classical Sha(E)[2].
+
+K4 — exact Gamma/Beta evaluation target:
+- NEW Synthesis/MillenniumBSDCMLevel32GammaSpecialValuePositiveExact.lean
+  defines Γ(1/4)²/(2^(7/2)Γ(1/2)) as the exact
+  externally published f32 central-value candidate
+  and proves this REAL number positive using
+  pinned Real.Gamma_pos_of_pos.
+- The separate theorem
+  cmOriginalCentralValue_positive_of_candidate_identity
+  takes the SAME-OBJECT L-value equality as an
+  EXPLICIT premise; it does not hide modularity,
+  Mellin, or analytic continuation in the definition.
+- Still OPEN: original curve E:y²=x³-x ↔ normalized
+  f32, analytic L(E,1)=L(f32,1), Mellin evaluation
+  to this Gamma expression, Bishop same-object
+  identification and formal proof of actual
+  L(E,1)>0. The paper identity alone is not
+  kernel acceptance.
+
+K5 — unchanged and genuinely OPEN: odd-primary
+Sha(E/Q), leading BSD coefficient, and universal BSD.
+A proof of one curve's explicit 2-Selmer cokernel
+cannot solve the Clay conjecture.
+
+K0 acceptance commands:
+  bash scripts/bsd_local_maxcut_verify.sh --full
+  bash scripts/bsd_stoll_mw_isolated_verify.sh
+
+The first is version-guarded and fails closed. The second
+is an opt-in genuine donor build in a scratch worktree.
+Neither was executed with a Lean kernel in this runtime.
+NO status promotion from source-written to kernel-accepted.
+
+Attribution ownership: original E(Q) group and Kummer
+code (DASHI); Mordell–Weil theorem (Michael Stoll);
+Gamma/Beta real positivity (Mathlib); f32 formula
+(Huber–Liu–McLaughlin–Ye–Yuan–Zhang).

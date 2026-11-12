@@ -1,0 +1,21 @@
+import LeanDojoExactTerminal
+
+namespace DASHILiteralClayNS
+
+#check pairToLeanSpacetime
+#check leanSpacetimeToPair
+#check pairToLeanSpacetime_leftInverse
+#check pairToLeanSpacetime_rightInverse
+#check comparatorInitialDecay_to_leanDojo
+#check comparatorInitialPeriodic_to_leanDojo
+#check comparatorForceDecay_to_leanDojo
+#check comparatorPeriodicForceDecay_to_leanDojo
+#check leanDojoR3Solution_to_comparator
+#check leanDojoPeriodicSolution_to_comparator
+#check dashiExactFeffermanC
+#check dashiExactFeffermanD
+
+#print axioms dashiExactFeffermanC
+#print axioms dashiExactFeffermanD
+
+end DASHILiteralClayNS

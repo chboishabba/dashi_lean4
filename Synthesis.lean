@@ -432,6 +432,7 @@ import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
 import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
 import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
 import Synthesis.MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
+import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
 /-!
 # Cross-domain synthesis spine
 

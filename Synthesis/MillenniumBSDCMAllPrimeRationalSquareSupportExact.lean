@@ -1,3 +1,4 @@
+import Synthesis.MillenniumBSDPinnedSquareCriterionV428Exact
 import Synthesis.MillenniumBSDRationalSquareClassQuotient
 import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Tactic
@@ -51,7 +52,7 @@ theorem cmRationalSquareClass_one_or_negOne_of_allPrimeEven
       intro p hp
       simpa [padicValRat.neg] using heven p hp
     have hsq : IsSquare (-(a : ℚ)) :=
-      (Rat.isSquare_iff_even_factorization).2 ⟨haneg, hEvenNeg⟩
+      cmPinnedRatSquare_of_nonneg_even_padicVal (-(a : ℚ)) haneg hEvenNeg
     rcases hsq with ⟨b, hb⟩
     have hbne : b ≠ 0 := by
       intro hzero

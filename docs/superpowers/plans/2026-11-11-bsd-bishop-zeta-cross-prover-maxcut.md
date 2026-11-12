@@ -417,3 +417,69 @@ Attribution: rational factorization and Padic valuation API are
 Mathlib sources; Agda original square-class/finite torsion and
 Bishop zeta/Dirichlet donors remain independently owned. No
 cross-kernel source import or new Agda theorem is asserted here.
+
+
+## 2026-11-12 second continuation: pinned mathlib repair and original cokernel
+
+Audit against Mathlib v4.28.0 SOURCE (not current HEAD):
+- Mathlib/NumberTheory/Padics/PadicVal/Basic.lean does NOT define
+  Rat.isSquare_iff_even_factorization. The earlier direct invocation
+  was incompatible with the actual pinned repository.
+- Mathlib v4.28.0 DOES provide Nat.factorization_prod_pow_eq_self,
+  Rat.isSquare_iff, padicValRat_def, and padicValNat_primes.
+- The previous Nat.padicValNat_def rewrite in the odd-prime unit
+  proof was invalid and is replaced by Padic.valuation_natCast and
+  the actual padicValNat_primes theorem.
+
+Implementation:
+- Synthesis/MillenniumBSDPinnedSquareCriterionV428Exact.lean:
+  cmPinnedNatSquare_of_even_factorization,
+  cmPinnedRat_num_den_padic_one_zero,
+  cmPinnedRat_num_den_even,
+  cmPinnedIntSquare_of_nonneg_even_factorization,
+  cmPinnedRatSquare_of_nonneg_even_padicVal.
+  This is an attributed adaptation of an upstream mathlib theorem to
+  OLD v4.28 primitives; it is NOT an original theorem discovery.
+- AllPrimeRationalSquareSupportExact now uses the local pinned square
+  theorem instead of nonexistent Rat.isSquare_iff_even_factorization.
+- Synthesis/MillenniumBSDCMOriginalExplicitCokernelZeroExact.lean:
+  cmRationalTorsionPointOfCode,
+  cmTotalGlobalKummer_torsionPointOfCode,
+  cmTorsionSelmerClass_in_globalKummerRange,
+  cmGlobalKummerQuotientToSelmer_surjective,
+  cmGlobalKummerQuotientEquivExplicitSelmer,
+  cmExplicitTwoSelmerCokernel_eq_one,
+  cmExplicitTwoSelmerCokernel_subsingleton.
+  These use original rational points, original global Kummer quotient,
+  original explicit Selmer, and original explicit cokernel—not an
+  invented group. No identification with classical Sha(E)[2] is claimed.
+- scripts/bsd_local_maxcut_verify.sh:
+  local-only focused Lean typecheck, dependency/axiom inspection and
+  optional --full synthesis root. Its existence is not execution.
+
+Acceptance status of ALL declarations above: SOURCE-WRITTEN,
+GITHUB-SOURCE-READBACK only. No pinned local lean/lake/nix executable
+was available during this continuation. No theorem is promoted to
+local kernel accepted on source readback, absence of sorry, or CI.
+
+The remaining exact high-alpha PROOF cut AFTER local typechecking:
+K1. Same-object *cohomological* local Kummer comparison all places
+    (especially Real and Q2) for actual E[2] and continuous H1.
+K2. Actual classical E(Qbar)-valued short exact [2] sequence,
+    continuous long exact connecting morphism/naturality, and
+    explicit cokernel ≃ Sha(E/Q)[2]. The trivial explicit quotient
+    does not identify the classical one without K1 and K2.
+K3. Transfer the original MW group E(Q)/2E(Q) equivalence and
+    four-point cardinality to an actual rank-zero theorem, paying
+    finite generation and rational E(Q)[2] same-object identification.
+K4. The analytic owner must construct the original CM elliptic
+    L-function and certify central nonvanishing; the Riemann zeta
+    commuting square supplies only reusable Bishop convergence
+    infrastructure, not L(E,1) itself.
+K5. Odd-primary Sha, full leading coefficient, and universal BSD
+    remain independent. Even a verified dim Sel(2)=2 proves at most
+    rank zero and Sha(E/Q)[2]=0 without K5.
+
+NON-NEGOTIABLE: Agda golden owners and attribution boundaries
+preserved; local kernel authoritative rather than CI; do not turn
+source-written descriptions into acceptance receipts.

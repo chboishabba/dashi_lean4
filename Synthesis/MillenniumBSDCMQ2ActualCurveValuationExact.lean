@@ -105,7 +105,9 @@ theorem cmQ2Valuation_negOne :
 theorem cmQ2Valuation_neg (x : ℚ_[2]) (hx : x ≠ 0) :
     (-x).valuation = x.valuation := by
   calc
-    (-x).valuation = ((-1 : ℚ_[2]) * x).valuation := by ring
+    (-x).valuation = ((-1 : ℚ_[2]) * x).valuation := by
+      congr 1
+      ring
     _ = ((-1 : ℚ_[2]).valuation) + x.valuation :=
       Padic.valuation_mul (by norm_num) hx
     _ = x.valuation := by rw [cmQ2Valuation_negOne]; omega

@@ -436,6 +436,7 @@ import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
 import Synthesis.MillenniumBSDCMFGAbelianRankZeroFromModTwoExact
 import Synthesis.MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact
 import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
+import Synthesis.MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
 /-!
 # Cross-domain synthesis spine
 

@@ -209,7 +209,10 @@ New committed Lean owners:
   cmQ2SquareClassValuationParity (on original PadicSquareClass 2);
   cmQ2SquareClassValuationParity_rep;
   cmQ2SquareClassValuationParity_of_even;
-  cmQ2OrdinaryXTSquareClassParity_zero.
+  cmQ2OrdinaryXTSquareClassParity_zero;
+  cmQ2TorsionFirstSquareClassOneParity_zero;
+  cmQ2TorsionFirstSquareClassNegOneParity_zero;
+  cmQ2ExceptionalFirstKummerRepresentativeParity_zero.
 
 These are theorem-shaped proof implementations on the literal existing
 Q_[2] field and square-class quotient, NOT a new abstract local carrier.
@@ -223,8 +226,10 @@ square-class quotient. Exact-head Lean kernel status remains PENDING;
 readback of a GitHub source file is NOT kernel checking.
 
 Remaining local cut:
-* exceptional torsion conventions (O and y=0 at x=0,+1,-1) in
-  the ACTUAL local square class, matching original geometric Kummer;
+* exceptional first-coordinate valuation parity is now proved in the
+  ACTUAL local square-class quotient for representatives 1 and -1;
+  still prove each selected exceptional geometric Kummer point maps
+  to the corresponding representative under naturality/restriction;
 * proof that the actual global/local Kummer diagram commutes on all
   rational and local points, including exceptional cases;
 * real-place full local Kummer image, not only the ordinary sign filter;

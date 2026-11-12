@@ -1,5 +1,7 @@
 import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
 import Mathlib.GroupTheory.FiniteAbelian.Basic
+import Mathlib.GroupTheory.Torsion
+import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 import Mathlib.Tactic
 
 /-!
@@ -85,5 +87,23 @@ theorem cmSelectedRationalPoints_finite_of_MW_finiteGeneration
     RationalProjectivePoint
   intro P
   exact cmEveryRationalPoint_eq_twoTorsion_add_double P
+
+
+/-- Conditional only on the genuine original E(Q) finite-generation
+instance, the original Mordell–Weil Z-module has rank ZERO.
+No abstract dimension receipt is supplied. The rank deduction
+uses the original mathlib finite-abelian group structure theorem,
+finite-group torsion, and rank_eq_zero_iff_isTorsion. -/
+theorem cmSelectedOriginalMordellWeil_ZRank_zero
+    [AddGroup.FG RationalProjectivePoint] :
+    Module.rank ℤ RationalProjectivePoint = 0 := by
+  letI : Finite RationalProjectivePoint :=
+    cmSelectedRationalPoints_finite_of_MW_finiteGeneration
+  have hTorsion : Module.IsTorsion ℤ RationalProjectivePoint :=
+    (AddMonoid.isTorsion_iff_isTorsion_int).mp
+      (AddGroup.is_add_torsion_of_finite :
+        AddMonoid.IsTorsion RationalProjectivePoint)
+  exact (rank_eq_zero_iff_isTorsion
+    (R := ℤ) (M := RationalProjectivePoint)).mpr hTorsion
 
 end Synthesis.Millennium.BSD

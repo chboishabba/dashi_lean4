@@ -85,4 +85,38 @@ theorem cmQ2OrdinaryXTSquareClassParity_zero
     ⟨x, (cmQ2Affine_nonzero_factors x y hcurve hy).1⟩
     (cmQ2NonexceptionalXValuationEven x y hcurve hy)
 
+
+/-- First local x-T torsion coordinate of O and (1,0): the original
+Q_2 square class of one has parity zero. -/
+theorem cmQ2TorsionFirstSquareClassOneParity_zero :
+    cmQ2SquareClassValuationParity
+      (padicSquareClassOf 2
+        (⟨1, by norm_num⟩ : NonzeroPadic 2)) = 0 := by
+  rw [cmQ2SquareClassValuationParity_rep]
+  simp [Padic.valuation_one]
+
+/-- First local x-T torsion coordinate of (0,0) and (-1,0):
+the original Q_2 square class of minus one has parity zero. -/
+theorem cmQ2TorsionFirstSquareClassNegOneParity_zero :
+    cmQ2SquareClassValuationParity
+      (padicSquareClassOf 2
+        (⟨-1, by norm_num⟩ : NonzeroPadic 2)) = 0 := by
+  rw [cmQ2SquareClassValuationParity_rep, cmQ2Valuation_negOne]
+  omega
+
+/-- Every exceptional first x-T representative in the selected
+rational torsion table is 1 or -1, hence its ORIGINAL Q_2 square
+class has even valuation. This is an arithmetic value theorem,
+not yet the local geometric Kummer naturality statement. -/
+theorem cmQ2ExceptionalFirstKummerRepresentativeParity_zero
+    (a : NonzeroPadic 2)
+    (ha : (a : ℚ_[2]) = 1 ∨ (a : ℚ_[2]) = -1) :
+    cmQ2SquareClassValuationParity (padicSquareClassOf 2 a) = 0 := by
+  rw [cmQ2SquareClassValuationParity_rep]
+  rcases ha with h | h
+  · rw [h, Padic.valuation_one]
+    omega
+  · rw [h, cmQ2Valuation_negOne]
+    omega
+
 end Synthesis.Millennium.BSD

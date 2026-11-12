@@ -46,5 +46,22 @@ theorem selectedXi_one : selectedXi 1 = 1 / 2 := by
 #print axioms selectedXi_one_sub
 #print axioms selectedXi_zero
 
+
+/-- Exact identification with the classical completed zeta product
+away from the removable poles 0 and 1. This uses Mathlib's
+`completedRiemannZeta_eq`, not a new completed-zeta axiom.
+It does NOT establish Weil positivity or any zero-location theorem. -/
+theorem selectedXi_eq_classical_completed (s : ℂ)
+    (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    selectedXi s = s * (s - 1) * completedRiemannZeta s / 2 := by
+  rw [completedRiemannZeta_eq]
+  have hs1sub : (1 : ℂ) - s ≠ 0 :=
+    sub_ne_zero.mpr hs1.symm
+  unfold selectedXi
+  field_simp [hs0, hs1, hs1sub]
+  ring
+
+#print axioms selectedXi_eq_classical_completed
+
 end
 end Integration.RiemannXiMathlibReflectionExact

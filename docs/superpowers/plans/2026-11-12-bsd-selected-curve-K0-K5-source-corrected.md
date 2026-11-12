@@ -134,3 +134,78 @@ checked, kernel accepted, or physically verified.
 Agda remains golden for Agda owners; local verification
 rather than CI is authoritative; attribution to Mathlib,
 LMFDB, Agda and other primary owners is preserved.
+
+
+## 2026-11-12 K1–K5 continuation and corrected original-owner accounting
+
+Source-written (not local-kernel-checked):
+* K3 MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact.lean:
+  cmRationalTorsionCode_double_zero,
+  cmOriginalMWModTwo_everyClass_has_twoTorsionLift,
+  cmOriginalMWModTwo_has_actual_twoTorsion_representative,
+  cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion.
+  These prove that EVERY original E(Q)/2E(Q) class can be
+  represented by a genuine rational point annihilated by [2].
+  The original full E(Q)[2] four-point classification is ALREADY
+  SOURCE-WRITTEN in the preexisting
+  MillenniumBSDRationalTwoTorsionExact.lean; DO NOT label this
+  part unpaid. The remaining missing rank step is formal
+  Mordell–Weil finite generation and a rank-vs-mod-two theorem
+  on the actual E(Q) carrier; the quotient calculation alone
+  does not establish that rank theorem.
+* K5 MillenniumBSDCMShaTwoNotFullShaNegativeControlExact.lean:
+  constructive finite counterexample ZMod 3 where
+  A[2] = 0 but A is nontrivial. This is NOT a claim
+  that the selected E has nonzero odd-primary Sha.
+  It forbids a logically invalid promoted full-Sha inference.
+* K4 MillenniumBSDCMLevel32EtaFinitePositivityExact.lean:
+  finite truncations of the ORIGINAL selected modular
+  newform eta(4z)^2 eta(8z)^2 (q-product) are positive
+  for 0<q<1. This is a literal q-product donor, not
+  proof of nonzero infinite product or Mellin integral.
+
+New concrete K4 proof path, with external academic attribution:
+Huber–Liu–McLaughlin–Ye–Yuan–Zhang,
+Computing Special L-Values of Certain Modular Forms with Complex
+Multiplication (https://emis.de/ft/24022), Lemma 3.1,
+states the exact original modular form equality
+  f_32(z)=eta(4z)^2 eta(8z)^2
+and
+  L(f_32,1)=2^(-7/2)*Beta(1/4,1/4)>0.
+Next K4 genuine producers:
+  (i) original finite q-product -> strictly positive
+      infinite product / rigorous positive Mellin integrand
+      via Bishop uniform product tails;
+ (ii) original eta-product newform and all-n Fourier
+      coefficients; modularity same-object f_32 ↔ E(32.a3);
+(iii) justified Mellin transform, analytic continuation,
+      and positive Beta integral at s=1.
+This avoids a gratuitous unverified L-value decimal or a
+fabricated exact period. It also avoids treating the Riemann-zeta
+commuting square as if it were an elliptic L-function theorem.
+
+K1 unpaid: all-place actual local scalar quadratic Kummer
+isomorphisms, actual elliptic local image exactness and
+localization naturality; the existing global E[2] H1 map
+is source-written but not sufficient.
+
+K2 unpaid: exact original E(Qbar) doubling sequence
+cohomology + comparison of restricted coefficient
+localizations to original E(Qbar_v), Sha(E)[2]
+cokernel equivalence. The original E(Qbar)
+coefficient representation is already present in
+MillenniumBSDLocalKummerCohomologyReduction.
+
+K3 unpaid: original MW finite-generation and rank
+transport only (rational E(Q)[2] classification is present).
+
+K4 unpaid: the original eta-product's infinite convergence,
+modular same-object and Mellin/central-value theorem.
+
+K5 unpaid: odd-primary Sha and full leading coefficient,
+and universal Clay BSD. The universal conjecture cannot be
+pronounced closed by an interface, declaration, or assertion.
+
+K0 acceptance: script includes these new modules in local
+Lake dependency builds and #print axioms. STILL PENDING
+actual local execution and original golden Agda validation.

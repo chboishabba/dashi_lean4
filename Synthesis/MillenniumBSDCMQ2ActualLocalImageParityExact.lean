@@ -141,4 +141,41 @@ theorem cmExplicitTwoSelmer_localQ2FirstParity_zero
   exact cmQ2LocalKummerImage_firstParity_zero
     (localizeKummerPair 2 (s : RatSquareClass × RatSquareClass)) hloc
 
+
+/-- The integer valuation parity of the localization of an ORIGINAL
+rational square class is its ORIGINAL global squareClassV2Parity.
+This is the genuine rational-to-Q_2 commuting square on the
+actual quotient objects, not on the finite 16-code approximation. -/
+theorem cmQ2SquareClassParity_localize_rational
+    (c : RatSquareClass) :
+    ((cmQ2SquareClassValuationParity (localizeSquareClass 2 c) : ℤ) :
+        ZMod 2) =
+      squareClassV2Parity c := by
+  refine Quotient.inductionOn c ?_
+  intro a
+  change
+    (((((a : ℚ) : ℚ_[2]).valuation % 2 : ℤ) : ZMod 2) =
+      (padicValRat 2 (a : ℚ) : ZMod 2)
+  rw [Padic.valuation_ratCast]
+  exact ZMod.intCast_mod _ _
+
+/-- The original global explicit two-Selmer subgroup has even
+first-coordinate rational 2-adic parity. This theorem uses the ACTUAL
+all-place local Kummer image and the exact rational-to-Q_2 valuation
+commuting square, not finite candidate enumeration. -/
+theorem cmExplicitTwoSelmer_firstRationalV2Parity_zero
+    (s : explicitTwoSelmerSubgroup) :
+    squareClassV2Parity
+      ((s : RatSquareClass × RatSquareClass).1) = 0 := by
+  have hlocal := cmExplicitTwoSelmer_localQ2FirstParity_zero s
+  change
+    cmQ2SquareClassValuationParity
+      (localizeSquareClass 2
+        ((s : RatSquareClass × RatSquareClass).1)) = 0 at hlocal
+  have hnat :=
+    cmQ2SquareClassParity_localize_rational
+      ((s : RatSquareClass × RatSquareClass).1)
+  rw [hlocal] at hnat
+  simpa using hnat.symm
+
 end Synthesis.Millennium.BSD

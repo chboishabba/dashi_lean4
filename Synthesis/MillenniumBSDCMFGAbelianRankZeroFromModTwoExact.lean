@@ -52,7 +52,7 @@ theorem cmFGAbelian_finite_of_modDoubles_twoTorsion
       Finite.of_equiv _ DFinsupp.equivFunOnFintype.symm
     haveI : Finite ((Fin 0 →₀ ℤ) ×
         (⨁ i : ι, ZMod (p i ^ e i))) := inferInstance
-    exact Finite.of_equiv G φ
+    exact Finite.of_equiv _ φ.symm
   · have hnpos : 0 < n := Nat.pos_of_ne_zero hn
     let i0 : Fin n := ⟨0, hnpos⟩
     let g0 : G :=

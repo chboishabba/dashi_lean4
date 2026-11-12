@@ -34,7 +34,10 @@ for module in \
   MillenniumBSDCMSelectedPeriodNormalizationExact \
   MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact \
   MillenniumBSDCMShaTwoNotFullShaNegativeControlExact \
-  MillenniumBSDCMLevel32EtaFinitePositivityExact
+  MillenniumBSDCMLevel32EtaFinitePositivityExact \
+  MillenniumBSDCMFGAbelianRankZeroFromModTwoExact \
+  MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact \
+  MillenniumBSDCMOriginalGeometricKummerGroupExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -49,6 +52,9 @@ import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
 import Synthesis.MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
 import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
+import Synthesis.MillenniumBSDCMFGAbelianRankZeroFromModTwoExact
+import Synthesis.MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact
+import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
 #print axioms Synthesis.Millennium.BSD.cmQpOddLocalKummerImage_secondParity_zero
@@ -64,6 +70,10 @@ import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
 #print axioms Synthesis.Millennium.BSD.cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion
 #print axioms Synthesis.Millennium.BSD.cmVanishingTwoTorsion_doesNotForceTrivialGroup
 #print axioms Synthesis.Millennium.BSD.cmLevel32EtaProductTruncation_pos
+#print axioms Synthesis.Millennium.BSD.cmEveryRationalPoint_eq_twoTorsion_add_double
+#print axioms Synthesis.Millennium.BSD.cmSelectedOriginalMordellWeil_ZRank_zero
+#print axioms Synthesis.Millennium.BSD.cmLevel32EtaAnalyticExpression_ne_zero
+#print axioms Synthesis.Millennium.BSD.cmSelectedGeometricKummerShortExact_group
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

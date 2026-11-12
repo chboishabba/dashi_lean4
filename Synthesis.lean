@@ -430,6 +430,8 @@ import Synthesis.MillenniumBSDCMActualE2H1ExplicitImageWeldExact
 import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
 import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
 import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
+import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
+import Synthesis.MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
 /-!
 # Cross-domain synthesis spine
 

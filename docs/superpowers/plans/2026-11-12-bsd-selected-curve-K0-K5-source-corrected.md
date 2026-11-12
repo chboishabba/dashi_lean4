@@ -209,3 +209,84 @@ pronounced closed by an interface, declaration, or assertion.
 K0 acceptance: script includes these new modules in local
 Lake dependency builds and #print axioms. STILL PENDING
 actual local execution and original golden Agda validation.
+
+
+## 2026-11-12 K2/K3/K4 next max-cut source continuation
+
+NEW source owners on THIS main-based PR branch, all still
+unverified against the local Lean kernel:
+
+K3: MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact now
+has cmEveryRationalPoint_eq_twoTorsion_add_double: for every
+original P:E(Q), actual original T,U:E(Q) with [2]T=O and
+P=T+[2]U. This is a literal group equation, not quotient code
+or dimension receipt.
+
+K3: MillenniumBSDCMFGAbelianRankZeroFromModTwoExact:
+- cmFGAbelian_finite_of_modDoubles_twoTorsion takes ANY
+  genuinely finitely generated abelian G with literal
+  g=t+[2]u and [2]t=0, and proves G FINITE via Mathlib
+  AddCommGroup.equiv_free_prod_directSum_zmod (v4.28.0).
+  It rules out a free Z coordinate by observing 1 cannot
+  equal a 2-torsion coordinate plus an even integer.
+- cmSelectedRationalPoints_finite_of_MW_finiteGeneration
+  reuses the actual P=T+2U theorem, with ONLY the
+  independently needed AddGroup.FG RationalProjectivePoint.
+- cmSelectedOriginalMordellWeil_ZRank_zero derives
+  Module.rank ℤ RationalProjectivePoint=0 using pinned
+  Mathlib AddMonoid.isTorsion_iff_isTorsion_int and
+  rank_eq_zero_iff_isTorsion.
+THIS IS A CONDITIONAL *GENUINE RANK THEOREM*, but the
+selected original Mordell–Weil finite-generation instance
+is UNPROVED; never claim K3 selected rank zero kernel-accepted.
+
+K2: MillenniumBSDCMOriginalGeometricKummerGroupExact:
+- actual E[2](Qbar) inclusion is injective;
+- its image is kernel of the actual [2] point-group
+  homomorphism;
+- actual [2] is surjective by selected curve's existing
+  constructive algebraic-closure halves;
+- cmSelectedGeometricKummerShortExact_group packages
+  unconditional selected GROUP-level
+  0→E[2](Qbar)→E(Qbar)→[2]E(Qbar)→0.
+Remaining K2 is the continuous equivariant TopRep exact
+sequence, global/local H1 connecting LES and coefficient
+comparison with E(Qbar_v), especially at the real place.
+
+K4: MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact:
+- uses Mathlib v4.28.0 ModularForm.eta and its proved
+  infinite tprod nonzero throughout the upper half-plane,
+  not a finite truncation limit assumed positive;
+- cmLevel32EtaAnalyticExpression_ne_zero proves
+  eta(4z)^2 eta(8z)^2 ≠ 0 for Im z>0;
+- cmLevel32EtaAnalyticExpression_differentiableAt
+  proves complex-differentiability (holomorphy) there.
+This closes the true infinite eta-expression nonvanishing
+and analyticity subgate. It does NOT prove positive Mellin
+integral or identified L(E,1): a nonzero holomorphic
+function may have a zero central Mellin value.
+Exact next: prove this expression = original normalized
+level-32 newform; build its q→0 and modular cusp bounds,
+positive integral on imaginary axis, Mellin/Dirichlet
+same-object and original curve L(E,1)=Mellin(f32,1).
+External academic formula is not a Lean theorem.
+
+K1 remains OPEN: local continuous H1 quadratic Kummer
+equivalence and full original elliptic local image
+naturality at Qp and R. No new scalar compatibility proof
+was inserted and none is marked complete.
+
+K5 remains OPEN: selected odd-primary Sha and full BSD
+leading formula; universal arbitrary-curve/higher-rank
+Clay BSD is unsolved and not representable by an axiom
+in the accepted source world.
+
+K0 is mandatory on exact HEAD:
+bash scripts/bsd_local_maxcut_verify.sh --full
+Script now includes all new modules and #print axioms.
+Source git-readback != kernel elaboration; no Lean/Lake
+is executable in the current attached execution context.
+
+Attribution: Mathlib authors of the finite abelian structure
+theorem and Birkbeck/Loeffler eta library retain their
+original credit. GitHub PR is source-written only.

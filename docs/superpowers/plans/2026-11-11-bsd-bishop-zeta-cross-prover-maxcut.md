@@ -150,3 +150,44 @@ Then the finite consumer delivers precisely the four torsion codes.
 
 This does NOT discharge classical E-valued Sha exactness or the
 analytic side. Kernel acceptance requires local Lean running.
+
+
+## Follow-up: 2-adic parity trichotomy reducer (2026-11-12)
+
+Implemented in Synthesis/MillenniumBSDCMTwoAdicValuationArithmeticExact.lean:
+- cmTwoAdicValuationParity_positive
+- cmTwoAdicValuationParity_negative
+- cmTwoAdicValuationParity_of_trichotomy
+- cmTwoAdicValuationParity_even
+
+The reducer consumes INTEGER valuations vx=v_2(x), vy=v_2(y),
+vm=v_2(x-1), vp=v_2(x+1) and the exact integer curve equation
+2*vy=vx+vm+vp. Under the ultrametric branches
+  vx>0 -> vm=vp=0;
+  vx<0 -> vm=vp=vx,
+it proves an explicit integer k with vx=2*k. It is imported in
+Synthesis.lean. Proofs are SOURCE-WRITTEN; exact-head kernel is unrun.
+
+Exact next producers, not new interfaces:
+1. cmQ2ValuationCurveIdentity: on the existing actual Q_[2] affine
+   elliptic point carrier, prove 2*v2(y)=v2(x)+v2(x-1)+v2(x+1)
+   where x,y,x-1,x+1 nonzero.
+2. cmQ2ShiftedValuationPositive and cmQ2ShiftedValuationNegative:
+   derive hPos/hNeg from the actual nonarchimedean Padic valuation
+   and its value on 1, without taking them as assumptions.
+3. cmQ2SquareClassValuationParity: prove the actual first x-T
+   square class maps to the candidate parity bit equal to v2(x)%2.
+4. cmQ2ExceptionalTorsionKummer: check O and x=0,1,-1 by
+   original x-T torsion conventions, not the affine valuation formula.
+5. cmRealSignOnActualKummer: establish the real sign filter on
+   the global/cohomological class at ALL local points.
+6. cmSUnitSupportFromGoodPlaces: prove outside-S conditions constrain
+   the global square classes to the sixteen finite bit codes.
+7. Connect exact local certificates to
+   cmFilter_eq_torsion_of_local_certificate and the ACTUAL
+   explicitTwoSelmerSubgroup equivalence, not a newly defined subgroup.
+
+Still independent: classical E-valued long exact H1 / Sha(E)[2],
+actual Selmer finrank, and original elliptic L-function central-value
+proof. The Bishop zeta commuting square is a source-preserving
+analytical donor, NOT a proof of original elliptic L(E,s).

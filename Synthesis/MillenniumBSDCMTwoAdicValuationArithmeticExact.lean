@@ -32,7 +32,7 @@ theorem cmTwoAdicValuationParity_of_trichotomy
     ∃ k : ℤ, vx = 2 * k := by
   rcases lt_trichotomy vx 0 with hn | hz | hp
   · obtain ⟨hm, hplus⟩ := hNeg hn
-    refine ⟨vy - 2 * vx, ?_⟩
+    refine ⟨vy - vx, ?_⟩
     omega
   · refine ⟨0, ?_⟩
     omega
@@ -55,7 +55,7 @@ theorem cmTwoAdicValuationParity_negative
     (hCurve : 2 * vy = vx + vm + vp)
     (hm : vm = vx)
     (hp : vp = vx) :
-    vx = 2 * (vy - vx * 1) := by
+    vx = 2 * (vy - vx) := by
   omega
 
 /-- Original x-T first-coordinate parity consumer: a 2-adic geometric

@@ -39,7 +39,6 @@ theorem cmOriginalMWModTwo_everyClass_has_twoTorsionLift
   obtain ⟨T, hT⟩ :=
     cmTorsionCodeToOriginalExplicitSelmer_surjective
       (globalKummerQuotientToSelmer q)
-  have hLift := cmTorsionSelmerClass_in_globalKummerRange T
   let qT :=
     QuotientGroup.mk' globalDoubleSubgroup
       (Multiplicative.ofAdd (cmRationalTorsionPointOfCode T))
@@ -68,5 +67,23 @@ theorem cmOriginalMWModTwo_has_actual_twoTorsion_representative
   obtain ⟨T, hT⟩ := cmOriginalMWModTwo_everyClass_has_twoTorsionLift q
   exact ⟨cmRationalTorsionPointOfCode T,
     cmRationalTorsionCode_double_zero T, hT.symm⟩
+
+
+/-- A pointwise consequence for EVERY actual rational elliptic point:
+its quotient class modulo doubles is represented by a genuine
+rational point killed by two. This is a same-object computation,
+not yet the finite-generation argument required for rank zero. -/
+theorem cmEveryRationalPoint_modDoubles_eq_actual_twoTorsion
+    (P : RationalProjectivePoint) :
+    ∃ T : RationalProjectivePoint,
+      IsRationalTwoTorsion T ∧
+      QuotientGroup.mk' globalDoubleSubgroup
+        (Multiplicative.ofAdd P) =
+      QuotientGroup.mk' globalDoubleSubgroup
+        (Multiplicative.ofAdd T) := by
+  obtain ⟨T, hT, hq⟩ :=
+    cmOriginalMWModTwo_has_actual_twoTorsion_representative
+      (QuotientGroup.mk' globalDoubleSubgroup (Multiplicative.ofAdd P))
+  exact ⟨T, hT, hq.symm⟩
 
 end Synthesis.Millennium.BSD

@@ -26,6 +26,7 @@ namespace DASHILiteralClayNS
 
 open ClaySpec
 open NavierStokes
+open MeasureTheory
 
 /-! ## Same physical velocity: spatial-slice measurability payment -/
 

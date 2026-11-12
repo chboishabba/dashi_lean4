@@ -87,4 +87,116 @@ theorem cmQ2ValuationParity_of_shiftedValuations
     x.valuation y.valuation (x - 1).valuation (x + 1).valuation
     (cmQ2ValuationCurveIdentity x y hcurve hy) hPos hNeg
 
+
+/-- Integer valuation of minus one in the genuine 2-adic field.
+Derived from the multiplicative valuation of (-1)^2=1. -/
+theorem cmQ2Valuation_negOne :
+    ((-1 : ℚ_[2]).valuation) = 0 := by
+  have h : (2 : ℤ) * ((-1 : ℚ_[2]).valuation) = 0 := by
+    calc
+      (2 : ℤ) * ((-1 : ℚ_[2]).valuation) =
+          (((-1 : ℚ_[2]) ^ 2).valuation) := by
+            rw [Padic.valuation_pow]
+            ring
+      _ = 0 := by norm_num [Padic.valuation_one]
+  omega
+
+/-- Genuine p-adic valuation is invariant under negation away from zero. -/
+theorem cmQ2Valuation_neg (x : ℚ_[2]) (hx : x ≠ 0) :
+    (-x).valuation = x.valuation := by
+  calc
+    (-x).valuation = ((-1 : ℚ_[2]) * x).valuation := by ring
+    _ = ((-1 : ℚ_[2]).valuation) + x.valuation :=
+      Padic.valuation_mul (by norm_num) hx
+    _ = x.valuation := by rw [cmQ2Valuation_negOne]; omega
+
+/-- The strict-min ultrametric valuation law on the ACTUAL Q_2 field,
+derived from Mathlib's min <= valuation(add) inequality in both directions. -/
+theorem cmQ2Valuation_add_of_lt
+    (a b : ℚ_[2])
+    (ha : a ≠ 0) (hb : b ≠ 0)
+    (hab : a + b ≠ 0)
+    (hlt : a.valuation < b.valuation) :
+    (a + b).valuation = a.valuation := by
+  have hforward : a.valuation ≤ (a + b).valuation := by
+    have h := Padic.le_valuation_add hab
+    simpa [min_eq_left (le_of_lt hlt)] using h
+  have hback : min (a + b).valuation b.valuation ≤ a.valuation := by
+    have h : (a + b) + (-b) ≠ 0 := by
+      simpa [add_assoc] using ha
+    have hh := Padic.le_valuation_add h
+    rw [cmQ2Valuation_neg b hb] at hh
+    simpa [add_assoc] using hh
+  have hreverse : (a + b).valuation ≤ a.valuation := by
+    by_contra hcontra
+    have hg : a.valuation < (a + b).valuation := lt_of_not_ge hcontra
+    have hmin : a.valuation < min (a + b).valuation b.valuation :=
+      lt_min hg hlt
+    omega
+  exact le_antisymm hreverse hforward
+
+/-- Positive actual 2-adic valuation means both x±1 are units. -/
+theorem cmQ2ShiftedValuationPositive
+    (x : ℚ_[2]) (hx : 0 < x.valuation) :
+    (x - 1).valuation = 0 ∧ (x + 1).valuation = 0 := by
+  have hxne : x ≠ 0 := by
+    intro h
+    simp [h, Padic.valuation_zero] at hx
+  have hxone : x ≠ 1 := by
+    intro h
+    simp [h, Padic.valuation_one] at hx
+  have hxnegone : x ≠ -1 := by
+    intro h
+    rw [h, cmQ2Valuation_negOne] at hx
+    omega
+  constructor
+  · have h := cmQ2Valuation_add_of_lt
+      (-1 : ℚ_[2]) x (by norm_num) hxne
+      (by simpa [sub_eq_add_neg, add_comm] using sub_ne_zero.mpr hxone)
+      (by rw [cmQ2Valuation_negOne]; exact hx)
+    simpa [sub_eq_add_neg, add_comm, cmQ2Valuation_negOne] using h
+  · have h := cmQ2Valuation_add_of_lt
+      (1 : ℚ_[2]) x (by norm_num) hxne
+      (by simpa [add_comm] using (show x + 1 ≠ 0 by
+        exact add_ne_zero.mpr (by simpa using hxnegone)))
+      (by simpa [Padic.valuation_one] using hx)
+    simpa [add_comm, Padic.valuation_one] using h
+
+/-- Negative actual 2-adic valuation is inherited by x±1. -/
+theorem cmQ2ShiftedValuationNegative
+    (x : ℚ_[2]) (hx : x.valuation < 0) :
+    (x - 1).valuation = x.valuation ∧
+      (x + 1).valuation = x.valuation := by
+  have hxne : x ≠ 0 := by
+    intro h
+    simp [h, Padic.valuation_zero] at hx
+  have hxone : x ≠ 1 := by
+    intro h
+    simp [h, Padic.valuation_one] at hx
+  have hxnegone : x ≠ -1 := by
+    intro h
+    rw [h, cmQ2Valuation_negOne] at hx
+    omega
+  constructor
+  · have h := cmQ2Valuation_add_of_lt
+      x (-1 : ℚ_[2]) hxne (by norm_num)
+      (by simpa [sub_eq_add_neg] using sub_ne_zero.mpr hxone)
+      (by rw [cmQ2Valuation_negOne]; exact hx)
+    simpa [sub_eq_add_neg] using h
+  · have h := cmQ2Valuation_add_of_lt
+      x (1 : ℚ_[2]) hxne (by norm_num)
+      (by exact add_ne_zero.mpr (by simpa using hxnegone))
+      (by simpa [Padic.valuation_one] using hx)
+    exact h
+
+/-- Actual nonexceptional Q_2 points of y²=x³-x have even
+integer 2-adic valuation in their first ordinary x-T coordinate. -/
+theorem cmQ2NonexceptionalXValuationEven
+    (x y : ℚ_[2]) (hcurve : y ^ 2 = x ^ 3 - x)
+    (hy : y ≠ 0) :
+    Even x.valuation := by
+  apply cmQ2ValuationParity_of_shiftedValuations x y hcurve hy
+  · exact cmQ2ShiftedValuationPositive x
+  · exact cmQ2ShiftedValuationNegative x
+
 end Synthesis.Millennium.BSD

@@ -1,0 +1,10 @@
+name = "BishopZ7Admission"
+defaultTargets = ["BishopZ7Admission"]
+
+[[require]]
+name = "ZetaIrrational"
+git = "https://github.com/telaviv/zeta-irrationality.git"
+rev = "v1.0"
+
+[[lean_lib]]
+name = "BishopZ7Admission"

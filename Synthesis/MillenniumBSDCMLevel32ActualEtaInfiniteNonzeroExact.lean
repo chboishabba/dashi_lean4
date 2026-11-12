@@ -68,4 +68,24 @@ theorem cmLevel32EtaAnalyticExpression_ne_zero
     (pow_ne_zero 2 (ModularForm.eta_ne_zero
       (cmUpperHalfPlane_scale_eight hz)))
 
+
+/-- The same ORIGINAL infinite level-32 eta-product expression is
+complex-differentiable in the upper half-plane. This uses pinned
+Mathlib's analytic Dedekind eta theorem on each scaled input.
+It does not prove modularity at Γ₀(32) or the curve-L Mellin weld. -/
+theorem cmLevel32EtaAnalyticExpression_differentiableAt
+    {z : ℂ} (hz : z ∈ upperHalfPlaneSet) :
+    DifferentiableAt ℂ cmLevel32EtaAnalyticExpression z := by
+  have h4 :
+      DifferentiableAt ℂ
+        (fun w : ℂ => ModularForm.eta (4 * w)) z :=
+    (ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet
+      (cmUpperHalfPlane_scale_four hz)).comp z (by fun_prop)
+  have h8 :
+      DifferentiableAt ℂ
+        (fun w : ℂ => ModularForm.eta (8 * w)) z :=
+    (ModularForm.differentiableAt_eta_of_mem_upperHalfPlaneSet
+      (cmUpperHalfPlane_scale_eight hz)).comp z (by fun_prop)
+  exact (h4.pow 2).mul (h8.pow 2)
+
 end Synthesis.Millennium.BSD

@@ -47,7 +47,7 @@ theorem cmQ2SquareRel_preservesValuationParity
 
 /-- Actual valuation-parity projection on the original quotient
 Q_2^*/Q_2^{*2}. Its result is the canonical representative 0 or 1. -/
-def cmQ2SquareClassValuationParity :
+noncomputable def cmQ2SquareClassValuationParity :
     PadicSquareClass 2 → ℤ :=
   Quotient.lift
     (fun a : NonzeroPadic 2 => (a : ℚ_[2]).valuation % 2)

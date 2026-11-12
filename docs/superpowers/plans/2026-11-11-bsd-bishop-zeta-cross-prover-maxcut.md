@@ -334,3 +334,86 @@ ACCEPTANCE: pinned local Lean kernel on exact branch head, then
 on the golden owner where applicable. No CI dependence. Avoid marking
 source-written declarations as kernel-checked or physical/integration
 verified until independently executed.
+
+
+## 2026-11-12 all-prime and four-torsion actual explicit Selmer max-cut
+
+NEW SOURCE-WRITTEN ORIGINAL-OBJECT OWNERS (exact-head kernel check PENDING):
+
+1. MillenniumBSDCMAllPrimeRationalSquareSupportExact.lean:
+   cmRationalSquareClass_one_or_negOne_of_allPrimeEven
+   on the original RatSquareClass, from Mathlib
+   Rat.isSquare_iff_even_factorization.
+
+2. MillenniumBSDCMAllPrimeLocalFirstParityExact.lean:
+   actual Q_[p] curve integer valuation identity and strict-ultrametric
+   branches for ALL primes, quotient-invariant first square-class parity,
+   literal LocalKummerImage p inclusion, original rational/local
+   parity commuting square, and the global source claim
+   cmExplicitTwoSelmer_firstSquareClass_unitSupport.
+   First rational Selmer square class is [1] or [-1].
+
+3. MillenniumBSDCMOddPrimeLocalSecondParityExact.lean:
+   actual Q_[p] p!=2 valuation of 2=0, second-coordinate valuation
+   trichotomy including y=0 x=-1, total local Kummer second-parity
+   theorem covering infinity/zero/one/ordinary branches, and
+   cmQpOddLocalKummerImage_secondParity_zero.
+
+4. MillenniumBSDCMOddPrimeRationalSquareSupportExact.lean:
+   cmRationalSquareClass_fourSupport_of_oddPrimeEven:
+   original global rational square-class coordinate supported on
+   [1],[-1],[2],[-2] when all odd-prime valuations are even.
+
+5. MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact.lean:
+   cmRationalSecondSquareClass_fourSupport_of_allLocalImages;
+   cmExplicitTwoSelmer_secondSquareClass_fourSupport;
+   cmExplicitTwoSelmer_only_torsionKummer;
+   cmExplicitTwoSelmer_carrier_eq_four_torsion;
+   cmTorsionCodeToOriginalExplicitSelmer_injective;
+   cmTorsionCodeToOriginalExplicitSelmer_surjective;
+   cmTorsionEquivOriginalExplicitSelmer.
+
+THE CLAIM THESE DECLARATIONS ARE KERNEL-CHECKED IS FALSE UNTIL A
+PINNED LOCAL LEAN RUN ACTUALLY SUCCEEDS. The source contains no sorry
+or explicit axiom declarations but this is not a typechecking receipt.
+No CI status is used as theorem authority.
+
+The remaining precise proof obligations AFTER local acceptance are:
+
+K0. Exact-head Lean typecheck and #print axioms for all new theorem
+owners and imported Synthesis root. Resolve any elaboration/API
+errors against pinned Lean/mathlib before treating them as paid.
+Check version compatibility: main lean-toolchain specifies
+leanprover/lean4:v4.35.0-rc3 while lakefile/manifest references
+mathlib v4.28.0; do not silently update without a local receipt.
+
+K1. Prove the SAME-OBJECT global/local geometric Kummer square
+for all completions and the real place: original x-T local
+Kummer image equals the cohomological connecting image under
+the actual E[2] representation.
+
+K2. Continuous E(Qbar)-valued equivariant [2] exact sequence and
+the real Weil-Chatelet long exact connecting map; identify
+the true Selmer cokernel with classical Sha(E)[2].
+E[2]-coefficient Sha^1 is NOT classical elliptic Sha[2].
+
+K3. Prove actual Mordell-Weil rank and rational E[2] finrank
+identifications from genuine finite-generation and Selmer group
+linear structure. The previous dimension receipt is arithmetic
+logic, not a construction of the inputs.
+
+K4. Original elliptic L(E,1): actual all-n coefficients,
+Bishop exp/log termwise same-object, Euler/Dirichlet convergence,
+modularity/Mellin, continuation, functional equation and
+certified nonzero central value. Do not substitute the original
+Riemann zeta commuting square or abstract setoid interfaces.
+
+K5. For full Sha(E)=0, independently eliminate odd-primary Sha
+components. Selected rank-zero BSD does not by itself prove this.
+General/universal Clay BSD additionally requires arbitrary curves,
+higher ranks and the leading coefficient formula.
+
+Attribution: rational factorization and Padic valuation API are
+Mathlib sources; Agda original square-class/finite torsion and
+Bishop zeta/Dirichlet donors remain independently owned. No
+cross-kernel source import or new Agda theorem is asserted here.

@@ -171,4 +171,55 @@ theorem cmExplicitTwoSelmer_carrier_eq_four_torsion :
     · subst c
       exact torsionKummer_mem_explicitTwoSelmerSubgroup .negOne
 
+
+/-- The four *existing* rational torsion-point constructors map into
+the ORIGINAL explicit Selmer subgroup via its original Kummer map. -/
+def cmTorsionCodeToOriginalExplicitSelmer
+    (P : RationalTwoTorsionPoint) :
+    explicitTwoSelmerSubgroup :=
+  ⟨torsionKummer P, torsionKummer_mem_explicitTwoSelmerSubgroup P⟩
+
+/-- Injectivity uses the already-proved native quotientBits
+dictionary on the original quotient. No synthetic point encoding. -/
+theorem cmTorsionCodeToOriginalExplicitSelmer_injective :
+    Function.Injective cmTorsionCodeToOriginalExplicitSelmer := by
+  intro P Q h
+  have hbits : finiteSeedBits P = finiteSeedBits Q := by
+    have hh := congrArg
+      (fun s : explicitTwoSelmerSubgroup =>
+        quotientBits (s : RatSquareClass × RatSquareClass)) h
+    simpa [cmTorsionCodeToOriginalExplicitSelmer, torsionKummer_bits]
+      using hh
+  cases P <;> cases Q <;> simp [finiteSeedBits] at hbits ⊢
+
+/-- Surjectivity is precisely the selected-curve four-torsion
+classification on the ACTUAL explicit Selmer subgroup. -/
+theorem cmTorsionCodeToOriginalExplicitSelmer_surjective :
+    Function.Surjective cmTorsionCodeToOriginalExplicitSelmer := by
+  intro s
+  rcases cmExplicitTwoSelmer_only_torsionKummer s with h | h | h | h
+  · refine ⟨.infinity, ?_⟩
+    apply Subtype.ext
+    exact h.symm
+  · refine ⟨.zero, ?_⟩
+    apply Subtype.ext
+    exact h.symm
+  · refine ⟨.one, ?_⟩
+    apply Subtype.ext
+    exact h.symm
+  · refine ⟨.negOne, ?_⟩
+    apply Subtype.ext
+    exact h.symm
+
+/-- Original finite 2-torsion codes and the ACTUAL all-place
+explicit Selmer group have the same underlying four elements.
+This does NOT yet identify that explicit group with the
+continuous E[2]-cohomological 2-Selmer group, and does NOT
+identify its cokernel with classical Sha(E)[2]. -/
+noncomputable def cmTorsionEquivOriginalExplicitSelmer :
+    RationalTwoTorsionPoint ≃ explicitTwoSelmerSubgroup :=
+  Equiv.ofBijective cmTorsionCodeToOriginalExplicitSelmer
+    ⟨cmTorsionCodeToOriginalExplicitSelmer_injective,
+      cmTorsionCodeToOriginalExplicitSelmer_surjective⟩
+
 end Synthesis.Millennium.BSD

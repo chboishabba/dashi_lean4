@@ -31,10 +31,9 @@ theorem cmQpOddValuation_two_zero
   letI : Fact (Nat.Prime 2) := ⟨by norm_num⟩
   have h : padicValNat p 2 = 0 :=
     padicValNat_primes (p := p) (q := 2) hne
-  have hm : multiplicity p 2 = 0 := by
-    simpa only [Nat.padicValNat_def] using h
-  rw [Padic.valuation_natCast]
-  simpa [hm]
+  rw [show (2 : ℚ_[p]) = ((2 : ℕ) : ℚ_[p]) from rfl,
+    Padic.valuation_natCast]
+  exact_mod_cast h
 
 theorem cmQpOddValuation_negTwo_zero
     (hne : p ≠ 2) :

@@ -44,7 +44,10 @@ for module in \
   MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact \
   MillenniumBSDCMOriginalEbarDoublingTopRepExact \
   MillenniumBSDCMUnitAreaTriangleCurveWeldExact \
-  MillenniumBSDCMCongruentOneRankReductionExact
+  MillenniumBSDCMCongruentOneRankReductionExact \
+  MillenniumBSDCMOriginalEbarTopRepUnderlyingExact \
+  MillenniumBSDCMLevel32GammaSpecialValuePositiveExact \
+  MillenniumBSDCMOriginalRationalToPadicH1NaturalityExact
 do
   echo "LOCAL KERNEL CHECK: Synthesis.$module"
   lake build "Synthesis.$module"
@@ -66,6 +69,9 @@ import Synthesis.MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
 import Synthesis.MillenniumBSDCMOriginalEbarDoublingTopRepExact
 import Synthesis.MillenniumBSDCMUnitAreaTriangleCurveWeldExact
 import Synthesis.MillenniumBSDCMCongruentOneRankReductionExact
+import Synthesis.MillenniumBSDCMOriginalEbarTopRepUnderlyingExact
+import Synthesis.MillenniumBSDCMLevel32GammaSpecialValuePositiveExact
+import Synthesis.MillenniumBSDCMOriginalRationalToPadicH1NaturalityExact
 #print axioms Synthesis.Millennium.BSD.cmPinnedRatSquare_of_nonneg_even_padicVal
 #print axioms Synthesis.Millennium.BSD.cmQpLocalKummerImage_firstParity_zero
 #print axioms Synthesis.Millennium.BSD.cmQpOddLocalKummerImage_secondParity_zero
@@ -90,6 +96,9 @@ import Synthesis.MillenniumBSDCMCongruentOneRankReductionExact
 #print axioms Synthesis.Millennium.BSD.cmEbarDoublingTopRepHom_kernel_and_surjective
 #print axioms Synthesis.Millennium.BSD.cmSelectedCongruentOne_iff_curve_nonTorsion
 #print axioms Synthesis.Millennium.BSD.cmOriginalMordellWeil_ZRank_zero_of_noUnitAreaTriangle
+#print axioms Synthesis.Millennium.BSD.cmEbarActualKummerShortExact_CLM
+#print axioms Synthesis.Millennium.BSD.cmLevel32PublishedSpecialValueCandidate_pos
+#print axioms Synthesis.Millennium.BSD.cmOriginalPoint_E2H1Restriction_eq_localXT
 EOF
 echo 'LOCAL AXIOM INSPECTION: original source objects'
 lake env lean "$tmp"

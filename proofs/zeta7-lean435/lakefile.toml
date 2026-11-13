@@ -1,5 +1,5 @@
 name = "BishopZ7Admission"
-defaultTargets = ["BishopZ7Admission"]
+defaultTargets = ["BishopZ7Admission", "BishopZ7DirichletSameObject"]
 
 [[require]]
 name = "ZetaIrrational"
@@ -8,3 +8,6 @@ rev = "v1.0"
 
 [[lean_lib]]
 name = "BishopZ7Admission"
+
+[[lean_lib]]
+name = "BishopZ7DirichletSameObject"

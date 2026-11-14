@@ -50,6 +50,10 @@ def NullNonzero := {x : V5 // x ≠ zeroV ∧ quadratic x = 0}
 def ClassOne := {x : V5 // quadratic x = 1}
 def ClassTwo := {x : V5 // quadratic x = 2}
 
+instance (x : V5) : Decidable (x ≠ zeroV ∧ quadratic x = 0) := inferInstance
+instance (x : V5) : Decidable (quadratic x = 1) := inferInstance
+instance (x : V5) : Decidable (quadratic x = 2) := inferInstance
+
 instance : Fintype NullNonzero := inferInstance
 instance : Fintype ClassOne := inferInstance
 instance : Fintype ClassTwo := inferInstance
@@ -68,9 +72,13 @@ def encode (x : V5) : Nat :=
 
 /-- Canonical representative of an antipodal pair, used only to obtain a
 literal finite carrier for projective root/null/nonsingular lines. -/
-def canonicalSign (x : V5) : Prop := encode x < encode (negV x)
+abbrev canonicalSign (x : V5) : Prop := encode x < encode (negV x)
 
 instance (x : V5) : Decidable (canonicalSign x) := inferInstance
+
+instance (x : V5) : Decidable (x ≠ zeroV ∧ quadratic x = 0 ∧ canonicalSign x) := inferInstance
+instance (x : V5) : Decidable (quadratic x = 2 ∧ canonicalSign x) := inferInstance
+instance (x : V5) : Decidable (quadratic x = 1 ∧ canonicalSign x) := inferInstance
 
 def NullLines := {x : V5 // x ≠ zeroV ∧ quadratic x = 0 ∧ canonicalSign x}
 def RootCandidateLines := {x : V5 // quadratic x = 2 ∧ canonicalSign x}

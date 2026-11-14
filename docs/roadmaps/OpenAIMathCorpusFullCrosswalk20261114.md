@@ -46,3 +46,48 @@ the 721/373/208 machine indices, six exact source-read comparisons and
 local fail-closed auditor. The remaining bridge **M00–M05** (actual
 Agda source ↔ OAI machine input), primitive time/all-prefix visited space,
 and both pinned kernel/axiom checks remain OPEN.
+
+
+## Exact original terminal theorem types: 14 November independent cross-rollup audit
+
+Golden Agda [Clay #1499](https://github.com/chboishabba/dashi_agda/pull/1499)
+now carries a reproducible 13-source theorem-signature audit at
+`Docs/roadmaps/ClaySourceVerifiedExistingVsOpen20261114.json`, and a
+fail-closed offline checker `scripts/check_clay_existing_vs_open_source_20261114.py`
+incorporated into the one six-frontier local acceptance driver. This
+is **not a formal absence theorem**, and no current Agda or Lean kernel
+receipt is claimed.
+
+The Lean files themselves confirm important paid intermediates:
+
+- `Synthesis/RiemannA2ActualSelectedIntervalDecisionExact.lean` has
+  genuine original W/rho/n interval PASS and NO-GO results. Both
+  depend on explicit source interval bounds (`hd,hf,hc,hm,hgap`) that
+  must come from the actual zeta-zero source. No unconditional RH or A2
+  contradiction follows.
+- `Synthesis/NavierStokesR854RealTimeIntegratedRateConditionalExact.lean`
+  proves a real-time negative integral **given**
+  `hOriginalRateEnvelope` for the selected `rate`. A physical
+  original R71/R853 real Galerkin rate producer has not been supplied.
+- `Synthesis/MillenniumBSDCMOriginalK1Q2H1SameSourceConvergence.lean`
+  proves selected E[2]-H1/local fragments. The real/Q2 classical
+  Kummer exact sequence remains separate.
+- `Synthesis/MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact.lean`
+  defines the actual E(Qbar)-coefficient Sha[2] subgroup, but the
+  classical Selmer/Sha cokernel identification and original selected
+  BSD coefficient theorem remain unproved at this interface.
+- `Integration/OpenAIMath/ClayCrosswalkSourceIndex20261114.lean`
+  proves an indexed **208-declaration List length**, not 208 imported
+  Lean math proof terms.
+
+The Agda consumer audit finds explicit `false` closure flags at R736
+and R240, and a conditional physical input `DirectSourceOSLiteralClayInputs`
+for the original Yang-Mills literal Clay solution compiler. This
+is consistent with the independent review of OpenAI's October 2026
+Yang-Mills existence-only candidate, which still needs the original
+DASHI F19/R445 Wilson family correspondence before E1 reuse. D1/D2
+remain new physical estimates.
+
+The highest-value work is now to produce original carrier hypotheses
+for the **existing** theorem consumers, not to build additional
+terminal-interface scaffolding. Preserve one rollup PR per repo.

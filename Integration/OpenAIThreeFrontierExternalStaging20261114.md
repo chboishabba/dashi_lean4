@@ -26,3 +26,12 @@ the 26-row A/B/C ledger (the grouped Karp F1–F4 row contains four gates):
 **Causal order:** foreign theorem kernel → exact original semantic equivalence → cost/limit transport → physical or universal Clay endpoint. Never upgrade source-level or finite rational PASS into Lean/Agda checker success.
 
 **Attribution:** OpenAI retains the mathematical results in its source repositories and 2026 papers; FormalConjectures retains comparator definitions; YM committee members retain independent review credit; earlier Cook--Levin/Tseitin, Wilson/Haar and Navier--Stokes/PDE results retain their historical attribution. DASHI here authors only the proposed cross-language/source adapters, independent checks and auditing.
+
+
+## 15 November: NS external project already pays C/D typed semantic transport
+
+Correction: the older staged `Integration/OpenAINavierStokes34/ForcedGlobalScopeCorollariesCandidate.lean` is now **strictly a redundant logic sidecar**. Our already-existing actual C/D audit project is `ExternalClayNS`, using independent `ClaySpec.lean`, `Gap.lean`, `ClauseAudit.lean`, `ProvenanceAudit.lean`, `SubmissionAudit.lean`, and `LiteralABCD.lean`. That nested project's `lakefile.toml` pins OpenAI `NavierStokesAndEuler@f9e8bc5b38b6e212696e8a30e3e91517af887bbd` and `lean-toolchain` pins `4.34.0-rc2`. The upstream comparator source `8937a8f4...` cited in the earlier staged note is one commit **older**.
+
+The direct source proof route already supplies `SubmissionAudit.directClayC`, `directClayD`, `directClauseAuditC`, `directClauseAuditD`, and `dualRouteReceipt`, and `LiteralABCD.literalAnyOneClayResolution` is an existing source-level theorem. No additional C/D formal declaration is required for the Clay-facing comparison; the remaining P0 is **a clean exact-head nested lake build and transitive #print axioms**, then independent manuscript/source semantic review (the user prefers local verification over CI).
+
+The Agda Golden TOE A/B/C/D and R³ reconciliation ledger is [ClayNSABCDTOER3OpenAIBidiReconciliation20261115.md](https://github.com/chboishabba/dashi_agda/blob/chatgpt/clay-20261112-four-frontier-fail-closed/Docs/roadmaps/ClayNSABCDTOER3OpenAIBidiReconciliation20261115.md), with a strict source + optional-kernel script `scripts/check_ns_toe_abcd_pinned_local_20261115.sh`. Exact SymPy checks are legitimate finite/reference algebra, **never** Lean/Agda kernel acceptance.

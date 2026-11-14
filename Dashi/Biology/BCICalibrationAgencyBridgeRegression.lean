@@ -1,0 +1,12 @@
+import Dashi.Biology.BCICalibrationAgencyBridgeExact
+
+namespace Dashi.Biology.BCICalibrationAgencyBridgeRegression
+
+open Dashi.Biology.BCICalibrationAgencyBridgeExact
+
+#check canonicalBCICalibrationAgencyBridge
+#check reducedCalibrationDoesNotDefinitionallyCreateAgency
+#check externalMetricDoesNotCreateParticipantExperience
+#check canonicalBCICalibrationAgencyBoundary
+
+end Dashi.Biology.BCICalibrationAgencyBridgeRegression

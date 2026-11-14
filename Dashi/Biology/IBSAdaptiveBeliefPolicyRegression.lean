@@ -1,0 +1,12 @@
+import Dashi.Biology.IBSAdaptiveBeliefPolicyExact
+
+namespace Dashi.Biology.IBSAdaptiveBeliefPolicyRegression
+open Dashi.Biology.IBSAdaptiveBeliefPolicyExact
+
+theorem beliefStateRegression : canonicalInitialIBSBeliefState = canonicalInitialIBSBeliefState := rfl
+theorem policyFrontierRegression : canonicalAdaptivePolicyParetoFrontier = canonicalAdaptivePolicyParetoFrontier := rfl
+theorem responseNotRegimeTruthRegression : SingleResponseMakesRegimeTruePermission → False := singleResponseDoesNotMakeRegimeTrue
+theorem informationNotBenefitRegression : InformationOptimalActionIsClinicalOptimalPermission → False := informationOptimalDoesNotMeanClinicalOptimal
+theorem posthocNotAdaptiveRegression : PostHocSwitchEqualsProspectiveAdaptivePolicyPermission → False := postHocSwitchDoesNotEqualProspectiveAdaptivePolicy
+
+end Dashi.Biology.IBSAdaptiveBeliefPolicyRegression

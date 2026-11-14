@@ -1,0 +1,16 @@
+import Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeExact
+
+namespace Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeRegression
+
+open Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeExact
+
+example : canonicalDyadicSynchronyAttunementBoundary.heterogeneityReviewRetained = true := rfl
+example : canonicalDyadicSynchronyAttunementBoundary.synchronyMeaningIsUniquePsychologicalClassifier = false := rfl
+
+#check canonicalDyadicSynchronyAttunementBridge
+#check synchronyDoesNotRecoverOrderedResponseTrace
+#check synchronyDoesNotCollapseDyadObservers
+#check synchronyDoesNotDefineUniquePsychologicalState
+#check canonicalDyadicSynchronyAttunementBoundary
+
+end Dashi.Biology.DyadicSynchronyDevelopmentalAttunementBridgeRegression

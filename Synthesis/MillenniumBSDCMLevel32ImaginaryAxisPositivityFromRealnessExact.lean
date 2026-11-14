@@ -94,6 +94,7 @@ theorem cmLevel32EtaAnalyticExpression_imaginary_pos_of_real
       ((ModularForm.eta (4 * z)).re) ^ 2 *
       ((ModularForm.eta (8 * z)).re) ^ 2 := by
     simp [cmLevel32EtaAnalyticExpression, hr4, hr8]
-  exact hrealProduct ▸ hproduct
+  rw [hrealProduct]
+  exact hproduct
 
 end Synthesis.Millennium.BSD

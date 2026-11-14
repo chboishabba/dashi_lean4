@@ -1,0 +1,138 @@
+name: E6 F3 exterior-square max-cut
+
+on:
+  pull_request:
+    paths:
+      - "Integration/E6Mod3ReflectionIntertwiner.lean"
+      - "Integration/E6Mod3ReflectionIntertwinerRegression.lean"
+      - "Integration/E6F3ExteriorSquare.lean"
+      - "Integration/E6F3ExteriorSquareRegression.lean"
+      - "Integration/E6PGSp4ExteriorSquare.lean"
+      - "Integration/E6PGSp4ExteriorSquareRegression.lean"
+      - "Integration/E6F3ProjectiveAssociation.lean"
+      - "Integration/E6F3ProjectiveAssociationRegression.lean"
+      - "Integration/E6F3OrbitTransitivity.lean"
+      - "Integration/E6F3OrbitTransitivityRegression.lean"
+      - "Integration/E6F3GeneratedGroupClosure.lean"
+      - "Integration/E6F3GeneratedGroupClosureRegression.lean"
+      - "Integration/E6RootStabilizerA5SixSet.lean"
+      - "Integration/E6RootStabilizerA5SixSetRegression.lean"
+      - "Integration/E6SelectedStabilizerFaceSameObject.lean"
+      - "Integration/E6SelectedStabilizerFaceSameObjectRegression.lean"
+      - "Integration/E6FullMatrixTernary27SameAction.lean"
+      - "Integration/E6FullMatrixTernary27SameActionRegression.lean"
+      - "Integration/E6Ternary27CoxeterAction.lean"
+      - "Integration/E6Ternary27CoxeterActionRegression.lean"
+      - "Integration/Ternary27AlbertShapeE6ActionBoundary.lean"
+      - "Integration/Ternary27AlbertShapeE6ActionBoundaryRegression.lean"
+      - "Integration/E6SeventyTwoChartHyperformAtlas.lean"
+      - "Integration/E6SeventyTwoChartHyperformAtlasRegression.lean"
+      - "Integration/E6SeventyTwoChartAtlasActionCompletion.lean"
+      - "Integration/E6SeventyTwoChartAtlasActionCompletionRegression.lean"
+      - "Integration/E6LiteralE8Action.lean"
+      - "Integration/E6LiteralE8ActionRegression.lean"
+      - "Integration/E6Minuscule27LiteralRecognition.lean"
+      - "Integration/E6Minuscule27LiteralRecognitionRegression.lean"
+      - "Integration/E6Minuscule27SchlafliRecognition.lean"
+      - "Integration/E6Minuscule27SchlafliRecognitionRegression.lean"
+      - "Integration/E6Minuscule27SameObject.lean"
+      - "Integration/E6Minuscule27SameObjectRegression.lean"
+      - "Integration/Ternary27HyperformSchlafliRecognition.lean"
+      - "Integration/Ternary27HyperformSchlafliRecognitionRegression.lean"
+      - "Integration/Ternary27A5SixFaceReorganisation.lean"
+      - "Integration/Ternary27A5SixFaceReorganisationRegression.lean"
+      - "Integration/E8TernaryBranchingActionObstruction.lean"
+      - "Integration/E8TernaryBranchingActionObstructionRegression.lean"
+      - "Integration/E8LiteralMixed27Fibres.lean"
+      - "Integration/E8LiteralMixed27FibresRegression.lean"
+      - "Integration/E8LiteralMixed27Transitivity.lean"
+      - "Integration/E8LiteralMixed27TransitivityRegression.lean"
+      - "Integration/E8LiteralMixed27Schlafli.lean"
+      - "Integration/E8LiteralMixed27SchlafliRegression.lean"
+      - "Integration/E8Mixed27TernaryTranslationObstruction.lean"
+      - "Integration/E8Mixed27TernaryTranslationObstructionRegression.lean"
+      - "Integration/E8StructuredTernary240E6A2Action.lean"
+      - "Integration/E8StructuredTernary240E6A2ActionRegression.lean"
+      - "Integration/E8ExceptionalLiftCapstone.lean"
+      - "Integration/E8ExceptionalLiftCapstoneRegression.lean"
+      - "Integration/E8StructuredExceptionalLiftFinalMaxCut.lean"
+      - "Integration/E8StructuredExceptionalLiftFinalMaxCutRegression.lean"
+      - "Integration/GeometricReasoningEverything.lean"
+      - ".github/workflows/e6-f3-exterior-square.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exterior-square:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check global E6 mod3 reflection intertwiner
+        run: |
+          lake env lean Integration/E6Mod3ReflectionIntertwiner.lean
+          lake env lean Integration/E6Mod3ReflectionIntertwinerRegression.lean
+      - name: Check F3 exterior-square core
+        run: |
+          lake env lean Integration/E6F3ExteriorSquare.lean
+          lake env lean Integration/E6F3ExteriorSquareRegression.lean
+          lake env lean Integration/E6PGSp4ExteriorSquare.lean
+          lake env lean Integration/E6PGSp4ExteriorSquareRegression.lean
+          lake env lean Integration/E6F3ProjectiveAssociation.lean
+          lake env lean Integration/E6F3ProjectiveAssociationRegression.lean
+          lake env lean Integration/E6F3OrbitTransitivity.lean
+          lake env lean Integration/E6F3OrbitTransitivityRegression.lean
+      - name: Check generated E6 image, selected stabilizer and full ternary action
+        run: |
+          lake env lean Integration/E6F3GeneratedGroupClosure.lean
+          lake env lean Integration/E6F3GeneratedGroupClosureRegression.lean
+          lake env lean Integration/E6RootStabilizerA5SixSet.lean
+          lake env lean Integration/E6RootStabilizerA5SixSetRegression.lean
+          lake env lean Integration/E6SelectedStabilizerFaceSameObject.lean
+          lake env lean Integration/E6SelectedStabilizerFaceSameObjectRegression.lean
+          lake env lean Integration/E6FullMatrixTernary27SameAction.lean
+          lake env lean Integration/E6FullMatrixTernary27SameActionRegression.lean
+          lake env lean Integration/E6Ternary27CoxeterAction.lean
+          lake env lean Integration/E6Ternary27CoxeterActionRegression.lean
+          lake env lean Integration/Ternary27AlbertShapeE6ActionBoundary.lean
+          lake env lean Integration/Ternary27AlbertShapeE6ActionBoundaryRegression.lean
+          lake env lean Integration/E6SeventyTwoChartHyperformAtlas.lean
+          lake env lean Integration/E6SeventyTwoChartHyperformAtlasRegression.lean
+          lake env lean Integration/E6SeventyTwoChartAtlasActionCompletion.lean
+          lake env lean Integration/E6SeventyTwoChartAtlasActionCompletionRegression.lean
+      - name: Check literal E8 sector and typed ternary27 geometry
+        run: |
+          lake env lean Integration/E6LiteralE8Action.lean
+          lake env lean Integration/E6LiteralE8ActionRegression.lean
+          lake env lean Integration/E6Minuscule27LiteralRecognition.lean
+          lake env lean Integration/E6Minuscule27LiteralRecognitionRegression.lean
+          lake env lean Integration/E6Minuscule27SchlafliRecognition.lean
+          lake env lean Integration/E6Minuscule27SchlafliRecognitionRegression.lean
+          lake env lean Integration/E6Minuscule27SameObject.lean
+          lake env lean Integration/E6Minuscule27SameObjectRegression.lean
+          lake env lean Integration/Ternary27HyperformSchlafliRecognition.lean
+          lake env lean Integration/Ternary27HyperformSchlafliRecognitionRegression.lean
+          lake env lean Integration/Ternary27A5SixFaceReorganisation.lean
+          lake env lean Integration/Ternary27A5SixFaceReorganisationRegression.lean
+      - name: Check E8 branching, structured 240 action and final capstone
+        run: |
+          lake env lean Integration/E8TernaryBranchingActionObstruction.lean
+          lake env lean Integration/E8TernaryBranchingActionObstructionRegression.lean
+          lake env lean Integration/E8LiteralMixed27Fibres.lean
+          lake env lean Integration/E8LiteralMixed27FibresRegression.lean
+          lake env lean Integration/E8LiteralMixed27Transitivity.lean
+          lake env lean Integration/E8LiteralMixed27TransitivityRegression.lean
+          lake env lean Integration/E8LiteralMixed27Schlafli.lean
+          lake env lean Integration/E8LiteralMixed27SchlafliRegression.lean
+          lake env lean Integration/E8Mixed27TernaryTranslationObstruction.lean
+          lake env lean Integration/E8Mixed27TernaryTranslationObstructionRegression.lean
+          lake env lean Integration/E8StructuredTernary240E6A2Action.lean
+          lake env lean Integration/E8StructuredTernary240E6A2ActionRegression.lean
+          lake env lean Integration/E8ExceptionalLiftCapstone.lean
+          lake env lean Integration/E8ExceptionalLiftCapstoneRegression.lean
+          lake env lean Integration/E8StructuredExceptionalLiftFinalMaxCut.lean
+          lake env lean Integration/E8StructuredExceptionalLiftFinalMaxCutRegression.lean
+      - name: Check geometric reasoning rollup
+        run: lake env lean Integration/GeometricReasoningEverything.lean

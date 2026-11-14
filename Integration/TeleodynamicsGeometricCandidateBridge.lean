@@ -56,7 +56,8 @@ structure Evaluation where
   deriving Repr
 
 structure Comparison where
-  left right : Evaluation
+  left : Evaluation
+  right : Evaluation
   reasoningComparison : CandidateComparisonReceipt
   matchedParameterBudget : Bool
   matchedOptimizer : Bool

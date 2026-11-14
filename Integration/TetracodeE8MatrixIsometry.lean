@@ -28,7 +28,6 @@ structure R8 where
   x5 : ℝ
   x6 : ℝ
   x7 : ℝ
-  deriving Repr
 
 private def m0 (v : R8) : ℝ := 3 * v.x4 + 3 * v.x6
 private def m1 (v : R8) : ℝ := -2 * v.x2 - 2 * v.x3 + v.x4 - 2 * v.x5 + v.x6 - 2 * v.x7

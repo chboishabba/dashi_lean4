@@ -84,7 +84,7 @@ def canonicalBoundary : Boundary where
 
 /-- The older branching owner still records a literal 27-sized positive fibre. -/
 theorem branching_positive_fibre_is_27 :
-    Integration.E8ExceptionalBranchingBridge.canonicalE8E6A2RootSplitReceipt.positiveFibreCount = 27 :=
+    Integration.E8ExceptionalBranchingBridge.canonicalE6A2.fibreSize = 27 :=
   rfl
 
 end Integration.E6Minuscule27WeightAction

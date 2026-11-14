@@ -30,19 +30,19 @@ Grönwall/integration step as the explicit remaining analytic seam.
 namespace Integration.TeleodynamicsConsensusSpectralGap
 
 /-- One time-slice of the consensus energy budget. -/
-structure SpectralGapEnergyPoint (E D dE λ : ℝ) : Prop where
+structure SpectralGapEnergyPoint (E D dE lam : ℝ) : Prop where
   energyNonnegative : 0 ≤ E
   dissipationNonnegative : 0 ≤ D
-  gapNonnegative : 0 ≤ λ
+  gapNonnegative : 0 ≤ lam
   energyDerivative : dE = -2 * D
-  spectralGap : λ * E ≤ D
+  spectralGap : lam * E ≤ D
 
 /-- The exact scalar max-cut: energy identity + spectral gap imply exponential
 rate differential inequality. -/
 theorem spectral_gap_gives_energy_differential_inequality
-    {E D dE λ : ℝ}
-    (h : SpectralGapEnergyPoint E D dE λ) :
-    dE ≤ -2 * λ * E := by
+    {E D dE lam : ℝ}
+    (h : SpectralGapEnergyPoint E D dE lam) :
+    dE ≤ -2 * lam * E := by
   rw [h.energyDerivative]
   linarith [h.spectralGap]
 
@@ -50,11 +50,11 @@ theorem spectral_gap_gives_energy_differential_inequality
 pointwise algebra. -/
 structure ConsensusExponentialDecayReceipt where
   Energy : ℝ → ℝ
-  λ : ℝ
-  gapPositive : 0 < λ
+  lam : ℝ
+  gapPositive : 0 < lam
   pointwiseDifferentialInequality :
-    ∀ t, HasDerivAt Energy (-2 * λ * Energy t) t ∨
-      ∃ dE, HasDerivAt Energy dE t ∧ dE ≤ -2 * λ * Energy t
+    ∀ t, HasDerivAt Energy (-2 * lam * Energy t) t ∨
+      ∃ dE, HasDerivAt Energy dE t ∧ dE ≤ -2 * lam * Energy t
   exponentialBound : Prop
   gronwallOrEquivalentReceipt : exponentialBound
 

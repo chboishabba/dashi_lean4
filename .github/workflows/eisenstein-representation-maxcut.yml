@@ -1,0 +1,36 @@
+name: Eisenstein representation max-cut
+
+on:
+  push:
+    branches:
+      - 'agent/eisenstein-lattice-counting-maxcut-20261012'
+    paths:
+      - 'Integration/Eisenstein*.lean'
+      - '.github/workflows/eisenstein-representation-maxcut.yml'
+  pull_request:
+    paths:
+      - 'Integration/Eisenstein*.lean'
+      - '.github/workflows/eisenstein-representation-maxcut.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  kernel-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+        with:
+          build: false
+      - name: Kernel check universal Eisenstein regression
+        run: lake env lean Integration/EisensteinLatticeCountingRegression.lean
+      - name: Kernel check focused capstones
+        run: |
+          lake env lean Integration/EisensteinChoiceRecoveryValidation.lean
+          lake env lean Integration/EisensteinCanonicalAssociateValidation.lean
+          lake env lean Integration/EisensteinAssociateClassCountValidation.lean
+          lake env lean Integration/EisensteinSixUnitOrbitValidation.lean
+          lake env lean Integration/EisensteinGeometricRepresentationFormulaValidation.lean
+          lake env lean Integration/EisensteinDirichletSeriesValidation.lean

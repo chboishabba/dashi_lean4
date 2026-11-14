@@ -1,0 +1,20 @@
+name: Collatz Syracuse Parity Cylinder
+
+on:
+  push:
+    branches:
+      - collatz-syracuse-parity-cylinder-20261006
+  pull_request:
+    paths:
+      - 'AgdaMirror/CollatzSyracuseInv3Exact.lean'
+      - '.github/workflows/collatz-syracuse-parity-cylinder.yml'
+  workflow_dispatch:
+
+jobs:
+  collatz-syracuse-inv3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Check exact inverse-of-three producer
+        run: lake env lean AgdaMirror/CollatzSyracuseInv3Exact.lean

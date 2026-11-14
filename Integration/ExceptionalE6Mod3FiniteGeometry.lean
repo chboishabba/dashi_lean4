@@ -46,9 +46,9 @@ def quadratic (x : V5) : F3 := bilinear x x
 
 def zeroV : V5 := ⟨0,0,0,0,0⟩
 
-def NullNonzero := {x : V5 // x ≠ zeroV ∧ quadratic x = 0}
-def ClassOne := {x : V5 // quadratic x = 1}
-def ClassTwo := {x : V5 // quadratic x = 2}
+abbrev NullNonzero := {x : V5 // x ≠ zeroV ∧ quadratic x = 0}
+abbrev ClassOne := {x : V5 // quadratic x = 1}
+abbrev ClassTwo := {x : V5 // quadratic x = 2}
 
 instance (x : V5) : Decidable (x ≠ zeroV ∧ quadratic x = 0) := inferInstance
 instance (x : V5) : Decidable (quadratic x = 1) := inferInstance
@@ -80,9 +80,9 @@ instance (x : V5) : Decidable (x ≠ zeroV ∧ quadratic x = 0 ∧ canonicalSign
 instance (x : V5) : Decidable (quadratic x = 2 ∧ canonicalSign x) := inferInstance
 instance (x : V5) : Decidable (quadratic x = 1 ∧ canonicalSign x) := inferInstance
 
-def NullLines := {x : V5 // x ≠ zeroV ∧ quadratic x = 0 ∧ canonicalSign x}
-def RootCandidateLines := {x : V5 // quadratic x = 2 ∧ canonicalSign x}
-def OtherNonsingularLines := {x : V5 // quadratic x = 1 ∧ canonicalSign x}
+abbrev NullLines := {x : V5 // x ≠ zeroV ∧ quadratic x = 0 ∧ canonicalSign x}
+abbrev RootCandidateLines := {x : V5 // quadratic x = 2 ∧ canonicalSign x}
+abbrev OtherNonsingularLines := {x : V5 // quadratic x = 1 ∧ canonicalSign x}
 
 instance : Fintype NullLines := inferInstance
 instance : Fintype RootCandidateLines := inferInstance

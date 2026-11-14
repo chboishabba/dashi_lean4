@@ -70,10 +70,13 @@ def git_records(vendor):
             require(b"\t" in raw,"malformed Git tree entry")
             prefix,path=raw.split(b"\t",1)
             mode,kind,blob=prefix.decode("ascii").split()
-            require(mode=="100644" and kind=="blob" and
-                    re.fullmatch(r"[0-9a-f]{40}",blob),
-                    "unexpected type/mode of source tree blob")
+            require(kind=="blob" and mode in ("100644","100755","120000")
+                    and re.fullmatch(r"[0-9a-f]{40}",blob),
+                    "unexpected Git tree object or blob identifier")
             name=path.decode("utf-8")
+            if name.endswith(".lean"):
+                require(mode=="100644",
+                        "Lean source must be ordinary file, not symlink/executable")
             require(name.startswith("lean/") and
                     ".." not in Path(name).parts and "\x00" not in name,
                     "Git tree returned an invalid path")

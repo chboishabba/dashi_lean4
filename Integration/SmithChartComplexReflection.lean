@@ -38,8 +38,9 @@ def gamma (z : ℂ) : ℂ :=
 
 /-- Conjugation commutes with the Smith fractional-linear transform. -/
 theorem gamma_conj (z : ℂ) :
-    gamma (conj z) = conj (gamma z) := by
-  simp [gamma, map_sub, map_add, map_div]
+    gamma (star z) = star (gamma z) := by
+  unfold gamma
+  simp only [map_div₀, map_sub, map_add, map_one]
 
 /-- Normalized admittance is reciprocal normalized impedance. -/
 def admittance (z : ℂ) : ℂ := z⁻¹
@@ -53,13 +54,13 @@ theorem gamma_admittance
   by_cases h : z = -1
   · subst z
     norm_num
-  · have hzp : z + 1 ≠ 0 := by
-      intro hz1
-      apply h
-      calc
-        z = (z + 1) - 1 := by ring
-        _ = -1 := by rw [hz1]; ring
-    field_simp [hz, hzp]
+  · have h1 : z⁻¹ - 1 = - (z - 1) / z := by
+      field_simp [hz]
+      ring
+    have h2 : z⁻¹ + 1 = (z + 1) / z := by
+      field_simp [hz]
+      ring
+    rw [h1, h2, div_div_div_cancel_right₀ _ hz]
     ring
 
 structure SmithLeanBoundary where

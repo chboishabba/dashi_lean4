@@ -1,4 +1,3 @@
-import Integration.Teleodynamics
 import Integration.SemanticInterventionEquivariance
 import Integration.GeometricReasoningCandidateSelection
 import Integration.T5E8RelativeComplementCandidate

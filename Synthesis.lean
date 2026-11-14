@@ -411,6 +411,38 @@ import Synthesis.RiemannSelectedPrimeSensitiveTwoScale
 
 
 
+import Synthesis.MillenniumBSDTwoSelmerDimensionArithmeticMaxCut
+import Synthesis.MillenniumBSDCMSupportedSquareClassFiniteCandidatesExact
+import Synthesis.MillenniumBSDCMRealAffineLocusExact
+import Synthesis.MillenniumBSDCMRealSieveTorsionCosetsExact
+import Synthesis.MillenniumBSDCMTwoAdicValuationArithmeticExact
+import Synthesis.MillenniumBSDCMQ2ActualCurveValuationExact
+import Synthesis.MillenniumBSDCMQ2SquareClassValuationParityExact
+import Synthesis.MillenniumBSDCMQ2ActualLocalImageParityExact
+import Synthesis.MillenniumBSDCMAllPrimeRationalSquareSupportExact
+import Synthesis.MillenniumBSDCMAllPrimeLocalFirstParityExact
+import Synthesis.MillenniumBSDCMOddPrimeLocalSecondParityExact
+import Synthesis.MillenniumBSDCMOddPrimeRationalSquareSupportExact
+import Synthesis.MillenniumBSDCMOriginalExplicitSelmerFourTorsionExact
+
+import Synthesis.MillenniumBSDCMOriginalExplicitCokernelZeroExact
+import Synthesis.MillenniumBSDCMActualE2H1ExplicitImageWeldExact
+import Synthesis.MillenniumBSDCMOriginalMordellWeilModTwoCardExact
+import Synthesis.MillenniumBSDCMActualEBarRestrictedShaTwoTargetExact
+import Synthesis.MillenniumBSDCMSelectedPeriodNormalizationExact
+import Synthesis.MillenniumBSDCMOriginalMWTwoTorsionRepresentativesExact
+import Synthesis.MillenniumBSDCMShaTwoNotFullShaNegativeControlExact
+import Synthesis.MillenniumBSDCMLevel32EtaFinitePositivityExact
+import Synthesis.MillenniumBSDCMFGAbelianRankZeroFromModTwoExact
+import Synthesis.MillenniumBSDCMLevel32ActualEtaInfiniteNonzeroExact
+import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
+import Synthesis.MillenniumBSDCMOriginalGeometricKummerGaloisEquivariantExact
+import Synthesis.MillenniumBSDCMOriginalEbarDoublingTopRepExact
+import Synthesis.MillenniumBSDCMUnitAreaTriangleCurveWeldExact
+import Synthesis.MillenniumBSDCMCongruentOneRankReductionExact
+import Synthesis.MillenniumBSDCMOriginalEbarTopRepUnderlyingExact
+import Synthesis.MillenniumBSDCMLevel32GammaSpecialValuePositiveExact
+import Synthesis.MillenniumBSDCMOriginalRationalToPadicH1NaturalityExact
 /-!
 # Cross-domain synthesis spine
 
@@ -420,96 +452,3 @@ the cross-domain material in this repository.
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

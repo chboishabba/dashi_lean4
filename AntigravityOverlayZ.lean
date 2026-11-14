@@ -1,0 +1,21 @@
+import Integration.AntigravityOverlayZMirror
+import Integration.AntigravityOverlayZMirrorTest
+import Integration.AntigravitySourceNativeRouteFork
+import Integration.AntigravitySourceNativeRouteForkTest
+import Integration.AntigravitySingleVacuumPhysicalMaxCut
+import Integration.AntigravitySingleVacuumPhysicalMaxCutTest
+import Integration.AntigravityVacuumControlCoordinateMaxCut
+import Integration.AntigravityVacuumControlCoordinateMaxCutTest
+import Integration.AntigravityPostScalarVacuumMaxCut
+import Integration.AntigravityPostScalarVacuumMaxCutTest
+import Integration.AntigravityR136StaticDifferentialReuse
+import Integration.AntigravityR136StaticDifferentialReuseTest
+import Integration.AntigravityTerminalPhysicalPackageFrontier
+import Integration.AntigravityTerminalPhysicalPackageFrontierTest
+import AgdaMirror.AntigravityOverlayZMirror
+
+/-!
+Focused compilation root for the antigravity Overlay-AA/source-native route mirror,
+including the post-normalization R136 static/differential reuse, terminal
+physical-package frontier, and TT donor cut.
+-/

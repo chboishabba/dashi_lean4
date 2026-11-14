@@ -1,0 +1,24 @@
+name: Antigravity R136 reuse mirror
+
+on:
+  push:
+    branches:
+      - agent/antigravity-overlay-z-mirror-20261008
+  pull_request:
+    paths:
+      - 'Integration/AntigravityR136StaticDifferentialReuse.lean'
+      - 'Integration/AntigravityR136StaticDifferentialReuseTest.lean'
+      - 'Integration/AntigravityTerminalPhysicalPackageFrontier.lean'
+      - 'Integration/AntigravityTerminalPhysicalPackageFrontierTest.lean'
+      - 'AntigravityOverlayZ.lean'
+      - '.github/workflows/antigravity-r136-reuse.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Compile focused antigravity mirror
+        run: lake env lean AntigravityOverlayZ.lean

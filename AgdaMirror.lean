@@ -134,6 +134,11 @@ provides faithful Lean mirrors:
   compliance handoffs, SensibLaw/Actionstep non-promotion, the 584/58 fleet
   target invariant, and the O/R/C/S/L/P/G/F governance receipt. Agda remains
   the semantic owner. The same surface now mirrors settlement-mediated norm transmission while keeping party obligation, platform policy, competitor adoption, industry convention, and generally binding law distinct. The Meta 2026 fixture follows the official Meta and California AG source boundary. The JMD poster remains interpretive provenance and does not create legal authority.
+* **Safe-and-just paper-chain mirror**: `AuthorityBoundary` also mirrors the
+  golden Agda non-promotion ledger for the O'Neill 2018 -> Fanning 2022 ->
+  Kallis 2025 chain.  It checks a finite lossy-count witness and keeps forecast,
+  provisioning, GDP-association, and policy-authority promotions closed.  Agda
+  remains the formal authority.
 
 * **Canonical non-factorability spine**: `IntersectionalNonFactorability` faithfully mirrors the generic Agda factorisation/witness calculus, retaining Crenshaw 1991 as conceptual motivation while keeping the mathematics DASHI-owned.
 

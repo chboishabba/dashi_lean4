@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/openai/math",
+  "commit": "7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a",
+  "separate_checkout_path": "vendor/openai378-src",
+  "lean_toolchain": "leanprover/lean4:v4.34.1",
+  "encoding_source": "lean/OAI/Algorithms/SubexponentialSAT/Encoding.lean",
+  "encoding_blob": "684229598d06d381ae27e4ca70421a46786deeca",
+  "machine_source": "lean/OAI/Algorithms/SubexponentialSAT/SqrtLogSpace/Final.lean",
+  "preserve_legacy_vendor_commit": "1581d4cbdd69a0faf34b2089614fe2a814316a6a",
+  "status": "SOURCE PIN ONLY: kernel check is not executed by this manifest"
+}

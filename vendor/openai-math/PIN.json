@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/openai/math",
+  "commit": "1581d4cbdd69a0faf34b2089614fe2a814316a6a",
+  "submodule_path": "vendor/openai-math-src",
+  "license": "Apache-2.0",
+  "lean_toolchain": "leanprover/lean4:v4.34.1",
+  "formalization_catalogue": "lean/formalization.yaml",
+  "formalization_catalogue_blob": "275eee8cfab7ce49d3a5e88f02cbb8f28fe6fee6"
+}

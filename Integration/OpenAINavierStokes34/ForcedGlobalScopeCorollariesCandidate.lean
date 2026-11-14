@@ -3,6 +3,17 @@ import NavierStokes.ComparatorSolution
 /-!
 # Bidirectional DASHI / OpenAI Navier--Stokes scope cut
 
+15 NOV 2026 CORRECTION: These elementary corollaries are redundant as
+evidence of Clay C/D proof progress. The original DASHI
+ExternalClayNS/ClaySpec.lean, Gap.lean, ClauseAudit.lean,
+ProvenanceAudit.lean, and SubmissionAudit.lean already reconstruct and
+clause-audit full official-spec C/D at the nested pinned source
+openai/NavierStokesAndEuler@f9e8bc5b38b6e212696e8a30e3e91517af887bbd.
+The staged source below remains as a strictly auxiliary scoped logic
+negative control, not the active proof endpoint or an externally accepted
+new discovery. It must not override the original source's priority.
+
+
 Original mathematical construction: OpenAI (September 2026).
 External comparator definitions: FormalConjectures authors; see source
 attribution in NavierStokes.ComparatorDefinitions.

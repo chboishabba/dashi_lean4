@@ -163,9 +163,10 @@ structure DeltaReconciliationRuntimeCertification
   survivingReconciliation : PersistedRelationDeltaReceipt
 
 theorem canonical8206Over8192CannotCertify :
-    ¬ DeltaReconciliationRuntimeCertification
-      canonical8206Over8192BudgetRejection := by
-  intro certification
+    ¬ Nonempty (DeltaReconciliationRuntimeCertification
+      canonical8206Over8192BudgetRejection) := by
+  intro h
+  rcases h with ⟨certification⟩
   cases certification.admissionIsExact
 
 inductive BudgetRejectionAuthorizesSemanticTruncation : Prop

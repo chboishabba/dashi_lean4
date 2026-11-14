@@ -486,3 +486,27 @@ Attribution ownership: original E(Q) group and Kummer
 code (DASHI); Mordell–Weil theorem (Michael Stoll);
 Gamma/Beta real positivity (Mathlib); f32 formula
 (Huber–Liu–McLaughlin–Ye–Yuan–Zhang).
+
+
+## 14 November 2026: K5 correction — odd-primary CM BSD is an existing theorem
+
+This is a **mathematical dependency correction**, not a kernel or K1–K5 proof receipt. This document remains on the SINGLE active Lean Clay PR #108, not on a new lane PR.
+
+**Exact selected object:** `E : y²=x³−x = 32.a3` (Cremona 32a2), CM by `Z[i]`. Its `E(Q)_tors ≃ (Z/2)^2`, rank zero, `c₂=2`, full real period Ω, and exact modular-symbol analytic ratio `L(E,1)/Ω=1/8` are catalogued in the reviewed LMFDB source (not in a currently accepted Lean theorem). Therefore the rank-zero predicted Sha order is `(1/8)*4²/2=1`. The curve `32.a4` is isogenous but has DIFFERENT Tamagawa, torsion and period normalization. Never consume its constants here.
+
+**Established odd-primary mathematics:** John Coates, *Lectures on the Birch–Swinnerton-Dyer Conjecture* (2013), Theorem 32 (Rubin), states that for a CM elliptic curve with `L(E,1)≠0`, the BSD p-primary equality holds at every `p≠2` (with an extra `p=3` exclusion only for CM by `Q(sqrt(-3))`). Because this E has CM by Q(i), all odd primes are covered subject to correct theorem hypotheses. Consequently, **do not list an independent novel odd-primary Sha-vanishing theorem as K5's mathematical obstacle**. The outstanding obligation is a precise same-object *formal application* of Rubin plus rigorously identified analytic quotient and rational invariants.
+
+**Strong selected-curve route, with no Sha shortcut:**
+
+1. K1/K2 classical, continuous Galois cohomology and true local Q₂/real/other-place Kummer equivalence, proving `0 → E(Q)/2E(Q) → Sel₂(E) → Sha(E)[2] → 0` (not merely the explicit square-class cokernel).
+2. Source identify actual finite Selmer count = actual E(Q)/2E(Q) count = 4. Exactness gives `Sha(E)[2]=0`.
+3. K4 source identify original `L(E,1)` with the published level-32 modular form, the Mellin/Beta special value and the standard full period, proving exact `L(E,1)/Ω = 1/8 > 0`. This is proven classical/CM mathematics, not a declaration of a candidate's positivity.
+4. Apply known analytic-rank-zero Mordell–Weil rank/finite-Sha result (Kolyvagin or exact suitable classical CM theorem) to this original E. In a finite group, `Sha[2]=0` excludes every nontrivial 2-power subgroup.
+5. Apply Rubin p-part for each odd p. With `v_p((L/Ω)*16/2)=v_p(1)=0`, deduce every odd p-primary Sha vanishes.
+6. By finiteness, no nonzero prime-primary subgroup implies `Sha(E)=0`, and the rank-zero leading-coefficient formula is `L(E,1)=Ω/8`. This is the selected curve, **not universal BSD**.
+
+**Exact target names (proposals, not existing checked declarations):** `cmOriginalLevel32LValueOverFullPeriod_eq_oneEighth`, `cmOriginalSelmerTwoEqualsActualEBarKummerKernel`, `cmOriginalShaTwoEqZero`, `cmOriginalRankZeroShaFiniteFromKolyvagin`, `cmOriginalOddPrimeBSDFromRubin`, `cmOriginalFullBSDForSelectedEFromKnownCMTheorems`.
+
+**Source classification:** K1/K2 = known cohomology, difficult formal source identification; K3 = known Mordell–Weil theorem + explicit original curve; K4 = established level-32 modular/Beta theorem + period normalization; K5 for E = theorem application plus 2-descent. **Novel mathematical frontier** = BSD for arbitrary elliptic curves, not this rank-zero instance. Retain fail-closed source acceptance and full `#print axioms`/trust checks; local verification rather than CI.
+
+References: LMFDB https://www.lmfdb.org/EllipticCurve/Q/32/a/3 and https://www.lmfdb.org/knowledge/show/rcs.rigor.ec.q ; Coates (2013) Theorem 32, https://intlpress.com/site/pub/files/_fulltext/journals/iccm/2013/0001/0002/ICCM-2013-0001-0002-a005.pdf ; Huber–Liu–McLaughlin–Ye–Yuan–Zhang, *Computing Special L-Values of Certain Modular Forms with CM*, https://emis.de/ft/24022. Do not claim those sources as original DASHI derivations.

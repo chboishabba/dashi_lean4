@@ -53,6 +53,38 @@ theorem no_universal_forced_R3_global_energy
     NavierStokes.Comparator.navier_stokes_breakdown_R3 ν hν
   exact hno (hall u₀ f hu hf)
 
+/-- Reverse direction: an actual unforced no-solution datum gives a forced
+option-D counterexample, IF zero forcing meets the comparator's force
+hypotheses. This does not construct that unforced datum. -/
+theorem unforced_no_solution_to_forced_periodic_breakdown
+    (ν : ℝ) (u₀ : R3 → R3)
+    (hInitial : InitialVelocityConditionPeriodic u₀)
+    (hZeroForce : ForceConditionPeriodic (fun _ _ => (0 : R3)))
+    (hNoGlobal :
+      ¬ (∃ v p,
+          NavierStokesExistenceAndSmoothnessPeriodic
+            ν u₀ (fun _ _ => (0 : R3)) v p)) :
+    ∃ (u : R3 → R3) (f : R3 → ℝ → R3),
+      InitialVelocityConditionPeriodic u ∧
+      ForceConditionPeriodic f ∧
+      ¬ (∃ v p, NavierStokesExistenceAndSmoothnessPeriodic ν u f v p) :=
+  ⟨u₀, (fun _ _ => 0), hInitial, hZeroForce, hNoGlobal⟩
+
+/-- Same reverse boundary for the R³ class with uniform-energy solutions. -/
+theorem unforced_no_solution_to_forced_R3_breakdown
+    (ν : ℝ) (u₀ : R3 → R3)
+    (hInitial : InitialVelocityConditionDecay u₀)
+    (hZeroForce : ForceConditionDecay (fun _ _ => (0 : R3)))
+    (hNoGlobal :
+      ¬ (∃ v p,
+          NavierStokesExistenceAndSmoothnessRn
+            ν u₀ (fun _ _ => (0 : R3)) v p)) :
+    ∃ (u : R3 → R3) (f : R3 → ℝ → R3),
+      InitialVelocityConditionDecay u ∧
+      ForceConditionDecay f ∧
+      ¬ (∃ v p, NavierStokesExistenceAndSmoothnessRn ν u f v p) :=
+  ⟨u₀, (fun _ _ => 0), hInitial, hZeroForce, hNoGlobal⟩
+
 #print axioms DASHI.OpenAINavierStokes.no_universal_forced_periodic_global
 #print axioms DASHI.OpenAINavierStokes.no_universal_forced_R3_global_energy
 

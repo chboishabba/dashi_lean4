@@ -5,6 +5,10 @@ on:
     paths:
       - "Integration/BishopRound11Machin**"
       - "Integration/BishopVendored**"
+      - "Integration/BishopNegativeLog**"
+      - "Integration/BishopRiemannZeta**"
+      - "Integration/BishopPureImaginary**"
+      - "scripts/check_bishop_imaginary_factorial_cauchy.py"
       - "Integration/MoonshineEisenstein**"
       - "Integration/MoonshineDelta**"
       - "scripts/verify_round11_machin_route_b.py"
@@ -53,6 +57,16 @@ jobs:
 
       - name: Kernel-check focused route-B probe
         run: lake env lean Integration/BishopRound11MachinReplayProbe.lean
+
+      - name: Exact factorial/parity regression
+        run: python3 scripts/check_bishop_imaginary_factorial_cauchy.py
+
+      - name: Kernel-check Bishop K04d/K05 source-faithful semantic candidates
+        run: |
+          lake env lean Integration/BishopNegativeLogNativeRound11Semantics.lean
+          lake env lean Integration/BishopRound11ImaginaryProductSemanticReflection.lean
+          lake env lean Integration/BishopRiemannZetaNativeMachinContinuity.lean
+          lake env lean Integration/BishopPureImaginaryFiniteCauchyCoefficientsExact.lean
 
       - name: Print focused route-B axiom audit
         run: lake env lean Integration/AxiomAuditMoonshineRound11RouteB.lean

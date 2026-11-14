@@ -26,6 +26,30 @@ namespace DASHILiteralClayNS
 
 open ClaySpec
 open NavierStokes
+open MeasureTheory
+
+/-! ## Same physical velocity: spatial-slice measurability payment -/
+
+/-- The actual globally smooth LeanDojo velocity is strongly measurable on
+every fixed nonnegative-time spatial slice. This fills the logical
+measurability requirement that an arbitrary scalar finite-energy bound
+cannot supply. Reuses the existing *same-object* smooth pair/ambient weld
+and the proven ClaySpec smooth spatial-slice lemma in `Gap.lean`. -/
+theorem smoothLeanDojoVelocitySlice_aestronglyMeasurable
+    (u : VelocityField 3)
+    (hu : NavierStokes.velocity_smooth_on_global_spacetime_domain u)
+    (t : ℝ) (ht : 0 ≤ t) :
+    AEStronglyMeasurable
+      (fun x : Space3 => u (NavierStokes.spacetime_point t x)) volume := by
+  have hPair : ClaySpec.TrustBoundarySmoothOn (leanDojoFieldToPair u) :=
+    leanDojoSmooth_to_pair hu
+  have hSlice :
+      ContDiff ℝ ∞ (fun x : R3 => (leanDojoFieldToPair u) (x, t)) :=
+    SemanticGap.smooth_space_slice hPair ht
+  simpa [leanDojoFieldToPair] using
+    hSlice.continuous.aestronglyMeasurable
+
+#print axioms smoothLeanDojoVelocitySlice_aestronglyMeasurable
 
 /-! ## Data-side residuals -/
 
@@ -76,10 +100,15 @@ def LeanDojoIncompressibleToClay : Prop :=
         (pairFieldToLeanDojo f))),
       ClaySpec.EquationTwo (leanDojoFieldToPair sol.velocity)
 
-/-- Translate LeanDojo's finite-energy representation (coordinate square sum)
-into ClaySpec's vector-valued `MemLp` plus norm-square integral representation. -/
+/-- Translate LeanDojo's coordinate-square finite-energy bound into
+ClaySpec's vector-valued `MemLp` bound for the SAME SMOOTH global velocity.
+The former `FiniteEnergy u` hypothesis for arbitrary u did not imply strong
+measurability of u, while `MemLp` does. In the actual target consumer,
+`GlobalSmoothSolution.velocity_smooth` supplies the missing hypothesis.
+No new fluid estimate is postulated by this recut. -/
 def LeanDojoEnergyToClay : Prop :=
   ∀ (u : VelocityField 3),
+    NavierStokes.velocity_smooth_on_global_spacetime_domain u →
     NavierStokesOnR3.FiniteEnergy u →
       ClaySpec.BoundedEnergy (leanDojoFieldToPair u)
 
@@ -125,7 +154,7 @@ theorem leanDojoSolutionToClaySpec_of_transport
     w.momentum ν ν_pos u₀ f hdiv sol,
     w.incompressible ν ν_pos u₀ f hdiv sol,
     leanDojoInitialCondition_to_clay sol,
-    w.energy sol.velocity henergy⟩
+    w.energy sol.velocity sol.velocity_smooth henergy⟩
 
 /-! ## Exact target compiler -/
 

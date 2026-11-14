@@ -1,0 +1,8 @@
+{
+  "query": "language:Lean",
+  "retrieval_date_utc": "2026-11-09T03:19:14.156093+00:00",
+  "repository_count": 21481,
+  "partitions": 34,
+  "source": "https://github.com/search?q=lang%3Alean&type=repositories&s=updated&o=desc",
+  "search_cap_note": "Partitions are bounded to <=900 results; deduplicated by GitHub numeric id."
+}

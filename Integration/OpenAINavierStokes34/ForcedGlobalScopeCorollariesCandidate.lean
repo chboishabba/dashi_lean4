@@ -87,5 +87,7 @@ theorem unforced_no_solution_to_forced_R3_breakdown
 
 #print axioms DASHI.OpenAINavierStokes.no_universal_forced_periodic_global
 #print axioms DASHI.OpenAINavierStokes.no_universal_forced_R3_global_energy
+#print axioms DASHI.OpenAINavierStokes.unforced_no_solution_to_forced_periodic_breakdown
+#print axioms DASHI.OpenAINavierStokes.unforced_no_solution_to_forced_R3_breakdown
 
 end DASHI.OpenAINavierStokes

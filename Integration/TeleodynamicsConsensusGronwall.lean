@@ -48,7 +48,7 @@ theorem consensus_energy_exponential_bound
   have hG :=
     le_gronwallBound_of_liminf_deriv_right_le
       (f := Energy) (f' := dEnergy)
-      (δ := E0) (K := -2 * λ) (ε := 0) (a := a) (b := b)
+      (δ := E0) (K := -2 * lam) (ε := 0) (a := a) (b := b)
       h.continuousEnergy hSlope h.initialBound
       (fun x hx => by
         simpa only [add_zero] using h.differentialInequality x hx)

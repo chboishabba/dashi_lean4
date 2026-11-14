@@ -1,0 +1,3 @@
+[submodule "vendor/LeanMillenniumPrizeProblems"]
+	path = vendor/LeanMillenniumPrizeProblems
+	url = https://github.com/lean-dojo/LeanMillenniumPrizeProblems.git

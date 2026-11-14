@@ -3,7 +3,7 @@
 This directory's foreign-source adapters are deliberately NOT imported by
 native DASHI Lean 4.28.0 `Synthesis.lean` or its Clay #108 acceptance root.
 They are proof CANDIDATES, not accepted results. Golden source authority and
-the 29-gate A/B/C ledger:
+the 26-row A/B/C ledger (the grouped Karp F1–F4 row contains four gates):
 [Agda Clay #1499: ClayOpenAIThreeFrontierBidirectionalSteelman20261114.md](https://github.com/chboishabba/dashi_agda/blob/chatgpt/clay-20261112-four-frontier-fail-closed/Docs/roadmaps/ClayOpenAIThreeFrontierBidirectionalSteelman20261114.md).
 
 ## Source-pinned compilation (each independent toolchain)

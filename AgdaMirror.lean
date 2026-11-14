@@ -1,4 +1,5 @@
 import AgdaMirror.Law.AustralianContractsReviewedHopCompiler
+import AgdaMirror.Cognition.PNF.DirectDeltaCompilerActivation
 import AgdaMirror.StageTwelveGrothendieckRelation
 import AgdaMirror.JInvariantSheafDescent
 import AgdaMirror.Moonshine
@@ -58,6 +59,7 @@ import AgdaMirror.SignatureDerivation
 import AgdaMirror.PhysicsConformance
 import AgdaMirror.QuotientSetoidSurface
 import AgdaMirror.AuthorityBoundary
+import AgdaMirror.WetteConstructiveFoundations
 import AgdaMirror.SeaMeInItPhysicalSuitClosure
 import AgdaMirror.SeaMeInItAdaptiveSuitClosure
 import AgdaMirror.IntersectionalNonFactorability

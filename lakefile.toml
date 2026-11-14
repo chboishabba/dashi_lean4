@@ -156,6 +156,16 @@ globs = ["RequestProject.NavierStokes.CanonicalCompletionLeaves"]
 [[lean_lib]]
 name = "NSPaperBridges"
 globs = ["RequestProject.NavierStokes.MillerAnisotropicAlgebra", "RequestProject.NavierStokes.MillerProjectionGeometry", "RequestProject.NavierStokes.YanRadulescuPressure", "RequestProject.NavierStokes.YanRadulescuCubeSeed", "RequestProject.NavierStokes.YanRadulescuExactSeed", "RequestProject.NavierStokes.YanRadulescuPressureCountermodel"]
+# Source-attributed, opt-in formalisation of Bastounis--Circelli--Hansen
+# arXiv:2610.08144v1. Proof of concrete examples != proof of SCI infinity.
+[[lean_lib]]
+name = "AutoformalisationBCH2026"
+globs = ["RequestProject.Autoformalisation.LostInTranslationExamples",
+         "RequestProject.Autoformalisation.LostInTranslationSCI",
+         "RequestProject.Autoformalisation.LostInTranslationNineVariables",
+         "RequestProject.Autoformalisation.ConditionalTranslation",
+         "RequestProject.Autoformalisation.LostInTranslationPadding",
+         "RequestProject.Autoformalisation.LostInTranslationAlternation"]
 
 # Native mathlib-backed continuum Yang--Mills analysis.  This lane is reserved
 # for genuine measure/topology/spectral theorems whose supporting infrastructure

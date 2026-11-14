@@ -1,3 +1,4 @@
+import Synthesis.MillenniumBSDCMRealNonexceptionalXTSignImageCompleteExact
 import Synthesis.MillenniumBSDCMActualE2H1ExplicitImageWeldExact
 import Synthesis.MillenniumBSDCMQ2ActualLocalImageParityExact
 import Synthesis.MillenniumBSDCMOriginalRationalToPadicH1NaturalityExact
@@ -51,5 +52,15 @@ theorem cmOriginalK1Q2ActualImage_toLocalNecessaryFirstParity
     (hc : c ∈ LocalKummerImage 2) :
     cmQ2SquareClassValuationParity c.1 = 0 :=
   cmQ2LocalKummerImage_firstParity_zero c hc
+
+
+/-- Original real E(R) source image pays BOTH equal-sign cases,
+rather than only an uninhabited necessary equality of sign bits.
+This is on the actual affine point locus; classical H1(R,E[2])
+and full local-Kummer cohomological equivalence remain separate. -/
+theorem cmOriginalK1RealNonexceptionalSignImageComplete :
+    cmOriginalRealNonexceptionalXTSignImage =
+      {c : Bool × Bool | c.1 = c.2} :=
+  cmOriginalRealNonexceptionalXTSignImage_eq
 
 end Synthesis.Millennium.BSD

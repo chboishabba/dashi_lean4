@@ -91,3 +91,40 @@ remain new physical estimates.
 The highest-value work is now to produce original carrier hypotheses
 for the **existing** theorem consumers, not to build additional
 terminal-interface scaffolding. Preserve one rollup PR per repo.
+
+
+## Correct source volume: 122,876 Git-pinned Lean files
+
+The immutable `openai/math@1581d4cb...` repository does **not**
+contain merely 200 or 208 Lean source files. A 14 November full
+subtree inventory obtained via 23 separate non-truncated academic
+directory Git tree walks (plus `ComparatorChallenges`) verifies
+**122,458 `lean/OAI/` files**, **416 comparator `.lean` files**, and
+**2 root `.lean` files**, total **122,876**. The initial combined
+recursive tree response was truncated after 59,790 source paths;
+that result is not the total.
+
+Full exact OAI academic-domain tree SHA/count inventory:
+Agda #1499
+`Docs/roadmaps/OpenAIMathCorpusCrosswalk20261114/pinned_vendor_full_lean_tree_20261114.json`.
+Native Lean rollup implementation:
+`scripts/check_openai_math_vendor_tree_20261114.py` streams
+the *pinned Git tree* `git ls-tree -r -z HEAD lean` without loading
+122k source files into memory, fails closed on source drift and may
+write per-module Git-blob provenance NDJSON for the existing world
+ingest (#1495). This script still requires locally materializing
+the full original submodule; it has not been executed in this
+connector-only source audit.
+
+The pinned **200** and later **208** catalogue main-results are a
+*selected headline theorem index*. They are NOT a count of all
+proof modules or theorem declarations. No unsupported claim of
+122,876 independently accepted theorems is made. The old
+101/208 lexical-to-DASHI crosswalk is a catalogue pilot only,
+not a crosswalk of 122k modules.
+
+**Actionable next cut:** use the existing Lean/Agda world-ingestion
+and shared hyperfabric source-blobs as a streaming discovery index,
+then prioritize original mathematical theorem consumers and actual
+type-equivalent proof reuse; do not fabricate 122k proof admissions
+or mutate 4.28 toolchains to 4.34 automatically.

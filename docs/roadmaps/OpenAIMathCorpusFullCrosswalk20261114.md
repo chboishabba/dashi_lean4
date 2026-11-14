@@ -15,3 +15,34 @@ lake env lean Integration/OpenAIMath/ClayCrosswalkSourceIndex20261114.lean
 lake env lean Synthesis/ClaySixFrontierRollup20261114.lean
 ```
 Check `#print axioms` on new named theorems. Exact branch kernel/axiom acceptance not yet recorded. External 4.34.1 source build and 4.28 original theorem ports remain separate.
+
+
+## Original Lean #78 source migration, 14 November
+
+The remaining 35 original PR #78 paths (all **except** the exact
+`UpstreamPin.lean` and `FullUpstreamMainResultsCatalogue.lean` already
+imported) are now staged in this **same Lean rollup #108**, including
+source-level Lean `ListFinsetCNFTransport` proofs, OAI 378 version-gated
+finite-CNF/bit-length/fixed-machine adapters, the full five index files,
+the original 13 scripts, attribution docs, exact original `.gitmodules`
+and **original Git submodule** `vendor/openai-math-src` at its fixed
+`1581d4cb...` commit. Historical file SHA IDs are preserved, not
+rewritten; any conflicting same-path target must be separately reconciled.
+
+**The source is now available in one PR**, but the older gitlink does not
+contain the 8 post-vendor additions. The separate `PIN_378.json` and
+`materialize_openai378_toolchain.sh` are required to fetch newer proof
+source. `Upstream378FiniteCNFBridge.lean` still imports OAI-specific
+source modules absent from the lean-4.28 ambient library and is intentionally
+**not** imported by `Synthesis/ClaySixFrontierRollup20261114.lean`.
+New safe-ambient source root:
+`Integration/OpenAIMath/ClayCrosswalkLeanSourceRollup20261114.lean`.
+This stages generic algebraic source, **not a compiler/kernel receipt**.
+
+The historical PR #78 can be retained as provenance rather than serving
+as a second active source implementation PR. Agda #1499 holds the full
+8 native original Circuit/CNF modules and 3 source tests from donor #1212,
+the 721/373/208 machine indices, six exact source-read comparisons and
+local fail-closed auditor. The remaining bridge **M00–M05** (actual
+Agda source ↔ OAI machine input), primitive time/all-prefix visited space,
+and both pinned kernel/axiom checks remain OPEN.

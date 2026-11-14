@@ -14,9 +14,9 @@ command -v lake >/dev/null 2>&1 || {
   echo "BLOCKED: no pinned Lake/Lean toolchain; finite lifts are NOT a kernel receipt" >&2
   exit 12
 }
-for owner in "$target" Synthesis/MillenniumBSDCMQ2AllOddUnitHenselExact.lean Synthesis/MillenniumBSDCMQ2ActualCurvePointAt39Exact.lean; do
+for owner in "$target" Synthesis/MillenniumBSDCMQ2AllOddUnitHenselExact.lean Synthesis/MillenniumBSDCMQ2ActualCurvePointAt39Exact.lean Synthesis/MillenniumBSDCMQ2EightLocalPointWitnessesExact.lean; do
   test -f "$owner" || { echo "BLOCKED: missing $owner" >&2; exit 11; }
   lake env lean "$owner"
 done
-echo "KERNEL PASS: actual Q2 Hensel source, uniform odd-unit roots and x=39 coordinate point."
+echo "KERNEL PASS: actual Q2 Hensel source, uniform odd-unit roots, x=39 and eight original-curve Q2 coordinate points."
 echo "OPEN: Q2 complete Kummer image, continuous H1, original Selmer/Sha exactness."

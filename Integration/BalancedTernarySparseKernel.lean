@@ -133,16 +133,16 @@ theorem depth_five_target_quotient_balanced :
 
 open Polynomial
 
-def poleShiftPolynomial : Polynomial ℤ :=
+noncomputable def poleShiftPolynomial : Polynomial ℤ :=
   X^4 - 1
 
-def originShiftPolynomial : Polynomial ℤ :=
+noncomputable def originShiftPolynomial : Polynomial ℤ :=
   X^5
 
-def jShiftPolynomial : Polynomial ℤ :=
+noncomputable def jShiftPolynomial : Polynomial ℤ :=
   X^5 * (X^2 - X - 1)
 
-def targetShiftPolynomial : Polynomial ℤ :=
+noncomputable def targetShiftPolynomial : Polynomial ℤ :=
   X^5 * (X + 1)
 
 theorem j_shift_polynomial_expanded :
@@ -177,7 +177,7 @@ structure ShiftPolynomialKernel where
   j2 : Polynomial ℤ
   target : Polynomial ℤ
 
-def canonicalShiftPolynomialKernel : ShiftPolynomialKernel where
+noncomputable def canonicalShiftPolynomialKernel : ShiftPolynomialKernel where
   pole := poleShiftPolynomial
   origin := originShiftPolynomial
   j2 := jShiftPolynomial

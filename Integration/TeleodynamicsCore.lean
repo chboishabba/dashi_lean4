@@ -99,6 +99,7 @@ structure GradientFlowReceipt where
 
  theorem gradientFlow_nonincreasing (r : GradientFlowReceipt) : r.dPsi ≤ 0 := by
   rw [r.identity]
+  have := r.gradNormSq_nonneg
   linarith
 
 structure TimeVaryingPotentialBalance where
@@ -112,6 +113,7 @@ structure TimeVaryingPotentialBalance where
  theorem timeVaryingPotential_nonincreasing (r : TimeVaryingPotentialBalance) :
     r.dPsi ≤ 0 := by
   rw [r.identity]
+  have := r.correction_le_budget
   linarith
 
 /-! ## C. Similarity-weighted consensus -/
@@ -152,6 +154,8 @@ structure ZenoRateReceipt where
 
  theorem zenoRate_nonneg (r : ZenoRateReceipt) : 0 ≤ r.effectiveRate := by
   rw [r.identity]
+  have := r.baseline_nonneg
+  have := r.factor_nonneg
   positivity
 
  theorem zenoRate_le_baseline (r : ZenoRateReceipt) :
@@ -276,7 +280,7 @@ def demoGradient : GradientFlowReceipt where
   gradNormSq_nonneg := by norm_num
   identity := by norm_num
 
-def demoZeno : ZenoRateReceipt where
+noncomputable def demoZeno : ZenoRateReceipt where
   baselineRate := 2
   suppressionFactor := 1 / 2
   effectiveRate := 1

@@ -23,21 +23,21 @@ open Set Filter Real
 inequality.  `dEnergy` is kept explicit so this owner can consume any upstream
 producer of the same scalar energy derivative. -/
 structure ScalarConsensusDecayOn
-    (Energy dEnergy : ℝ → ℝ) (λ E0 a b : ℝ) : Prop where
+    (Energy dEnergy : ℝ → ℝ) (lam E0 a b : ℝ) : Prop where
   continuousEnergy : ContinuousOn Energy (Icc a b)
   rightDerivative : ∀ t ∈ Ico a b,
     HasDerivWithinAt Energy (dEnergy t) (Ici t) t
   initialBound : Energy a ≤ E0
   differentialInequality : ∀ t ∈ Ico a b,
-    dEnergy t ≤ (-2 * λ) * Energy t
+    dEnergy t ≤ (-2 * lam) * Energy t
 
 /-- Scalar Grönwall closes the finite-interval exponential estimate once the
 spectral-gap differential inequality is available. -/
 theorem consensus_energy_exponential_bound
-    {Energy dEnergy : ℝ → ℝ} {λ E0 a b : ℝ}
-    (h : ScalarConsensusDecayOn Energy dEnergy λ E0 a b) :
+    {Energy dEnergy : ℝ → ℝ} {lam E0 a b : ℝ}
+    (h : ScalarConsensusDecayOn Energy dEnergy lam E0 a b) :
     ∀ t ∈ Icc a b,
-      Energy t ≤ E0 * Real.exp ((-2 * λ) * (t - a)) := by
+      Energy t ≤ E0 * Real.exp ((-2 * lam) * (t - a)) := by
   have hSlope :
       ∀ x ∈ Ico a b, ∀ r, dEnergy x < r →
         ∃ᶠ z in 𝓝[>] x, (z - x)⁻¹ * (Energy z - Energy x) < r := by
@@ -60,9 +60,9 @@ used as the producer of `dE <= -2 lambda E`; this receipt records the remaining
 regularity data needed by the integration theorem without identifying those
 regularity hypotheses with graph connectivity. -/
 structure SpectralGapTrajectoryReceipt
-    (Energy dEnergy : ℝ → ℝ) (λ E0 a b : ℝ) : Prop where
-  regularity : ScalarConsensusDecayOn Energy dEnergy λ E0 a b
-  lambdaPositive : 0 < λ
+    (Energy dEnergy : ℝ → ℝ) (lam E0 a b : ℝ) : Prop where
+  regularity : ScalarConsensusDecayOn Energy dEnergy lam E0 a b
+  lambdaPositive : 0 < lam
 
 inductive ExponentialDecayCreatesNonlocalPhysicalTransmission : Prop
 

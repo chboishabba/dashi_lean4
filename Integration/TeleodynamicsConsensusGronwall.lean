@@ -17,7 +17,7 @@ negative.
 
 namespace Integration.TeleodynamicsConsensusGronwall
 
-open Set Filter Real
+open Set Filter Real Topology
 
 /-- Time-local hypotheses needed to integrate the spectral-gap differential
 inequality.  `dEnergy` is kept explicit so this owner can consume any upstream

@@ -80,7 +80,9 @@ instance : Fintype NullLines := inferInstance
 instance : Fintype RootCandidateLines := inferInstance
 instance : Fintype OtherNonsingularLines := inferInstance
 
-deriving instance DecidableEq for OtherNonsingularLines
+instance : DecidableEq NullLines := Subtype.decidableEq
+instance : DecidableEq RootCandidateLines := Subtype.decidableEq
+instance : DecidableEq OtherNonsingularLines := Subtype.decidableEq
 
 theorem null_line_count : Fintype.card NullLines = 40 := by native_decide
 theorem root_candidate_line_count : Fintype.card RootCandidateLines = 36 := by native_decide

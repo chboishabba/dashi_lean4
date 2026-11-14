@@ -15,7 +15,7 @@ abbrev V4 := Fin 4 → F3
 abbrev V5 := Fin 5 → F3
 
 /-- Raw punctured four-trit carrier.  This is *not* the derived Lagrangian carrier. -/
-def RawT4Punctured := {v : V4 // v ≠ 0}
+abbrev RawT4Punctured := {v : V4 // v ≠ 0}
 
 instance : Fintype RawT4Punctured := inferInstance
 
@@ -89,19 +89,26 @@ def standardToPrimitive (z : V5) : V5 :=
 
 theorem primitive_standard_left (p : V5) :
     standardToPrimitive (primitiveToStandard p) = p := by
+  have h3 : (3 : F3) = 0 := rfl
   funext i
-  fin_cases i <;> simp [standardToPrimitive, primitiveToStandard] <;> ring
+  fin_cases i <;> simp [standardToPrimitive, primitiveToStandard] <;> ring_nf <;> simp [h3]
 
 theorem primitive_standard_right (z : V5) :
     primitiveToStandard (standardToPrimitive z) = z := by
+  have h3 : (3 : F3) = 0 := rfl
+  have h2 : (2 : F3) = -1 := rfl
+  have h4 : (4 : F3) = 1 := rfl
   funext i
-  fin_cases i <;> simp [standardToPrimitive, primitiveToStandard] <;> ring
+  fin_cases i <;> simp [standardToPrimitive, primitiveToStandard] <;> ring_nf <;> simp [h3, h2, h4]
 
 /-- The primitive Plucker quadratic diagonalizes to `-qPrimitive`. -/
 theorem primitive_standard_quadratic (p : V5) :
     qStandard (primitiveToStandard p) = -qPrimitive p := by
+  have h3 : (3 : F3) = 0 := rfl
+  have h2 : (2 : F3) = -1 := rfl
   simp [qStandard, qPrimitive, primitiveToStandard]
-  ring
+  ring_nf
+  simp [h3, h2]
 
 def primitiveStandardEquiv : V5 ≃ V5 where
   toFun := primitiveToStandard
@@ -110,13 +117,13 @@ def primitiveStandardEquiv : V5 ≃ V5 where
   right_inv := primitive_standard_right
 
 /-- Nonzero primitive-null bivectors: the correct derived 80-state carrier. -/
-def PrimitiveNull := {p : V5 // p ≠ 0 ∧ qPrimitive p = 0}
+abbrev PrimitiveNull := {p : V5 // p ≠ 0 ∧ qPrimitive p = 0}
 
 /-- Nonzero null vectors in the standard five-dimensional quadratic chart. -/
-def StandardNull := {z : V5 // z ≠ 0 ∧ qStandard z = 0}
+abbrev StandardNull := {z : V5 // z ≠ 0 ∧ qStandard z = 0}
 
-def StandardQ1 := {z : V5 // qStandard z = 1}
-def StandardQ2 := {z : V5 // qStandard z = 2}
+abbrev StandardQ1 := {z : V5 // qStandard z = 1}
+abbrev StandardQ2 := {z : V5 // qStandard z = 2}
 
 instance : Fintype PrimitiveNull := inferInstance
 instance : Fintype StandardNull := inferInstance
@@ -137,7 +144,7 @@ theorem standardQ2_card : Fintype.card StandardQ2 = 72 := by
 
 /-- Exact construction-level source carrier: ordered independent symplectically
 isotropic frames.  `wedgePrimitive ≠ 0` is exactly linear independence here. -/
-def IsotropicFrame :=
+abbrev IsotropicFrame :=
   {uv : V4 × V4 // omega uv.1 uv.2 = 0 ∧ wedgePrimitive uv.1 uv.2 ≠ 0}
 
 instance : Fintype IsotropicFrame := inferInstance
@@ -158,7 +165,7 @@ theorem wedge_to_primitive_null_surjective :
   native_decide
 
 /-- Frames presenting the same oriented Plucker bivector. -/
-def OrientedFrameFiber (p : PrimitiveNull) :=
+abbrev OrientedFrameFiber (p : PrimitiveNull) :=
   {frame : IsotropicFrame // wedgeToPrimitiveNull frame = p}
 
 instance (p : PrimitiveNull) : Fintype (OrientedFrameFiber p) := inferInstance

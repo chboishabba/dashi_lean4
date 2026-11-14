@@ -14,6 +14,7 @@ import Synthesis.RiemannA2G3PoleAndSignedHeatNegativeControls
 import Synthesis.RiemannSelectedSignedFifthCorrelationGapAudit
 import Synthesis.RiemannSignedFifthEventualThreeProducerRollupExact
 import Synthesis.NavierStokesR854RealTimeIntegratedRateConditionalExact
+import Synthesis.NavierStokesR855SharpRealTimeConditionalExact
 
 /-!
 # Clay six-frontier Lean donor acceptance root — Nov 14 2026

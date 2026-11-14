@@ -1,18 +1,26 @@
 import Synthesis.RiemannProjectiveQuarticFourWindowUniformPoleLocalizationPaid
-import Synthesis.RiemannProjectiveQuarticFourWindowSignedPoleA2ScalarAudit
+import Synthesis.RiemannPostMergeAnalyticMaxCut
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapAsymptoticBalance
-import Synthesis.RiemannSelectedPrimeSensitiveThreeTapInverseSquareCarrierAudit
 import Synthesis.RiemannSelectedPrimeSensitiveThreeTapMidStripMesh
 import Synthesis.RiemannSelectedPrimeSensitiveTwoScalePromotion
-import Synthesis.RiemannSelectedSignedFifthCorrelationGapAudit
 
 /-!
-# RH max-cut frontier after analytic compression
+# RH max-cut frontier after post-merge analytic compression
 
 This is the import boundary for the live analytic frontier.
 
-The branch is now best managed as three analytic routes sharing the same
-terminal consumer.
+The merged architecture is frozen.  The programme is now three concrete
+analytic routes sharing the same terminal consumer; no RH-equivalent terminal
+certificate is counted as producer progress.
+
+The fail-closed accounting used here is:
+
+* `K`: source/kernel theorem already present on the same proof graph;
+* `U`: unconditional analytic input once instantiated on the literal carrier;
+* `O`: genuinely open scalar/limit estimate;
+* `C`: circular, RH-equivalent, or logically inert as an RH producer.
+
+`C` premises never count as progress.
 
 ## Route A1: inverse-square / three-tap
 
@@ -31,9 +39,6 @@ One-scale resonance has been compressed past the abstract reflection tail:
 * the actual transformed pair kernel has exact q^-2 decay;
 * the zeta critical strip puts every actual normalized horizontal displacement
   in the fixed compact alpha interval |alpha|<=1/25 for t>=200;
-* the formerly pointwise-in-t pole-weight continuity has been sharpened to the
-  uniform elementary estimate
-  `|w_t,c(u)-w_t,c(v)| <= 19*cosh(1)*|u-v|` on [-6,6] for t>=200, |c|<=2;
 * the normalized four-window determinant quantifier swap is isolated as the
   finite compiler target `UniformQuarticFourPoleDeterminantCompilerTarget`, and
   that target already compiles to one fixed-width high-t signed-pole core;
@@ -42,109 +47,150 @@ One-scale resonance has been compressed past the abstract reflection tail:
 * the subtraction-defined actual adverse far remainder is exactly a
   complementary subtype tsum and is bounded by Ccurv times the literal
   inverse-square zero tail `threeTapInverseSquareZeroTailAfter`;
-* the arbitrary-endpoint RvM discrepancy has been converted into a literal
-  count bound
-  `N(A,B) <= C (B-A+1) log(B+4)` for `5 <= A < B`;
-* `zetaWindowInverseSquareMass_le_count_div_sq` pays the exact carrier weld
-  from a separated literal zero window to `N(A,B)/d^2`;
-* positive-height right/left shell bounds are source-written, and the existing
-  unconditional all-real local zero count gives unit-window inverse-square
-  bounds on both sides of `t`, including negative ordinates, without changing
-  the `Ncount` carrier or invoking zero reflection;
-* `threeTapHalfHeightComplement_left_or_right` now proves the exact complement
-  has only the two ordinate charts `gamma<=t/2` and `3t/2<=gamma`; the elementary
-  absolute-value geometry is no longer part of the carrier debt;
-* the half-open right-shell endpoint issue at `gamma=3t/2` is absorbed by the
-  boundary-safe first source window `(3t/2-1,2t]`, while the left first dyadic
-  chart already owns `gamma=t/2` by its `(lower,upper]` convention;
-* dyadic half-height shell geometry is source-written and its numerical series
-  is summed exactly:
+* arbitrary-endpoint and all-real local zero-count bounds own the literal right,
+  positive-left, and negative-ordinate shell/window estimates;
+* `threeTapHalfHeightComplement_left_or_right` proves the exact complement has
+  only the two ordinate charts `gamma<=t/2` and `3t/2<=gamma`;
+* the right boundary `gamma=3t/2` is owned by the first boundary-safe source
+  window `(3t/2-1,2t]`, and the left first shell owns `gamma=t/2`;
+* dyadic shell geometry is source-written and its numerical series is summed
+  exactly:
     `sum_k ((log t + 1) + k) 2^-k / t = (2 log t + 4)/t`;
-* `ThreeTapInverseSquareShellPartitionBound` is the exact remaining carrier
-  surface, and its compiler proves the normalized Route-A tail bound with only
-  a factor-four loss.  Thus no infinite-series algebra remains behind that cut;
-* `threeTapRouteAAdverseBudget` combines the explicit finite budget and this
-  inverse-square far budget, while
-  `exists_threeTapRouteAAsymptoticBalancePass_constants` compiles the strict
+* `ThreeTapInverseSquareShellPartitionBound` is therefore the exact remaining
+  carrier surface; its compiler pays all subsequent infinite-series algebra;
+* `threeTapRouteAAdverseBudget` combines finite and inverse-square far budgets,
+  and `exists_threeTapRouteAAsymptoticBalancePass_constants` compiles the strict
   comparison against the gamma+pole-minus-slack floor directly to paid-cost
-  negativity;
-* the compensation floor is exactly
-  `-(Gamma+Pole) - LocalSlack/2`;
-* after a near-line PASS, the existing finite net/Lipschitz compiler closes the
-  compact mid-strip once certified node margins and a derivative bound exist.
+  negativity.
 
-The live A1 leaves are therefore:
+The cheap A1 geometry is exhausted.  The live A1 leaves are exactly:
 
-1. assign each of the two exact ordinate charts to the already-paid countable
-   shell/window family and sum the literal complementary-zero carrier; boundary
-   ownership and left/right chart geometry are already paid;
+1. prove `ThreeTapInverseSquareShellPartitionBound`, i.e. assign the two exact
+   ordinate charts to the already-paid countable shell/window family and sum the
+   literal complementary-zero carrier;
 2. finish fixed-width determinant transport / witness control and prove uniform
    compact-alpha curvature;
 3. prove translated gamma+pole gain versus local slack strongly enough that
 
      finite + Ccurv*inverseSquareTail < G - S/2.
 
+No further boundary convention or numerical-series theorem is owed.
+
 ## Route A2: V4/H4/G3
 
-The polarity problem described by the pointwise identity
+The polarity and dominant selected-sixth issues are paid.  The post-merge audit
+traces the target scalar to primitives:
 
-  P_G3 = positive_scale * (a^4 - fourthAngular)
+  compensationTargetThreshold(W,rho)
+    = 4*combinedZeroHeightDefect(W,rho)
+      + integral signedOrdinateTest(W)*mu.
 
-has now been cut past the original fail-fast wall.  The source owns:
+Thus the A2 target does not hide an abstract high-ordinate contradiction
+hypothesis.
 
-* `literalLocalHorizontalFourthCorrectionAt_lower`, an unconditional lower H4
-  envelope from the critical strip and local ordinate radius;
-* `literalLocalVerticalFourthDiscrepancy_ge_neg_rvm`, which uses the absolute V4
-  theorem and the nonnegative left-endpoint atom;
-* `literalLocalCenteredFourthAngularAt_lower`, the correct-polarity lower bound
-  on the same finite fourth-angular carrier;
-* `literalLocalFourthPhaseMomentAt_ge_corrected_scalar`, which adds the mu
-  reference contribution on the exact local phase carrier;
-* `literalOffOrdExactAt_le_postSixthV4H4AbsorbBudgetAt`, which therefore gives
-  the required same-object UPPER bound on the off-ordinate source;
-* the selected witness admits the quantitative certificate
-  `-(3/20)*pi^6 <= M6_signed < 0`, and
-  `quarticSignedPole_terminal_M6_cap_pays_dominant_balance` proves that this
-  cap is already strictly below the dominant quartic target coefficient;
-* `postSixthTerminalLocalM6Budget_eq_debt_sub_muGain` writes the local scalar
-  exactly as positive/local debt minus the smooth-mu gain;
-* `quarticSignedPoleMuLowerEnvelope_canonical_pos` proves that this mu gain is
-  genuinely favorable throughout `t>=200`;
-* the exact finite strict scalar is therefore
+The source owns:
+
+* the correct-polarity finite fourth-angular upper compiler;
+* the selected witness certificate `-(3/20)*pi^6 <= M6_signed < 0`;
+* `quarticSignedPole_terminal_M6_cap_pays_dominant_balance`;
+* `postSixthTerminalLocalM6Budget_eq_debt_sub_muGain`;
+* `quarticSignedPoleMuLowerEnvelope_canonical_pos` for t>=200;
+* the exact strict scalar equivalence
 
     localPositiveDebt + FarExact
-      < compensationTargetThreshold + localMuGain,
+      < compensationTargetThreshold + localMuGain;
 
-  with FarExact still signed and no hidden absolute value.
+* the four-coordinate identity
 
-Thus A2 is no longer waiting on orientation or the leading sixth coefficient.
-Its live analytic theorem is the remaining lower-order/far/compensation strict
-inequality above.  If that inequality has the wrong asymptotic sign, A2 should
-be retired by an explicit no-go theorem rather than recut again.
+    localPositiveDebt
+      = verticalDebt + countDebt + sixthDebt + eighthDebt;
+
+* the sharpened reassociation
+
+    localPositiveDebt = lowerOrderLocalDebt + leadingLocalDebt,
+
+  where `lowerOrderLocalDebt = verticalDebt + countDebt` and
+  `leadingLocalDebt = sixthDebt + eighthDebt`;
+* exact canonical-radius expansions of the sixth and eighth envelopes.  These
+  show that both selected-M6 sixth debt and G1-welded eighth debt contain a
+  leading contribution proportional to
+
+    expandedZeroCount / (t/16)^2.
+
+  Therefore the eighth term is not automatically lower order merely because it
+  is an eighth-order Taylor remainder.  A2 now requires an actual leading
+  constant comparison on the selected witness;
+* `postSixthTerminalDominantHeadroom_pos`, showing every strength-floor witness
+  has strict headroom after the selected dominant M6 allowance is removed;
+* an exact far split `FarExact = FarBaseExact + FarHorizontalExact`;
+* the far base carrier already has an unconditional inverse-square shell bound;
+* the far horizontal carrier has the same shell bound once the single selected
+  witness coordinate `HorizontalFarCurvatureBound CH` is supplied; the combined
+  `FarExact` shell compiler and canonical linear cutoff are source-written.
+
+Consequently `FarExact` is no longer one opaque analytic leaf.  Its remaining
+far-side open coordinate is the selected horizontal curvature constant `CH`;
+the zero-shell payment itself is already compiled.
+
+The normalized compensation audit also rules out a false Fourier-decay shortcut:
+at the fixed normalized boundary q=+/-eta0 the centered Abel channel starts at
+the physical r^-2 scale, whereas the quartic target is r^-6.  The compensation
+producer must therefore obtain four additional powers by genuine cancellation
+or sign, not merely by sending the Fourier frequency to infinity.
+
+The live A2 leaves are now exactly:
+
+1. compare the leading sixth/eighth constants, the positive smooth-mu gain, and
+   the instantiated expanded-zero-count envelope on the selected witness;
+2. prove a selected `HorizontalFarCurvatureBound CH` sharp enough for the
+   already-written FarExact shell compiler;
+3. prove the explicit completed compensation lower bound, preserving the
+   same-object N-mu cancellation;
+4. combine those with the already-instantiated vertical/count error bounds and
+   either prove the strict scalar or prove an eventual reverse/no-go inequality
+   and retire A2.
+
+No stronger terminal certificate should be introduced if those constants fail.
 
 ## Route B: signed fifth
 
-The independent signed-fifth route exposes exactly the roadmap scalar
+The exact signed scalar is
 
   signedFifthCorrelationGapAt
-    = Credit_n - Debt_n + OuterBudget - 3 eps.
+    = Credit_n - Debt_n + OuterBudget - 3 eps
+    = signedFifthPhysicalCapInteriorAt n + OuterBudget - 3 eps
 
-The direct gap audit also rewrites this same object as
+at sufficiently large finite cutoff.  Separate credit/debt estimates are
+optional because the signed physical cap is the useful cancellation object.
 
-  signedFifthPhysicalCapInteriorAt n + OuterBudget - 3 eps
+The cutoff ownership itself is now `K`: for every fixed t,
+`quarticSignedPoleCanonicalPhysicalHalfWidth t <= (n:Real)` holds eventually
+by the Archimedean property of natural cutoffs.  It is not an analytic premise.
 
-once the existing finite cap identity is instantiated.  Therefore cancellation
-inside the signed cap can be estimated directly; no separate credit/debt
-bounds are required unless they are analytically useful.
+`signedFifthAnalyticInput_of_three_producers` therefore exposes exactly three
+remaining analytic producers:
 
-`eventual gap >= 0` compiles directly to the existing
-`SignedFifthInteriorTarget`.  The only unpaid Route-B research theorem is the
-eventual nonnegativity of that exact scalar.
+1. eventual upper-boundary decay
+     `|signedFifthCapUpperBoundaryAt n| <= eps`;
+2. eventual direct signed-gap nonnegativity
+     `0 <= signedFifthCorrelationGapAt rho EV eps n`;
+3. convergence of `quarticScaleOuterTerminalAt` to the canonical signed high
+   residual.
 
-No RH theorem or unpaid analytic sign is asserted here.  In particular, there
-is still no exact-head kernel receipt for this branch.  Mid-strip certification
-stays downstream of a genuine near-line PASS, and J4 stays quarantined until an
-actual J2=0 source exists.
+Once those are proved for the same selected witness, the existing terminal
+consumer closes Route B.  Until then they remain independent `O` leaves.
+
+## Downstream
+
+Mid-strip certification remains downstream of a genuine near-line PASS.  J4
+remains quarantined until an actual J2=0 source exists.  High-zero RH and global
+RH remain open.
+
+## Trust boundary
+
+The post-merge additions are source-written / statically inspectable unless an
+exact-head workflow supplies a kernel receipt.  This file asserts neither RH
+nor any unpaid analytic sign.
 -/
 
 noncomputable section

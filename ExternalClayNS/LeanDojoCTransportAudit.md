@@ -62,3 +62,27 @@ released comparator C
 There is no remaining fluid estimate in the external acceptance seam. The two boundary-extension leaves are routine analytic representation obligations, not a new Navier--Stokes estimate.
 
 Promotion rule: NS remains fail-closed until all five residual transports are inhabited and the unconditional exact target theorem kernel-checks. A conditional compiler is not GREEN.
+
+
+## 12 November 2026 — energy representation source correction
+
+The original fifth transport predicate was quantified over *arbitrary* `VelocityField 3` and assumed only LeanDojo `FiniteEnergy u`, which requires a finite integral of the scalar **sum of coordinate squares** and a uniform energy bound. The target `ClaySpec.BoundedEnergy` additionally requires `MemLp`, hence almost-everywhere strong measurability of the original vector field, not just its scalar squared norm. Without measurability, the unrestricted old implication is generally invalid.
+
+The actual contradiction consumer always has `sol : GlobalSmoothSolution`, supplying `sol.velocity_smooth` on the original closed-half-space domain. The fifth exact leaf is therefore recut **without weakening the Fefferman C endpoint**:
+
+```lean
+def LeanDojoEnergyToClay : Prop :=
+  ∀ (u : VelocityField 3),
+    NavierStokes.velocity_smooth_on_global_spacetime_domain u →
+    NavierStokesOnR3.FiniteEnergy u →
+      ClaySpec.BoundedEnergy (leanDojoFieldToPair u)
+```
+
+The existing compiler now calls `w.energy sol.velocity sol.velocity_smooth henergy`. The remaining proof is genuine **same-field norm-square identity + measurability/finite-integral transport**, not a new Navier–Stokes estimate. This branch is **source-written/Lean kernel pending**; the predicate is recut, not inhabited. The other four leaves are unchanged. All results must be checked at the exact stacked head against PR #51's pinned LeanDojo vendor.
+
+
+### Positive same-source sublemma added
+
+`smoothLeanDojoVelocitySlice_aestronglyMeasurable` is now source-written directly in `LeanDojoCComparatorBridge.lean`. It consumes the **actual** `velocity_smooth_on_global_spacetime_domain` of the LeanDojo field and composes existing `leanDojoSmooth_to_pair` and `SemanticGap.smooth_space_slice`; the resulting spatial slice is continuous, hence AE strongly measurable with respect to `volume`. This discharges the *source-level measurability substep*, pending exact-head Lean elaboration and axiom inspection.
+
+The positive finite-energy transport still needs the Euclidean coordinate sum-of-squares equals vector-norm-squared identity, integrability conversion using that now available measurability, and uniform bound alignment. **Do not mark `LeanDojoEnergyToClay` inhabited from this sublemma alone.**

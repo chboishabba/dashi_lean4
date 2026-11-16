@@ -36,7 +36,7 @@ structure DocumentQueryModel
 
 /-- A proof-bearing semantic licence for a PARTICULAR source and query.
     Distinct queries can require different resolution strength.
-    'licencedAnswer' is the real, currently unfilled semantic correspondence;
+    'consumerFactorises' is the real, currently unfilled correspondence;
     it cannot be inferred from parser output, QIDs, or a review-reference string.
 
     'closed' is consumer sufficiency on the live semantic fibre.
@@ -50,8 +50,10 @@ structure SourceQueryLicence
   sameProducedObservation : observation = m.observe source
   chosenReading : Reading
   chosenIsLive : m.live observation chosenReading
-  licensedAnswer :
-    m.documentAnswer source query = m.readingAnswer chosenReading query
+  consumerFactorises :
+    ∀ otherSource : Source, m.observe otherSource = observation →
+      m.documentAnswer otherSource query =
+        m.readingAnswer chosenReading query
   consumerClosed :
     ∀ reading, m.live observation reading →
       m.readingAnswer reading query = m.readingAnswer chosenReading query
@@ -94,7 +96,7 @@ theorem slrJmdDocumentQuerySound
     (answer : Answer)
     (checked : m.readingAnswer licence.chosenReading query = answer) :
     m.documentAnswer source query = answer :=
-  licence.licensedAnswer.trans checked
+  (licence.consumerFactorises source licence.sameProducedObservation.symm).trans checked
 
 /-- If a different reading remains live, a certified checked answer for it
     yields the SAME document answer. This is the actual consumer-relative
@@ -110,7 +112,7 @@ theorem slrJmdDocumentQuerySoundForAnyLiveReading
     (answer : Answer)
     (checked : m.readingAnswer reading query = answer) :
     m.documentAnswer source query = answer :=
-  licence.licensedAnswer.trans
+  (licence.consumerFactorises source licence.sameProducedObservation.symm).trans
     ((licence.consumerClosed reading live).symm.trans checked)
 
 /-- An actual pair of still-live readings with different answers is
@@ -134,6 +136,29 @@ theorem incompatibleLiveReadingsBlockQueryLicence
     simpa [licence.sameProducedObservation] using rightLive
   exact disagree ((licence.consumerClosed left hl).trans
     (licence.consumerClosed right hr).symm)
+
+/-- A concrete source pair that collides under the observation but
+    disagrees on this consumer is a negative witness to factorisation.
+    This is the same DASHI non-factorability criterion that forbids loss
+    of epistemic scope, speaker, temporal interpretation, or provenance
+    when those distinctions matter to the query. -/
+theorem sourceObservationCollisionBlocksQueryLicence
+    {Source : Type uSource} {Reading : Type uReading}
+    {Query : Type uQuery} {Answer : Type uAnswer}
+    {m : DocumentQueryModel Source Reading Query Answer}
+    (left right : Source) (query : Query)
+    (sameObservation : m.observe left = m.observe right)
+    (differentAnswers :
+      m.documentAnswer left query ≠ m.documentAnswer right query) :
+    ¬ SourceQueryLicence m left query := by
+  intro licence
+  have hleft : m.observe left = licence.observation :=
+    licence.sameProducedObservation.symm
+  have hright : m.observe right = licence.observation :=
+    sameObservation.symm.trans hleft
+  exact differentAnswers
+    ((licence.consumerFactorises left hleft).trans
+      (licence.consumerFactorises right hright).symm)
 
 /-- A smaller live fibre retains consumer closure, matching the generic
     DASHI semantic-refinement theorem. -/

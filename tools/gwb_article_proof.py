@@ -291,15 +291,84 @@ def write_summary(path: Path, projection: dict) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def self_check() -> int:
+    # Fully synthetic parser receipt: validates this projection and its
+    # negative controls without substituting a fake parser for a live run.
+    import copy
+    text = "George W. Bush met Laura Bush in 1977."
+    def token(i: int, value: str, dep: str, head: int, pos: str):
+        return {"i": i, "idx": text.index(value), "text": value,
+                "lemma": value.lower(), "dep": dep, "head_i": head,
+                "pos": pos, "tag": pos}
+    record = {
+        "schema": "slr-source-unit-pnf-record-v1",
+        "source_unit_ref": "wikipedia:en:George_W._Bush:fixture",
+        "revision_ref": "enwiki-revid:fixture",
+        "manifestation": {"source_text_sha256": digest(text)},
+        "parser_receipt": {"dependency_capable": True},
+        "candidate_only": True, "semantic_promotion": False,
+        "named_entities": [
+            {"surface": "George W. Bush", "start_char": 0, "end_char": 14,
+             "label_ref": "PERSON", "candidate_only": True, "semantic_promotion": False},
+            {"surface": "1977", "start_char": text.index("1977"),
+             "end_char": text.index("1977") + 4, "label_ref": "DATE",
+             "candidate_only": True, "semantic_promotion": False}],
+        "pnf_candidates": [{
+            "claim_candidate_id": "source:fixture:event",
+            "sentence_index": 0, "source_span_start": 0,
+            "source_span_end": len(text), "sentence_text_sha256": digest(text),
+            "candidate_only": True, "semantic_promotion": False,
+            "dependency_rows": [
+                token(0, "Bush", "nsubj", 1, "PROPN"),
+                token(1, "met", "ROOT", 1, "VERB"),
+                token(2, "Laura", "dobj", 1, "PROPN")]}],
+    }
+    count = 0
+    result = derive_projection(record, text,
+         [{"kind": "paragraph", "heading": "Fixture",
+           "start_char": 0, "end_char": len(text)}])
+    assert result["summary"]["people_mentions"] == 1; count += 1
+    assert result["summary"]["event_candidates"] == 1; count += 1
+    assert result["event_candidates"][0]["actors"][0]["surface"] == "Bush"; count += 1
+    assert result["event_candidates"][0]["patients"][0]["surface"] == "Laura"; count += 1
+    assert result["timeline_candidates"][0]["year_candidate"] == 1977; count += 1
+    assert result["timeline_candidates"][0]["kind"] == "source-date-mention-not-event-date"; count += 1
+    assert not result["event_candidates"][0]["world_event_occurrence_paid"]; count += 1
+    for mutate in ("bad-hash", "bad-head", "bad-span", "promote"):
+        bad = copy.deepcopy(record)
+        if mutate == "bad-hash":
+            bad["manifestation"]["source_text_sha256"] = "0" * 64
+        elif mutate == "bad-head":
+            bad["pnf_candidates"][0]["dependency_rows"][0]["head_i"] = 55
+        elif mutate == "bad-span":
+            bad["named_entities"][0]["end_char"] -= 1
+        elif mutate == "promote":
+            bad["pnf_candidates"][0]["semantic_promotion"] = True
+        try:
+            derive_projection(bad, text, [])
+        except ValueError:
+            count += 1
+        else:
+            raise AssertionError(f"forged SLR evidence accepted: {mutate}")
+    print(f"GWB_ARTICLE_PROJECTION_SELF_CHECK passed={count} "
+          "original_slr_rows_reused=true semantic_promotion=false")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--agda-root", type=Path, required=True)
-    p.add_argument("--output-dir", type=Path, required=True)
+    p.add_argument("--agda-root", type=Path)
+    p.add_argument("--output-dir", type=Path)
+    p.add_argument("--self-check", action="store_true")
     p.add_argument("--revision", help="Wikipedia oldid for exact replay")
     p.add_argument("--source-text", type=Path, help="offline fixture/plain article text")
     p.add_argument("--source-revision", help="required with --source-text")
     p.add_argument("--slr-record", type=Path, help="reuse an already produced SLR source-unit record")
     args = p.parse_args(argv)
+    if args.self_check:
+        return self_check()
+    if args.agda_root is None or args.output_dir is None:
+        p.error("--agda-root and --output-dir are required for a live run")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     if args.source_text:
         if not args.source_revision:

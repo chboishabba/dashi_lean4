@@ -32,7 +32,9 @@ structure SourceUnitCandidateOutput where
 def decodeSourceUnitCandidate (record : Json) :
     Option SourceUnitCandidateOutput := do
   let schema ← (record.getObjValAs? String "schema").toOption
-  if schema != "slr-source-unit-pnf-record-v1" then none else
+  if schema != "slr-source-unit-pnf-record-v1" then
+    none
+  else do
     let sourceUnitReference ←
       (record.getObjValAs? String "source_unit_ref").toOption
     let revisionReference ←

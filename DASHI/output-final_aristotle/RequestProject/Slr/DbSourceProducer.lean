@@ -157,9 +157,24 @@ def callSlrS28Candidates (slrExecutable eventRef : String) : IO Json := do
   let contestations ← match value.getObjValAs? (Array Json) "contestation_relations" with
     | .ok a => pure a
     | .error err => throw (IO.userError s!"Missing contestation records: {err}")
+  let sourceRows ← match value.getObjValAs? (Array Json) "source_statements" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing M12 source rows: {err}")
+  let assemblyRows ← match value.getObjValAs? (Array Json) "observation_event_links" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing M12 event assembly: {err}")
+  let statementLinks ← match value.getObjValAs? (Array Json) "statement_observation_links" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing M12 statement links: {err}")
+  let traceComplete := (value.getObjValAs? Bool "source_trace_join_complete").toOption
+  if traceComplete.isNone then
+    throw (IO.userError "Missing source trace completeness coordinate")
+  for row in assemblyRows do
+    if (row.getObjValAs? String "event_ref").toOption != some eventRef then
+      throw (IO.userError "S28 assembly references a different event")
   if temporal.isEmpty && claims.isEmpty then
     throw (IO.userError "S28 event has no candidate history")
-  for row in temporal ++ claims ++ contestations do
+  for row in temporal ++ claims ++ contestations ++ sourceRows ++ assemblyRows ++ statementLinks do
     if (row.getObjValAs? Bool "candidate_only").toOption != some true ||
         (row.getObjValAs? Bool "creates_semantic_authority").toOption != some false ||
         (row.getObjValAs? Bool "applicability_promoted").toOption != some false ||

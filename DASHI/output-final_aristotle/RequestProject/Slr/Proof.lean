@@ -11,6 +11,7 @@ DASHI source-attached integration: chboishabba.
 -/
 import RequestProject.Slr.Producer
 import RequestProject.Cli.Derive
+import RequestProject.PropertyEngine
 
 namespace Wikidata
 namespace Slr
@@ -45,6 +46,31 @@ theorem reviewedSubClassChainSound (q : ReviewedSubclassQuery) :
 theorem checkedChainDoesNotNeedParserPromotion (q : ReviewedSubclassQuery) :
     Relation.ReflTransGen q.kb.Sub q.alignedSubject q.alignedSuperclass :=
   reviewedSubClassChainSound q
+
+/-- General property relation, not restricted to P31/P279. SLR identifies
+    the candidate source occurrence, while an independently reviewed mapping
+    supplies the Wikidata property and endpoints. -/
+structure ReviewedPropertyQuestion where
+  observation : ProducerOutput
+  originatingCandidate : Candidate
+  candidateBelongsToSource :
+    originatingCandidate ∈ observation.candidates.toList
+  reviewReference : String
+  alignmentReference : String
+  sourceRevisionReference : String
+  pkb : PKB
+  property : Pid
+  subject : Qid
+  object : Qid
+  supported : pkb.supportsB property subject object = true
+
+/-- Reuse JMD's generic property-support theorem directly, including the
+    possibility of a subproperty witness. This proves a fact *of the checked
+    imported PKB*, not that the original source text means that fact. -/
+theorem reviewedPropertySupportSound (q : ReviewedPropertyQuestion) :
+    ∃ p, (p, q.subject, q.object) ∈ q.pkb.stmts ∧
+      q.pkb.isSubPropertyOf p q.property = true :=
+  PKB.supportsB_iff.mp q.supported
 
 end Slr
 end Wikidata

@@ -6,6 +6,7 @@ import RequestProject.Slr.SentenceBeliefCorrection
 import RequestProject.Slr.DocumentQuerySound
 import RequestProject.Slr.TemporalDocumentProof
 import RequestProject.Slr.SourceUnitProducer
+import RequestProject.Slr.DbSourceProducer
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query
@@ -990,6 +991,20 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["slr-db-pnf", slrBinary, parserRun, statementRef, documentRef, sourceRev,
+      regionRef, startText, endText, literalPath] =>
+      match startText.toNat?, endText.toNat? with
+      | some startChar, some endChar =>
+          let obs ← Slr.callSlrDbM12 slrBinary parserRun statementRef documentRef
+            sourceRev regionRef literalPath startChar endChar
+          IO.println s!"SLR DB M12 checked observation: {obs.statementRef}"
+          IO.println s!"revision={obs.sourceRevisionRef} region={obs.regionRef}"
+          IO.println s!"tokens={obs.tokens.size} candidates={obs.candidates.size} entities={obs.entities.size}"
+          IO.println "Source/parser integrity checked; semantic licence NOT paid"
+          return 0
+      | _, _ =>
+          IO.eprintln "slr-db-pnf requires numeric character bounds"
+          return 1
   | ["slr-source-pnf", python, script, inputJsonl, outputDir, manifest, summary] =>
       let results ← Slr.callSlrSourceUnitProducer
         python script inputJsonl outputDir manifest summary

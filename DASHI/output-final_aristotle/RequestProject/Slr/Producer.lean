@@ -60,7 +60,7 @@ def decodeCandidate (j : Json) : Option Candidate := do
   let lemma ← field? j "lemma"
   let dependency ← field? j "dependency"
   let candidateOnly ← boolField? j "candidate_only"
-  if !candidateOnly || reference.isEmpty || startChar >= endChar then
+  if !candidateOnly || reference.isEmpty || decide (startChar >= endChar) then
     none
   else
     some ⟨reference, role, startChar, endChar, surface, lemma, dependency, candidateOnly⟩
@@ -85,11 +85,11 @@ def decodeProducerOutput (j : Json) : Option ProducerOutput := do
     let claimTruthPaid ← boolField? j "claim_truth_paid"
     let candidatesJson ← (j.getObjValAs? (Array Json) "candidates").toOption
     let candidates ← candidatesJson.toList.mapM decodeCandidate
-    if spanReference.isEmpty || startChar >= endChar ||
+    if spanReference.isEmpty || decide (startChar >= endChar) ||
         sourceRevisionVerified || parserEvidenceVerified ||
         semanticAdmissionPaid || propositionSupportPaid ||
         applicabilityPaid || claimTruthPaid ||
-        !(candidates.all fun c => startChar <= c.startChar && c.endChar <= endChar) then
+        !(candidates.all fun c => decide (startChar <= c.startChar ∧ c.endChar <= endChar)) then
       none
     else
       some ⟨producer, spanReference, startChar, endChar, inputDigest,

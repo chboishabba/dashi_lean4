@@ -991,6 +991,10 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["slr-timeline", slrBinary, eventRef] =>
+      let result ← Slr.callSlrS28Candidates slrBinary eventRef
+      IO.println result.compress
+      return 0
   | ["slr-db-pnf", slrBinary, parserRun, statementRef, documentRef, sourceRev,
       regionRef, startText, endText, literalPath] =>
       match startText.toNat?, endText.toNat? with

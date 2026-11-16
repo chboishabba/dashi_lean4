@@ -76,8 +76,10 @@ def decodeDbM12Observation (j : Json) : Option DbM12Observation := do
         tokens.isEmpty ||
         !(candidates.all fun candidate =>
             (candidate.getObjValAs? Bool "candidate_only").toOption == some true &&
-            decide (startChar <= ((candidate.getObjValAs? Nat "start_char").toOption.getD 0)) &&
-            decide (((candidate.getObjValAs? Nat "end_char").toOption.getD 0) <= endChar)) then
+            match (candidate.getObjValAs? Nat "start_char").toOption,
+                  (candidate.getObjValAs? Nat "end_char").toOption with
+            | some a, some b => decide (startChar <= a ∧ a < b ∧ b <= endChar)
+            | _, _ => false) then
       none
     else
       some ⟨statementRef, documentRef, sourceRevisionRef,

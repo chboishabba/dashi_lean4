@@ -1,6 +1,7 @@
 /- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Cli.Fetch
 import RequestProject.Slr.Producer
+import RequestProject.Slr.Proof
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query

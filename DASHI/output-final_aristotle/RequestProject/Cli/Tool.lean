@@ -4,6 +4,7 @@ import RequestProject.Slr.Producer
 import RequestProject.Slr.Proof
 import RequestProject.Slr.SentenceBeliefCorrection
 import RequestProject.Slr.DocumentQuerySound
+import RequestProject.Slr.SourceUnitProducer
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query
@@ -988,6 +989,13 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["slr-source-pnf", python, script, inputJsonl, outputDir, manifest, summary] =>
+      let results ← Slr.callSlrSourceUnitProducer
+        python script inputJsonl outputDir manifest summary
+      IO.println s!"SLR source units: {results.size} (candidate-only, no semantic licence)"
+      for item in results do
+        IO.println s!"{item.sourceUnitReference}\t{item.revisionReference}\t{item.sourceTextDigest}"
+      return 0
   | ["slr-pnf", slrBinary, tsv, spanRef, startText, endText] =>
       match startText.toNat?, endText.toNat? with
       | some startChar, some endChar =>

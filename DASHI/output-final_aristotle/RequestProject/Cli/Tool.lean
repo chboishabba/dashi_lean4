@@ -1037,6 +1037,7 @@ def run (args : List String) : IO UInt32 := do
         (some scanFile)
       if scanStatus != 0 then return scanStatus
       IO.println s!"GWB article candidate proof and JMD source scan: {outputDir}"
+      IO.println "JMD link scan is independently fetched and NOT certified to share the article's MediaWiki revision."
       IO.println "No article mention has been equated to a Wikidata QID without alignment."
       return 0
   | ["slr-timeline", slrBinary, eventRef] =>

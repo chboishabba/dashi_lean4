@@ -361,7 +361,8 @@ def self_check() -> int:
             "dependency_rows": [
                 token(0, "Bush", "nsubj", 1, "PROPN"),
                 token(1, "met", "ROOT", 1, "VERB"),
-                token(2, "Laura", "dobj", 1, "PROPN")]}],
+                token(2, "Laura", "dobj", 1, "PROPN"),
+                token(3, "1977", "npadvmod", 1, "NUM")]}],
     }
     count = 0
     result = derive_projection(record, text,
@@ -372,6 +373,8 @@ def self_check() -> int:
     assert result["event_candidates"][0]["actors"][0]["surface"] == "Bush"; count += 1
     assert result["event_candidates"][0]["patients"][0]["surface"] == "Laura"; count += 1
     assert result["timeline_candidates"][0]["year_candidate"] == 1977; count += 1
+    assert result["summary"]["literal_year_mentions"] == 1; count += 1
+    assert result["summary"]["proper_noun_token_candidates"] == 2; count += 1
     assert result["timeline_candidates"][0]["kind"] == "source-date-mention-not-event-date"; count += 1
     assert not result["event_candidates"][0]["world_event_occurrence_paid"]; count += 1
     for mutate in ("bad-hash", "bad-head", "bad-span", "promote"):

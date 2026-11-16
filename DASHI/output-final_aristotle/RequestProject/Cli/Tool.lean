@@ -1015,6 +1015,23 @@ def run (args : List String) : IO UInt32 := do
       let ontologyOpts := { o with out := some ontologyFile, depth := 1 }
       let ontologyStatus ← cmdFetch ["Q207"] ontologyOpts
       if ontologyStatus != 0 then return ontologyStatus
+      let proofFile := outputDir ++ "/GwbArticleQ207Proof.lean"
+      let proofOpts := { o with
+        module := some "GwbArticleQ207Proof",
+        out := some proofFile,
+        kernel := true,
+        highlights := 8 }
+      let codegenStatus ← cmdLean ontologyFile proofOpts
+      if codegenStatus != 0 then return codegenStatus
+      let kernel ← IO.Process.output {
+        cmd := "lake"
+        args := #["env", "lean", proofFile]
+      }
+      if kernel.exitCode != 0 then
+        IO.eprintln s!"JMD Q207 proof kernel failed: {kernel.stderr}"
+        return 1
+      IO.println "JMD_Q207_KERNEL_OK: Wikidata-derived facts rechecked by Lean."
+      IO.println "This does not promote any article event candidate to a world fact."
       let scanFile := outputDir ++ "/gwb-q207.scan"
       let scanStatus ← cmdScan o.cache o.offline ["Q207"] ["en"] 40 20
         (some scanFile)

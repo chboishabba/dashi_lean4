@@ -170,6 +170,28 @@ private def validateTextOrder (events : Array Json) (edge : Json) : Bool :=
       | _, _ => false
   | _, _ => false
 
+/-- A timeline entry is only a source-backed DATE phrase with a numeric
+    year and zero or more event candidates in the same parsed sentence.
+    No temporal event-edge or admitted event date is constructed here. -/
+private def validateTimeline
+    (text : String) (dates events : Array Json) (row : Json) : Bool :=
+  match nat? row "year_candidate", nat? row "sentence_index",
+        arr? row "co_sentential_event_refs", str? row "surface" with
+  | some year, some idx, some refs, some surface =>
+      decide (1800 ≤ year ∧ year ≤ 2099) &&
+      ((surface.splitOn (toString year)).length > 1) &&
+      str? row "kind" == some "source-date-mention-not-event-date" &&
+      spanExact text row &&
+      dates.toList.any (fun date =>
+        str? date "surface" == some surface &&
+        nat? date "start_char" == nat? row "start_char" &&
+        nat? date "end_char" == nat? row "end_char") &&
+      refs.toList.all (fun ref =>
+        events.toList.any (fun event =>
+          str? event "event_candidate_ref" == ref.getStr?.toOption &&
+          nat? event "sentence_index" == some idx))
+  | _, _, _, _ => false
+
 /-- A source-verification success never implies that an extracted event
     occurred: it certifies the relation to source/parser observations only. -/
 def checkProjection (text : String) (source projection : Json) : Bool :=
@@ -178,9 +200,10 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
         arr? projection "event_candidates",
         arr? projection "people_mentions",
         arr? projection "time_mentions",
+        arr? projection "timeline_candidates",
         arr? projection "text_order_edges" with
   | some original, some entities, some events,
-    some people, some dates, some order =>
+    some people, some dates, some timeline, some order =>
       str? source "schema" == some "slr-source-unit-pnf-record-v1" &&
       str? projection "schema" == some "slr-jmd-wikipedia-article-candidates-v1" &&
       str? projection "wikidata_item_qid" == some "Q207" &&
@@ -188,6 +211,11 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       str? source "revision_ref" == str? projection "source_revision_ref" &&
       bool? source "candidate_only" == some true &&
       bool? source "semantic_promotion" == some false &&
+      bool? source "parser_output_creates_ontology_truth" == some false &&
+      bool? source "source_role_creates_claim_truth" == some false &&
+      original.toList.all (fun row =>
+        bool? row "candidate_only" == some true &&
+        bool? row "semantic_promotion" == some false) &&
       bool? projection "source_assertion_is_world_truth" == some false &&
       bool? projection "parser_carries_semantic_licence" == some false &&
       bool? projection "text_order_is_event_chronology" == some false &&
@@ -195,8 +223,9 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       events.toList.all (validateEvent text original) &&
       people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
       dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
+      timeline.toList.all (validateTimeline text dates events) &&
       order.toList.all (validateTextOrder events)
-  | _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _ => false
 
 /-- This exact-source certificate is obtained only after checking the
     literal article, SLR original parser rows and projected evidence. -/
@@ -243,8 +272,9 @@ def verifyFiles
     let persons := (arr? projection "people_mentions").getD #[]
     let dates := (arr? projection "time_mentions").getD #[]
     let order := (arr? projection "text_order_edges").getD #[]
+    let timeline := (arr? projection "timeline_candidates").getD #[]
     IO.println s!"JMD_LEAN_SOURCE_PROOF_OK sha256={sha}"
-    IO.println s!"people_mentions={persons.size} event_candidates={events.size} date_mentions={dates.size} text_order_edges={order.size}"
+    IO.println s!"people_mentions={persons.size} event_candidates={events.size} date_mentions={dates.size} timeline_candidates={timeline.size} text_order_edges={order.size}"
     IO.println "PROVED: exact source spans and original SLR parser-row support; textual ordering only."
     IO.println "OPEN: entity identity, interpretation licence, event occurrence, historical chronology."
     return true

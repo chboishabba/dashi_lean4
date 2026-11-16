@@ -73,7 +73,11 @@ def decodeDbM12Observation (j : Json) : Option DbM12Observation := do
         decide (startChar >= endChar) ||
         !sameLiteral || !headsCovered || !revisionJoined ||
         !candidateOnly || semanticPaid || occurrencePaid || truthPaid ||
-        tokens.isEmpty then
+        tokens.isEmpty ||
+        !(candidates.all fun candidate =>
+            (candidate.getObjValAs? Bool "candidate_only").toOption == some true &&
+            decide (startChar <= ((candidate.getObjValAs? Nat "start_char").toOption.getD 0)) &&
+            decide (((candidate.getObjValAs? Nat "end_char").toOption.getD 0) <= endChar)) then
       none
     else
       some ⟨statementRef, documentRef, sourceRevisionRef,
@@ -155,6 +159,8 @@ def callSlrS28Candidates (slrExecutable eventRef : String) : IO Json := do
     throw (IO.userError "S28 event has no candidate history")
   for row in temporal ++ claims ++ contestations do
     if (row.getObjValAs? Bool "candidate_only").toOption != some true ||
+        (row.getObjValAs? Bool "creates_semantic_authority").toOption != some false ||
+        (row.getObjValAs? Bool "applicability_promoted").toOption != some false ||
         (row.getObjValAs? Bool "claim_truth_promoted").toOption != some false then
       throw (IO.userError "S28 row attempts to promote claim truth")
   return value

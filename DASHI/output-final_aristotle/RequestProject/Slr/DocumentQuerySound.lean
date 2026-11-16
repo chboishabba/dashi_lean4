@@ -113,6 +113,28 @@ theorem slrJmdDocumentQuerySoundForAnyLiveReading
   licence.licensedAnswer.trans
     ((licence.consumerClosed reading live).symm.trans checked)
 
+/-- An actual pair of still-live readings with different answers is
+    a constructive negative gate: no query licence can be formed for this
+    observation without further refinement or changing the query. This is the
+    consumer-relative WrongType/non-factorability failure mode. -/
+theorem incompatibleLiveReadingsBlockQueryLicence
+    {Source : Type uSource} {Reading : Type uReading}
+    {Query : Type uQuery} {Answer : Type uAnswer}
+    {m : DocumentQueryModel Source Reading Query Answer}
+    {source : Source} {query : Query}
+    (left right : Reading)
+    (leftLive : m.live (m.observe source) left)
+    (rightLive : m.live (m.observe source) right)
+    (disagree : m.readingAnswer left query ≠ m.readingAnswer right query) :
+    ¬ SourceQueryLicence m source query := by
+  intro licence
+  have hl : m.live licence.observation left := by
+    simpa [licence.sameProducedObservation] using leftLive
+  have hr : m.live licence.observation right := by
+    simpa [licence.sameProducedObservation] using rightLive
+  exact disagree ((licence.consumerClosed left hl).trans
+    (licence.consumerClosed right hr).symm)
+
 /-- A smaller live fibre retains consumer closure, matching the generic
     DASHI semantic-refinement theorem. -/
 theorem semanticClosurePreservedByRefinement

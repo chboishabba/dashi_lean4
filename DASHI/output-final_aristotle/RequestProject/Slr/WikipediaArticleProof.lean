@@ -83,7 +83,7 @@ private def rawMatchesProjection (text : String) (raw proj : Json) : Bool :=
   match nat? raw "idx", str? raw "text", nat? proj "start_char",
         nat? proj "end_char", str? proj "surface" with
   | some start, some word, some a, some b, some surface =>
-      start == a && b == start + word.length &&
+      start == a && b == start + word.toList.length &&
       surface == word && spanExact text proj &&
       nat? raw "i" == nat? proj "i" &&
       nat? raw "head_i" == nat? proj "head_i" &&
@@ -179,7 +179,7 @@ private def validateTimeline
         arr? row "co_sentential_event_refs", str? row "surface" with
   | some year, some idx, some refs, some surface =>
       decide (1800 ≤ year ∧ year ≤ 2099) &&
-      ((surface.splitOn (toString year)).length > 1) &&
+      decide ((surface.splitOn (toString year)).length > 1) &&
       str? row "kind" == some "source-date-mention-not-event-date" &&
       spanExact text row &&
       dates.toList.any (fun date =>

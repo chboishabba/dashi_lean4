@@ -121,7 +121,11 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
 
     mentions: list[dict] = []
     times: list[dict] = []
-    for entity in record.get("named_entities", []):
+    named_entities = record.get("named_entities")
+    if named_entities is not None and not isinstance(named_entities, list):
+        raise ValueError("SLR named_entities must be an array when present")
+    ner_observations_present = named_entities is not None
+    for entity in named_entities or []:
         start, stop = int(entity["start_char"]), int(entity["end_char"])
         surface = str(entity["surface"])
         label = str(entity["label_ref"])
@@ -137,6 +141,10 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
             times.append({**coord, "year_candidates": [int(y) for y in YEAR.findall(surface)]})
 
     events: list[dict] = []
+    # These are original spaCy POS-tagged tokens, NOT PERSON NER decisions.
+    # A missing named_entities field must never silently mean no people.
+    proper_noun_tokens: list[dict] = []
+    parser_rows: list[tuple[dict, dict]] = []
     sentence_dates: dict[int, list[dict]] = {}
     for candidate in record["pnf_candidates"]:
         if candidate.get("candidate_only") is not True or candidate.get("semantic_promotion") is not False:
@@ -150,6 +158,14 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
             raise ValueError("SLR sentence digest does not match exact source")
         rows = candidate["dependency_rows"]
         tokens = [tok_span(row, text) for row in rows]
+        for token in tokens:
+            parser_rows.append((candidate, token))
+            if token["pos"] == "PROPN":
+                proper_noun_tokens.append({
+                    **token, "sentence_index": sentence_index,
+                    "candidate_only": True, "entity_identity_paid": False,
+                    "person_type_paid": False,
+                })
         ordinals = {t["i"] for t in tokens}
         if len(ordinals) != len(tokens) or any(t["head_i"] not in ordinals for t in tokens):
             raise ValueError("missing/duplicate dependency head")
@@ -192,31 +208,46 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         for a, b in zip(events, events[1:])
         if a["predicate"]["start_char"] < b["predicate"]["start_char"]
     ]
-    # The timeline is a *dated mention index*. A DATE phrase in the same
-    # sentence as an event is only a candidate association, never event-time
-    # identity or world-event chronological truth.
+    # Year spans are source-token observations, never event-time admissions.
+    # This works even when an older SLR record lacks trained NER output.
+    # Year strings inside parser tokens like "1995–2000" are preserved.
+    literal_year_mentions = []
     timeline_candidates = []
-    for date in times:
-        sentence = next((
-            c for c in record["pnf_candidates"]
-            if int(c["source_span_start"]) <= date["start_char"]
-            and date["end_char"] <= int(c["source_span_end"])
-        ), None)
-        if sentence is None:
-            continue
-        idx = int(sentence["sentence_index"])
-        local_events = [e["event_candidate_ref"] for e in events
-                        if e["sentence_index"] == idx]
-        for year in date["year_candidates"]:
-            timeline_candidates.append({
-                "year_candidate": year,
-                "surface": date["surface"],
-                "start_char": date["start_char"],
-                "end_char": date["end_char"],
-                "sentence_index": idx,
-                "co_sentential_event_refs": local_events,
-                "kind": "source-date-mention-not-event-date",
-            })
+    for match in YEAR.finditer(text):
+        start, stop = match.span()
+        covering = [
+            (candidate, token) for candidate, token in parser_rows
+            if token["start_char"] <= start < stop <= token["end_char"]
+        ]
+        if len(covering) != 1:
+            raise ValueError(
+                f"literal year at [{start},{stop}) has {len(covering)} "
+                "matching original SLR parser tokens"
+            )
+        source_candidate, source_token = covering[0]
+        idx = int(source_candidate["sentence_index"])
+        year = int(match.group())
+        mention = {
+            "year_candidate": year, "surface": match.group(),
+            "start_char": start, "end_char": stop,
+            "sentence_index": idx,
+            "slr_claim_candidate_id": source_candidate["claim_candidate_id"],
+            "parser_token_i": source_token["i"],
+            "parser_token_start": source_token["start_char"],
+            "parser_token_end": source_token["end_char"],
+            "parser_token_surface": source_token["surface"],
+            "evidence_kind": "literal-year-inside-original-parser-token",
+            "candidate_only": True, "event_time_paid": False,
+        }
+        literal_year_mentions.append(mention)
+        timeline_candidates.append({
+            **mention,
+            "co_sentential_event_refs": [
+                e["event_candidate_ref"] for e in events
+                if e["sentence_index"] == idx
+            ],
+            "kind": "source-year-mention-not-event-date",
+        })
     timeline_candidates.sort(key=lambda row:
                              (row["year_candidate"], row["start_char"]))
     return {
@@ -228,8 +259,11 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         "article_url": ARTICLE,
         "sections": sections,
         "people_mentions": mentions,
+        "ner_observations_present": ner_observations_present,
+        "proper_noun_tokens": proper_noun_tokens,
         "event_candidates": events,
         "time_mentions": times,
+        "literal_year_mentions": literal_year_mentions,
         "timeline_candidates": timeline_candidates,
         "text_order_edges": textual_order,
         "source_assertion_is_world_truth": False,
@@ -239,8 +273,11 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         "summary": {
             "sentences": len(record["pnf_candidates"]),
             "people_mentions": len(mentions),
+            "ner_observations_present": ner_observations_present,
+            "proper_noun_token_candidates": len(proper_noun_tokens),
             "event_candidates": len(events),
             "time_mentions": len(times),
+            "literal_year_mentions": len(literal_year_mentions),
             "timeline_candidates": len(timeline_candidates),
             "text_order_edges": len(textual_order),
             "missing_actor_candidates": sum(not e["actors"] for e in events),
@@ -261,7 +298,10 @@ def write_summary(path: Path, projection: dict) -> None:
         f"SLR sentences: {s['sentences']}",
         f"PERSON mentions: {s['people_mentions']}",
         f"Event/action candidates: {s['event_candidates']}",
-        f"Temporal mentions: {s['time_mentions']}",
+        f"Temporal mentions (trained NER only): {s['time_mentions']}",
+        f"Trained NER observations available: {s['ner_observations_present']}",
+        f"Proper-noun parser tokens (NOT verified persons): {s['proper_noun_token_candidates']}",
+        f"Literal source-year mentions: {s['literal_year_mentions']}",
         f"Textual-order edges: {s['text_order_edges']}",
         f"Timeline year-index entries (unlicensed event dates): {s['timeline_candidates']}",
         "",

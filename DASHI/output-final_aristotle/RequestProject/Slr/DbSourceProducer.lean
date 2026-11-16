@@ -115,5 +115,49 @@ def callSlrDbM12
     throw (IO.userError "SLR DB M12 response mismatches requested source/run/region")
   return observation
 
+
+/-- Read existing S28 temporal, claim and contestation observations for a
+    previously assembled event. This is NOT an automatic event join nor
+    a derived world timeline. Its rows remain separately attributable. -/
+def callSlrS28Candidates (slrExecutable eventRef : String) : IO Json := do
+  if eventRef.isEmpty then
+    throw (IO.userError "Event identity is required")
+  let result ← IO.Process.output {
+    cmd := slrExecutable
+    args := #["timeline-candidates", eventRef]
+  }
+  if result.exitCode != 0 then
+    throw (IO.userError s!"SLR S28 retrieval failed: {result.stderr}")
+  let value ← match Json.parse result.stdout with
+    | .ok j => pure j
+    | .error err => throw (IO.userError s!"Invalid S28 JSON: {err}")
+  let schema := (value.getObjValAs? String "schema").toOption
+  let receivedEvent := (value.getObjValAs? String "event_ref").toOption
+  let candidatesOnly := (value.getObjValAs? Bool "candidate_only").toOption
+  let promotion := (value.getObjValAs? Bool "semantic_promotion").toOption
+  let occurrence := (value.getObjValAs? Bool "event_occurrence_paid").toOption
+  let worldTruth := (value.getObjValAs? Bool "source_or_review_receipts_are_world_truth").toOption
+  if schema != some "slr-s28-event-chronology-candidates-v1" ||
+      receivedEvent != some eventRef || candidatesOnly != some true ||
+      promotion != some false || occurrence != some false ||
+      worldTruth != some false then
+    throw (IO.userError "S28 returned wrong event identity or promoted authority")
+  let temporal ← match value.getObjValAs? (Array Json) "temporal_assertions" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing temporal records: {err}")
+  let claims ← match value.getObjValAs? (Array Json) "claim_leaves" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing claim records: {err}")
+  let contestations ← match value.getObjValAs? (Array Json) "contestation_relations" with
+    | .ok a => pure a
+    | .error err => throw (IO.userError s!"Missing contestation records: {err}")
+  if temporal.isEmpty && claims.isEmpty then
+    throw (IO.userError "S28 event has no candidate history")
+  for row in temporal ++ claims ++ contestations do
+    if (row.getObjValAs? Bool "candidate_only").toOption != some true ||
+        (row.getObjValAs? Bool "claim_truth_promoted").toOption != some false then
+      throw (IO.userError "S28 row attempts to promote claim truth")
+  return value
+
 end Slr
 end Wikidata

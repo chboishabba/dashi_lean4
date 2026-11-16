@@ -3,6 +3,7 @@ import RequestProject.Cli.Fetch
 import RequestProject.Slr.Producer
 import RequestProject.Slr.Proof
 import RequestProject.Slr.SentenceBeliefCorrection
+import RequestProject.Slr.DocumentQuerySound
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query

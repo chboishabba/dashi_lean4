@@ -7,6 +7,7 @@ import RequestProject.Slr.DocumentQuerySound
 import RequestProject.Slr.TemporalDocumentProof
 import RequestProject.Slr.SourceUnitProducer
 import RequestProject.Slr.DbSourceProducer
+import RequestProject.Slr.WikipediaArticleProof
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query
@@ -991,6 +992,36 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["gwb-article-check", articleText, slrRecord, projection] =>
+      let ok ← Slr.ArticleProof.verifyFiles articleText slrRecord projection
+      return if ok then 0 else 1
+  | ["gwb-article-proof", python, runner, agdaRoot, outputDir] =>
+      IO.FS.createDirAll outputDir
+      let producer ← IO.Process.output {
+        cmd := python
+        args := #[runner, "--agda-root", agdaRoot, "--output-dir", outputDir]
+      }
+      if producer.exitCode != 0 then
+        IO.eprintln s!"Wikipedia/SLR producer failed: {producer.stderr}"
+        return 1
+      IO.println producer.stdout
+      let article := outputDir ++ "/article.txt"
+      let source := outputDir ++ "/slr-record.json"
+      let projection := outputDir ++ "/article-candidates.json"
+      let verified ← Slr.ArticleProof.verifyFiles article source projection
+      if !verified then return 1
+      IO.println "JMD Wiki ontology crosswalk: importing Wikidata item Q207 separately."
+      let ontologyFile := outputDir ++ "/gwb-q207.wdkb"
+      let ontologyOpts := { o with out := some ontologyFile, depth := 1 }
+      let ontologyStatus ← cmdFetch ["Q207"] ontologyOpts
+      if ontologyStatus != 0 then return ontologyStatus
+      let scanFile := outputDir ++ "/gwb-q207.scan"
+      let scanStatus ← cmdScan o.cache o.offline ["Q207"] ["en"] 40 20
+        (some scanFile)
+      if scanStatus != 0 then return scanStatus
+      IO.println s!"GWB article candidate proof and JMD source scan: {outputDir}"
+      IO.println "No article mention has been equated to a Wikidata QID without alignment."
+      return 0
   | ["slr-timeline", slrBinary, eventRef] =>
       let result ← Slr.callSlrS28Candidates slrBinary eventRef
       IO.println result.compress

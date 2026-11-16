@@ -107,7 +107,7 @@ turns parser evidence, an S28 review reference, or a Lean import into world trut
 ## Evidence as of this review
 
 Local Python/SymPy: 2,145 finite-model event/order checks; 13 source-unit
-PNF structural checks; 30 new DB M12/S28 synthetic handoff checks (28 negative).
+PNF structural checks; 32 new DB M12/S28 synthetic handoff checks (28 negative).
 The newer checks are *fixtures*, not a PostgreSQL or Rust run. Python syntax
 checks pass. No `rustc`, `cargo`, `lean`, `lake`, `agda`, trained spaCy
 model, or database is available in the current local runtime. GitHub returned

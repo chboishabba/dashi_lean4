@@ -110,6 +110,36 @@ theorem conflictingPolarityIsDifferentScope :
     charlieBelief.polarity ≠ retrospectiveDenial.polarity := by
   decide
 
+/-- Inside Charlie's belief world, p can be affirmed even while actual
+    occurrence remains unestablished or false. This is scope-relative, not a
+    second historical event. -/
+structure ScopedCallEvaluation where
+  believedCall : Bool
+  actualCall : Bool
+  deriving Repr
+
+def thoughtOnly : ScopedCallEvaluation :=
+  ⟨true, false⟩
+
+theorem thoughtContentCanBeTrueWithoutWorldEvent :
+    thoughtOnly.believedCall = true ∧ thoughtOnly.actualCall = false := by
+  decide
+
+theorem thoughtWorldCallDoesNotEntailActualCall :
+    ¬ (∀ s : ScopedCallEvaluation,
+        s.believedCall = true → s.actualCall = true) := by
+  intro h
+  have impossible : false = true := h thoughtOnly rfl
+  cases impossible
+
+/-- The later sentence is a negative proposition *reported by the narrator*
+    about the same CallProposition; it does not rewrite a positive thought
+    into an actual-world positive event. -/
+theorem laterDenialTargetsBelievedProposition :
+    retrospectiveDenial.proposition = charlieBelief.proposition ∧
+    retrospectiveDenial.polarity = .negative := by
+  decide
+
 /-- A countermodel prevents the invalid inference:
     'Charlie believes the call happened' => 'the call happened'.
     The premise is about belief in a possible world, the conclusion about

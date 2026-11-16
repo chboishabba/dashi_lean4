@@ -192,6 +192,33 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         for a, b in zip(events, events[1:])
         if a["predicate"]["start_char"] < b["predicate"]["start_char"]
     ]
+    # The timeline is a *dated mention index*. A DATE phrase in the same
+    # sentence as an event is only a candidate association, never event-time
+    # identity or world-event chronological truth.
+    timeline_candidates = []
+    for date in times:
+        sentence = next((
+            c for c in record["pnf_candidates"]
+            if int(c["source_span_start"]) <= date["start_char"]
+            and date["end_char"] <= int(c["source_span_end"])
+        ), None)
+        if sentence is None:
+            continue
+        idx = int(sentence["sentence_index"])
+        local_events = [e["event_candidate_ref"] for e in events
+                        if e["sentence_index"] == idx]
+        for year in date["year_candidates"]:
+            timeline_candidates.append({
+                "year_candidate": year,
+                "surface": date["surface"],
+                "start_char": date["start_char"],
+                "end_char": date["end_char"],
+                "sentence_index": idx,
+                "co_sentential_event_refs": local_events,
+                "kind": "source-date-mention-not-event-date",
+            })
+    timeline_candidates.sort(key=lambda row:
+                             (row["year_candidate"], row["start_char"]))
     return {
         "schema": SCHEMA,
         "source_unit_ref": record["source_unit_ref"],
@@ -203,6 +230,7 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         "people_mentions": mentions,
         "event_candidates": events,
         "time_mentions": times,
+        "timeline_candidates": timeline_candidates,
         "text_order_edges": textual_order,
         "source_assertion_is_world_truth": False,
         "parser_carries_semantic_licence": False,
@@ -213,6 +241,7 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
             "people_mentions": len(mentions),
             "event_candidates": len(events),
             "time_mentions": len(times),
+            "timeline_candidates": len(timeline_candidates),
             "text_order_edges": len(textual_order),
             "missing_actor_candidates": sum(not e["actors"] for e in events),
             "missing_patient_candidates": sum(not e["patients"] for e in events),
@@ -234,6 +263,7 @@ def write_summary(path: Path, projection: dict) -> None:
         f"Event/action candidates: {s['event_candidates']}",
         f"Temporal mentions: {s['time_mentions']}",
         f"Textual-order edges: {s['text_order_edges']}",
+        f"Timeline year-index entries (unlicensed event dates): {s['timeline_candidates']}",
         "",
         "These are parser-supported document observations, not proved event occurrences.",
         "Entity identity, event identity, speaker scope and event-time relations remain",
@@ -250,6 +280,11 @@ def write_summary(path: Path, projection: dict) -> None:
         b = "/".join(r["surface"] for r in e["patients"]) or "?"
         lines.append(f"- [{e['predicate']['start_char']}] {a} / {e['predicate']['lemma']} / {b} "
                      f"({e['scope']})")
+    lines += ["", "## Candidate timeline (year-ordered DATE phrases; NOT event chronology)", ""]
+    for row in projection["timeline_candidates"][:40]:
+        lines.append(f"- {row['year_candidate']}: {row['surface']} "
+                     f"[{row['start_char']},{row['end_char']}) "
+                     f"(co-sentential events: {len(row['co_sentential_event_refs'])})")
     lines += ["", "## First temporal mentions", ""]
     lines += [f"- {r['surface']} at [{r['start_char']},{r['end_char']})"
               for r in projection["time_mentions"][:40]]

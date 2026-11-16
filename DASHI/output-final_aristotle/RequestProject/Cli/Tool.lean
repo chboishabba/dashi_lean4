@@ -4,6 +4,7 @@ import RequestProject.Slr.Producer
 import RequestProject.Slr.Proof
 import RequestProject.Slr.SentenceBeliefCorrection
 import RequestProject.Slr.DocumentQuerySound
+import RequestProject.Slr.TemporalDocumentProof
 import RequestProject.Slr.SourceUnitProducer
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen

@@ -1,5 +1,6 @@
 /- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Cli.Fetch
+import RequestProject.Slr.Producer
 import RequestProject.Cli.Derive
 import RequestProject.Cli.Codegen
 import RequestProject.Cli.Query
@@ -984,6 +985,17 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["slr-pnf", slrBinary, tsv, spanRef, startText, endText] =>
+      match startText.toNat?, endText.toNat? with
+      | some startChar, some endChar =>
+          let result ← Slr.querySlrCandidate slrBinary tsv spanRef startChar endChar
+          IO.println s!"SLR candidate observations: {result.candidates.size}"
+          for candidate in result.candidates do
+            IO.println s!"{candidate.reference}\t{candidate.role}\t{candidate.surface}\t{candidate.dependency}"
+          return 0
+      | _, _ =>
+          IO.eprintln "slr-pnf requires numeric source character bounds"
+          return 1
   | "fetch" :: ids => cmdFetch ids o
   | "import" :: files => cmdImport files o
   | ["check", f] => cmdCheck f o

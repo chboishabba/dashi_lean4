@@ -18,7 +18,7 @@ import RequestProject.Slr.DocumentQuerySound
 namespace Wikidata
 namespace Slr
 
-universe uEvent uScope uEvidence uSource uReading uQuery uAnswer
+universe uEvent uScope uEvidence uSource uObservation uReading uQuery uAnswer
 
 /-- Reachability of licensed event-order evidence inside one context.
     An edge requires independent semantic licensing at the calling boundary;
@@ -118,9 +118,10 @@ theorem temporalEvidenceFusionAssociative
     temporal/event queries whose licensed readings supply a checked answer.
     Neither sentence order nor the parser candidate alone supplies a licence. -/
 theorem temporalQueryFactorsThroughDocument
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (licence : SourceQueryLicence m source query)
     (answer : Answer)

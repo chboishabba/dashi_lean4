@@ -21,16 +21,17 @@ import RequestProject.Slr.Producer
 namespace Wikidata
 namespace Slr
 
-universe uSource uReading uQuery uAnswer
+universe uSource uObservation uReading uQuery uAnswer
 
 /-- The existing SLR producer supplies observations; existing SLR/DASHI
     interpretation and consumer owners supply the actual semantic maps.
     The model is not an alternative interpretation engine. -/
 structure DocumentQueryModel
-    (Source : Type uSource) (Reading : Type uReading)
-    (Query : Type uQuery) (Answer : Type uAnswer) where
-  observe : Source → ProducerOutput
-  live : ProducerOutput → Reading → Prop
+    (Source : Type uSource) (Observation : Type uObservation)
+    (Reading : Type uReading) (Query : Type uQuery)
+    (Answer : Type uAnswer) where
+  observe : Source → Observation
+  live : Observation → Reading → Prop
   documentAnswer : Source → Query → Answer
   readingAnswer : Reading → Query → Answer
 
@@ -42,11 +43,12 @@ structure DocumentQueryModel
     'closed' is consumer sufficiency on the live semantic fibre.
     No global unique reading is required. -/
 structure SourceQueryLicence
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    (m : DocumentQueryModel Source Reading Query Answer)
+    (m : DocumentQueryModel Source Observation Reading Query Answer)
     (source : Source) (query : Query) where
-  observation : ProducerOutput
+  observation : Observation
   sameProducedObservation : observation = m.observe source
   chosenReading : Reading
   chosenIsLive : m.live observation chosenReading
@@ -61,9 +63,10 @@ structure SourceQueryLicence
 /-- No semantic answer depends on the arbitrary choice of a still-live
     reading when the consumer is closed. -/
 theorem liveReadingQueryInvariant
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (licence : SourceQueryLicence m source query)
     (reading : Reading)
@@ -75,9 +78,10 @@ theorem liveReadingQueryInvariant
 /-- The original producer attachment is retained: a checked interpretation
     cannot silently substitute an unrelated observation at query time. -/
 theorem licensedReadingBelongsToProducedObservation
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (licence : SourceQueryLicence m source query) :
     m.live (m.observe source) licence.chosenReading := by
@@ -88,9 +92,10 @@ theorem licensedReadingBelongsToProducedObservation
     itself be justified against the selected reading; it is not accepted on
     the authority of a mere external success flag. -/
 theorem slrJmdDocumentQuerySound
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (licence : SourceQueryLicence m source query)
     (answer : Answer)
@@ -102,9 +107,10 @@ theorem slrJmdDocumentQuerySound
     yields the SAME document answer. This is the actual consumer-relative
     adequacy law, not a requirement to resolve every ambiguity. -/
 theorem slrJmdDocumentQuerySoundForAnyLiveReading
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (licence : SourceQueryLicence m source query)
     (reading : Reading)
@@ -120,9 +126,10 @@ theorem slrJmdDocumentQuerySoundForAnyLiveReading
     observation without further refinement or changing the query. This is the
     consumer-relative WrongType/non-factorability failure mode. -/
 theorem incompatibleLiveReadingsBlockQueryLicence
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     {source : Source} {query : Query}
     (left right : Reading)
     (leftLive : m.live (m.observe source) left)
@@ -143,9 +150,10 @@ theorem incompatibleLiveReadingsBlockQueryLicence
     of epistemic scope, speaker, temporal interpretation, or provenance
     when those distinctions matter to the query. -/
 theorem sourceObservationCollisionBlocksQueryLicence
-    {Source : Type uSource} {Reading : Type uReading}
+    {Source : Type uSource} {Observation : Type uObservation}
+    {Reading : Type uReading}
     {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
+    {m : DocumentQueryModel Source Observation Reading Query Answer}
     (left right : Source) (query : Query)
     (sameObservation : m.observe left = m.observe right)
     (differentAnswers :
@@ -163,7 +171,7 @@ theorem sourceObservationCollisionBlocksQueryLicence
 /-- A smaller live fibre retains consumer closure, matching the generic
     DASHI semantic-refinement theorem. -/
 theorem semanticClosurePreservedByRefinement
-    {Observation : Type} {Reading : Type uReading}
+    {Observation : Type uObservation} {Reading : Type uReading}
     {Answer : Type uAnswer}
     (oldLive newLive : Observation → Reading → Prop)
     (consumer : Reading → Answer)

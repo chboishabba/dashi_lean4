@@ -1,0 +1,256 @@
+/-!
+Source-backed Wikipedia article candidate proof checker for JMD.
+
+This verifies *observations about text*, NOT the events of the world:
+* every person/date mention matches the literal Wikipedia source and the
+  unchanged SLR trained-spaCy named-entity output;
+* every action candidate's predicate/agent/patient row is present in the
+  original SLR source-unit dependency graph, with exact token-source spans,
+  and actor/patient dependency heads pointing to the same predicate;
+* every textual-order edge matches two retained event candidates and
+  their source coordinates, without asserting historical temporal order;
+* the article text SHA-256 matches both SLR and extraction output;
+* neither the producer nor the projection has paid semantic/world authority.
+
+Original Wikidata getter, ontology checker and proof-owner attribution:
+meta-introspector/JMD. Existing SLR generic producer: chboishabba/dashi_agda.
+The checker does NOT reparse prose or invent an independent NLP ontology.
+-/
+import Lean
+
+namespace Wikidata
+namespace Slr
+namespace ArticleProof
+
+open Lean
+
+private def str? (j : Json) (key : String) : Option String :=
+  (j.getObjValAs? String key).toOption
+
+private def nat? (j : Json) (key : String) : Option Nat :=
+  (j.getObjValAs? Nat key).toOption
+
+private def bool? (j : Json) (key : String) : Option Bool :=
+  (j.getObjValAs? Bool key).toOption
+
+private def arr? (j : Json) (key : String) : Option (Array Json) :=
+  (j.getObjValAs? (Array Json) key).toOption
+
+private def substring (text : String) (start stop : Nat) : String :=
+  String.ofList ((text.toList.drop start).take (stop - start))
+
+/-- Concrete span support is determined by the actual source characters,
+    not by the candidate's claimed label, SHA or source reference alone. -/
+def spanExact (text : String) (j : Json) : Bool :=
+  match nat? j "start_char", nat? j "end_char", str? j "surface" with
+  | some start, some stop, some surface =>
+      decide (start < stop ∧ stop ≤ text.toList.length) &&
+        substring text start stop == surface
+  | _, _, _ => false
+
+/-- Proof-bearing carrier: a source-bound string fragment can only be built
+    when Lean has an actual equality witness for the specified source slice. -/
+structure VerifiedSourceFragment (text : String) where
+  start : Nat
+  stop : Nat
+  surface : String
+  bounded : start < stop ∧ stop ≤ text.toList.length
+  exact : substring text start stop = surface
+
+def verifySourceFragment? (text : String) (j : Json) :
+    Option (VerifiedSourceFragment text) := do
+  let start ← nat? j "start_char"
+  let stop ← nat? j "end_char"
+  let surface ← str? j "surface"
+  if hBounded : start < stop ∧ stop ≤ text.toList.length then
+    if hExact : substring text start stop = surface then
+      some ⟨start, stop, surface, hBounded, hExact⟩
+    else none
+  else none
+
+theorem verifiedFragmentExact
+    {text : String} (f : VerifiedSourceFragment text) :
+    substring text f.start f.stop = f.surface :=
+  f.exact
+
+/-- The source-text order relation has its ordinary mathematical laws.
+    It says NOTHING about narrated/actual event chronology. -/
+theorem sourceTextOrderTransitive
+    (a b c : Nat) (ab : a < b) (bc : b < c) : a < c :=
+  Nat.lt_trans ab bc
+
+private def rawMatchesProjection (text : String) (raw proj : Json) : Bool :=
+  match nat? raw "idx", str? raw "text", nat? proj "start_char",
+        nat? proj "end_char", str? proj "surface" with
+  | some start, some word, some a, some b, some surface =>
+      start == a && b == start + word.length &&
+      surface == word && spanExact text proj &&
+      nat? raw "i" == nat? proj "i" &&
+      nat? raw "head_i" == nat? proj "head_i" &&
+      str? raw "dep" == str? proj "dep" &&
+      str? raw "lemma" == str? proj "lemma" &&
+      str? raw "pos" == str? proj "pos"
+  | _, _, _, _, _ => false
+
+private def originalToken (text : String) (rows : Array Json) (proj : Json) : Bool :=
+  rows.toList.any (fun row => rawMatchesProjection text row proj)
+
+private def roleSupported
+    (text : String) (rows : Array Json) (predicate actor : Json)
+    (allowed : List String) : Bool :=
+  originalToken text rows actor &&
+  allowed.contains ((str? actor "dep").getD "") &&
+  nat? actor "head_i" == nat? predicate "i"
+
+private def validateEvent
+    (text : String) (original : Array Json) (event : Json) : Bool :=
+  match str? event "slr_claim_candidate_id",
+        (event.getObjVal? "predicate").toOption,
+        arr? event "actors", arr? event "patients",
+        nat? event "sentence_index", nat? event "sentence_start",
+        nat? event "sentence_end" with
+  | some cid, some predicate, some actors, some patients,
+    some idx, some a, some b =>
+      let found := original.toList.any fun candidate =>
+        match arr? candidate "dependency_rows" with
+        | none => false
+        | some rows =>
+            str? candidate "claim_candidate_id" == some cid &&
+            nat? candidate "sentence_index" == some idx &&
+            nat? candidate "source_span_start" == some a &&
+            nat? candidate "source_span_end" == some b &&
+            originalToken text rows predicate &&
+            str? predicate "pos" == some "VERB" &&
+            (["ROOT", "conj", "ccomp", "xcomp", "advcl",
+               "acl", "relcl"].contains ((str? predicate "dep").getD "")) &&
+            actors.toList.all (fun x =>
+              roleSupported text rows predicate x
+                ["nsubj", "csubj", "nsubjpass", "csubjpass", "agent"]) &&
+            patients.toList.all (fun x =>
+              roleSupported text rows predicate x
+                ["dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"])
+      found &&
+      decide (a < b ∧ b ≤ text.toList.length) &&
+      bool? event "candidate_only" == some true &&
+      bool? event "semantic_licence_paid" == some false &&
+      bool? event "world_event_occurrence_paid" == some false
+  | _, _, _, _, _, _, _ => false
+
+private def validateEntity
+    (text : String) (original : Array Json)
+    (entity : Json) (labels : List String) : Bool :=
+  let label := (str? entity "label_ref").getD ""
+  labels.contains label && spanExact text entity &&
+    original.toList.any (fun row =>
+      str? row "surface" == str? entity "surface" &&
+      nat? row "start_char" == nat? entity "start_char" &&
+      nat? row "end_char" == nat? entity "end_char" &&
+      str? row "label_ref" == str? entity "label_ref" &&
+      bool? row "candidate_only" == some true &&
+      bool? row "semantic_promotion" == some false)
+
+private def eventStart? (event : Json) : Option Nat := do
+  let predicate ← (event.getObjVal? "predicate").toOption
+  nat? predicate "start_char"
+
+private def validateTextOrder (events : Array Json) (edge : Json) : Bool :=
+  let before := (str? edge "before").getD ""
+  let after := (str? edge "after").getD ""
+  let lhs := events.toList.find? (fun e =>
+    str? e "event_candidate_ref" == some before)
+  let rhs := events.toList.find? (fun e =>
+    str? e "event_candidate_ref" == some after)
+  match lhs, rhs with
+  | some a, some b =>
+      match eventStart? a, eventStart? b with
+      | some x, some y =>
+          x == (nat? edge "before_start").getD (y + 1) &&
+          y == (nat? edge "after_start").getD (x + 1) &&
+          decide (x < y) && str? edge "kind" == some "source-text-order-only"
+      | _, _ => false
+  | _, _ => false
+
+/-- A source-verification success never implies that an extracted event
+    occurred: it certifies the relation to source/parser observations only. -/
+def checkProjection (text : String) (source projection : Json) : Bool :=
+  match arr? source "pnf_candidates",
+        arr? source "named_entities",
+        arr? projection "event_candidates",
+        arr? projection "people_mentions",
+        arr? projection "time_mentions",
+        arr? projection "text_order_edges" with
+  | some original, some entities, some events,
+    some people, some dates, some order =>
+      str? source "schema" == some "slr-source-unit-pnf-record-v1" &&
+      str? projection "schema" == some "slr-jmd-wikipedia-article-candidates-v1" &&
+      str? projection "wikidata_item_qid" == some "Q207" &&
+      str? source "source_unit_ref" == str? projection "source_unit_ref" &&
+      str? source "revision_ref" == str? projection "source_revision_ref" &&
+      bool? source "candidate_only" == some true &&
+      bool? source "semantic_promotion" == some false &&
+      bool? projection "source_assertion_is_world_truth" == some false &&
+      bool? projection "parser_carries_semantic_licence" == some false &&
+      bool? projection "text_order_is_event_chronology" == some false &&
+      bool? projection "cross_sentence_identity_paid" == some false &&
+      events.toList.all (validateEvent text original) &&
+      people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
+      dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
+      order.toList.all (validateTextOrder events)
+  | _, _, _, _, _, _ => false
+
+/-- This exact-source certificate is obtained only after checking the
+    literal article, SLR original parser rows and projected evidence. -/
+structure CheckedArticleExtraction (text : String) (source projection : Json) where
+  checked : checkProjection text source projection = true
+
+theorem checkedArticleHasStructuralEvidence
+    {text : String} {source projection : Json}
+    (receipt : CheckedArticleExtraction text source projection) :
+    checkProjection text source projection = true :=
+  receipt.checked
+
+private def hashFile (path : String) : IO String := do
+  let output ← IO.Process.output { cmd := "sha256sum", args := #[path] }
+  if output.exitCode != 0 then
+    throw (IO.userError s!"sha256sum failed: {output.stderr}")
+  return (output.stdout.splitOn " ").head!
+
+private def readJson (path : String) : IO Json := do
+  let content ← IO.FS.readFile path
+  match Json.parse content with
+  | .ok value => return value
+  | .error err => throw (IO.userError s!"Invalid evidence JSON ({path}): {err}")
+
+/-- JMD proof run over actual revision-pinned Wikipedia text and original
+    SLR PNF rows. This provides a checkable observation claim; the additional
+    DASHI SourceQueryLicence still governs semantic or occurrence questions. -/
+def verifyFiles
+    (articlePath slrRecordPath projectionPath : String) : IO Bool := do
+  let text ← IO.FS.readFile articlePath
+  let source ← readJson slrRecordPath
+  let projection ← readJson projectionPath
+  let manifestation ← match (source.getObjVal? "manifestation").toOption with
+    | some v => pure v
+    | none => throw (IO.userError "SLR manifestation missing")
+  let sha ← hashFile articlePath
+  if str? manifestation "source_text_sha256" != some sha ||
+      str? projection "source_text_sha256" != some sha then
+    throw (IO.userError "Source digest mismatch: SLR/projection do not match article")
+  if h : checkProjection text source projection = true then
+    let receipt : CheckedArticleExtraction text source projection := ⟨h⟩
+    let _ := checkedArticleHasStructuralEvidence receipt
+    let events := (arr? projection "event_candidates").getD #[]
+    let persons := (arr? projection "people_mentions").getD #[]
+    let dates := (arr? projection "time_mentions").getD #[]
+    let order := (arr? projection "text_order_edges").getD #[]
+    IO.println s!"JMD_LEAN_SOURCE_PROOF_OK sha256={sha}"
+    IO.println s!"people_mentions={persons.size} event_candidates={events.size} date_mentions={dates.size} text_order_edges={order.size}"
+    IO.println "PROVED: exact source spans and original SLR parser-row support; textual ordering only."
+    IO.println "OPEN: entity identity, interpretation licence, event occurrence, historical chronology."
+    return true
+  else
+    throw (IO.userError "JMD Lean rejected a forged or unsupported source/PNF projection")
+
+end ArticleProof
+end Slr
+end Wikidata

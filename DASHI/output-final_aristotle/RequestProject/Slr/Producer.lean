@@ -69,31 +69,33 @@ def decodeCandidate (j : Json) : Option Candidate := do
     any semantic, proposition, applicability or truth authority. -/
 def decodeProducerOutput (j : Json) : Option ProducerOutput := do
   let version ← field? j "version"
-  if version != "slr-pnf-candidate-v1" then none else
-  let producer ← field? j "producer"
-  let spanReference ← field? j "exact_span_ref"
-  let startChar ← natField? j "source_start_char"
-  let endChar ← natField? j "source_end_char"
-  let inputDigest ← field? j "parser_input_sha256"
-  let sourceRevisionVerified ← boolField? j "source_revision_verified"
-  let parserEvidenceVerified ← boolField? j "parser_evidence_verified"
-  let semanticAdmissionPaid ← boolField? j "semantic_admission_paid"
-  let propositionSupportPaid ← boolField? j "proposition_support_paid"
-  let applicabilityPaid ← boolField? j "applicability_paid"
-  let claimTruthPaid ← boolField? j "claim_truth_paid"
-  let candidatesJson ← (j.getObjValAs? (Array Json) "candidates").toOption
-  let candidates ← candidatesJson.toList.mapM decodeCandidate
-  if spanReference.isEmpty || startChar >= endChar ||
-      sourceRevisionVerified || parserEvidenceVerified ||
-      semanticAdmissionPaid || propositionSupportPaid ||
-      applicabilityPaid || claimTruthPaid ||
-      !(candidates.all fun c => startChar <= c.startChar && c.endChar <= endChar) then
+  if version != "slr-pnf-candidate-v1" then
     none
-  else
-    some ⟨producer, spanReference, startChar, endChar, inputDigest,
-      sourceRevisionVerified, parserEvidenceVerified, semanticAdmissionPaid,
-      propositionSupportPaid, applicabilityPaid, claimTruthPaid,
-      candidates.toArray⟩
+  else do
+    let producer ← field? j "producer"
+    let spanReference ← field? j "exact_span_ref"
+    let startChar ← natField? j "source_start_char"
+    let endChar ← natField? j "source_end_char"
+    let inputDigest ← field? j "parser_input_sha256"
+    let sourceRevisionVerified ← boolField? j "source_revision_verified"
+    let parserEvidenceVerified ← boolField? j "parser_evidence_verified"
+    let semanticAdmissionPaid ← boolField? j "semantic_admission_paid"
+    let propositionSupportPaid ← boolField? j "proposition_support_paid"
+    let applicabilityPaid ← boolField? j "applicability_paid"
+    let claimTruthPaid ← boolField? j "claim_truth_paid"
+    let candidatesJson ← (j.getObjValAs? (Array Json) "candidates").toOption
+    let candidates ← candidatesJson.toList.mapM decodeCandidate
+    if spanReference.isEmpty || startChar >= endChar ||
+        sourceRevisionVerified || parserEvidenceVerified ||
+        semanticAdmissionPaid || propositionSupportPaid ||
+        applicabilityPaid || claimTruthPaid ||
+        !(candidates.all fun c => startChar <= c.startChar && c.endChar <= endChar) then
+      none
+    else
+      some ⟨producer, spanReference, startChar, endChar, inputDigest,
+        sourceRevisionVerified, parserEvidenceVerified, semanticAdmissionPaid,
+        propositionSupportPaid, applicabilityPaid, claimTruthPaid,
+        candidates.toArray⟩
 
 /-- Directly invoke the SLR native producer, as the JMD Wikidata CLI invokes
     its external Wikidata getter. The binary path is explicit, not a shell
@@ -131,8 +133,7 @@ def mayEnterCandidateResolution (output : ProducerOutput) : Bool :=
 theorem candidateResolution_ne_semanticAdmission
     (o : ProducerOutput) (h : mayEnterCandidateResolution o = true) :
     o.semanticAdmissionPaid = false := by
-  simp [mayEnterCandidateResolution] at h
-  exact h.2.2.1
+  simp_all [mayEnterCandidateResolution]
 
 end Slr
 end Wikidata

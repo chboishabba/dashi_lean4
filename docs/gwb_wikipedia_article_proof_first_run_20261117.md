@@ -23,7 +23,9 @@
 5. Runs JMD's existing **Q207 Wikidata getter**, its original `cmdLean`
    ontology-code generator with `--kernel`, calls `lake env lean` on the
    generated proof module, then runs JMD's original English Wikipedia
-   `cmdScan` to collect article links/sources.
+   `cmdScan` to collect article links/sources. **This JMD scan fetches an
+   independent page snapshot and is not certified to share the pinned article
+   revision used by the SLR source-unit producer.**
 
 ## Requirements
 

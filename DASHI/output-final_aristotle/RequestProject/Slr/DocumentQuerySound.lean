@@ -128,19 +128,6 @@ theorem semanticClosurePreservedByRefinement
   intro o x y hx hy
   exact closed o x y (refines o x hx) (refines o y hy)
 
-/-- An unreadable parser candidate cannot buy a semantic licence.
-    The actual licence is an additional proof argument with no factory
-    function from ProducerOutput. -/
-theorem candidateWithoutLicenceCannotDeriveAnswer
-    {Source : Type uSource} {Reading : Type uReading}
-    {Query : Type uQuery} {Answer : Type uAnswer}
-    {m : DocumentQueryModel Source Reading Query Answer}
-    {source : Source} {query : Query}
-    (licence : SourceQueryLicence m source query)
-    (answer : Answer)
-    (h : m.readingAnswer licence.chosenReading query = answer) :
-    m.documentAnswer source query = answer :=
-  slrJmdDocumentQuerySound licence answer h
 
 end Slr
 end Wikidata

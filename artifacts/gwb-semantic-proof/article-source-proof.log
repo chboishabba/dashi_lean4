@@ -1,0 +1,15 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+JMD_LEAN_SOURCE_PROOF_OK sha256=a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233
+source_blocks=225 (heading/paragraph spans fully covered)
+ner_people_mentions=0 proper_noun_tokens=2620 event_candidates=1468 ner_date_mentions=0 literal_year_mentions=311 timeline_candidates=311 text_order_edges=1467
+PROVED: exact source spans and original SLR parser-row support; textual ordering only.
+OPEN: entity identity, interpretation licence, event occurrence, historical chronology.

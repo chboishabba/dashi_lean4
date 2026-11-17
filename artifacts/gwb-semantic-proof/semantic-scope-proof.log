@@ -1,0 +1,15 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED
+left=9:set parent=sponsored embedded=false
+right=18:had parent=possessed embedded=true
+same_flat_scope_label=unresolved-source-assertion
+This does not refute the production SLR rich source graph.

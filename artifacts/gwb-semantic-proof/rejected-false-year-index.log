@@ -1,0 +1,11 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+uncaught exception: JMD Lean rejected a forged or unsupported source/PNF projection

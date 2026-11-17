@@ -1,0 +1,13 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS
+Checked: native Rust candidates, alternatives, residuals, source spans and 5 consumer outcomes
+NOT PAID: reviewed semantic transports, production S28 joins or world occurrence

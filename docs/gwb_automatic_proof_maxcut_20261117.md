@@ -354,3 +354,38 @@ source objects, and a query-specific `SourceQueryLicence` for an identity
 or event-time question under independently checked producer/review
 evidence. A source-only positive result is not authority for those
 different queries.
+
+### P4 final composition extension
+
+`GwbP4ArticleEndToEnd.originalGwbArticlePositiveSourceQuery` closes the
+previously unconstructed **source-only** `SourceQueryLicence` premise of
+`GwbArticleSystem.checkedArticleLocalSystemSound`: with the independently
+checked Q207 Wikipedia/Wikidata sitelink and the original source-checked
+GWB Rust typed rows, the theorem supplies the actual licence and proves
+the source-observable result end to end. The specialisation
+`sourceActorCandidatesAndReferenceResiduals` proves the actor-*role
+candidate* and unresolved-reference-*residual* source counts. These do
+not prove referent identity, claim truth or historical event time.
+
+The exact five-input proof runner command is:
+
+```bash
+lake env lean --run tools/GwbProofRunner.lean article-p4-check \
+  .dashi/gwb-source/article.txt \
+  .dashi/gwb-source/slr-record.json \
+  .dashi/gwb-source/article-candidates.json \
+  artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json \
+  /path/to/original-Q207-EntityData.json
+```
+
+If `GWB_Q207_ENTITY_JSON` is set, the unified proof-only script now
+rechecks the Q207 sitelink and (where the original native Rust receipt is
+available) additionally runs the source-QID/native-fibre P4 theorem.
+The original SLR full runner compiles the composed theorem and retains
+`p4-article-end-to-end-build.log` as a required receipt. No Q207
+document is invented when one is absent.
+
+P4 source-only theorem acceptance and the five-input real Q207 join have
+**not** been locally executed by the author of this source patch.
+The pre-existing PR #112 `336488ccf` run remains the accepted P3 proof
+substrate.

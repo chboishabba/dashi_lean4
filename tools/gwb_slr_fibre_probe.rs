@@ -132,7 +132,7 @@ fn receipt_json(observation: &ExpandedConsumerObservation) -> Value {
 /// consumer-label heuristic. Coverage is limited to independently checked
 /// revision/character-span provenance. No semantic identity, temporal or
 /// factual coordinate is paid by a candidate-only parser/expansion.
-fn consumer_receipts(source_sha: &str) -> Result<Value, String> {
+fn consumer_receipts(source_sha: &str, source_claim_candidate_ref: &str) -> Result<Value, String> {
     let graph = ProjectionGraph {
         kind: ProjectionKind::IssueProof,
         nodes: vec![],
@@ -164,12 +164,23 @@ fn consumer_receipts(source_sha: &str) -> Result<Value, String> {
                 ConsumerAxis::SemanticIdentity,
                 ConsumerAxis::FactualPredicate]).collect()),
     ];
+    require(!source_claim_candidate_ref.is_empty(),
+            "missing original source-bound GWB claim candidate ref")?;
     let mut outcomes = Vec::new();
+    let mut empty_query_paid_identity = false;
     for (name, axes) in query_definitions {
+        // Every semantic query points at the REAL original GWB claim
+        // candidate, not an empty or invented semantic-identity witness.
+        // Source-only queries request no semantic identity.
+        let semantic_refs = if name.starts_with("gwb:source:") {
+            BTreeSet::new()
+        } else {
+            BTreeSet::from([source_claim_candidate_ref.to_owned()])
+        };
         let demand = ConsumerQueryDemand {
             query_ref: name.to_owned(),
             required_axes: axes,
-            required_semantic_refs: BTreeSet::new(),
+            required_semantic_refs: semantic_refs,
             candidate_only: true,
             creates_semantic_authority: false,
         };
@@ -178,12 +189,21 @@ fn consumer_receipts(source_sha: &str) -> Result<Value, String> {
                 !result.creates_semantic_authority &&
                 !result.creates_claim_truth,
                 "SLR candidate-only consumer falsely claims semantic theorem/truth")?;
+        if name.starts_with("gwb:source:") &&
+                result.paid_axes.contains(&ConsumerAxis::SemanticIdentity) {
+            // Detect SLR's empty-ref vacuity instead of mistaking it
+            // for a resolved actor or semantic classification.
+            empty_query_paid_identity = true;
+        }
         outcomes.push(serde_json::to_value(result).map_err(|e| e.to_string())?);
     }
     Ok(json!({
         "engine": "sensiblaw-legal-runtime::assess_consumer_adequacy",
         "real_input_revision_sha256": source_sha,
         "runtime_outcomes": outcomes,
+        "semantic_target_ref": source_claim_candidate_ref,
+        "empty_reference_identity_vacuity_detected": empty_query_paid_identity,
+        "empty_reference_identity_is_not_accepted_as_reviewed_evidence": true,
         "factors_through_kernel_proof_paid": false,
         "semantic_identity_temporal_and_truth_remain_unpaid": true
     }))
@@ -409,7 +429,14 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
             "unresolved_temporal_modifier_never_asserts_event_time": true
         },
         "real_source_witnesses": sample_witnesses,
-        "consumer_adequacy": consumer_receipts(SOURCE_SHA)?,
+        "consumer_adequacy": consumer_receipts(
+            SOURCE_SHA,
+            original.iter().find(|candidate|
+                candidate.get("sentence_index").and_then(Value::as_u64) == Some(18))
+              .and_then(|candidate| candidate.get("claim_candidate_id"))
+              .and_then(Value::as_str)
+              .ok_or("no original GWB Iraq source claim candidate")?
+        )?,
         "sentence_observations": observations
     }))
 }

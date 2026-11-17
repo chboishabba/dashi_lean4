@@ -208,6 +208,17 @@ def pack(path, report, logs=None, lean_version=None, head=None,
         ""
     ]
     additional[SUMMARY] = "\n".join(md).encode("utf-8")
+    # Refresh ONLY this runner's owned records. Other proof/ records may be
+    # genuine externally produced Rust/DB/review receipts and must survive
+    # repeated rounds byte-for-byte, not be silently discarded.
+    owned = set(additional) | {AUDIT, SUMMARY, MANIFEST,
+        "proof/slr-rust-semantic-expansion.json"}
+    owned.update("proof/" + name for name in LOGS)
+    owned.update("proof/" + name for name in (
+        "slr-rust-test.log", "slr-rust-expansion.log"))
+    owned.update("proof/rejected-" + name + ".log" for name in (
+        "missing-predicate", "missing-direct-actor", "false-year-index",
+        "promoted-world-truth", "forged-paragraph-boundary"))
     fd, temp_path = tempfile.mkstemp(
         prefix=".gwb-single-tar-", suffix=".tar", dir=archive_path.parent)
     os.close(fd)
@@ -222,7 +233,7 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                     "not a flat regular-file TAR")
             with tarfile.open(temp_path, "w:") as new:
                 for name in old_names:
-                    if name in additional or name.startswith("proof/"):
+                    if name in owned:
                         continue
                     item = old.getmember(name)
                     data = old.extractfile(item).read()

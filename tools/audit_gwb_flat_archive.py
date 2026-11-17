@@ -60,7 +60,14 @@ def validate(text, slr, projection, carrier):
     doc = parser["document_ref"]
     require(slr["manifestation"]["source_text_sha256"] == source_sha, "SLR source digest")
     require(projection["source_text_sha256"] == source_sha, "projection source digest")
-    require(carrier["canonical_text_sha256"] == canonical_json_sha(text), "P0b JSON-text digest")
+    # Historical, exact-TAR audit only. The old P0b source digest used
+    # SHA-256 of JSON-encoded text, which is NOT the desired source identity.
+    # Do not silently treat this legacy hash as a current valid UTF-8 digest.
+    legacy_json_text_digest = canonical_json_sha(text)
+    require(carrier["canonical_text_sha256"] == legacy_json_text_digest,
+            "archived legacy P0b JSON-text digest mismatch")
+    require(carrier["canonical_text_sha256"] != source_sha,
+            "this historical fixture unexpectedly uses modern UTF-8 P0b hashing")
     require(len(text) == slr["manifestation"]["character_count"], "source length")
     require(projection["source_revision_ref"] == rev and
             projection["source_unit_ref"] == source_ref, "projection source identity")
@@ -233,7 +240,10 @@ def validate(text, slr, projection, carrier):
         "schema": "gwb-archived-evidence-regression-v1",
         "source_revision_ref": rev,
         "source_sha256_raw_utf8": source_sha,
-        "p0b_canonical_json_text_sha256": carrier["canonical_text_sha256"],
+        "p0b_legacy_json_string_sha256": carrier["canonical_text_sha256"],
+        "current_source_utf8_sha256": source_sha,
+        "p0b_matches_current_utf8_source_hash": False,
+        "p0b_legacy_hash_reissue_required": True,
         "source_chars": len(text),
         "sentences": len(sentences),
         "original_parser_tokens": len(tokens),

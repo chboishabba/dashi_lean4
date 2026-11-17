@@ -51,7 +51,8 @@ def git(root, *args):
                                    text=True).strip()
 
 
-def publish(repo, source, run, slr_head, lean_version, auto_commit):
+def publish(repo, source, run, slr_head, lean_version, auto_commit,
+            jmd_head_at_run=None):
     article = (source / "article.txt").read_bytes()
     require(hashlib.sha256(article).hexdigest() == PIN_SHA,
             "original raw UTF-8 source digest mismatch")
@@ -119,12 +120,14 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit):
             b"admitAx" not in (run / "axiom-audit.log").read_bytes(),
             "Lean proof contains a sorry/admit axiom")
 
-    receipt_head = git(repo, "rev-parse", "HEAD")
+    receipt_head = jmd_head_at_run or git(repo, "rev-parse", "HEAD")
     manifest = {
         "schema": "gwb-committed-rust-lean-proof-v1",
         "source_revision": PIN_REV,
         "source_utf8_sha256": PIN_SHA,
         "jmd_head_at_run": receipt_head,
+        "receipt_imported_or_published_at_head":
+            git(repo, "rev-parse", "HEAD"),
         "slr_head_at_run": slr_head,
         "lean_version": lean_version,
         "slr_semantic_expansion": "EXECUTED_CANDIDATE_ONLY",

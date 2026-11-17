@@ -79,6 +79,44 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                 native["typed_residual_count"], "residual count forged")
         require(sum(len(x["alternative_fibres"]) for x in native["sentence_observations"]) ==
                 native["alternative_fibre_count"], "fibre count forged")
+        consumers = native["consumer_adequacy"]
+        require(consumers["engine"] ==
+                "sensiblaw-legal-runtime::assess_consumer_adequacy" and
+                consumers["factors_through_kernel_proof_paid"] is False and
+                consumers["semantic_identity_temporal_and_truth_remain_unpaid"] is True,
+                "invalid production SLR consumer boundary")
+        outcomes = {
+            row["query_ref"]: row
+            for row in consumers["runtime_outcomes"]
+        }
+        require(len(outcomes) == 5 and
+                len(consumers["runtime_outcomes"]) == 5,
+                "missing or duplicated query-specific SLR consumer receipts")
+        for query in ("gwb:source:observed-mentions",
+                      "gwb:source:syntactic-role-candidates"):
+            require(outcomes[query]["disposition"] == "Adequate" and
+                    not outcomes[query]["missing_axes"],
+                    "actual source-only consumer did not reach operational adequacy")
+        for query in ("gwb:person:who-was-agent",
+                      "gwb:event:when", "gwb:world:occurrence"):
+            row = outcomes[query]
+            require(row["disposition"] == "NeedsResearch" and
+                    "SemanticIdentity" in row["missing_axes"],
+                    "semantic identity silently admitted")
+            require(row["research_demands"],
+                    "unpaid SLR consumer lacks research residuals")
+        require("Temporal" in
+                outcomes["gwb:event:when"]["missing_axes"],
+                "event-year attachment was silently paid")
+        require("FactualPredicate" in
+                outcomes["gwb:world:occurrence"]["missing_axes"],
+                "world occurrence was silently paid")
+        require(all(row["factors_through_formally_proved"] is False and
+                    row["candidate_only"] is True and
+                    row["creates_semantic_authority"] is False and
+                    row["creates_claim_truth"] is False
+                    for row in outcomes.values()),
+                "consumer report forges a semantic theorem or truth")
         additional["proof/slr-rust-semantic-expansion.json"] = rust_bytes
         rust_status = "SLR_RUST_CANDIDATE_EXPANSION_PARITY_CHECKED_NOT_DB_NATIVE"
     status = "NOT_EXECUTED_IN_THIS_REFRESH"

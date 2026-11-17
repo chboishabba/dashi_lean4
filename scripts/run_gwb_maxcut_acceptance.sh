@@ -49,6 +49,7 @@ compile_slr GwbWorldGraphProof
 compile_slr GwbHyperfabricTransport
 compile_slr GwbArticleSystemSoundness
 compile_slr GwbP4SourceLicence
+compile_slr GwbP4ArticleEndToEnd
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 lake env lean --run tools/GwbProofRunner.lean p4
@@ -111,6 +112,15 @@ if [[ -n "$qid_json" ]]; then
   lake env lean --run tools/GwbProofRunner.lean article-qid-check \
     "$source_dir/article.txt" "$source_dir/slr-record.json" \
     "$source_dir/article-candidates.json" "$qid_json"
+  # Optional real end-to-end P4 check: use original locally executed Rust
+  # receipt if explicitly supplied, otherwise the prior committed receipt.
+  p4_native="${GWB_P4_NATIVE_JSON:-$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json}"
+  if [[ -f "$p4_native" ]]; then
+    lake env lean --run tools/GwbProofRunner.lean article-p4-check \
+      "$source_dir/article.txt" "$source_dir/slr-record.json" \
+      "$source_dir/article-candidates.json" "$p4_native" "$qid_json"
+  fi
+
 fi
 
 if [[ "$mode" == "--proof-only" ]]; then

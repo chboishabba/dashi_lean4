@@ -260,3 +260,37 @@ graph JSON directly and creates no TAR.
 The `--strict` option deliberately exits nonzero while full production
 semantic coverage, reviewed event/time and article-to-world alignment are
 unpaid, even if all existing structural certificates pass.
+
+## 2026-11-17 first-run dependency fix
+
+Operator's first `--proof-only` run passed `Producer`,
+`DocumentQuerySound`, `TemporalDocumentProof` and
+`WikipediaArticleProof`, then stopped at `GwbArticleIdentity`
+because `RequestProject.Cli.Import.olean` was absent from the targeted
+cache. This is an import-build ordering issue; it does **not**
+establish a failure of an article theorem.
+
+The proof-only and full entrypoints now first invoke the shared
+`scripts/build_gwb_jmd_prerequisites.sh` to compile precisely the
+original JMD `Core`, `Reachability`, `Engine`, `Merge`,
+`Properties`, `PropertyEngine`, `Cli.Import`, `Cli.Format`,
+`Cli.Fetch`, `Cli.Derive` import closure. This is **not**
+`lake build wikidata`, and runs no new parser, data getter or TAR.
+
+A source-level finite-list decidability correction was also made to
+`FiniteConsumerCertificate.checkConstant`: the checker now
+evaluates all actual list pairs with `List.all` instead of
+attempting an unbounded `Decidable (∀ reading : Reading, ...)`.
+The general soundness result continues to rely on an explicit
+live-fibre completeness witness.
+
+Re-run:
+```bash
+git pull --ff-only
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+```
+
+**Status:** pushed source fix, not yet tested with Lean 4.28.0.
+If the next compile reports a theorem error, capture the precise
+module, line and diagnostics. Do not fall back to the whole
+`wikidata` build or assert that a partial compile is a proof receipt.

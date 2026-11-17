@@ -41,6 +41,47 @@ class GwbArticleProjectionTests(unittest.TestCase):
                              text[block["start_char"]:block["end_char"]].strip())
         self.assertEqual(sections[0]["kind"], "heading")
 
+    def test_old_slr_record_without_ner_still_has_parser_bound_years(self):
+        text = "Bush served from 2001–2009."
+        def token(i, surface, dep, head, pos):
+            return {"i": i, "idx": text.index(surface), "text": surface,
+                    "lemma": surface.lower(), "dep": dep,
+                    "head_i": head, "pos": pos}
+        record = {
+            "schema": "slr-source-unit-pnf-record-v1",
+            "source_unit_ref": "wikipedia:en:George_W._Bush:fixture",
+            "revision_ref": "enwiki-revid:fixture",
+            "manifestation": {"source_text_sha256": pipeline.digest(text)},
+            "parser_receipt": {"dependency_capable": True},
+            "candidate_only": True, "semantic_promotion": False,
+            # Intentionally lacks named_entities: original uploaded format.
+            "pnf_candidates": [{
+                "claim_candidate_id": "source:fixture:event",
+                "sentence_index": 0, "source_span_start": 0,
+                "source_span_end": len(text),
+                "sentence_text_sha256": pipeline.digest(text),
+                "candidate_only": True, "semantic_promotion": False,
+                "dependency_rows": [
+                    token(0, "Bush", "nsubj", 1, "PROPN"),
+                    token(1, "served", "ROOT", 1, "VERB"),
+                    token(2, "2001–2009", "npadvmod", 1, "NUM"),
+                ],
+            }],
+        }
+        result = pipeline.derive_projection(record, text, [])
+        self.assertFalse(result["ner_observations_present"])
+        self.assertEqual(len(result["people_mentions"]), 0)
+        self.assertEqual(len(result["literal_year_mentions"]), 2)
+        self.assertEqual(len(result["timeline_candidates"]), 2)
+        self.assertEqual(len(result["proper_noun_tokens"]), 1)
+        self.assertEqual([y["year_candidate"] for y in result["timeline_candidates"]],
+                         [2001, 2009])
+        self.assertTrue(all(
+            year["evidence_kind"] == "literal-year-inside-original-parser-token"
+            and year["event_time_paid"] is False
+            for year in result["literal_year_mentions"]
+        ))
+
     def test_year_lexical_only(self):
         self.assertEqual(pipeline.YEAR.findall("2001 and 2009"), ["2001", "2009"])
         self.assertEqual(pipeline.YEAR.findall("circa 1962"), ["1962"])

@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import tarfile
 import tempfile
+from gwb_semantic_observer_audit import check as audit_source, load as load_source
 
 PINNED_SOURCE_SHA256 = "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
 PINNED_REVISION = "enwiki-revid:1385850169"
@@ -39,6 +40,8 @@ def pack(path, report, logs=None, lean_version=None, head=None):
     require(payload["source_revision"] == PINNED_REVISION, "audit revision")
     require(payload["source_utf8_sha256"] == PINNED_SOURCE_SHA256,
             "audit source digest")
+    require(payload == audit_source(*load_source(str(archive_path))),
+            "supplied semantic audit is not derived from original TAR evidence")
     additional = {AUDIT: report_path.read_bytes()}
     status = "NOT_EXECUTED_IN_THIS_REFRESH"
     if logs is not None:
@@ -137,12 +140,13 @@ def pack(path, report, logs=None, lean_version=None, head=None):
                     entry.mode = 0o644
                     entry.mtime = 0
                     new.addfile(entry, io.BytesIO(data))
-        with tarfile.open(temp_path) as check:
+        with tarfile.open(temp_path) as check, tarfile.open(archive_path) as old:
             require(check.getnames().count(MANIFEST) == 1,
                     "failed to build canonical proof manifest")
-            require(check.extractfile("article.txt").read() ==
-                    tarfile.open(archive_path).extractfile("article.txt").read(),
-                    "original source bytes not retained")
+            for name in ORIGINAL:
+                require(check.extractfile(name).read() ==
+                        old.extractfile(name).read(),
+                        "original input evidence bytes not retained: " + name)
         os.replace(temp_path, archive_path)
     finally:
         if os.path.exists(temp_path):

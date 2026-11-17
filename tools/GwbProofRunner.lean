@@ -2,6 +2,7 @@ import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.WikipediaArticleProof
 import RequestProject.Slr.GwbRealSourceConsumer
 import RequestProject.Slr.GwbNativeFibreReceipt
+import RequestProject.Slr.GwbProofComposition
 
 open Wikidata
 
@@ -95,6 +96,12 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["composition"] =>
+      IO.println "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK"
+      IO.println "PROVED: checked finite semantic consumer constancy under explicit complete live-fibre enumeration and source correspondence"
+      IO.println "PROVED: independent article answer and JMD KB property witness composition, without semantic or world-truth promotion"
+      IO.println "UNPAID: production semantic coverage, checked cross-sentence identity/event join, JMD article-to-KB semantic alignment"
+      return 0
   | ["axioms"] =>
       printAxiomAudit
       return 0
@@ -118,3 +125,7 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent
 
 #print axioms Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals
+#print axioms Wikidata.Slr.FiniteConsumer.checkConstant_sound
+#print axioms Wikidata.Slr.FiniteConsumer.completeFiniteFibreConsumerClosed
+#print axioms Wikidata.Slr.GwbProofComposition.checkedFiniteArticleAnswerSound
+#print axioms Wikidata.Slr.GwbProofComposition.independentArticleAndKBResultsSound

@@ -31,6 +31,15 @@
  Classical.choice,
  Quot.sound]
 'Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness' does not depend on any axioms
+'Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer' depends on axioms: [propext]
+'Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 GWB_FIBRE_THEOREMS_KERNEL_OK
 PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance
 NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence

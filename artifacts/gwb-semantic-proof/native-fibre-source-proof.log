@@ -31,7 +31,19 @@
  Classical.choice,
  Quot.sound]
 'Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness' does not depend on any axioms
+'Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer' depends on axioms: [propext]
+'Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS sentences=643 candidates=4190 alternatives=814 residuals=15595
+GWB_P4_SOURCE_LICENCE_KERNEL_OK sentences=643 actor_role_candidates=1146 reference_residuals=62
+P4 SCOPE: source-only typed row query with original GWB source and fragment ancestry
+UNPAID: real cross-sentence actor identity, reviewed event/time semantics, production live-fibre coverage
 GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS
 Checked: native Rust candidates, alternatives, residuals, source spans and 5 consumer outcomes
 NOT PAID: reviewed semantic transports, production S28 joins or world occurrence

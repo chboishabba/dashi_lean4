@@ -31,6 +31,15 @@
  Classical.choice,
  Quot.sound]
 'Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness' does not depend on any axioms
+'Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer' depends on axioms: [propext]
+'Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
 GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED
 left=9:set parent=sponsored embedded=false
 right=18:had parent=possessed embedded=true

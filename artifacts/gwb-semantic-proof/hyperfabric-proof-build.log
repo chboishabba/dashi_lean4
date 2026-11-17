@@ -1,0 +1,3 @@
+/home/c/Documents/code/dashi_lean4/DASHI/output-final_aristotle/RequestProject/Slr/GwbHyperfabricTransport.lean:102:5: warning: unused variable `fragment`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

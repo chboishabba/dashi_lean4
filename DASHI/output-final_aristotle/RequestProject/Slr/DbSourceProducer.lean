@@ -1,3 +1,5 @@
+import Lean
+
 /-!
 Direct SLR DB M12 source-observation bridge.
 
@@ -7,7 +9,6 @@ This Lean caller checks returned source, parser and region coordinates.
 It does NOT prove event occurrence, resolve semantics, or accept a
 semantic-licence Boolean. Use SourceQueryLicence for semantic obligations.
 -/
-import Lean
 
 namespace Wikidata
 namespace Slr
@@ -28,7 +29,6 @@ structure DbM12Observation where
   candidates : Array Json
   tokens : Array Json
   entities : Array Json
-  deriving Repr
 
 private def field? (j : Json) (name : String) : Option String :=
   (j.getObjValAs? String name).toOption

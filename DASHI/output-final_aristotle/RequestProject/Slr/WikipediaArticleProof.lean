@@ -216,7 +216,7 @@ private def validateLexicalYear
             str? raw "text" == some tokenSurface &&
             tokenStop == tokenStart + tokenSurface.toList.length)
         | none => false)
-  | _, _, _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _ => false
 
 /-- Lexical year index with bounded candidate co-occurrences, not a
     world-level before/after relation or licensed event timestamp. -/
@@ -309,7 +309,7 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       years.toList.all (validateLexicalYear text original) &&
       timeline.toList.all (validateTimeline text original events) &&
       order.toList.all (validateTextOrder events)
-  | _, _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _, _ => false
 
 /-- This exact-source certificate is obtained only after checking the
     literal article, SLR original parser rows and projected evidence. -/

@@ -1,143 +1,117 @@
-# GWB source/PNF → consumer-fibre → JMD Lean proof acceptance
+# GWB consumer-level acceptance — one TAR, one working PR
 
-**Working PR:** [dashi_lean4 #111](https://github.com/chboishabba/dashi_lean4/pull/111);
-reuse SLR [#78](https://github.com/chboishabba/slr/pull/78) for native M12/S28.
-Agda is golden; SLR Rust is production; SensibLaw Python is historical.
-All actual source and fibre correctness claims must retain that separation.
+Working branch: [dashi_lean4 PR #112](https://github.com/chboishabba/dashi_lean4/pull/112).
+SLR Rust is the production evidence owner; dashi_agda/Lean are golden;
+SensibLaw Python is historical. Keep JMD/meta-introspector attribution.
 
-## 1. Run the full available proof suite against the exact TAR
+## Single-artifact policy
 
-From the root of **dashi_lean4**, with the repository's root
-`leanprover/lean4:v4.28.0` toolchain installed:
+**Only** `gwb_article_proof.tar` is retained for the round trip between
+assistant and operator. The original seven evidence members are preserved
+**byte for byte**. New diagnostic/Lean proof outputs go under `proof/`
+inside the same TAR. There is no second TAR and no surviving extracted
+working directory. Temporary staging is under the active repository, never
+`/tmp`.
 
-```bash
-bash scripts/run_gwb_lean_proof_suite.sh /path/to/gwb_article_proof.tar
-```
+The tarball's SHA-256 necessarily changes after each refresh. Identity is
+therefore pinned by the **original decoded UTF-8 article text** SHA-256
+`a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`
+and revision `enwiki-revid:1385850169`, NOT by the old entire TAR SHA.
+The old P0b JSON-string source hash remains historical evidence, not a
+canonical replacement for the raw source hash.
 
-The script pins archive SHA-256
-`6bbad0f9bcc2f0aa2e0e6f77f15692a945c1331a6337cfe202c19a58e2460f9e`,
-checks the active Lean version, unpacks only the three original source/parser
-observation files to a temporary directory, executes `lake build wikidata`,
-then invokes two commands:
+## One-command targeted proof + refresh
 
-```bash
-lake exe wikidata gwb-fibre-proof
-lake exe wikidata gwb-article-check ARTICLE.txt SLR-RECORD.json CANDIDATES.json
-```
-
-**No spaCy, Python parsing, simulated world state or external historical fact
-acquisition.** The TAR is a historical, parser-observation *fixture*.
-The executable's import graph checks the new Lean theorems at build time.
-
-Expected on success:
-- `GWB_FIBRE_THEOREMS_KERNEL_OK`
-- `JMD_LEAN_SOURCE_PROOF_OK sha256=a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`
-- `GWB_LEAN_CONSUMER_AND_ARCHIVE_PROOF_SUITE_PASS`
-
-Output logs: `.gwb_lean_proof/lean-build.log`,
-`consumer-fibre-proof.log`, `axiom-audit.log`,
-`article-source-proof.log`, `proof-boundary.txt`.
-The explicit `#print axioms` step inspects kernel dependencies and rejects
-`sorryAx`/`admitAx`; ordinary Lean `propext` is not an admission shortcut.
-
-The runner also uses `jq` when available to forge five adversarial
-variants of the **real** article projection: omitted predicate, dropped direct
-actor, corrupted year index, promoted world-truth flag and forged paragraph
-boundary. Every variant must be rejected by the same Lean checker (nonzero
-exit status); otherwise the script fails. These are negative controls, not
-another language producer. If `jq` is absent they are explicitly skipped.
-
-## 2. What is actually proved
-
-Module:
-`DASHI/output-final_aristotle/RequestProject/Slr/GwbConsumerFibreProof.lean`
-
-- Joins two typed fibres of meaning + provenance annotations by union, with
-  **idempotence, commutativity, associativity** and retention of both distinct
-  execution annotations. This is a Lean witness of the established
-  Agda `TypedEventuallyConsistentFibreSystemExact` interaction law,
-  not a replacement for SLR's production fabric.
-- Fully constructs `SourceQueryLicence` for two **source-observation**
-  consumers (reporting of a claim and presence of a year string); no globally
-  resolved actor, event or timeline is required.
-- Defines two competing semantic completions of the *same* quoted GWB source
-  observation. Proves nonfactorability for **world occurrence**, unique actor
-  identity, attached event date and embedding scope. These are mathematical
-  countermodels, not a claim about actual Iraqi WMD or historical events.
-- Reuses `TemporalDocumentProof.scopedTemporalOrderClosureSound`: only
-  scope-indexed, independently licensed edges may enter temporal closure.
-
-Module:
-`RequestProject/Slr/WikipediaArticleProof.lean`
-
-- Independently checks the **actual archived** literal and its raw UTF-8
-  SHA-256, every emitted candidate's original token/role source support,
-  and now *exhaustively* checks all original eligible predicate positions,
-  all immediate actor/patient dependencies, PROPN token cardinality and
-  uniqueness, year-index completeness/uniqueness and source paragraph blocks.
-- This is syntactic *source-observation* adequacy only. It intentionally does
-  **not** certify the flattened `by` token as a semantic actor or the
-  embedded `had` as world occurrence.
-
-Independent local reference comparison on the exact uploaded source before
-the Lean run: eligible predicates **1,468/1,468**, zero actor/patient child
-mismatches, PROPN **2,620/2,620**, literal-year index **311/311**.
-
-## 3. Native Rust-only production M12 + S28
-
-Use genuine original persisted PostgreSQL parser receipts, **not identifiers
-fabricated from the flat TAR**. See the existing script's argument names:
+From the root of `dashi_lean4`, with Lean **4.28.0** and its previously
+built mathlib/Batteries `.olean` cache:
 
 ```bash
-SLR_BIN=/absolute/path/to/slr/target/debug/sensiblaw \
-DATABASE_URL=... PARSER_RUN=... STATEMENT_REF=... \
-DOCUMENT_REF=... SOURCE_REV=... REGION_REF=... \
-START_CHAR=... END_CHAR=... LITERAL_FILE=... \
-EVENT_REF=... \
-bash scripts/run_gwb_native_proof_acceptance.sh
+bash scripts/run_gwb_lean_proof_suite.sh gwb_article_proof.tar
 ```
 
-`RequestProject/Slr/DbSourceProducer.lean` now checks **again, independently
-in Lean**:
-- exact raw UTF-8 literal SHA-256 supplied by native SLR and the actual bytes;
-- every candidate/token/entity source span and token-head ordinal;
-- the real source run / region / statement / revision identity;
-- **all S28 source-statement, statement-observation, observation-event,
-  temporal, claim and contestation reference joins**, and no semantic/truth
-  promotion. The prior `source_trace_join_complete=true` flag is necessary
-  but *not itself sufficient*.
+The command executes the cached targeted Lean runner, the exact source
+verifier, its axiom audit and **all five** forged-evidence negative controls.
+`jq` is mandatory; no quiet skipping. It then runs the read-only
+`tools/gwb_semantic_observer_audit.py`, checks real-source invariants, and
+atomically refreshes the original tarball through
+`tools/refresh_gwb_single_tar.py`.
 
-A saved S28 native JSON response can be examined separately:
+The refresh tool independently **recomputes** the semantic observer audit
+from the unchanged original TAR before accepting the report. It also
+checks every original evidence member byte-for-byte before replacing the TAR.
+On failure, the original TAR remains unchanged.
+
+On success, inspect the ONE TAR:
+
 ```bash
-lake exe wikidata slr-s28-proof-check /path/to/s28-candidates.json EVENT_REF
+tar -tf gwb_article_proof.tar
+tar -xOf gwb_article_proof.tar proof/proof_run_manifest.json
+tar -xOf gwb_article_proof.tar proof/semantic_observer_audit.md
+tar -xOf gwb_article_proof.tar proof/semantic_observer_audit.json
+tar -xOf gwb_article_proof.tar proof/axiom-audit.log
 ```
-A forged missing link, scope/source mismatch, changed event ref or promoted
-truth/authority flag must return a nonzero exit status.
 
-## 4. Limits / explicit gates
+Temporary proof outputs are cleaned after packaging. The manifest records
+the exact Lean version, Git head, proof execution status and **unpaid**
+production semantic obligations. Archive refresh without a genuine Lean
+run must state `NOT_EXECUTED_IN_THIS_REFRESH` and cannot fabricate logs.
 
-The actual **GWB semantic-fibre ledger**, reviewed event interpretation and
-query-relative source meaning have not been supplied in this TAR and are
-not manufactured by the new proofs. In particular:
-- Source text *mentions* a WMD proposition: source-relative query.
-- World actually possessed WMD: different consumer; requires evidence outside
-  this article, not inferable from parsing.
-- `He`/Bush identity: not a grammatical synonym; source-local alternatives
-  stay live until resolved for the selected consumer.
-- `2003` in a sentence: not a temporal event attachment.
-- Source order: not world chronological order.
+## Actual GWB semantic discrimination
 
-A complete historical/event query needs genuine reviewed/admitted SLR
-`SourceQueryLicence` premises and matching S28 account edges. This remains a
-separate open empirical input, not an unproved Lean `sorry`.
+The uploaded revision has **643 original SLR sentences**, **1,468
+candidate predicates**, **311 lexical year observations**, **11,975 P0b
+mentions**, **16,034 candidate licences**, and **no admitted SLR semantic
+fibre or S28 review receipt** in the archive.
 
-## 5. Verification reality
+The new source-grounded audit checks:
+- **57** coordinated verbs with an embedded immediate parent, all
+  flattened to `unresolved-source-assertion`. Sentence 18 has
+  `claims → possessed (acl) → had (conj)`. A root-relative conjunction
+  such as `set` (sentence 9) shares the same flat label. The consumer
+  `is_conj_parent_embedded` therefore cannot factor through the single
+  flat scope-label field. The ORIGINAL parser dependency rows do retain
+  the distinction; this is not an SLR hyperfabric counterexample.
+- **73** projected grammatical role tokens without corresponding
+  materialised P0b mention spans: **59 actor `by`** tokens, one
+  actor hyphen, nine patient `to`, three patient hyphens, and one
+  patient percent symbol. These are *syntactic attachments*, not
+  settled semantic actors/objects.
+- The **311** lexical-year candidates stay unpromoted even in
+  multi-predicate sentences. Mere co-sentential association does not
+  provide a reviewed S28 event-date attachment.
+- Named surfaces `George Walker Bush`, `Laura Welch`, `Bush`,
+  `He`, `he`, `1977`, and `possessed` retain the P0b candidate
+  type alternatives, **not unique identities or world claims**.
 
-The authoring runtime has **no Lean, Lake or Rust compiler** and no original
-SLR PostgreSQL fixture. Thus the files are SOURCE-WRITTEN and logically
-reviewed but **NOT YET KERNEL-VERIFIED**. Run the exact commands above
-and retain `lean-build.log`; do not accept this note as a successful run.
-The root toolchain is `4.28.0` whereas the nested archived Aristotle
-Lean directory has `4.28.0`. Use the **root** Lake build. A pinned mathlib
-version mismatch or unrelated imported module failure is a genuine build
-failure to fix, not a reason to weaken proof gates or replace tooling.
+The script fails if the pinned real article no longer produces these
+specific negative controls. The JSON ledger records source sentences,
+predicate coordinates, parser dependency heads and exact source spans.
+
+## What the Lean kernel establishes
+
+`GwbConsumerFibreProof.lean` proves the abstract ACI fibre union,
+source-relative claim/year-string closure, and four non-factorability
+countermodels (occurrence, actor identity, event date and scope).
+`WikipediaArticleProof.lean` checks the actual source, exhaustive
+selected syntax roles/predicates, years, and article source blocks.
+The targeted `GwbProofRunner.lean` tests these without rebuilding
+the full Wikidata executable.
+
+The user reported a passing kernel run at the previous PR #112 head
+`048c08375`; this is **not** evidence that the newer semantic-audit/
+archive-refresh changes have executed. The authoring sandbox does not
+contain Lean/Lake, so its new code remains uncompiled here.
+
+## Still open — required production evidence
+
+No real GWB `SemanticFibreLedger`, live alternatives/transports,
+query-indexed H3/H6/H9 closure receipts, or reviewed S28 join exists in
+the seven original members. Abstract countermodels alone cannot prove
+that production Rust meets those obligations on the 643 sentences.
+
+A future production Rust extraction must append **original,
+source-bound semantic-fibre evidence and review receipts** to the same
+TAR. Compare those directly against these witnessed source
+counterexamples and the existing Agda/Lean consumer laws. Do not
+substitute a Python NLP producer, synthetic provenance ID, or a
+success flag for actual semantic evidence.

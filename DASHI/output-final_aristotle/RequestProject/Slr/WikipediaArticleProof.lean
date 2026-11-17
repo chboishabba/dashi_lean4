@@ -170,45 +170,92 @@ private def validateTextOrder (events : Array Json) (edge : Json) : Bool :=
       | _, _ => false
   | _, _ => false
 
-/-- A timeline entry is only a source-backed DATE phrase with a numeric
-    year and zero or more event candidates in the same parsed sentence.
-    No temporal event-edge or admitted event date is constructed here. -/
-private def validateTimeline
-    (text : String) (dates events : Array Json) (row : Json) : Bool :=
-  match nat? row "year_candidate", nat? row "sentence_index",
-        arr? row "co_sentential_event_refs", str? row "surface" with
-  | some year, some idx, some refs, some surface =>
+/-- A raw PROPN tag is a proper-noun TOKEN, not a named person identity.
+    The proof reopens the same sentence and parser dependency row. -/
+private def validateProperNounToken
+    (text : String) (original : Array Json) (token : Json) : Bool :=
+  str? token "pos" == some "PROPN" &&
+  bool? token "candidate_only" == some true &&
+  bool? token "entity_identity_paid" == some false &&
+  bool? token "person_type_paid" == some false &&
+  original.toList.any (fun candidate =>
+    nat? candidate "sentence_index" == nat? token "sentence_index" &&
+    match arr? candidate "dependency_rows" with
+    | some rows => originalToken text rows token
+    | none => false)
+
+/-- Even when NER is absent, a four-digit literal-year substring can
+    have a stronger exact-source + ORIGINAL spaCy token witness.
+    It remains a date-like lexical observation, NOT an event date. -/
+private def validateLexicalYear
+    (text : String) (original : Array Json) (row : Json) : Bool :=
+  match nat? row "year_candidate", nat? row "start_char",
+        nat? row "end_char", nat? row "sentence_index",
+        nat? row "parser_token_i", nat? row "parser_token_start",
+        nat? row "parser_token_end", str? row "parser_token_surface" with
+  | some year, some start, some stop, some idx,
+    some tokenI, some tokenStart, some tokenStop, some tokenSurface =>
       decide (1800 ≤ year ∧ year ≤ 2099) &&
-      decide ((surface.splitOn (toString year)).length > 1) &&
-      str? row "kind" == some "source-date-mention-not-event-date" &&
+      str? row "surface" == some (toString year) &&
       spanExact text row &&
-      dates.toList.any (fun date =>
-        str? date "surface" == some surface &&
-        nat? date "start_char" == nat? row "start_char" &&
-        nat? date "end_char" == nat? row "end_char") &&
+      decide (tokenStart ≤ start ∧ start < stop ∧ stop ≤ tokenStop ∧
+              tokenStop ≤ text.toList.length) &&
+      substring text tokenStart tokenStop == tokenSurface &&
+      str? row "evidence_kind" ==
+        some "literal-year-inside-original-parser-token" &&
+      bool? row "candidate_only" == some true &&
+      bool? row "event_time_paid" == some false &&
+      original.toList.any (fun candidate =>
+        str? candidate "claim_candidate_id" ==
+          str? row "slr_claim_candidate_id" &&
+        nat? candidate "sentence_index" == some idx &&
+        match arr? candidate "dependency_rows" with
+        | some rows => rows.toList.any (fun raw =>
+            nat? raw "i" == some tokenI &&
+            nat? raw "idx" == some tokenStart &&
+            str? raw "text" == some tokenSurface &&
+            tokenStop == tokenStart + tokenSurface.toList.length)
+        | none => false)
+  | _, _, _, _, _, _, _, _ => false
+
+/-- Lexical year index with bounded candidate co-occurrences, not a
+    world-level before/after relation or licensed event timestamp. -/
+private def validateTimeline
+    (text : String) (original events : Array Json) (row : Json) : Bool :=
+  validateLexicalYear text original row &&
+  str? row "kind" == some "source-year-mention-not-event-date" &&
+  match nat? row "sentence_index", arr? row "co_sentential_event_refs" with
+  | some idx, some refs =>
       refs.toList.all (fun ref =>
         events.toList.any (fun event =>
           str? event "event_candidate_ref" == ref.getStr?.toOption &&
           nat? event "sentence_index" == some idx))
-  | _, _, _, _ => false
+  | _, _ => false
 
 /-- A source-verification success never implies that an extracted event
     occurred: it certifies the relation to source/parser observations only. -/
 def checkProjection (text : String) (source projection : Json) : Bool :=
   match arr? source "pnf_candidates",
-        arr? source "named_entities",
         arr? projection "event_candidates",
         arr? projection "people_mentions",
         arr? projection "time_mentions",
+        arr? projection "proper_noun_tokens",
+        arr? projection "literal_year_mentions",
         arr? projection "timeline_candidates",
         arr? projection "text_order_edges" with
-  | some original, some entities, some events,
-    some people, some dates, some timeline, some order =>
+  | some original, some events, some people, some dates,
+    some proper, some years, some timeline, some order =>
+      let rawNamed := (source.getObjVal? "named_entities").toOption
+      let entities := (arr? source "named_entities").getD #[]
+      let nerPresent := rawNamed.isSome
       str? source "schema" == some "slr-source-unit-pnf-record-v1" &&
       str? projection "schema" == some "slr-jmd-wikipedia-article-candidates-v1" &&
       str? projection "wikidata_item_qid" == some "Q207" &&
       str? source "source_unit_ref" == str? projection "source_unit_ref" &&
       str? source "revision_ref" == str? projection "source_revision_ref" &&
+      bool? projection "ner_observations_present" == some nerPresent &&
+      (!nerPresent || (arr? source "named_entities").isSome) &&
+      (nerPresent || (people.isEmpty && dates.isEmpty)) &&
       bool? source "candidate_only" == some true &&
       bool? source "semantic_promotion" == some false &&
       bool? source "parser_output_creates_ontology_truth" == some false &&
@@ -223,9 +270,11 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       events.toList.all (validateEvent text original) &&
       people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
       dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
-      timeline.toList.all (validateTimeline text dates events) &&
+      proper.toList.all (validateProperNounToken text original) &&
+      years.toList.all (validateLexicalYear text original) &&
+      timeline.toList.all (validateTimeline text original events) &&
       order.toList.all (validateTextOrder events)
-  | _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _ => false
 
 /-- This exact-source certificate is obtained only after checking the
     literal article, SLR original parser rows and projected evidence. -/
@@ -271,10 +320,12 @@ def verifyFiles
     let events := (arr? projection "event_candidates").getD #[]
     let persons := (arr? projection "people_mentions").getD #[]
     let dates := (arr? projection "time_mentions").getD #[]
+    let years := (arr? projection "literal_year_mentions").getD #[]
+    let proper := (arr? projection "proper_noun_tokens").getD #[]
     let order := (arr? projection "text_order_edges").getD #[]
     let timeline := (arr? projection "timeline_candidates").getD #[]
     IO.println s!"JMD_LEAN_SOURCE_PROOF_OK sha256={sha}"
-    IO.println s!"people_mentions={persons.size} event_candidates={events.size} date_mentions={dates.size} timeline_candidates={timeline.size} text_order_edges={order.size}"
+    IO.println s!"ner_people_mentions={persons.size} proper_noun_tokens={proper.size} event_candidates={events.size} ner_date_mentions={dates.size} literal_year_mentions={years.size} timeline_candidates={timeline.size} text_order_edges={order.size}"
     IO.println "PROVED: exact source spans and original SLR parser-row support; textual ordering only."
     IO.println "OPEN: entity identity, interpretation licence, event occurrence, historical chronology."
     return true

@@ -45,6 +45,30 @@ lake exe wikidata gwb-article-check \
   "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
   | tee "$out/article-source-proof.log"
 
+# Adversarial replay of the *same* Lean checker. jq changes test
+# fixtures only; it does not parse/produce language interpretations.
+if command -v jq >/dev/null; then
+  reject_mutation() {
+    local name="$1"
+    local filter="$2"
+    jq "$filter" "$tmp/article-candidates.json" > "$tmp/forged-$name.json"
+    if lake exe wikidata gwb-article-check \
+        "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/forged-$name.json" \
+        > "$out/rejected-$name.log" 2>&1; then
+      echo "UNSOUND: Lean accepted forged article evidence ($name)" >&2
+      exit 1
+    fi
+    echo "LEAN_NEGATIVE_CONTROL_REJECTED $name"
+  }
+  reject_mutation missing-predicate '.event_candidates |= .[1:]'
+  reject_mutation missing-direct-actor '.event_candidates[1].actors = []'
+  reject_mutation false-year-index '.timeline_candidates[0].year_candidate = 0'
+  reject_mutation promoted-world-truth '.source_assertion_is_world_truth = true'
+  reject_mutation forged-paragraph-boundary '.sections[0].end_char += 1'
+else
+  echo "Optional source-mutation negative tests SKIPPED (jq unavailable)"
+fi
+
 cat > "$out/proof-boundary.txt" <<'EOF'
 LEAN_GWB_CONSUMER_PROOF_BOUNDARY_V1
 Kernel proved: generic provenance-preserving fibre join ACI;

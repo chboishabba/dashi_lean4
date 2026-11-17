@@ -40,6 +40,12 @@
 'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
+'Wikidata.Slr.GwbP5P10.p5OriginalSourceSurvivesReview' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p6PreservesBothOriginalChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p8ConsumerAnswerSound' does not depend on any axioms
+'Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence' depends on axioms: [propext, Classical.choice, Quot.sound]
 GWB_FIBRE_THEOREMS_KERNEL_OK
 PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance
 NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence

@@ -1,0 +1,9 @@
+/home/c/Documents/code/dashi_lean4/DASHI/output-final_aristotle/RequestProject/Slr/GwbP5P10ExactWeld.lean:63:5: warning: unused variable `review`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/c/Documents/code/dashi_lean4/DASHI/output-final_aristotle/RequestProject/Slr/GwbP5P10ExactWeld.lean:188:5: warning: unused variable `temporal`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/c/Documents/code/dashi_lean4/DASHI/output-final_aristotle/RequestProject/Slr/GwbP5P10ExactWeld.lean:219:5: warning: unused variable `alignment`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`

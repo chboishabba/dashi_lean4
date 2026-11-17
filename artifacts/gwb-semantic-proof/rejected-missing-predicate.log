@@ -40,4 +40,10 @@
 'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
  Classical.choice,
  Quot.sound]
+'Wikidata.Slr.GwbP5P10.p5OriginalSourceSurvivesReview' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p6PreservesBothOriginalChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p8ConsumerAnswerSound' does not depend on any axioms
+'Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence' depends on axioms: [propext, Classical.choice, Quot.sound]
 uncaught exception: JMD Lean rejected a forged or unsupported source/PNF projection

@@ -134,10 +134,11 @@ if [[ -n "$qid_json" ]]; then
   lake env lean --run tools/GwbProofRunner.lean article-qid-check \
     "$source_dir/article.txt" "$source_dir/slr-record.json" \
     "$source_dir/article-candidates.json" "$qid_json"
-  # Optional real end-to-end P4 check: use original locally executed Rust
-  # receipt if explicitly supplied, otherwise the prior committed receipt.
-  p4_native="${GWB_P4_NATIVE_JSON:-$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json}"
-  if [[ -f "$p4_native" ]]; then
+  # The historical P4 native Rust receipt is NOT a canonical article-semantic
+  # premise. Reopen it only on the explicitly selected legacy diagnostic lane.
+  if [[ "$mode" == "--legacy-rust" ]]; then
+    p4_native="${GWB_P4_NATIVE_JSON:-$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json}"
+    [[ -f "$p4_native" ]] || { echo "Legacy Rust P4 receipt absent" >&2; exit 2; }
     lake env lean --run tools/GwbProofRunner.lean article-p4-check \
       "$source_dir/article.txt" "$source_dir/slr-record.json" \
       "$source_dir/article-candidates.json" "$p4_native" "$qid_json"

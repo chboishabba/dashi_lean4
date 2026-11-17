@@ -100,9 +100,20 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceCon
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbNativeFibreReceipt.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbNativeFibreReceipt.lean" \
   2>&1 | tee "$out/native-fibre-lean-build.log"
+# Build the previously source-written finite consumer theorem and the
+# same-owner JMD/SLR composition theorem before loading the GWB runner.
+# Keeping each OLEAN path explicit makes missing imports fail closed.
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/FiniteConsumerCertificate.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/FiniteConsumerCertificate.lean" \
+  2>&1 | tee "$out/finite-consumer-build.log"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbProofComposition.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbProofComposition.lean" \
+  2>&1 | tee "$out/proof-composition-build.log"
 lake env lean tools/GwbProofRunner.lean 2>&1 | tee "$out/lean-build.log"
 lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"
+lake env lean --run tools/GwbProofRunner.lean composition \
+  | tee "$out/proof-composition-proof.log"
 lake env lean tools/GwbProofRunner.lean \
   | tee "$out/axiom-audit.log"
 if grep -qE 'sorryAx|admitAx' "$out/axiom-audit.log"; then
@@ -178,6 +189,7 @@ reject_rust_semantic_mutation false-residual-closure \
 cat > "$out/proof-boundary.txt" <<'EOF'
 LEAN_GWB_CONSUMER_PROOF_BOUNDARY_V1
 Kernel proved: generic provenance-preserving fibre join ACI;
+conditional complete-finite-fibre query constancy and JMD KB witness composition;
 source-relative reported-claim and year-string consumer sufficiency;
 nonfactorability of world occurrence, actor identity, event date, embedded scope
 under the deliberately unresolved two-reading fibre.

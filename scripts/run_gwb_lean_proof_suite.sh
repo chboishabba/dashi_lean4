@@ -114,6 +114,31 @@ lake env lean --run tools/GwbProofRunner.lean rust-fibre-check \
   "$out/slr-rust-observations.json" \
   | tee "$out/native-fibre-source-proof.log"
 
+# Adversarial controls on the ACTUAL Rust SLR alternative/residual and
+# consumer receipts. They must fail in the Lean native-fibre consumer.
+reject_rust_semantic_mutation() {
+  local name="$1"
+  local filter="$2"
+  jq "$filter" "$out/slr-rust-observations.json" > "$tmp/forged-slr-$name.json"
+  if lake env lean --run tools/GwbProofRunner.lean rust-fibre-check \
+      "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+      "$tmp/forged-slr-$name.json" \
+      > "$out/rejected-slr-$name.log" 2>&1; then
+    echo "UNSOUND: Lean accepted forged native SLR semantic evidence ($name)" >&2
+    exit 1
+  fi
+  echo "SLR_RUST_SEMANTIC_NEGATIVE_CONTROL_REJECTED $name"
+}
+reject_rust_semantic_mutation passive-by-as-actor \
+  '(.sentence_observations[] | .candidates[] | select(.kind=="ReferenceRelation")).kind = "Role(Actor)"'
+reject_rust_semantic_mutation event-date-falsely-closed \
+  '(.consumer_adequacy.runtime_outcomes[] | select(.query_ref=="gwb:event:when")).disposition = "Adequate"'
+reject_rust_semantic_mutation forged-occurrence '.world_occurrence_paid = true'
+reject_rust_semantic_mutation dropped-ambiguity \
+  '.sentence_observations[18].alternative_fibres |= .[1:]'
+reject_rust_semantic_mutation false-residual-closure \
+  '.sentence_observations[18].residuals[0].consumer_closed = true'
+
 # Adversarial replay of the *same* Lean checker. jq modifies only
 # negative fixtures: it does not parse/produce language interpretations.
 {

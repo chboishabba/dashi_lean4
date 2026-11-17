@@ -50,6 +50,7 @@ compile_slr GwbHyperfabricTransport
 compile_slr GwbArticleSystemSoundness
 compile_slr GwbP4SourceLicence
 compile_slr GwbP4ArticleEndToEnd
+compile_slr GwbP5P10ExactWeld
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 lake env lean --run tools/GwbProofRunner.lean p4

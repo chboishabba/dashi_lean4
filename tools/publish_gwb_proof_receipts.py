@@ -18,7 +18,7 @@ PIN_REV = "enwiki-revid:1385850169"
 OUTPUT = Path("artifacts/gwb-semantic-proof")
 LOGS = (
     "source-consumer-build.log", "native-fibre-lean-build.log",
-    "typed-semantic-fibre-build.log",
+    "typed-semantic-fibre-build.log", "q207-identity-proof-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
     "db-m12-s28-build.log", "jmd-property-proof-build.log",
     "world-graph-proof-build.log", "finite-consumer-build.log",

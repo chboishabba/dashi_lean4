@@ -294,3 +294,63 @@ bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
 If the next compile reports a theorem error, capture the precise
 module, line and diagnostics. Do not fall back to the whole
 `wikidata` build or assert that a partial compile is a proof receipt.
+
+## P4 source-indexed consumer maximum cut — 17 Nov 2026
+
+The production-backed candidate fixture and full original Rust/Lean run
+were previously accepted at PR #112 head `336488ccf`, with 643 source
+sentences, 4,190 candidate rows, 814 alternative fibres and 15,595
+residuals. The original receipt manifest still says that *full production*
+semantic identity, chronology and consumer coverage remain unpaid.
+
+New source-written owner: `RequestProject.Slr.GwbP4SourceLicence`.
+
+This is the first *real GWB source-observation* positive
+`SourceQueryLicence`, rather than a synthetic finite countermodel.
+The checked original article and Rust receipt are decoded into the
+existing `GwbTypedFibre.CheckedRows`, then indexed by the existing
+`GwbHyperfabric.Fragment`. The executable consumer counts source
+sentences, syntactic candidates, clause alternatives, typed residuals,
+or source candidate/residual kinds. Two fragments, selected by original
+sentence parity, are rejoined as the same indexed source object.
+`checkedGwbP4SourceLicenceSound` derives jointly:
+
+* the original `checkRealGwbNativeFibreReceipt = true` proof;
+* every joined-fragment row belongs to the original checked receipt;
+* the positive query answer follows from an actual `SourceQueryLicence`
+  for those rows, independent of abstract unresolved semantic axes.
+
+The key mathematical cut is that source-observable queries are
+**consumer-sufficient even without enumerating all world/actor/event/time
+interpretations**. That does NOT mean an identity, occurrence or
+event-time consumer is closed. `unresolvedAxesDoNotChangeSourceAnswer`
+makes this boundary explicit.
+
+Existing Agda owners remain golden for semantic identity, event and
+chronology refinements. No new NLP producer or alternate event ontology
+is added.
+
+Acceptance path:
+
+```bash
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+SLR_ROOT=/path/to/original/slr bash scripts/run_gwb_maxcut_acceptance.sh --full
+```
+
+The proof-only run compiles/audits `GwbP4SourceLicence.lean`.
+The full run requires the original ignored GWB source fixture and demands
+the new `GWB_P4_SOURCE_LICENCE_KERNEL_OK` marker from the **actual Rust
+receipt** after Lean verifies original source binding and typed decoding.
+Receipt publication also requires the new P4 build log and marker.
+The 10 existing negative controls remain mandatory.
+
+**Status of this P4 addition: source written and committed; no claim of
+Lean acceptance until the operator runs it.**
+
+Outstanding P4 semantic frontier (different from the positive source-only
+cut above): reviewed cross-sentence referent identity, original M12/S28
+event joining, a semantic interpretation interface for those same
+source objects, and a query-specific `SourceQueryLicence` for an identity
+or event-time question under independently checked producer/review
+evidence. A source-only positive result is not authority for those
+different queries.

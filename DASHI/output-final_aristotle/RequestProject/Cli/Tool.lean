@@ -5,6 +5,7 @@ import RequestProject.Slr.Proof
 import RequestProject.Slr.SentenceBeliefCorrection
 import RequestProject.Slr.DocumentQuerySound
 import RequestProject.Slr.TemporalDocumentProof
+import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.SourceUnitProducer
 import RequestProject.Slr.DbSourceProducer
 import RequestProject.Slr.WikipediaArticleProof
@@ -1031,6 +1032,14 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["gwb-fibre-proof"] =>
+      -- This executable imports the kernel-checked GWB fibre/convergence
+      -- theorems. It certifies their *logical contracts*, not the provenance
+      -- or semantic admission of an external article.
+      IO.println "GWB_FIBRE_THEOREMS_KERNEL_OK"
+      IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
+      IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
+      return 0
   | ["gwb-article-replay", outputDir] =>
       cmdGwbArticleReplay outputDir o
   | ["gwb-article-check", articleText, slrRecord, projection] =>

@@ -3,6 +3,7 @@ import RequestProject.Slr.WikipediaArticleProof
 import RequestProject.Slr.GwbRealSourceConsumer
 import RequestProject.Slr.GwbNativeFibreReceipt
 import RequestProject.Slr.GwbProofComposition
+import RequestProject.Slr.DbSourceProducer
 
 open Wikidata
 
@@ -89,6 +90,63 @@ def runNativeFibreReceipt (articlePath sourcePath projectionPath nativePath : St
       IO.eprintln "GWB_RUST_FIBRE_LEAN_REJECTED: invalid evidence JSON"
       return 1
 
+/-- Independently re-open an actual persisted M12 source product.
+    This checks the raw literal and its digest; it does not replace the
+    original PostgreSQL parser-run identity checked by callSlrDbM12. -/
+def runSavedM12Check (jsonPath literalPath : String) : IO UInt32 := do
+  let literal ← IO.FS.readFile literalPath
+  let encoded ← IO.FS.readFile jsonPath
+  let json ← match Lean.Json.parse encoded with
+    | .ok value => pure value
+    | .error err =>
+        IO.eprintln s!"Invalid DB M12 JSON: {err}"
+        return 1
+  let observed ← match Slr.decodeDbM12Observation json with
+    | some value => pure value
+    | none =>
+        IO.eprintln "GWB_DB_M12_PROVENANCE_REJECTED: invalid/promoted DB source"
+        return 1
+  let hash ← IO.Process.output { cmd := "sha256sum", args := #[literalPath] }
+  if hash.exitCode != 0 then
+    IO.eprintln "GWB_DB_M12_PROVENANCE_REJECTED: sha256sum failed"
+    return 1
+  let digest := (hash.stdout.splitOn " ").head!
+  if digest != observed.sourceLiteralDigest then
+    IO.eprintln "GWB_DB_M12_PROVENANCE_REJECTED: original literal SHA mismatch"
+    return 1
+  if h : Slr.checkNativeM12Literal literal observed = true then
+    let checked : Slr.CheckedNativeM12Literal literal observed := ⟨h⟩
+    let _ := Slr.checkedM12AllSourceSpansExact checked
+    IO.println "GWB_DB_M12_LITERAL_AND_DEPENDENCY_KERNEL_OK"
+    IO.println "Scope: source-bound original M12 product; no event/identity admission"
+    return 0
+  else
+    IO.eprintln "GWB_DB_M12_PROVENANCE_REJECTED: source or dependency mismatch"
+    return 1
+
+/-- Consume the original SLR timeline-candidates JSON for an event
+    assembled in M12. The whole source/observation/claim ancestry is
+    reconstructed independently of the producer's completeness flag. -/
+def runSavedS28Check (jsonPath eventRef : String) : IO UInt32 := do
+  if eventRef.isEmpty then
+    IO.eprintln "GWB_S28_SOURCE_TRACE_REJECTED: event reference empty"
+    return 1
+  let encoded ← IO.FS.readFile jsonPath
+  let json ← match Lean.Json.parse encoded with
+    | .ok value => pure value
+    | .error err =>
+        IO.eprintln s!"GWB_S28_SOURCE_TRACE_REJECTED: invalid JSON {err}"
+        return 1
+  if h : Slr.checkS28Provenance json eventRef = true then
+    let checked : Slr.CheckedS28Provenance json eventRef := ⟨h⟩
+    let _ := Slr.checkedS28HasCompleteAncestry checked
+    IO.println "GWB_DB_S28_SOURCE_TRACE_KERNEL_OK"
+    IO.println "Scope: consistent source/observation/event provenance; no semantic identity or chronology admission"
+    return 0
+  else
+    IO.eprintln "GWB_S28_SOURCE_TRACE_REJECTED: incomplete or promoted M12/S28 ancestry"
+    return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["fibre"] =>
@@ -96,6 +154,10 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["db-m12-check", json, literal] =>
+      runSavedM12Check json literal
+  | ["db-s28-check", json, event] =>
+      runSavedS28Check json event
   | ["composition"] =>
       IO.println "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK"
       IO.println "PROVED: checked finite semantic consumer constancy under explicit complete live-fibre enumeration and source correspondence"
@@ -112,7 +174,7 @@ def main (args : List String) : IO UInt32 := do
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON"
+      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -129,3 +191,6 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.FiniteConsumer.completeFiniteFibreConsumerClosed
 #print axioms Wikidata.Slr.GwbProofComposition.checkedFiniteArticleAnswerSound
 #print axioms Wikidata.Slr.GwbProofComposition.independentArticleAndKBResultsSound
+
+#print axioms Wikidata.Slr.checkedM12AllSourceSpansExact
+#print axioms Wikidata.Slr.checkedS28HasCompleteAncestry

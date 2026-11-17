@@ -117,6 +117,19 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit,
         "rejected-slr-" + n + ".log" for n in RUST_NEGATIVE)
     for name in all_logs:
         require((run / name).is_file(), "missing executed proof/negative log: " + name)
+    # A failing subprocess is not sufficient: every adversarial control
+    # must be rejected by the intended Lean source/semantic checker, not
+    # by a crash, missing dependency or malformed runner invocation.
+    for negative in NEGATIVE:
+        name = "rejected-" + negative + ".log"
+        log = (run / name).read_bytes()
+        require(b"JMD Lean rejected a forged or unsupported source/PNF projection" in log,
+                "adversarial source control failed for the wrong reason: " + name)
+    for negative in RUST_NEGATIVE:
+        name = "rejected-slr-" + negative + ".log"
+        log = (run / name).read_bytes()
+        require(b"GWB_RUST_FIBRE_LEAN_REJECTED:" in log,
+                "adversarial semantic control failed for the wrong reason: " + name)
     for name, marker in MARKERS.items():
         require(marker.encode() in (run / name).read_bytes(), "missing " + marker)
     require(b"sorryAx" not in (run / "axiom-audit.log").read_bytes() and

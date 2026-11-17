@@ -35,8 +35,10 @@ Expected on success:
 - `GWB_LEAN_CONSUMER_AND_ARCHIVE_PROOF_SUITE_PASS`
 
 Output logs: `.gwb_lean_proof/lean-build.log`,
-`consumer-fibre-proof.log`, `article-source-proof.log`,
-`proof-boundary.txt`.
+`consumer-fibre-proof.log`, `axiom-audit.log`,
+`article-source-proof.log`, `proof-boundary.txt`.
+The explicit `#print axioms` step inspects kernel dependencies and rejects
+`sorryAx`/`admitAx`; ordinary Lean `propext` is not an admission shortcut.
 
 ## 2. What is actually proved
 

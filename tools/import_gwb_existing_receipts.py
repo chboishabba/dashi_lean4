@@ -82,7 +82,8 @@ def main():
             previous = json.load(tar.extractfile("proof/proof_run_manifest.json"))
             slr_head = previous.get("rust_source_repo_head")
             lean_version = previous.get("lean_version")
-            if not slr_head or not lean_version:
+            jmd_head_at_run = previous.get("git_head")
+            if not slr_head or not lean_version or not jmd_head_at_run:
                 raise ValueError("missing original run's exact Rust/Lean provenance")
         # Never overwrite an existing original fixture of different bytes.
         if source.exists():
@@ -93,7 +94,7 @@ def main():
             data_source.rename(source)
         # Publish the REAL captured run, no Rust or Lean rerun.
         publish(repo, source, data_logs, slr_head, lean_version,
-                not args.no_commit)
+                not args.no_commit, jmd_head_at_run=jmd_head_at_run)
         print("GWB_LEGACY_TAR_RECEIPTS_IMPORTED_TO_GIT")
         if args.delete_on_success:
             if args.no_commit:

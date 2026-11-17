@@ -55,6 +55,12 @@ lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 lake env lean --run tools/GwbProofRunner.lean p4
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
+# P5-P10: test semantic-promotion negative controls and classify the
+# existing original P4 evidence. This audit is NOT a positive review.
+python3 -m unittest discover -s tests -p 'test_gwb_p5_p10_evidence_audit.py'
+python3 tools/gwb_p5_p10_evidence_audit.py \
+  --manifest "$root/artifacts/gwb-semantic-proof/proof_run_manifest.json"
+
 # Optional real DB-native outputs. These files must be produced by the
 # original checked SLR/PostgreSQL path; no JSON or event identity is invented.
 # M12 requires its exact source literal; S28 requires its event reference.

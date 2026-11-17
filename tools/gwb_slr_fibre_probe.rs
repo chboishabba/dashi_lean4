@@ -7,7 +7,7 @@
 //! semantic runtime: never label this output a reviewed GWB semantic fibre.
 //!
 //! Usage: gwb_slr_fibre_probe ARTICLE.txt SLR-RECORD.json OUTPUT.json
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 
@@ -181,8 +181,10 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
                 HeadDeclaration::LocalOrdinal(
                     *index.get(&head_i).ok_or("original parser dependency head missing")?)
             };
-            let dep_symbol = interner.id("dep", dep)?;
             let signal = classify(dep, tag, surface);
+            // AUX/mark signals can depend on tag/surface, not merely dep.
+            // Preserve this distinction in the SymbolId -> signal map.
+            let dep_symbol = interner.id("dep-signal", &format!("{dep}:{signal:?}"))?;
             let dep_slot = usize::try_from(dep_symbol).map_err(|_| "symbol overflow")?;
             if signals.len() <= dep_slot {
                 signals.resize(dep_slot + 1, ExpansionSignal::Unsupported);
@@ -274,6 +276,12 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
         "full_production_s28_or_hyperfabric_closure": false,
         "consumer_specific_semantic_licence_paid": false,
         "world_occurrence_paid": false,
+        "scope_and_role_contract": {
+            "conj_is_not_automatically_source_assertion": true,
+            "agent_preposition_is_not_automatically_Actor": true,
+            "clausal_alternatives_are_retained_as_unresolved": true,
+            "unresolved_temporal_modifier_never_asserts_event_time": true
+        },
         "real_source_witnesses": sample_witnesses,
         "sentence_observations": observations
     }))
@@ -294,4 +302,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         receipt["alternative_fibre_count"], receipt["typed_residual_count"]
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn passive_agent_marker_does_not_promote_preposition_to_actor() {
+        assert!(matches!(classify("agent", "IN", "by"),
+            ExpansionSignal::ReferenceAttachment));
+    }
+    #[test]
+    fn coordination_is_not_a_standalone_world_assertion() {
+        assert!(matches!(classify("conj", "VBD", "had"),
+            ExpansionSignal::Unsupported));
+        assert!(matches!(classify("acl", "VBD", "possessed"),
+            ExpansionSignal::ClausalModifier));
+    }
+    #[test]
+    fn arbitrary_number_is_not_automatically_a_temporal_anchor() {
+        assert!(matches!(classify("nummod", "CD", "2003"),
+            ExpansionSignal::Unsupported));
+    }
+    #[test]
+    fn modal_typed_but_nonmodal_auxiliary_not_falsely_licensed() {
+        assert!(matches!(classify("aux", "MD", "may"),
+            ExpansionSignal::ModalAuxiliary));
+        assert!(matches!(classify("aux", "VB", "have"),
+            ExpansionSignal::Unsupported));
+    }
 }

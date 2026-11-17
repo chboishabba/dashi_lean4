@@ -10,6 +10,7 @@ import RequestProject.Slr.GwbArticleIdentity
 import RequestProject.Slr.GwbArticleSystemSoundness
 import RequestProject.Slr.GwbP4SourceLicence
 import RequestProject.Slr.GwbP4ArticleEndToEnd
+import RequestProject.Slr.GwbP5P10ExactWeld
 
 open Wikidata
 open Lean
@@ -421,3 +422,10 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery
 #print axioms Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals
+
+#print axioms Wikidata.Slr.GwbP5P10.p5OriginalSourceSurvivesReview
+#print axioms Wikidata.Slr.GwbP5P10.p6PreservesBothOriginalChecks
+#print axioms Wikidata.Slr.GwbP5P10.p8ConsumerAnswerSound
+#print axioms Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks
+#print axioms Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported
+#print axioms Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence

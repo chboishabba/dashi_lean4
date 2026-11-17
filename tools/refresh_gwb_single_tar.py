@@ -24,9 +24,10 @@ ORIGINAL = (
 AUDIT = "proof/semantic_observer_audit.json"
 SUMMARY = "proof/semantic_observer_audit.md"
 MANIFEST = "proof/proof_run_manifest.json"
-LOGS = ("source-consumer-build.log", "lean-build.log",
-        "axiom-audit.log", "consumer-fibre-proof.log",
-        "article-source-proof.log", "semantic-scope-proof.log")
+LOGS = ("source-consumer-build.log", "native-fibre-lean-build.log",
+        "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
+        "article-source-proof.log", "semantic-scope-proof.log",
+        "native-fibre-source-proof.log")
 
 def require(ok, error):
     if not ok:
@@ -136,6 +137,9 @@ def pack(path, report, logs=None, lean_version=None, head=None,
         require(b"GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED" in
                 additional["proof/semantic-scope-proof.log"],
                 "actual source-backed scope theorem did not run")
+        require(b"GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS" in
+                additional["proof/native-fibre-source-proof.log"],
+                "Rust alternative fibres/residuals were not accepted by actual Lean source checker")
         require(b"sorryAx" not in additional["proof/axiom-audit.log"] and
                 b"admitAx" not in additional["proof/axiom-audit.log"],
                 "axiom audit contains admitted proof")

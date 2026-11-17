@@ -149,6 +149,8 @@ lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"
 lake env lean --run tools/GwbProofRunner.lean composition \
   | tee "$out/proof-composition-proof.log"
+lake env lean --run tools/GwbProofRunner.lean p4 \
+  | tee "$out/p4-source-licence-proof.log"
 lake env lean tools/GwbProofRunner.lean \
   | tee "$out/axiom-audit.log"
 if grep -qE 'sorryAx|admitAx' "$out/axiom-audit.log"; then

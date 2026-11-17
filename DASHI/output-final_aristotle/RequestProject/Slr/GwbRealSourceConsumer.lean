@@ -94,12 +94,11 @@ theorem flatScopeCannotAnswerEmbeddedParent
     ¬ ∃ (consumer : String → Bool),
         consumer a.scopeLabel = a.parentEmbedded ∧
         consumer b.scopeLabel = b.parentEmbedded := by
-  rintro ⟨consumer, ha, hb⟩
-  apply different
-  calc
-    a.parentEmbedded = consumer a.scopeLabel := ha.symm
-    _ = consumer b.scopeLabel := congrArg consumer same
-    _ = b.parentEmbedded := hb
+  intro h
+  cases h with
+  | intro consumer evidence =>
+    exact different
+      (evidence.1.symm.trans ((congrArg consumer same).trans evidence.2))
 
 /-- Checked only if the complete original article projection was source
     verified by the separately kernel-checked WikipediaArticleProof module. -/

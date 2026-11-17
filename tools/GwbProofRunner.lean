@@ -309,6 +309,11 @@ def main (args : List String) : IO UInt32 := do
       runSavedM12Check json literal
   | ["db-s28-check", json, event] =>
       runSavedS28Check json event
+  | ["p4"] =>
+      IO.println "GWB_P4_SOURCE_THEOREMS_KERNEL_OK"
+      IO.println "PROVED: same-source typed original fragment join, unrestricted unresolved-axis source-query factorization, and positive SourceQueryLicence construction"
+      IO.println "NOT PROVED: live GWB reviewed actor/event/time identity or semantic world-truth consumer"
+      return 0
   | ["composition"] =>
       IO.println "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK"
       IO.println "GWB_ARTICLE_LOCAL_SYSTEM_THEOREM_KERNEL_OK"

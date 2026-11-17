@@ -389,3 +389,88 @@ P4 source-only theorem acceptance and the five-input real Q207 join have
 **not** been locally executed by the author of this source patch.
 The pre-existing PR #112 `336488ccf` run remains the accepted P3 proof
 substrate.
+
+## P5–P10 integrated maximum cut — 17 November 2026
+
+The verified P4 source proof substrate is PR #112 `eada25574`.
+The **actual committed manifest** states:
+`reviewed_semantic_transports: NOT_TESTED`,
+`production_db_s28: NOT_TESTED`,
+`full_consumer_factors_through_certificate: NOT_PAID`,
+and `historical_occurrence: NOT_LICENSED`.
+
+### New implementation
+
+`Slr/GwbP5P10ExactWeld.lean` reuses original source owners without
+inserting a simulated semantics:
+
+- **P5** `SourceAnchor` and `ReviewedIdentity`: real
+  `CheckedRows` and sentence member; reviewed mention/referent
+  relation is separately required. `p5OriginalSourceSurvivesReview`
+  transports the original native receipt.
+- **P6** `ReviewedEvent`: original `CheckedNativeM12Literal`,
+  `CheckedS28Provenance`, source-statement link and independently
+  reviewed event equivalence. `p6PreservesBothOriginalChecks`.
+- **P7** `ReviewedTemporal`: time-event/source meaning is explicit
+  additional evidence, not extracted from S28 candidate-only flags.
+- **P8** `ReviewedConsumer`: requires the EXISTING
+  `SourceQueryLicence`. Its soundness is `p8ConsumerAnswerSound`;
+  `FiniteConsumer.CompleteEnumeration` remains available when all
+  production-live interpretations can actually be proven covered.
+- **P9** `ReviewedArticleKBAlignment`: explicit reviewed
+  article-proposition ↔ JMD statement alignment, not just a Q207
+  sitelink; `p9AlignmentRetainsIndependentChecks`.
+- **P10** `CompletelyCheckedWorld`: all original candidate world edges
+  need an independently reimported JMD
+  `GwbWorldGraph.proofForEdge?` witness, otherwise the inventory is
+  unresolved. `p10AllEdgesJmdSupported`.
+
+`fullChainKeepsSeparateEvidence` is a compositional theorem
+requiring actual review objects for P5/P6/P7/P9 and full JMD edge
+coverage. It **does not** construct those witnesses from names,
+unpaid parser candidates, review-reference strings or success flags.
+
+Original Agda research **already contains a relevant reviewed
+Wikimedia identity overlay**, in
+`chboishabba/dashi_agda/fixtures/slr/gwb-reviewed-wikimedia-identities-v1.jsonl`
+with 10 document-level coordinates and
+`SLRGWBReviewedWikimediaIdentityAndTieredTransportExact.agda`.
+Those records are **candidate-only** and explicitly distinguish
+`topic-anchor-not-source-object` from exact-work identity. In
+particular, the six Q207 subject-person topic anchors are not a
+sentence-level mention→referent review for the pinned GWB article.
+The source-work entry for *Family of Secrets* intentionally has no
+reviewed QID. P5 cannot promote this overlay into actor identity.
+
+A new fail-closed audit
+`tools/gwb_p5_p10_evidence_audit.py` classifies existing real
+receipts and optionally the exact overlay, S28 candidate record and
+JMD world report. Its negative tests reject unreviewed promotion and
+forged source revisions, and it never marks a semantic gate closed on
+a `candidate_only=true` document. The proof-only runner now compiles
+the integrated Lean owner, runs these negative tests and audits the
+previous actual P4 manifest. This audit passage is not a claim that
+reviewed witnesses exist.
+
+### Acceptance and next decisive source requests
+
+```bash
+git pull --ff-only
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+SLR_ROOT=/home/c/Documents/code/slr bash scripts/run_gwb_maxcut_acceptance.sh --full
+```
+
+To inspect an original reviewed overlay without promotion:
+
+```bash
+python3 tools/gwb_p5_p10_evidence_audit.py \
+  --overlay /path/to/dashi_agda/fixtures/slr/gwb-reviewed-wikimedia-identities-v1.jsonl
+```
+
+**Status:** full proof architecture and fail-closed evidence discriminator
+implemented and pushed; *new* Lean 4.28 execution not yet run by the
+operator. None of P5–P10's substantive GWB-specific reviewed identity,
+event equivalence, temporal admission, complete semantic coverage,
+semantic article/KB equivalence or universal 51-QID statements is yet
+established. A proof whose positive conclusions depend on those
+external evidence premises is NOT a closed empirical semantic gate.

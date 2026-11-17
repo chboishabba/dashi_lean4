@@ -33,10 +33,17 @@ SLR hashes the raw UTF-8 article text:
 a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233.
 By contrast, SensibLaw P0b canonical_text_sha256 is
 c1ae7a8b93b70050f27b64524211d624e3053b1b59f28491ca3db45320c985a1.
-SensibLaw src/policy/entity_resolution.py defines _canonical_digest
-as SHA-256 of canonical JSON encoding (ensure_ascii=False, sorted keys,
-compact separators). Both digests independently recompute correctly.
-Comparing the two literal hashes would produce a false regression failure.
+This TAR was created with a **legacy bug**: P0b used
+_entity_resolution._canonical_digest(text), which hashes JSON-encoded text
+instead of the raw UTF-8 source. Both digests reproduce from this historical
+archive, but **only the raw UTF-8 digest is the correct source identity**.
+After JSON transport is decoded, hashing its text bytes must equal SLR.
+
+SensibLaw PR #515 corrects P0b and expansion source hashing to the raw
+UTF-8 digest. Do not rewrite old carrier IDs in place: the historical
+P0b record must be reissued from the same underlying source and parser
+observations. The archive auditor reports its legacy hash explicitly
+and rejects pretending it already follows the new canonical policy.
 
 ## Mutation regressions
 

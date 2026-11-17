@@ -474,3 +474,53 @@ event equivalence, temporal admission, complete semantic coverage,
 semantic article/KB equivalence or universal 51-QID statements is yet
 established. A proof whose positive conclusions depend on those
 external evidence premises is NOT a closed empirical semantic gate.
+
+## 18 November: P5–P10 actual acceptance audit and JMD scope correction
+
+The executed local P5–P10 acceptance commit is `f429e5573`.
+The original GWB Rust/Lean receipt rechecks all 643 sentences, 4,190
+candidates, 814 alternative fibres and 15,595 typed residuals. It
+also reports 1,146 source-syntactic `Role(Actor)` candidates and
+62 `ReferenceAttachmentUnresolved` residuals; neither proves an
+actor's external identity. The P5–P10 compiler emitted three
+unused-variable warnings and no Lean errors, with normal
+`#print axioms` foundations rather than `sorryAx`.
+
+**Important architectural ownership correction:** original JMD
+`Engine`, `PropertyEngine`, `Cli.Import` and `Cli.Derive`
+formalize the imported Wikidata KB's internal consistency,
+hierarchy, property constraints, saturation, and KB-relative
+derivations. They are not an article parser, actor-identity
+resolver, event evaluator, source-truth judge or semantic
+reading engine. SLR/DASHI exclusively owns the article-internal
+semantic interpretation. Any article–JMD comparison must first
+provide an independently reviewed alignment; JMD then verifies
+only the ontology/KB-relative consequence.
+
+A source-anchored, non-promoting original evidence inventory is
+committed at
+`artifacts/gwb-semantic-proof/p5_p10_original_evidence_inventory.json`.
+It reuses the original DASHI Agda
+`fixtures/slr/gwb-reviewed-wikimedia-identities-v1.jsonl`:
+10 candidate-only acquisition coordinates, eight topic anchors,
+one exact source-work coordinate, and one unresolved work QID
+(*Family of Secrets*). Six Q207 coordinates identify subject
+topic documents; none is an original 643-sentence actor mention
+identity certificate. These are useful *actual original review data*
+for acquisition and source attribution, but **do not instantiate**
+the `ReviewedIdentity` premise of P5.
+
+The committed acceptance still has no DB-native M12/S28
+instance and no independently imported 51-QID JMD property-coverage
+receipt. Accordingly P6/P7/P10 have no positive instance here.
+P8 production-live semantic completeness and P9 article proposition
+↔ KB statement alignment are separately open. The integrated Lean
+theorems are reusable *conditional welds*, not executed semantic
+completion.
+
+Highest-alpha next cut: construct the original source-span anchored
+review identity/temporal data in SLR; replay M12/S28 in their
+original DB-owning runtime; only then query JMD's imported KB for
+independent consistency of explicitly aligned propositions.
+Do NOT require Wikidata coverage for an entirely article-internal
+consumer and do NOT treat a QID sitelink as an article proposition.

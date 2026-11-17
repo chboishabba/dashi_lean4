@@ -146,7 +146,8 @@ def check(article, slr, proj, p0b):
             "reviewed_slr_fibres": "NOT_IN_ARCHIVE",
             "s28_join": "NOT_IN_ARCHIVE",
             "query_relative_closure": "NOT_IN_ARCHIVE",
-            "world_occurrence": "NOT_LICENSED"}},
+            "world_occurrence": "NOT_LICENSED"}}
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("tar")

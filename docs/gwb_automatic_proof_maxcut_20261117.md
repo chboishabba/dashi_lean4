@@ -72,6 +72,111 @@ The *maximum cut* is L3 + L5 + L8b: the real-data representation,
 coherent cross-sentence transport, and proof that the tested consumer covers
 the actual semantic fibre. L8a alone is not semantic completeness.
 
+## Implementation added after the initial roadmap snapshot
+
+The active PR #112 branch now contains the following additional source-written
+Lean proof/adapter declarations and runners. **None is declared kernel-passed
+before the operator runs pinned Lean 4.28.0.**
+
+* `Slr.GwbTypedFibre.decodeCheckedRows?`: parses every candidate, clause
+  alternative and unresolved residual into a typed, source-indexed Lean
+  observation after the existing original-source GWB checker has passed.
+  Failure to decode any row rejects the entire fibre.
+* `Slr.GwbProofComposition.checkedFiniteArticleAnswerSound`: composes
+  exhaustive finite consumer constancy and the existing real
+  `SourceQueryLicence` into JMD/SLR document-query soundness; source/semantic
+  correspondence is still an explicit premise.
+* `Slr.GwbProofComposition.independentArticleAndKBResultsSound`: preserves
+  both an article-relative answer and a JMD KB property witness as
+  independent results, without manufacturing an alignment.
+* `Slr.GwbWorldGraph.checkCandidateWorldGraph`: checks original
+  `slr-wikimedia-world-follow-v1` graph shape and provenance status.
+* `Slr.GwbWorldGraph.checkedWorldPropertySound`: checks each independently
+  re-imported item-valued Wikidata property by the original JMD
+  `PKB.supportsB_iff` theorem. Unsupported edges remain obligations;
+  this does not prove a shared historical Wikidata snapshot.
+* `tools/GwbProofRunner.lean` now offers `db-m12-check`, `db-s28-check`
+  and `world-graph-check` (online/cache-first or offline) with explicit
+  kernel-auditable positive receipts.
+* `scripts/run_gwb_maxcut_acceptance.sh` builds the targeted owner
+  modules and runs the proof-composition audit; `--full` also replays
+  the original Rust/Lean source and negative-control suite without TAR.
+  `--strict` never claims production semantic completeness from these
+  checks alone.
+* `tools/publish_gwb_proof_receipts.py` now requires typed semantic
+  decoding, the conditional composition proof execution, and the
+  original intended Lean rejection marker for every negative control.
+
+**Important:** The GWB property graph edges were initially acquired
+without native Wikidata statement context. Therefore the graph is not
+itself a proof. The new JMD reimporter can prove positive
+`PKB.supportsB` statements for the separately fetched snapshots and
+records the unproved remainder. An eventual article-to-property semantics
+theorem still requires a checked alignment.
+
+## Operator one-command handoff
+
+From the existing PR #112 working branch, with Lean 4.28.0 and JMD dependencies
+already cached:
+
+```bash
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+```
+
+To replay the actual original Wikipedia source and Rust semantic observations:
+
+```bash
+SLR_ROOT=/home/c/Documents/code/slr \
+  bash scripts/run_gwb_maxcut_acceptance.sh --full
+```
+
+The original source fixture must already be present in
+`.dashi/gwb-source/`; no TAR, parser reimplementation, extra archive,
+or whole-`wikidata` executable build is required.
+
+Optional original DB-native outputs:
+
+```bash
+GWB_DB_M12_JSON=/path/to/slr-db-m12-product.json \
+GWB_DB_M12_LITERAL=/path/to/exact-source-literal.txt \
+GWB_DB_S28_JSON=/path/to/slr-s28-event-chronology-candidates.json \
+GWB_DB_S28_EVENT_REF=original-event-ref \
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+```
+
+Optional existing 51-QID world graph, rechecked against JMD's original
+Wikidata getter/importer:
+
+```bash
+GWB_WORLD_GRAPH_JSON=/path/to/gwb-wikimedia-world-graph.json \
+GWB_JMD_ENTITY_CACHE=.dashi/gwb-world/jmd-entity-cache \
+GWB_WORLD_JMD_REPORT=.dashi/gwb-world/jmd-property-proof.json \
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+```
+
+For a deterministic cache-only replay set `GWB_WIKIDATA_OFFLINE=1` and
+populate the JMD entity cache first. The property report records per-QID
+Wikidata `lastrevid` when available, all original graph edges, supported
+edge count, and the complete unresolved candidate edge inventory. It does
+not assert that Wikidata was acquired as one simultaneous snapshot.
+
+### Exact remaining empirical/theorem gates after this source patch
+
+1. Lean 4.28.0 kernel acceptance of the newly source-written modules and
+   original M12/S28 restoration.
+2. Original PostgreSQL parser-run and reviewed M12/S28 receipts on the same
+   source object, including negative controls for missing ancestry.
+3. A proof that the finite emitted readings cover all *production-live*
+   readings relevant to each consumer, or an alternative direct semantic
+   invariance theorem that covers unenumerated readings.
+4. Checked GWB cross-sentence identity/event equivalence and temporal
+   assertions, not just source-bound syntactic roles.
+5. Checked article-proposition ↔ JMD property alignment (separate from
+   independently proved KB support).
+6. A reproducible per-QID graph acquisition/reimport/revision ledger,
+   and eventually a proof-preserving elaboration across all discovered
+   QIDs; the initial historical 51 is not a permanent closed-world count.
+
 ## Exact runnable checks
 
 From the existing PR #112 branch with pinned Lean 4.28.0 and cached olean files:

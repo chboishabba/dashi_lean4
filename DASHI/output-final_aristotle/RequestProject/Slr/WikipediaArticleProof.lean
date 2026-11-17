@@ -216,7 +216,7 @@ private def validateLexicalYear
             str? raw "text" == some tokenSurface &&
             tokenStop == tokenStart + tokenSurface.toList.length)
         | none => false)
-  | _, _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _, _ => false
 
 /-- Lexical year index with bounded candidate co-occurrences, not a
     world-level before/after relation or licensed event timestamp. -/
@@ -232,10 +232,44 @@ private def validateTimeline
           nat? event "sentence_index" == some idx))
   | _, _ => false
 
+/-- The full article's paragraphs and headings must cover the exact
+    supplied source in order. This is a structural source hierarchy ONLY;
+    the semantic sentence-to-paragraph fusion contract remains separate. -/
+def articleSectionCoverageExact (text : String) (sections : Array Json) : Bool :=
+  Id.run do
+    if sections.isEmpty then return false
+    let sourceLength := text.toList.length
+    let mut expectedStart := 0
+    let mut currentHeading := "Lead"
+    for section in sections do
+      let some start := nat? section "start_char"
+        | return false
+      let some stop := nat? section "end_char"
+        | return false
+      let some kind := str? section "kind"
+        | return false
+      let some heading := str? section "heading"
+        | return false
+      if start != expectedStart || start >= stop || stop > sourceLength then
+        return false
+      let fragment := substring text start stop
+      if kind == "heading" then
+        if heading != fragment then return false
+        currentHeading := fragment
+      else if kind == "paragraph" then
+        if heading != currentHeading then return false
+      else
+        return false
+      if stop < sourceLength && substring text stop (stop + 2) != "\n\n" then
+        return false
+      expectedStart := stop + 2
+    return expectedStart == sourceLength + 2
+
 /-- A source-verification success never implies that an extracted event
     occurred: it certifies the relation to source/parser observations only. -/
 def checkProjection (text : String) (source projection : Json) : Bool :=
   match arr? source "pnf_candidates",
+        arr? projection "sections",
         arr? projection "event_candidates",
         arr? projection "people_mentions",
         arr? projection "time_mentions",
@@ -243,7 +277,7 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
         arr? projection "literal_year_mentions",
         arr? projection "timeline_candidates",
         arr? projection "text_order_edges" with
-  | some original, some events, some people, some dates,
+  | some original, some sections, some events, some people, some dates,
     some proper, some years, some timeline, some order =>
       let rawNamed := (source.getObjVal? "named_entities").toOption
       let entities := (arr? source "named_entities").getD #[]
@@ -267,6 +301,7 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       bool? projection "parser_carries_semantic_licence" == some false &&
       bool? projection "text_order_is_event_chronology" == some false &&
       bool? projection "cross_sentence_identity_paid" == some false &&
+      articleSectionCoverageExact text sections &&
       events.toList.all (validateEvent text original) &&
       people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
       dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
@@ -317,6 +352,7 @@ def verifyFiles
   if h : checkProjection text source projection = true then
     let receipt : CheckedArticleExtraction text source projection := ⟨h⟩
     let _ := checkedArticleHasStructuralEvidence receipt
+    let sections := (arr? projection "sections").getD #[]
     let events := (arr? projection "event_candidates").getD #[]
     let persons := (arr? projection "people_mentions").getD #[]
     let dates := (arr? projection "time_mentions").getD #[]
@@ -325,6 +361,7 @@ def verifyFiles
     let order := (arr? projection "text_order_edges").getD #[]
     let timeline := (arr? projection "timeline_candidates").getD #[]
     IO.println s!"JMD_LEAN_SOURCE_PROOF_OK sha256={sha}"
+    IO.println s!"source_blocks={sections.size} (heading/paragraph spans fully covered)"
     IO.println s!"ner_people_mentions={persons.size} proper_noun_tokens={proper.size} event_candidates={events.size} ner_date_mentions={dates.size} literal_year_mentions={years.size} timeline_candidates={timeline.size} text_order_edges={order.size}"
     IO.println "PROVED: exact source spans and original SLR parser-row support; textual ordering only."
     IO.println "OPEN: entity identity, interpretation licence, event occurrence, historical chronology."

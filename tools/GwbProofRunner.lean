@@ -333,3 +333,5 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbHyperfabric.narrowingPreservesIdentity
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedArticleLocalSystemSound
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedArticleAndRootKBPropertySound
+
+#print axioms Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness

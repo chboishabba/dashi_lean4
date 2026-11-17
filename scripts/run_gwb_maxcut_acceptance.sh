@@ -165,12 +165,13 @@ fi
 if [[ "$mode" == "--legacy-rust" ]]; then
   echo "GWB_EXPERIMENTAL_RUST_DIAGNOSTIC_LEGACY_OPT_IN"
   bash "$root/scripts/run_gwb_lean_proof_suite.sh" --no-commit
+  echo "Legacy diagnostic artifacts only: artifacts/gwb-semantic-proof/"
 else
   echo "GWB_ORIGINAL_SLR_PRODUCER_CANONICAL_ACCEPTANCE"
   bash "$root/scripts/run_gwb_original_slr_acceptance.sh"
+  echo "GWB_MAXCUT_ORIGINAL_SLR_SOURCE_AND_NEGATIVE_CONTROLS_PASS"
+  echo "Review and commit only artifacts/gwb-original-slr-proof/; historical Rust artifacts remain unchanged."
 fi
-echo "GWB_MAXCUT_ORIGINAL_SLR_SOURCE_AND_NEGATIVE_CONTROLS_PASS"
-echo "Review and commit only the new artifacts/gwb-original-slr-proof/ results; historical Rust artifacts remain unchanged."
 
 if [[ "$mode" == "--strict" ]]; then
   # This is a fail-closed research acceptance mode: source/kernel passage is

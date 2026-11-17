@@ -226,21 +226,25 @@ private def sourceForStatement
     (sources : Array Json) (statement : String) : Option Json :=
   sources.toList.find? (fun row => field? row "statement_ref" == some statement)
 
+private def statementLinkSourceExact
+    (sources : Array Json) (link : Json) : Bool :=
+  match field? link "statement_ref" with
+  | none => false
+  | some statement =>
+    match sourceForStatement sources statement with
+    | none => false
+    | some source =>
+      field? link "source_revision_ref" ==
+        field? source "source_revision_ref" &&
+      field? link "exact_span_ref" == field? source "exact_span_ref" &&
+      (field? source "source_revision_ref").isSome &&
+      (field? source "exact_span_ref").isSome
+
 private def hasSourceBackedLink
     (sources links : Array Json) (observation : String) : Bool :=
   links.toList.any (fun link =>
     field? link "observation_ref" == some observation &&
-    (match field? link "statement_ref" with
-     | none => false
-     | some statement =>
-       match sourceForStatement sources statement with
-       | none => false
-       | some source =>
-         field? link "source_revision_ref" ==
-           field? source "source_revision_ref" &&
-         field? link "exact_span_ref" == field? source "exact_span_ref" &&
-         (field? source "source_revision_ref").isSome &&
-         (field? source "exact_span_ref").isSome))
+    statementLinkSourceExact sources link)
 
 private def sourceAndObservationRefsBacked
     (sources assemblies links : Array Json) (row : Json) : Bool :=
@@ -288,19 +292,19 @@ def checkS28Provenance (j : Json) (eventRef : String) : Bool :=
       noRepeatedRefs statementLinks "link_ref" &&
       eventLinks.toList.all (fun assembly =>
         field? assembly "event_ref" == some eventRef &&
-        match field? assembly "observation_ref" with
-        | none => false
-        | some observation =>
-          (temporal ++ leaves ++ contestations).toList.any (fun row =>
-            ((strArray? row "observation_refs").getD #[]).contains observation) &&
-          hasSourceBackedLink sourceRows statementLinks observation) &&
+        (match field? assembly "observation_ref" with
+         | none => false
+         | some observation =>
+           (temporal ++ leaves ++ contestations).toList.any (fun row =>
+             ((strArray? row "observation_refs").getD #[]).contains observation) &&
+           hasSourceBackedLink sourceRows statementLinks observation)) &&
       statementLinks.toList.all (fun link =>
         match field? link "observation_ref", field? link "statement_ref" with
         | some observation, some statement =>
             eventLinks.toList.any (fun assembly =>
               field? assembly "observation_ref" == some observation) &&
             (sourceForStatement sourceRows statement).isSome &&
-            hasSourceBackedLink sourceRows statementLinks observation
+            statementLinkSourceExact sourceRows link
         | _, _ => false) &&
       (temporal ++ leaves ++ contestations).toList.all
         (sourceAndObservationRefsBacked sourceRows eventLinks statementLinks) &&

@@ -40,6 +40,13 @@ Output logs: `.gwb_lean_proof/lean-build.log`,
 The explicit `#print axioms` step inspects kernel dependencies and rejects
 `sorryAx`/`admitAx`; ordinary Lean `propext` is not an admission shortcut.
 
+The runner also uses `jq` when available to forge five adversarial
+variants of the **real** article projection: omitted predicate, dropped direct
+actor, corrupted year index, promoted world-truth flag and forged paragraph
+boundary. Every variant must be rejected by the same Lean checker (nonzero
+exit status); otherwise the script fails. These are negative controls, not
+another language producer. If `jq` is absent they are explicitly skipped.
+
 ## 2. What is actually proved
 
 Module:

@@ -71,7 +71,7 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                 native["world_occurrence_paid"] is False,
                 "unreviewed semantic/truth promotion in Rust receipt")
         source_checks = native["real_source_contract_checks"]
-        require(source_checks["passive_by_as_unresolved_reference"] == 59 and
+        require(source_checks["passive_by_as_unresolved_reference"] == 62 and
                 source_checks["iraq_claim_possessed_had_ambiguity_preserved"] is True and
                 source_checks["consumer_did_not_promote_agent_preposition"] is True and
                 source_checks["candidate_expansion_transports_emitted"] is False,

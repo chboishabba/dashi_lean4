@@ -30,6 +30,16 @@ cd "$here"
   --source-revision "$revision" \
   --slr-record "$input/slr-record.json" \
   "${html_arg[@]}"
+# Optional canonical SensibLaw P0b handoff: reuse the original SLR
+# tokens and dependency rows, without a second parser or identity decisions.
+# The explicit root avoids accidentally importing an unrelated src package.
+if [[ -n "${SENSIBLAW_ROOT:-}" ]]; then
+  "$py" tools/slr_existing_mention_fibre_handoff.py \
+    --source-text "$input/article.txt" \
+    --slr-record "$input/slr-record.json" \
+    --sensiblaw-root "$SENSIBLAW_ROOT" \
+    --output "$output/sensiblaw-p0b-mention-licences.json"
+fi
 lake build wikidata
 lake exe wikidata gwb-article-replay "$output"
 echo "Summary: $output/summary.md"

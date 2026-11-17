@@ -53,7 +53,11 @@ compile_slr GwbP4ArticleEndToEnd
 compile_slr GwbP5P10ExactWeld
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
-lake env lean --run tools/GwbProofRunner.lean p4
+# Historical P4 SourceQueryLicence is a theorem over the experimental
+# Rust observation; it is not an original SLR semantic licence.
+if [[ "$mode" == "--legacy-rust" ]]; then
+  lake env lean --run tools/GwbProofRunner.lean p4
+fi
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
 # Historical P5-P10 candidate-probe audit is not required by original SLR acceptance.
 # Experimental Rust residual diagnostics are NOT part of canonical acceptance.

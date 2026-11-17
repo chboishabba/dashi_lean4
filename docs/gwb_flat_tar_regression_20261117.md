@@ -51,6 +51,30 @@ Ten locally mutated checks rejected altered: source hash, sentence hash,
 dependency head, token surface, event actor, event occurrence promotion,
 year, article section, P0b mention text and P0b canonical hash.
 
+## Independent full derivation (stronger than the original auditor)
+
+The separate standard-library reference checker
+`tools/gwb_archive_p0b_full_derivation.py` reconstructs the archived
+P0b carrier directly from the original 17,547 SLR token/POS observations.
+It rederives structural suppression, lexical-token hypotheses, contiguous
+PROPN name-shaped runs, NUM and VERB/AUX eventuality hypotheses,
+token-interval normalisation, licence priority/order and sorted output.
+It invokes NO parser, model or semantic producer.
+
+The independently executed local reconstruction compared the **entire**
+11,975 mention records, 16,034 licence records and 6,162 suppressed-span
+records field-by-field. All matched exactly. Recomputing the canonical
+structured carrier identity also matched its 256-bit `carrier_ref`:
+
+`mention-licensing:3ef79fd2fc6e44351edd6defb0c8aa21a72c3a19a757c203b1d328eb9abbed1e`.
+
+This is a proof by exhaustive finite comparison of the archived P0b
+derivation to the recorded rules under the assumption that the supplied
+token/POS observations are the intended inputs. It is NOT a kernel proof,
+semantic fibre closure, or external authentication of the observations.
+The standalone committed verifier has not been run by an independent
+CI worker; the equivalent local reference implementation passed.
+
 ## What the TAR cannot verify
 
 The archive's original record reports parser_backend=spacy-trained,

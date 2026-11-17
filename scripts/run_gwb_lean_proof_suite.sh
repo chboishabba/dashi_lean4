@@ -6,25 +6,31 @@ set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 archive="${1:?Usage: bash scripts/run_gwb_lean_proof_suite.sh /path/to/gwb_article_proof.tar}"
 archive="$(realpath "$archive")"
-out="${2:-$root/.gwb_lean_proof}"
-mkdir -p "$out"
-out="$(realpath "$out")"
+# One permanent artifact: the SAME TAR. All proof logs and staged files
+# live inside project-local temporary directories and are packed back into it.
+out="$(mktemp -d "$root/.gwb-proof-run.XXXXXX")"
+trap 'rm -rf "$out"' EXIT
 command -v sha256sum >/dev/null || { echo "sha256sum unavailable" >&2; exit 2; }
 command -v lake >/dev/null || { echo "Pinned Lake/Lean unavailable; install repo lean-toolchain through elan" >&2; exit 2; }
 command -v tar >/dev/null || { echo "tar unavailable" >&2; exit 2; }
+command -v jq >/dev/null || { echo "jq required for strict negative controls" >&2; exit 2; }
+command -v python3 >/dev/null || { echo "python3 needed for read-only evidence archive auditing (NOT NLP)" >&2; exit 2; }
 if ! lake env lean --version | grep -q '4.28.0'; then
   echo "Pinned root Lean 4.28.0 not active; do not use /usr/bin/lean 4.27.0" >&2
   exit 2
 fi
 
-expected="6bbad0f9bcc2f0aa2e0e6f77f15692a945c1331a6337cfe202c19a58e2460f9e"
-actual="$(sha256sum "$archive" | cut -d ' ' -f 1)"
+# A refreshed archive has a different TAR SHA. Pin the ORIGINAL source
+# bytes and revision instead; the immutable seven-member evidence payload is
+# retained across updates by refresh_gwb_single_tar.py.
+expected="a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
+actual="$(tar -xOf "$archive" article.txt | sha256sum | cut -d ' ' -f 1)"
 if [[ "$actual" != "$expected" ]]; then
-  echo "Archive SHA mismatch: expected $expected, found $actual" >&2
+  echo "GWB canonical source UTF-8 SHA mismatch: expected $expected, found $actual" >&2
   exit 2
 fi
 tmp="$(mktemp -d "$root/.gwb-lean-stage.XXXXXX")"
-trap 'rm -rf "$tmp"' EXIT
+trap 'rm -rf "$tmp" "$out"' EXIT
 tar -xf "$archive" -C "$tmp" article.txt slr-record.json article-candidates.json
 cd "$root"
 
@@ -46,9 +52,9 @@ lake env lean --run tools/GwbProofRunner.lean article-check \
   "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
   | tee "$out/article-source-proof.log"
 
-# Adversarial replay of the *same* Lean checker. jq changes test
-# fixtures only; it does not parse/produce language interpretations.
-if command -v jq >/dev/null; then
+# Adversarial replay of the *same* Lean checker. jq modifies only
+# negative fixtures: it does not parse/produce language interpretations.
+{
   reject_mutation() {
     local name="$1"
     local filter="$2"
@@ -66,10 +72,8 @@ if command -v jq >/dev/null; then
   reject_mutation false-year-index '.timeline_candidates[0].year_candidate = 0'
   reject_mutation promoted-world-truth '.source_assertion_is_world_truth = true'
   reject_mutation forged-paragraph-boundary '.sections[0].end_char += 1'
-else
-  echo "Optional source-mutation negative tests SKIPPED (jq unavailable)"
-fi
-
+}
+ 
 cat > "$out/proof-boundary.txt" <<'EOF'
 LEAN_GWB_CONSUMER_PROOF_BOUNDARY_V1
 Kernel proved: generic provenance-preserving fibre join ACI;
@@ -83,5 +87,15 @@ Not proved: externally reviewed PNF semantic admission, real S28 event identity,
 world occurrence, actual event chronology, or a complete SLR semantic fibre.
 The TAR is historical Python-parser evidence, not a Rust DB M12 receipt.
 EOF
+# Examine the real GWB sentences, original dependency graph, P0b
+# mention eligibility and temporal candidate associations. This is an
+# auditor only, never a SensibLaw/Python language producer.
+python3 tools/gwb_semantic_observer_audit.py "$archive" \
+  --output "$out/semantic_observer_audit.json"
+python3 tools/refresh_gwb_single_tar.py "$archive" \
+  --audit "$out/semantic_observer_audit.json" \
+  --logs "$out" \
+  --lean-version "$(lake env lean --version)" \
+  --head "$(git rev-parse HEAD)"
 echo "GWB_LEAN_CONSUMER_AND_ARCHIVE_PROOF_SUITE_PASS"
-echo "Proof logs: $out"
+echo "All proof logs, semantic witnesses and status are INSIDE: $archive"

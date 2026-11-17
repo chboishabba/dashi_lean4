@@ -1,3 +1,5 @@
+import RequestProject.Slr.DocumentQuerySound
+
 /-!
 # Generic temporal and event query laws over source-licensed SLR readings
 
@@ -13,7 +15,6 @@ Source observations still require the actual producer-to-semantics licence.
 The context parameter of an ordering relation is mandatory; no inference
 may merge speaker beliefs, narrator assertions or external-world admission.
 -/
-import RequestProject.Slr.DocumentQuerySound
 
 namespace Wikidata
 namespace Slr

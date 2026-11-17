@@ -19,7 +19,8 @@ OUTPUT = Path("artifacts/gwb-semantic-proof")
 LOGS = (
     "source-consumer-build.log", "native-fibre-lean-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
-    "finite-consumer-build.log", "proof-composition-build.log",
+    "db-m12-s28-build.log", "finite-consumer-build.log",
+    "proof-composition-build.log",
     "proof-composition-proof.log",
     "article-source-proof.log", "semantic-scope-proof.log",
     "native-fibre-source-proof.log", "slr-rust-test.log",

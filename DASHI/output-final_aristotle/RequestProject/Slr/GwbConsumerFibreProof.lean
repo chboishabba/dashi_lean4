@@ -47,9 +47,9 @@ theorem fibreJoinIdempotent {Meaning Meta : Type}
     (a : EvidenceFibre Meaning Meta) : a.join a = a := by
   apply EvidenceFibre.extensional
   · funext x
-    exact propext (or_self (a.meanings x))
+    exact or_self (a.meanings x)
   · funext x
-    exact propext (or_self (a.annotations x))
+    exact or_self (a.annotations x)
 
 theorem fibreJoinCommutative {Meaning Meta : Type}
     (a b : EvidenceFibre Meaning Meta) : a.join b = b.join a := by

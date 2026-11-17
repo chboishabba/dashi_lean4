@@ -87,6 +87,85 @@ The script fails if the pinned real article no longer produces these
 specific negative controls. The JSON ledger records source sentences,
 predicate coordinates, parser dependency heads and exact source spans.
 
+## Execute actual SLR Rust alternatives, residuals, and consumer answers
+
+The single targeted runner now requires the **existing SLR Rust checkout**.
+Set `SLR_ROOT` when it is not the sibling directory `../slr`:
+
+```bash
+SLR_ROOT=/path/to/slr \
+  bash scripts/run_gwb_lean_proof_suite.sh gwb_article_proof.tar
+```
+
+This does **not** invoke SensibLaw Python, spaCy or another parser.
+The caller reopens precisely the 643 original sentence dependency graphs
+and invokes existing SLR Rust crate
+`sensiblaw-semantic-expansion::check_expanded_parity` on all 17,547
+original tokens. Its normalised **direct and reference** observations must
+agree. All emitted candidate deltas, alternative-fibre coordinates, typed
+residuals and projection failures are recorded source-span by source-span.
+
+Important classification: **SLR itself labels that semantic-expansion
+crate experimental/outside the certified direct path.** It is still the
+real SLR Rust implementation, not a synthetic Python fibre; it is not a
+reviewed DB-native GWB hyperfabric ledger or semantic transport.
+
+This round also executes production SLR
+`sensiblaw-legal-runtime::assess_consumer_adequacy` with five declared
+real-article consumers. The source/text and syntactic-role observers can
+be operationally adequate for source-only queries. The historical actor,
+event-date and world-occurrence consumers must produce genuine
+`NeedsResearch` receipts with missing `SemanticIdentity`,
+`Temporal` and/or `FactualPredicate` axes, **not** silently close.
+Each runtime receipt retains `factors_through_formally_proved=false`.
+Abstract Lean source-closure theorems do not change those missing axes.
+
+The Rust runner also **tests the source content**:
+- In the 2003 Iraq sentence, `possessed` (ACL) must produce a
+  `ClauseInterpretationAmbiguous` residual and an alternative fibre;
+  coordinated `had` must retain an `UnsupportedDependency` residual.
+- All **59** original `agent:by` prepositions must be
+  `ReferenceRelation` + `ReferenceAttachmentUnresolved`, never
+  `Role(Actor)`.
+- Ordinary `nummod` years must not become reviewed temporal anchors.
+- Production review/occurrence/semantic-transport flags remain unpaid.
+
+A new Lean module,
+`RequestProject.Slr.GwbNativeFibreReceipt.lean`, checks the **actual
+Rust-produced evidence rows** against the original parser-token
+positions and source projection, including alternative-fibre
+attachment, typed residuals and all five production consumer-adequacy
+outcomes. It refuses semantic/occurrence promotion. The cached Lean
+runner builds only this module and the previous source-consumer module,
+not the large `wikidata` executable.
+
+If and ONLY if Rust tests, original-source parity, the Lean kernel
+and all negative controls pass, the same existing TAR is **refreshed
+locally by that runner** to contain:
+
+- `proof/slr-rust-semantic-expansion.json` — complete actual
+  per-sentence SLR Rust candidate/fibre/residual emission.
+- `proof/slr-rust-test.log`, `proof/slr-rust-expansion.log` —
+  actual executed Rust test/runner logs.
+- `proof/native-fibre-lean-build.log`,
+  `proof/native-fibre-source-proof.log` — actual Lean kernel/receipt
+  verification logs.
+- `proof/proof_run_manifest.json` — explicit native SLR head,
+  tested Lean head, exact source SHA, and remaining open gates.
+
+Nothing in this PR regenerates or repackages the TAR before the local
+Lean runner is invoked. New files are source code **inside PR #112**.
+A refresh preserves externally owned `proof/` receipts and the seven
+original evidence members; it changes the overall TAR SHA.
+
+### Gate still open after this round
+
+The experimental SLR expansion API does not emit the reviewed,
+production **semantic transport ledger**, DB-native S28 joins, or
+query-relative theorem payment for actual historical answers. These
+remain explicitly reported absent. The next step requires original
+production SLR DB evidence rather than counterfeit identities.
+
 ## Source-specific Lean consumer proof
 
 New `RequestProject.Slr.GwbRealSourceConsumer` constructs dependency-

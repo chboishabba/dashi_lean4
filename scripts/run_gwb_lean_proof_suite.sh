@@ -32,6 +32,12 @@ cd "$root"
 # GwbConsumerFibreProof, DocumentQuerySound and TemporalDocumentProof.
 lake build wikidata | tee "$out/lean-build.log"
 lake exe wikidata gwb-fibre-proof | tee "$out/consumer-fibre-proof.log"
+lake env lean DASHI/output-final_aristotle/RequestProject/Slr/GwbProofAxiomAudit.lean \
+  | tee "$out/axiom-audit.log"
+if grep -qE 'sorryAx|admitAx' "$out/axiom-audit.log"; then
+  echo "Rejected theorem with admitted proof placeholder" >&2
+  exit 1
+fi
 
 # Independent Lean structural check: original article characters,
 # sentence/role/predicate completeness, 311 lexical years and exact hierarchy.

@@ -208,6 +208,8 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
     let mut actual_residuals = 0usize;
     let mut kinds: BTreeMap<String, usize> = BTreeMap::new();
     let mut sample_witnesses = Vec::new();
+    let mut passive_by_reference_count = 0usize;
+    let mut iraq_coordination_guard_verified = false;
     let original = array(record, "pnf_candidates")?;
     for sentence in original {
         let sentence_id = number(sentence, "sentence_index")?;
@@ -290,6 +292,54 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
         require(parity.holds(), "SLR direct/reference semantic expansion parity failure")?;
         require(parity.direct.projection_failures.is_empty(),
                 "SLR original parser dependency graph projection failure")?;
+        // The original flat article event projector incorrectly presents
+        // syntactic "agent:by" as an actor token. SLR's actual semantic
+        // emitter must retain it as an unresolved reference attachment.
+        for (local, row) in rows.iter().enumerate() {
+            if string(row, "dep")? == "agent" && string(row, "text")? == "by" {
+                let n = u32::try_from(local).map_err(|_| "ordinal overflow")?;
+                require(parity.direct.candidates.iter().any(|c|
+                    c.address.local_ordinal == n &&
+                    format!("{:?}", c.kind) == "ReferenceRelation") &&
+                    !parity.direct.candidates.iter().any(|c|
+                        c.address.local_ordinal == n &&
+                        format!("{:?}", c.kind) == "Role(Actor)") &&
+                    parity.direct.residuals.iter().any(|r|
+                        r.address.local_ordinal == n &&
+                        format!("{:?}", r.kind) == "ReferenceAttachmentUnresolved"),
+                    "SLR turned a passive-agent preposition into a resolved actor")?;
+                passive_by_reference_count += 1;
+            }
+        }
+        if sentence_id == 18 {
+            let possessed = rows.iter().find(|r|
+                r.get("text").and_then(Value::as_str) == Some("possessed") &&
+                r.get("dep").and_then(Value::as_str) == Some("acl"))
+                .ok_or("original GWB nested possession clause is missing")?;
+            let had = rows.iter().find(|r|
+                r.get("text").and_then(Value::as_str) == Some("had") &&
+                r.get("dep").and_then(Value::as_str) == Some("conj") &&
+                r.get("head_i") == possessed.get("i"))
+                .ok_or("original coordinated had is not under embedded possessed")?;
+            let p = *index.get(&number(possessed, "i")?)
+                .ok_or("missing possessed ordinal")?;
+            let h = *index.get(&number(had, "i")?)
+                .ok_or("missing had ordinal")?;
+            require(parity.direct.alternative_fibres.iter().any(|f|
+                f.address.local_ordinal == p &&
+                f.alternatives.len() == 3) &&
+                parity.direct.residuals.iter().any(|r|
+                    r.address.local_ordinal == p &&
+                    format!("{:?}", r.kind) == "ClauseInterpretationAmbiguous") &&
+                parity.direct.residuals.iter().any(|r|
+                    r.address.local_ordinal == h &&
+                    format!("{:?}", r.kind) == "UnsupportedDependency") &&
+                !parity.direct.candidates.iter().any(|c|
+                    c.address.local_ordinal == h &&
+                    format!("{:?}", c.kind) == "Role(Actor)"),
+                "SLR failed to retain the nested claim/coordination residuals")?;
+            iraq_coordination_guard_verified = true;
+        }
         actual_tokens += rows.len();
         actual_candidates += parity.direct.candidates.len();
         actual_alternatives += parity.direct.alternative_fibres.len();
@@ -321,6 +371,10 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
             "sentence count mismatch");
     require(actual_tokens == number(&record["parser_receipt"], "token_count")? as usize,
             "token count mismatch");
+    require(passive_by_reference_count == 59,
+            "GWB passive-agent source surfaces changed; review new source parser fibre")?;
+    require(iraq_coordination_guard_verified,
+            "GWB 2003 Iraq coordination semantic discrimination missing")?;
     Ok(json!({
         "schema": "gwb-slr-native-semantic-expansion-observations-v1",
         "source_revision": REVISION,
@@ -339,6 +393,12 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
         "typed_residual_kinds": kinds,
         "direct_reference_parity_complete": true,
         "projection_failures": 0,
+        "real_source_contract_checks": {
+            "passive_by_as_unresolved_reference": passive_by_reference_count,
+            "iraq_claim_possessed_had_ambiguity_preserved": iraq_coordination_guard_verified,
+            "consumer_did_not_promote_agent_preposition": true,
+            "candidate_expansion_transports_emitted": false
+        },
         "full_production_s28_or_hyperfabric_closure": false,
         "consumer_specific_semantic_licence_paid": false,
         "world_occurrence_paid": false,

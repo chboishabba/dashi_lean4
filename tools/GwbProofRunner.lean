@@ -6,6 +6,7 @@ import RequestProject.Slr.GwbProofComposition
 import RequestProject.Slr.DbSourceProducer
 import RequestProject.Slr.GwbWorldGraphProof
 import RequestProject.Slr.GwbTypedSemanticFibre
+import RequestProject.Slr.GwbArticleIdentity
 
 open Wikidata
 open Lean
@@ -237,6 +238,32 @@ def runWorldGraphCheck
     return 3
   return 0
 
+/-- Check the exact pinned GWB article against JMD's independent Q207
+    Wikidata EntityData sitelink. The two source revisions stay distinct. -/
+def runArticleQidCheck
+    (articlePath slrPath projectionPath wikidataPath : String) :
+    IO UInt32 := do
+  let article ← IO.FS.readFile articlePath
+  let slrRaw ← IO.FS.readFile slrPath
+  let projectionRaw ← IO.FS.readFile projectionPath
+  let wdRaw ← IO.FS.readFile wikidataPath
+  match Lean.Json.parse slrRaw, Lean.Json.parse projectionRaw, Lean.Json.parse wdRaw with
+  | .ok slr, .ok projection, .ok wikidata =>
+      if h : Slr.GwbArticleIdentity.checkGwbRootIdentity
+            article slr projection wikidata = true then
+        let receipt : Slr.GwbArticleIdentity.CheckedGwbRootIdentity
+              article slr projection wikidata := ⟨h⟩
+        let _ := Slr.GwbArticleIdentity.checkedGwbRootSourceAndSitelink receipt
+        IO.println "GWB_Q207_ARTICLE_AND_JMD_SITELINK_KERNEL_OK"
+        IO.println "Not a simultaneous Wikipedia/Wikidata revision or a world-event truth theorem"
+        return 0
+      else
+        IO.eprintln "GWB_Q207_ARTICLE_SITELINK_REJECTED: source/QID/title mismatch"
+        return 1
+  | _, _, _ =>
+      IO.eprintln "GWB_Q207_ARTICLE_SITELINK_REJECTED: invalid original input JSON"
+      return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["fibre"] =>
@@ -244,6 +271,8 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["article-qid-check", article, slr, projection, wikidata] =>
+      runArticleQidCheck article slr projection wikidata
   | ["world-graph-check", graph, cacheDir, output] =>
       runWorldGraphCheck graph cacheDir output false false
   | ["world-graph-check-offline", graph, cacheDir, output] =>
@@ -270,7 +299,7 @@ def main (args : List String) : IO UInt32 := do
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON"
+      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -295,3 +324,5 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbWorldGraph.checkedGraphInventoryExact
 
 #print axioms Wikidata.Slr.GwbTypedFibre.typedRowsRemainSourceBound
+
+#print axioms Wikidata.Slr.GwbArticleIdentity.checkedGwbRootSourceAndSitelink

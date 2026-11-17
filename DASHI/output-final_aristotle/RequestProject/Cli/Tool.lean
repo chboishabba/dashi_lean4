@@ -1056,6 +1056,23 @@ def run (args : List String) : IO UInt32 := do
         return 1
       IO.println producer.stdout
       cmdGwbArticleReplay outputDir o
+  | ["slr-s28-proof-check", savedJson, eventRef] =>
+      let source ← IO.FS.readFile savedJson
+      let value ← match Lean.Json.parse source with
+        | .ok j => pure j
+        | .error err =>
+          IO.eprintln s!"Invalid saved S28 JSON: {err}"
+          return 1
+      if h : Slr.checkS28Provenance value eventRef = true then
+        let receipt : Slr.CheckedS28Provenance value eventRef := ⟨h⟩
+        let _ := Slr.checkedS28HasCompleteAncestry receipt
+        IO.println s!"SLR_S28_LEAN_PROVENANCE_OK event={eventRef}"
+        IO.println "PROVED: M12 statement/observation/event ancestry, time and contestation source links"
+        IO.println "NOT PROVED: historical event occurrence or semantic world truth"
+        return 0
+      else
+        IO.eprintln "SLR_S28_LEAN_PROVENANCE_REJECTED: missing or forged M12/S28 joins"
+        return 1
   | ["slr-timeline", slrBinary, eventRef] =>
       let result ← Slr.callSlrS28Candidates slrBinary eventRef
       IO.println result.compress

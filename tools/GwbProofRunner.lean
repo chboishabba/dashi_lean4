@@ -8,6 +8,7 @@ import RequestProject.Slr.GwbWorldGraphProof
 import RequestProject.Slr.GwbTypedSemanticFibre
 import RequestProject.Slr.GwbArticleIdentity
 import RequestProject.Slr.GwbArticleSystemSoundness
+import RequestProject.Slr.GwbP4SourceLicence
 
 open Wikidata
 open Lean
@@ -93,6 +94,30 @@ def runNativeFibreReceipt (articlePath sourcePath projectionPath nativePath : St
             let (candidateCount, alternativeCount, residualCount) :=
               Slr.GwbTypedFibre.totals typed.rows
             IO.println s!"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS sentences={typed.rows.size} candidates={candidateCount} alternatives={alternativeCount} residuals={residualCount}"
+            -- P4: real (not synthetic) typed source receipts, two
+            -- source-indexed cross-sentence fragments, and positive
+            -- source-only licences despite unresolved semantic axes.
+            let original := Slr.GwbHyperfabric.whole typed
+            let evenRows := Slr.GwbHyperfabric.restrict original
+              (fun row => row.sentenceIndex % 2 == 0)
+            let oddRows := Slr.GwbHyperfabric.restrict original
+              (fun row => row.sentenceIndex % 2 != 0)
+            let merged := Slr.GwbHyperfabric.join evenRows oddRows
+            let hPositive := Slr.GwbP4.checkedGwbP4SourceLicenceSound
+              typed merged (.candidateKind "Role(Actor)")
+            let _ := hPositive
+            let _ := Slr.GwbP4.joinedFragmentHasPositiveLicence
+              evenRows oddRows (.residualKind "ReferenceAttachmentUnresolved")
+            let _ := Slr.GwbHyperfabric.restrictionCommutesWithJoin
+              evenRows oddRows (fun row => row.sentenceIndex % 2 == 0)
+            let sourceOnlyActors :=
+              Slr.GwbP4.sourceAnswer merged.rows (.candidateKind "Role(Actor)")
+            let referenceResiduals :=
+              Slr.GwbP4.sourceAnswer merged.rows
+                (.residualKind "ReferenceAttachmentUnresolved")
+            IO.println s!"GWB_P4_SOURCE_LICENCE_KERNEL_OK sentences={merged.rows.length} actor_role_candidates={sourceOnlyActors} reference_residuals={referenceResiduals}"
+            IO.println "P4 SCOPE: source-only typed row query with original GWB source and fragment ancestry"
+            IO.println "UNPAID: real cross-sentence actor identity, reviewed event/time semantics, production live-fibre coverage"
             IO.println "GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS"
             IO.println "Checked: native Rust candidates, alternatives, residuals, source spans and 5 consumer outcomes"
             IO.println "NOT PAID: reviewed semantic transports, production S28 joins or world occurrence"
@@ -335,3 +360,7 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedArticleAndRootKBPropertySound
 
 #print axioms Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness
+
+#print axioms Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound
+#print axioms Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer
+#print axioms Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence

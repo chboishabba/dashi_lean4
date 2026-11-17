@@ -23,7 +23,8 @@ LOGS = (
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
     "db-m12-s28-build.log", "jmd-property-proof-build.log",
     "world-graph-proof-build.log", "hyperfabric-proof-build.log",
-    "article-system-proof-build.log", "finite-consumer-build.log",
+    "article-system-proof-build.log", "p4-source-licence-build.log",
+    "finite-consumer-build.log",
     "proof-composition-build.log",
     "proof-composition-proof.log",
     "article-source-proof.log", "semantic-scope-proof.log",
@@ -138,6 +139,9 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit,
     require(b"GWB_ARTICLE_LOCAL_SYSTEM_THEOREM_KERNEL_OK" in
             (run / "proof-composition-proof.log").read_bytes(),
             "end-to-end conditional article theorem was not loaded in Lean")
+    require(b"GWB_P4_SOURCE_LICENCE_KERNEL_OK" in
+            (run / "native-fibre-source-proof.log").read_bytes(),
+            "real typed-source P4 positive SourceQueryLicence was not executed")
     require(b"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS" in
             (run / "native-fibre-source-proof.log").read_bytes(),
             "typed SLR candidate/alternative/residual decoder was not executed")

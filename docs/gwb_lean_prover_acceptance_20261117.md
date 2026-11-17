@@ -134,9 +134,9 @@ The Rust runner also **tests the source content**:
 - In the 2003 Iraq sentence, `possessed` (ACL) must produce a
   `ClauseInterpretationAmbiguous` residual and an alternative fibre;
   coordinated `had` must retain an `UnsupportedDependency` residual.
-- All **59** original `agent:by` prepositions must be
+- All **62** original `agent:by` dependency tokens must be
   `ReferenceRelation` + `ReferenceAttachmentUnresolved`, never
-  `Role(Actor)`.
+  `Role(Actor)`. The flat event projection includes only 59 of these 62,\nwhich is a separate selected-predicate coverage count.
 - Ordinary `nummod` years must not become reviewed temporal anchors.
 - Production review/occurrence/semantic-transport flags remain unpaid.
 

@@ -167,8 +167,8 @@ def callSlrS28Candidates (slrExecutable eventRef : String) : IO Json := do
     | .ok a => pure a
     | .error err => throw (IO.userError s!"Missing M12 statement links: {err}")
   let traceComplete := (value.getObjValAs? Bool "source_trace_join_complete").toOption
-  if traceComplete.isNone then
-    throw (IO.userError "Missing source trace completeness coordinate")
+  if traceComplete != some true then
+    throw (IO.userError "Unverified or incomplete M12 -> S28 source trace; refusing JMD proof handoff")
   for row in assemblyRows do
     if (row.getObjValAs? String "event_ref").toOption != some eventRef then
       throw (IO.userError "S28 assembly references a different event")

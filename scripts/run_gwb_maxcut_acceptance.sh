@@ -35,6 +35,7 @@ compile_slr WikipediaArticleProof
 compile_slr GwbConsumerFibreProof
 compile_slr GwbRealSourceConsumer
 compile_slr GwbNativeFibreReceipt
+compile_slr GwbTypedSemanticFibre
 compile_slr Proof
 compile_slr DbSourceProducer
 compile_slr FiniteConsumerCertificate

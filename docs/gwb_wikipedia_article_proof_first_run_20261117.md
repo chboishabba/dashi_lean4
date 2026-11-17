@@ -56,6 +56,34 @@ GWB_ARTICLE_OUT=/path/to/results \
 bash scripts/run_gwb_article_proof.sh
 ```
 
+## Replay the uploaded first-run evidence without spaCy
+
+The initial real GWB record (enwiki revision `1385850169`) omitted
+`named_entities`, causing its original PERSON and DATE summary fields to
+remain empty even though the SLR dependency observations were sound.
+The repaired pipeline **does not pretend** the missing NER field exists:
+it separately emits parser-backed proper-noun tokens and literal four-digit
+year spans. To continue into JMD Lean using the existing exact source:
+
+```bash
+# Directory contains article.txt, article.html and slr-record.json
+bash scripts/replay_gwb_article_from_files.sh \
+  /path/to/saved-gwb /path/to/gwb-replay
+```
+
+The saved HTML must reconstruct byte-for-byte the same article plaintext.
+This preserves the original article section/paragraph boundaries rather
+than replacing them with one synthetic paragraph. On the uploaded fixture,
+there are **225 blocks (63 headings, 162 paragraphs)**, 643 SLR sentences,
+2,620 proper-noun tokens and 311 literal-year matches. NER PERSON/DATE
+claims remain unavailable until the updated trained SLR producer reruns.
+
+The script validates the saved source, builds the JMD Wikidata executable,
+checks the article parser observations in Lean, then fetches Q207 and
+kernel-checks its independent ontology proof module. A JMD link scan is
+still a separate live snapshot and is **not** thereby proven to have the
+source revision's exact HTML.
+
 ## Troubleshooting and staged reruns
 
 ```bash

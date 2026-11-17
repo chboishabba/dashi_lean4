@@ -25,7 +25,8 @@ AUDIT = "proof/semantic_observer_audit.json"
 SUMMARY = "proof/semantic_observer_audit.md"
 MANIFEST = "proof/proof_run_manifest.json"
 LOGS = ("lean-build.log", "axiom-audit.log",
-        "consumer-fibre-proof.log", "article-source-proof.log")
+        "consumer-fibre-proof.log", "article-source-proof.log",
+        "semantic-scope-proof.log")
 
 def require(ok, error):
     if not ok:
@@ -57,6 +58,9 @@ def pack(path, report, logs=None, lean_version=None, head=None):
                 PINNED_SOURCE_SHA256.encode("ascii") in
                 additional["proof/article-source-proof.log"],
                 "no exact-source success in log")
+        require(b"GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED" in
+                additional["proof/semantic-scope-proof.log"],
+                "actual source-backed scope theorem did not run")
         require(b"sorryAx" not in additional["proof/axiom-audit.log"] and
                 b"admitAx" not in additional["proof/axiom-audit.log"],
                 "axiom audit contains admitted proof")
@@ -67,7 +71,7 @@ def pack(path, report, logs=None, lean_version=None, head=None):
                     "missing counterexample rejection log: " + name)
             additional["proof/rejected-" + name + ".log"] = (
                 root / ("rejected-" + name + ".log")).read_bytes()
-        status = "TARGETED_LEAN_AND_FIVE_NEGATIVE_CONTROLS_RUN"
+        status = "TARGETED_LEAN_SOURCE_SCOPE_AND_FIVE_NEGATIVE_CONTROLS_RUN"
     manifest = {
         "schema": "gwb-single-tar-proof-manifest-v1",
         "source_revision": PINNED_REVISION,

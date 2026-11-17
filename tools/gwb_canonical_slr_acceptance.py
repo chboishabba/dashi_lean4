@@ -62,6 +62,9 @@ def inspect(article,slr,projection,p0b):
     return {
       "schema":"gwb-original-slr-canonical-source-acceptance-v1",
       "source_revision":REV,"source_utf8_sha256":digest,"source_unit_ref":sr,
+      "original_slr_json_sha256":hashlib.sha256(json.dumps(slr,sort_keys=True,separators=(",",":")).encode("utf-8")).hexdigest(),
+      "original_projection_json_sha256":hashlib.sha256(json.dumps(projection,sort_keys=True,separators=(",",":")).encode("utf-8")).hexdigest(),
+      "original_p0b_json_sha256":hashlib.sha256(json.dumps(p0b,sort_keys=True,separators=(",",":")).encode("utf-8")).hexdigest(),
       "original_slr_producer_schema":slr["schema"],
       "original_article_projection_schema":projection["schema"],
       "parser_receipt":slr.get("parser_receipt"),

@@ -9,6 +9,7 @@ import RequestProject.Slr.GwbTypedSemanticFibre
 import RequestProject.Slr.GwbArticleIdentity
 import RequestProject.Slr.GwbArticleSystemSoundness
 import RequestProject.Slr.GwbP4SourceLicence
+import RequestProject.Slr.GwbP4ArticleEndToEnd
 
 open Wikidata
 open Lean
@@ -290,6 +291,52 @@ def runArticleQidCheck
       IO.eprintln "GWB_Q207_ARTICLE_SITELINK_REJECTED: invalid original input JSON"
       return 1
 
+/-- P4 end-to-end original-source proof: exact original Wikipedia
+    parser/revision, JMD Q207 sitelink, native Rust fibre and automatically
+    constructed source-only SourceQueryLicence. -/
+def runArticleP4Check
+    (articlePath slrPath projectionPath nativePath wikidataPath : String) :
+    IO UInt32 := do
+  let article ← IO.FS.readFile articlePath
+  let slrText ← IO.FS.readFile slrPath
+  let projectionText ← IO.FS.readFile projectionPath
+  let nativeText ← IO.FS.readFile nativePath
+  let wikidataText ← IO.FS.readFile wikidataPath
+  match Lean.Json.parse slrText, Lean.Json.parse projectionText,
+        Lean.Json.parse nativeText, Lean.Json.parse wikidataText with
+  | .ok slr, .ok projection, .ok native, .ok wikidata =>
+      if hRoot : Slr.GwbArticleIdentity.checkGwbRootIdentity
+          article slr projection wikidata = true then
+        if hNative : Slr.GwbNativeFibre.checkRealGwbNativeFibreReceipt
+            article slr projection native = true then
+          let root : Slr.GwbArticleIdentity.CheckedGwbRootIdentity
+              article slr projection wikidata := ⟨hRoot⟩
+          let original : Slr.GwbNativeFibre.CheckedRealGwbNativeFibre
+              article slr projection native := ⟨hNative⟩
+          match Slr.GwbTypedFibre.decodeCheckedRows? original with
+          | none =>
+              IO.eprintln "GWB_P4_ARTICLE_REJECTED: incomplete original typed fibre"
+              return 1
+          | some rows =>
+              let _ := Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery
+                root rows (.candidateKind "Role(Actor)")
+              let _ := Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals
+                root rows
+              let count := Slr.GwbP4.sourceAnswer rows.rows.toList
+                (.candidateKind "Role(Actor)")
+              IO.println s!"GWB_P4_ORIGINAL_ARTICLE_SOURCE_LICENCE_KERNEL_OK sentences={rows.rows.size} actor_role_candidates={count}"
+              IO.println "Q207/article and original Rust fibre checked; positive query is source-syntactic only"
+              return 0
+        else
+          IO.eprintln "GWB_P4_ARTICLE_REJECTED: native Rust receipt was not source bound"
+          return 1
+      else
+        IO.eprintln "GWB_P4_ARTICLE_REJECTED: Q207/article source correspondence failed"
+        return 1
+  | _, _, _, _ =>
+      IO.eprintln "GWB_P4_ARTICLE_REJECTED: invalid input JSON"
+      return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["fibre"] =>
@@ -297,6 +344,8 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["article-p4-check", article, slr, projection, native, wikidata] =>
+      runArticleP4Check article slr projection native wikidata
   | ["article-qid-check", article, slr, projection, wikidata] =>
       runArticleQidCheck article slr projection wikidata
   | ["world-graph-check", graph, cacheDir, output] =>
@@ -369,3 +418,6 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound
 #print axioms Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer
 #print axioms Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence
+
+#print axioms Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery
+#print axioms Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals

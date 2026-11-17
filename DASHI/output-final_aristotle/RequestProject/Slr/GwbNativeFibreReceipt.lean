@@ -45,7 +45,7 @@ private def candidateSourceBound (rows : Array Json) (c : Json) : Bool :=
       | none => false
       | some raw =>
           nat? raw "idx" == some a &&
-          str? raw "text" |>.isSome &&
+          (str? raw "text").isSome &&
           (match str? raw "text" with
            | none => false
            | some surface => b == a + surface.toList.length) &&
@@ -135,6 +135,7 @@ def checkRealGwbNativeFibreReceipt (article : String)
     (slr projection receipt : Json) : Bool :=
   let original := (arr? slr "pnf_candidates").getD #[]
   let observations := (arr? receipt "sentence_observations").getD #[]
+  let parser := (slr.getObjVal? "parser_receipt").toOption.getD Json.null
   let consumers := (receipt.getObjVal? "consumer_adequacy").toOption
   let candidateCount := observations.foldl (fun count row =>
     count + ((arr? row "candidates").getD #[]).size) 0
@@ -159,8 +160,7 @@ def checkRealGwbNativeFibreReceipt (article : String)
   bool? receipt "world_occurrence_paid" == some false &&
   nat? receipt "projection_failures" == some 0 &&
   nat? receipt "source_sentences" == some original.size &&
-  nat? receipt "source_tokens" ==
-    nat? ((slr.getObjVal? "parser_receipt").toOption.getD Json.null) "token_count" &&
+  nat? receipt "source_tokens" == nat? parser "token_count" &&
   observations.size == original.size &&
   decide ((observations.toList.map (fun o => nat? o "sentence_index")).Nodup) &&
   observations.toList.all (observationSourceBound original) &&

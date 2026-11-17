@@ -87,6 +87,81 @@ def decodeDbM12Observation (j : Json) : Option DbM12Observation := do
         sourceLiteralDigest, startChar, endChar, candidates,
         tokens, entities⟩
 
+/-- Independent Lean-side check of the same original literal characters
+    and parser-ordinal parent graph returned by the Rust DB M12 compiler.
+    Offsets are source-revision absolute; literal text is region-local. -/
+private def exactLiteralSpan (literal : String) (spanStart spanEnd : Nat)
+    (row : Json) : Bool :=
+  match nat? row "start_char", nat? row "end_char", field? row "surface" with
+  | some a, some b, some surface =>
+      decide (spanStart <= a ∧ a < b ∧ b <= spanEnd) &&
+      String.ofList ((literal.toList.drop (a - spanStart)).take (b - a)) ==
+        surface
+  | _, _, _ => false
+
+private def nativeTokenOrdinal? (token : Json) : Option Nat :=
+  nat? token "ordinal"
+
+private def supportedNativeHead
+    (tokens : Array Json) (token : Json) : Bool :=
+  match nat? token "ordinal", nat? token "head_ordinal" with
+  | some _, some head =>
+      tokens.toList.any (fun t => nativeTokenOrdinal? t == some head)
+  | _, _ => false
+
+private def nativeSourceTokenExact
+    (literal : String) (start stop : Nat)
+    (tokens : Array Json) (token : Json) : Bool :=
+  exactLiteralSpan literal start stop token &&
+  supportedNativeHead tokens token &&
+  (field? token "lemma").isSome &&
+  (field? token "pos").isSome &&
+  (field? token "dependency").isSome
+
+private def nativeSourceCandidateExact
+    (literal : String) (start stop : Nat)
+    (candidate : Json) : Bool :=
+  exactLiteralSpan literal start stop candidate &&
+  (field? candidate "candidate_ref").isSome &&
+  (field? candidate "lemma").isSome &&
+  (field? candidate "dependency").isSome &&
+  (field? candidate "role").isSome &&
+  (["actor", "predicate", "patient", "qualifier", "other"].contains
+    ((field? candidate "role").getD "")) &&
+  bool? candidate "candidate_only" == some true
+
+private def nativeSourceEntityExact
+    (literal : String) (start stop : Nat) (entity : Json) : Bool :=
+  exactLiteralSpan literal start stop entity &&
+  (nat? entity "ordinal").isSome &&
+  (field? entity "label").isSome
+
+/-- A checked M12 response has literal-source witnesses for EVERY token,
+    candidate and entity, with complete dependency-head references.
+    The proof does not invent named-entity or event-occurrence semantics. -/
+def checkNativeM12Literal
+    (literal : String) (observation : DbM12Observation) : Bool :=
+  let start := observation.startChar
+  let stop := observation.endChar
+  let tokens := observation.tokens
+  let ordinals := tokens.toList.map nativeTokenOrdinal?
+  decide (literal.toList.length = stop - start) &&
+  decide ordinals.Nodup &&
+  tokens.toList.all (nativeSourceTokenExact literal start stop tokens) &&
+  observation.candidates.toList.all
+    (nativeSourceCandidateExact literal start stop) &&
+  observation.entities.toList.all
+    (nativeSourceEntityExact literal start stop)
+
+structure CheckedNativeM12Literal
+    (literal : String) (observation : DbM12Observation) where
+  checked : checkNativeM12Literal literal observation = true
+
+theorem checkedM12AllSourceSpansExact
+    {literal : String} {observation : DbM12Observation}
+    (receipt : CheckedNativeM12Literal literal observation) :
+    checkNativeM12Literal literal observation = true := receipt.checked
+
 /-- Directly calls SLR's checked M12 compiler, never the TSV adapter.
     The literal file is checked against parser-product identity and
     token-head-entity source coverage by the existing SLR compiler. -/
@@ -119,7 +194,21 @@ def callSlrDbM12
       observation.endChar != endChar ||
       observation.parserReceiptRef != s!"db-parser:{parserRun}:{regionRef}" then
     throw (IO.userError "SLR DB M12 response mismatches requested source/run/region")
-  return observation
+  let literal ← IO.FS.readFile literalPath
+  let digestCheck ← IO.Process.output {
+    cmd := "sha256sum", args := #[literalPath]
+  }
+  if digestCheck.exitCode != 0 then
+    throw (IO.userError s!"Cannot independently hash M12 literal: {digestCheck.stderr}")
+  let literalDigest := (digestCheck.stdout.splitOn " ").head!
+  if literalDigest != observation.sourceLiteralDigest then
+    throw (IO.userError "Native M12 source hash differs from raw literal UTF-8 SHA-256")
+  if h : checkNativeM12Literal literal observation = true then
+    let receipt : CheckedNativeM12Literal literal observation := ⟨h⟩
+    let _ := checkedM12AllSourceSpansExact receipt
+    return observation
+  else
+    throw (IO.userError "Lean rejected incomplete or forged M12 literal/token/head/role coordinates")
 
 
 /-- Original S28 source-trace completeness must be reconstructed from

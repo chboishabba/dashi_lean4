@@ -15,6 +15,11 @@ use sensiblaw_core::{Annotation, Capability, HeadDeclaration, TextSpan, TokenObs
 use sensiblaw_semantic_expansion::{
     check_expanded_parity, ExpandedConsumerObservation, ExpansionSignal,
 };
+use sensiblaw_legal_runtime::{
+    assess_consumer_adequacy, ConsumerAxis, ConsumerCoverage, ConsumerQueryDemand,
+    ProjectionGraph, ProjectionKind,
+};
+use std::collections::BTreeSet;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 
@@ -121,6 +126,67 @@ fn receipt_json(observation: &ExpandedConsumerObservation) -> Value {
         "projection_failures": observation.projection_failures.iter()
             .map(|err| format!("{err:?}")).collect::<Vec<_>>()
     })
+}
+
+/// Existing SLR production consumer adequacy runtime, not an invented
+/// consumer-label heuristic. Coverage is limited to independently checked
+/// revision/character-span provenance. No semantic identity, temporal or
+/// factual coordinate is paid by a candidate-only parser/expansion.
+fn consumer_receipts(source_sha: &str) -> Result<Value, String> {
+    let graph = ProjectionGraph {
+        kind: ProjectionKind::IssueProof,
+        nodes: vec![],
+        edges: vec![],
+        deterministic_digest: format!("sha256:{source_sha}"),
+        projection_only: true,
+        creates_semantic_authority: false,
+    };
+    let observed = BTreeSet::from([
+        ConsumerAxis::SourceRevision,
+        ConsumerAxis::SourceSpan,
+        ConsumerAxis::Provenance,
+    ]);
+    let coverage = ConsumerCoverage {
+        paid_axes: observed.clone(),
+        closed_unresolved_axes: BTreeSet::new(),
+        unresolved_refs: BTreeSet::new(),
+    };
+    let query_definitions = [
+        ("gwb:source:observed-mentions", observed.clone()),
+        ("gwb:source:syntactic-role-candidates", observed.clone()),
+        ("gwb:person:who-was-agent",
+            observed.iter().copied().chain([ConsumerAxis::SemanticIdentity]).collect()),
+        ("gwb:event:when",
+            observed.iter().copied().chain([
+                ConsumerAxis::SemanticIdentity, ConsumerAxis::Temporal]).collect()),
+        ("gwb:world:occurrence",
+            observed.iter().copied().chain([
+                ConsumerAxis::SemanticIdentity,
+                ConsumerAxis::FactualPredicate]).collect()),
+    ];
+    let mut outcomes = Vec::new();
+    for (name, axes) in query_definitions {
+        let demand = ConsumerQueryDemand {
+            query_ref: name.to_owned(),
+            required_axes: axes,
+            required_semantic_refs: BTreeSet::new(),
+            candidate_only: true,
+            creates_semantic_authority: false,
+        };
+        let result = assess_consumer_adequacy(&demand, &graph, &coverage)?;
+        require(!result.factors_through_formally_proved &&
+                !result.creates_semantic_authority &&
+                !result.creates_claim_truth,
+                "SLR candidate-only consumer falsely claims semantic theorem/truth")?;
+        outcomes.push(serde_json::to_value(result).map_err(|e| e.to_string())?);
+    }
+    Ok(json!({
+        "engine": "sensiblaw-legal-runtime::assess_consumer_adequacy",
+        "real_input_revision_sha256": source_sha,
+        "runtime_outcomes": outcomes,
+        "factors_through_kernel_proof_paid": false,
+        "semantic_identity_temporal_and_truth_remain_unpaid": true
+    }))
 }
 
 fn run(article: &str, record: &Value) -> Result<Value, String> {
@@ -283,6 +349,7 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
             "unresolved_temporal_modifier_never_asserts_event_time": true
         },
         "real_source_witnesses": sample_witnesses,
+        "consumer_adequacy": consumer_receipts(SOURCE_SHA)?,
         "sentence_observations": observations
     }))
 }

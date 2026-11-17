@@ -35,6 +35,16 @@ all event/identity/temporal consumers.
    adequate for the 'which actor?' consumer without retaining its
    prepositional complement, scope and candidate entity alternatives.
 
+**Cross-layer P0b/role disagreement.** Exact source-span joins between
+the projected event roles and P0b materialised mentions give:
+actor 976/1,036 matched, **60 not materialised** (59 `by`, one `-`);
+patient 788/801 matched, **13 not materialised** (nine `to`, three
+`-`, one `%`). P0b correctly suppresses structural lexemes and
+punctuation; the naive event-role projection still places them in
+participant slots. A semantic `who did what` consumer cannot use
+these slots without a typed reconciliation. This is a real projection
+mismatch, not proof of a bad original dependency graph.
+
 3. **Single main PNF predicate is not a full event summary.**
    419 of 643 SLR sentence candidate records have MORE projected action
    candidates than their `predicate_lemmas` lists. Difference totals

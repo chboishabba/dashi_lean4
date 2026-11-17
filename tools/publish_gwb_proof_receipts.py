@@ -18,6 +18,7 @@ PIN_REV = "enwiki-revid:1385850169"
 OUTPUT = Path("artifacts/gwb-semantic-proof")
 LOGS = (
     "source-consumer-build.log", "native-fibre-lean-build.log",
+    "typed-semantic-fibre-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
     "db-m12-s28-build.log", "jmd-property-proof-build.log",
     "world-graph-proof-build.log", "finite-consumer-build.log",
@@ -132,6 +133,9 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit,
         log = (run / name).read_bytes()
         require(b"GWB_RUST_FIBRE_LEAN_REJECTED:" in log,
                 "adversarial semantic control failed for the wrong reason: " + name)
+    require(b"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS" in
+            (run / "native-fibre-source-proof.log").read_bytes(),
+            "typed SLR candidate/alternative/residual decoder was not executed")
     for name, marker in MARKERS.items():
         require(marker.encode() in (run / name).read_bytes(), "missing " + marker)
     require(b"sorryAx" not in (run / "axiom-audit.log").read_bytes() and

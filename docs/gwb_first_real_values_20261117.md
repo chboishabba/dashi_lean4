@@ -6,6 +6,9 @@
 - source text SHA-256: `a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`
 - original SLR `en_core_web_sm` parser: **643 sentences / 17,547 tokens**
 - original SLR parser receipt reports spaCy **3.8.18**
+- original HTML-to-text structural projection: **225 blocks**, including
+  **63 headings and 162 paragraphs**. Full reconstructed HTML plaintext
+  exactly matches the uploaded 93,577-character source text.
 - original source/PNF candidate stream: 643 candidate records
 - computed direct role/action projection: **1,468 event/action candidates**
 - **990** have a direct actor dependency, **767** a direct patient dependency;
@@ -69,6 +72,9 @@ rerun `bash scripts/run_gwb_article_proof.sh` with `en_core_web_sm` installed.
   17,547 token spans/head IDs: **zero mismatches**.
 - A separate local Python replay checked 1,468 events and 1,467 source order
   edges and produced the lexical candidates described above.
+- A separate local source-hierarchy audit passed **7/7** tests:
+  exact paragraph/heading coverage and six adversarial boundary changes
+  (gaps, overlaps, wrong headings, missing last block, forged kinds).
 - A local baseline and ten adversarial cases rejected altered source hash,
   source revision, sentence hash, token head/surface, actor, text order and
   promotion flags.

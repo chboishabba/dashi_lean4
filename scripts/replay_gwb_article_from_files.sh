@@ -18,13 +18,18 @@ assert ref.startswith("enwiki-revid:"), f"unexpected revision {ref!r}"
 print(ref.removeprefix("enwiki-revid:"))
 PY
 )"
+html_arg=()
+if [[ -f "$input/article.html" ]]; then
+  html_arg=(--source-html "$input/article.html")
+fi
 cd "$here"
 "$py" tools/gwb_article_proof.py --self-check
 "$py" tools/gwb_article_proof.py \
   --output-dir "$output" \
   --source-text "$input/article.txt" \
   --source-revision "$revision" \
-  --slr-record "$input/slr-record.json"
+  --slr-record "$input/slr-record.json" \
+  "${html_arg[@]}"
 lake build wikidata
 lake exe wikidata gwb-article-replay "$output"
 echo "Summary: $output/summary.md"

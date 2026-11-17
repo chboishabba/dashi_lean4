@@ -122,6 +122,105 @@ def callSlrDbM12
   return observation
 
 
+/-- Original S28 source-trace completeness must be reconstructed from
+    retained rows; accepting a producer-supplied true Boolean is insufficient.
+    This stays strictly at the provenance boundary, before *semantic* review. -/
+private def strArray? (j : Json) (key : String) : Option (Array String) :=
+  (j.getObjValAs? (Array String) key).toOption
+
+private def noRepeatedRefs (rows : Array Json) (field : String) : Bool :=
+  let refs := rows.toList.map (fun r => field? r field)
+  refs.all Option.isSome && decide refs.Nodup
+
+private def sourceForStatement
+    (sources : Array Json) (statement : String) : Option Json :=
+  sources.toList.find? (fun row => field? row "statement_ref" == some statement)
+
+private def hasSourceBackedLink
+    (sources links : Array Json) (observation : String) : Bool :=
+  links.toList.any (fun link =>
+    field? link "observation_ref" == some observation &&
+    match field? link "statement_ref" with
+    | none => false
+    | some statement =>
+      match sourceForStatement sources statement with
+      | none => false
+      | some source =>
+        field? link "source_revision_ref" ==
+          field? source "source_revision_ref" &&
+        field? link "exact_span_ref" == field? source "exact_span_ref" &&
+        (field? source "source_revision_ref").isSome &&
+        (field? source "exact_span_ref").isSome)
+
+private def sourceAndObservationRefsBacked
+    (sources assemblies links : Array Json) (row : Json) : Bool :=
+  match strArray? row "statement_refs",
+        strArray? row "observation_refs" with
+  | some statements, some observations =>
+      statements.toList.all (fun ref =>
+        (sourceForStatement sources ref).isSome) &&
+      observations.toList.all (fun ref =>
+        assemblies.toList.any (fun assembly =>
+          field? assembly "observation_ref" == some ref) &&
+        hasSourceBackedLink sources links ref)
+  | _, _ => false
+
+/-- These are original SLR adjacency and source-ancestry relations, not
+    semantic equivalence, same historical event, or temporal truth. -/
+def checkS28Provenance (j : Json) (eventRef : String) : Bool :=
+  let sources := (j.getObjValAs? (Array Json) "source_statements").toOption
+  let assemblies := (j.getObjValAs? (Array Json) "observation_event_links").toOption
+  let links := (j.getObjValAs? (Array Json) "statement_observation_links").toOption
+  let times := (j.getObjValAs? (Array Json) "temporal_assertions").toOption
+  let claims := (j.getObjValAs? (Array Json) "claim_leaves").toOption
+  let disputes := (j.getObjValAs? (Array Json) "contestation_relations").toOption
+  match sources, assemblies, links, times, claims, disputes with
+  | some sourceRows, some eventLinks, some statementLinks,
+    some temporal, some leaves, some contestations =>
+      !sourceRows.isEmpty && !eventLinks.isEmpty &&
+      !statementLinks.isEmpty && !eventRef.isEmpty &&
+      noRepeatedRefs sourceRows "statement_ref" &&
+      noRepeatedRefs eventLinks "link_ref" &&
+      noRepeatedRefs statementLinks "link_ref" &&
+      eventLinks.toList.all (fun assembly =>
+        field? assembly "event_ref" == some eventRef &&
+        match field? assembly "observation_ref" with
+        | none => false
+        | some observation =>
+          (temporal ++ leaves ++ contestations).toList.any (fun row =>
+            ((strArray? row "observation_refs").getD #[]).contains observation) &&
+          hasSourceBackedLink sourceRows statementLinks observation) &&
+      statementLinks.toList.all (fun link =>
+        match field? link "observation_ref", field? link "statement_ref" with
+        | some observation, some statement =>
+            eventLinks.toList.any (fun assembly =>
+              field? assembly "observation_ref" == some observation) &&
+            (sourceForStatement sourceRows statement).isSome &&
+            hasSourceBackedLink sourceRows statementLinks observation
+        | _, _ => false) &&
+      (temporal ++ leaves ++ contestations).toList.all
+        (sourceAndObservationRefsBacked sourceRows eventLinks statementLinks) &&
+      leaves.toList.all (fun claim =>
+        match strArray? claim "temporal_refs" with
+        | none => false
+        | some refs => refs.toList.all (fun ref =>
+            temporal.toList.any (fun assertion =>
+              field? assertion "temporal_ref" == some ref))) &&
+      contestations.toList.all (fun relation =>
+        leaves.toList.any (fun claim =>
+          field? claim "claim_ref" == field? relation "from_claim_ref") &&
+        leaves.toList.any (fun claim =>
+          field? claim "claim_ref" == field? relation "to_claim_ref"))
+  | _, _, _, _, _, _ => false
+
+structure CheckedS28Provenance (j : Json) (eventRef : String) where
+  checked : checkS28Provenance j eventRef = true
+
+theorem checkedS28HasCompleteAncestry
+    {j : Json} {eventRef : String}
+    (receipt : CheckedS28Provenance j eventRef) :
+    checkS28Provenance j eventRef = true := receipt.checked
+
 /-- Read existing S28 temporal, claim and contestation observations for a
     previously assembled event. This is NOT an automatic event join nor
     a derived world timeline. Its rows remain separately attributable. -/
@@ -172,6 +271,12 @@ def callSlrS28Candidates (slrExecutable eventRef : String) : IO Json := do
   for row in assemblyRows do
     if (row.getObjValAs? String "event_ref").toOption != some eventRef then
       throw (IO.userError "S28 assembly references a different event")
+  if proof : checkS28Provenance value eventRef = true then
+    let receipt : CheckedS28Provenance value eventRef := ⟨proof⟩
+    let _ := checkedS28HasCompleteAncestry receipt
+    pure ()
+  else
+    throw (IO.userError "S28 provenance graph does not commute: missing source/observation/claim edges")
   if temporal.isEmpty && claims.isEmpty then
     throw (IO.userError "S28 event has no candidate history")
   for row in temporal ++ claims ++ contestations ++ sourceRows ++ assemblyRows ++ statementLinks do

@@ -25,6 +25,14 @@ def publish(source,run,dest):
             data["experimental_sl_semantic_expansion_used"] is False and
             data["semantic_authority_created"] is False,
             "canonical producer evidence absent or promoted")
+    for filename, field in (
+        ("slr-record.json","original_slr_json_sha256"),
+        ("article-candidates.json","original_projection_json_sha256"),
+        ("gwb_sensiblaw_p0b_mention_licences.json","original_p0b_json_sha256"),
+    ):
+        document=json.loads((source/filename).read_bytes())
+        digest=hashlib.sha256(json.dumps(document,sort_keys=True,separators=(",",":")).encode("utf-8")).hexdigest()
+        require(data.get(field)==digest,"original producer input changed after validation: "+filename)
     counts=data["counts"]
     require(counts["sentences"]==643 and counts["parser_tokens"]==17547 and
             counts["original_predicates"]>0 and
@@ -50,6 +58,9 @@ def publish(source,run,dest):
       "schema":"gwb-original-slr-source-lean-proof-v1",
       "source_revision":REV, "source_utf8_sha256":PIN,
       "source_unit_ref":data["source_unit_ref"],
+      "original_slr_json_sha256":data["original_slr_json_sha256"],
+      "original_projection_json_sha256":data["original_projection_json_sha256"],
+      "original_p0b_json_sha256":data["original_p0b_json_sha256"],
       "source_producer":"slr-source-unit-pnf-record-v1",
       "source_projection":"slr-jmd-wikipedia-article-candidates-v1",
       "original_semantic_predicate_count":counts["original_predicates"],

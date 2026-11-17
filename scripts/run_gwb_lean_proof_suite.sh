@@ -52,6 +52,14 @@ lake env lean --run tools/GwbProofRunner.lean article-check \
   "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
   | tee "$out/article-source-proof.log"
 
+# The first real-article consumer theorem: the original dependency rows
+# provide two different embedded-parent answers for an IDENTICAL flat
+# scope label. Lean checks the source graph and constructs a no-factorisation
+# certificate; no PNF or world event is promoted.
+lake env lean --run tools/GwbProofRunner.lean semantic-scope \
+  "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+  | tee "$out/semantic-scope-proof.log"
+
 # Adversarial replay of the *same* Lean checker. jq modifies only
 # negative fixtures: it does not parse/produce language interpretations.
 {

@@ -82,19 +82,19 @@ def runNativeFibreReceipt (articlePath sourcePath projectionPath nativePath : St
             article slr projected evidence := ⟨h⟩
         let _ := Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals
           checked
-        let typed ← match Slr.GwbTypedFibre.decodeCheckedRows? checked with
-          | some value => pure value
-          | none =>
-              IO.eprintln "GWB_RUST_FIBRE_LEAN_REJECTED: typed candidate/alternative/residual decoding incomplete"
-              return 1
-        let _typedProof := Slr.GwbTypedFibre.typedRowsRemainSourceBound typed
-        let (candidateCount, alternativeCount, residualCount) :=
-          Slr.GwbTypedFibre.totals typed.rows
-        IO.println s!"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS sentences={typed.rows.size} candidates={candidateCount} alternatives={alternativeCount} residuals={residualCount}"
-        IO.println "GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS"
-        IO.println "Checked: native Rust candidates, alternatives, residuals, source spans and 5 consumer outcomes"
-        IO.println "NOT PAID: reviewed semantic transports, production S28 joins or world occurrence"
-        return 0
+        match Slr.GwbTypedFibre.decodeCheckedRows? checked with
+        | none =>
+            IO.eprintln "GWB_RUST_FIBRE_LEAN_REJECTED: typed candidate/alternative/residual decoding incomplete"
+            return 1
+        | some typed =>
+            let _typedProof := Slr.GwbTypedFibre.typedRowsRemainSourceBound typed
+            let (candidateCount, alternativeCount, residualCount) :=
+              Slr.GwbTypedFibre.totals typed.rows
+            IO.println s!"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS sentences={typed.rows.size} candidates={candidateCount} alternatives={alternativeCount} residuals={residualCount}"
+            IO.println "GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS"
+            IO.println "Checked: native Rust candidates, alternatives, residuals, source spans and 5 consumer outcomes"
+            IO.println "NOT PAID: reviewed semantic transports, production S28 joins or world occurrence"
+            return 0
       else
         IO.eprintln "GWB_RUST_FIBRE_LEAN_REJECTED: altered source, unresolved correspondence or promoted semantic claim"
         return 1

@@ -24,9 +24,9 @@ ORIGINAL = (
 AUDIT = "proof/semantic_observer_audit.json"
 SUMMARY = "proof/semantic_observer_audit.md"
 MANIFEST = "proof/proof_run_manifest.json"
-LOGS = ("lean-build.log", "axiom-audit.log",
-        "consumer-fibre-proof.log", "article-source-proof.log",
-        "semantic-scope-proof.log")
+LOGS = ("source-consumer-build.log", "lean-build.log",
+        "axiom-audit.log", "consumer-fibre-proof.log",
+        "article-source-proof.log", "semantic-scope-proof.log")
 
 def require(ok, error):
     if not ok:

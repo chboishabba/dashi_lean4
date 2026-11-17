@@ -42,6 +42,26 @@ compile_slr GwbProofComposition
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
+# Optional real DB-native outputs. These files must be produced by the
+# original checked SLR/PostgreSQL path; no JSON or event identity is invented.
+# M12 requires its exact source literal; S28 requires its event reference.
+if [[ -n "${GWB_DB_M12_JSON:-}" || -n "${GWB_DB_M12_LITERAL:-}" ]]; then
+  [[ -f "${GWB_DB_M12_JSON:-}" && -f "${GWB_DB_M12_LITERAL:-}" ]] || {
+    echo "Supply both GWB_DB_M12_JSON and GWB_DB_M12_LITERAL" >&2
+    exit 2
+  }
+  lake env lean --run tools/GwbProofRunner.lean db-m12-check \
+    "$GWB_DB_M12_JSON" "$GWB_DB_M12_LITERAL"
+fi
+if [[ -n "${GWB_DB_S28_JSON:-}" || -n "${GWB_DB_S28_EVENT_REF:-}" ]]; then
+  [[ -f "${GWB_DB_S28_JSON:-}" && -n "${GWB_DB_S28_EVENT_REF:-}" ]] || {
+    echo "Supply both GWB_DB_S28_JSON and GWB_DB_S28_EVENT_REF" >&2
+    exit 2
+  }
+  lake env lean --run tools/GwbProofRunner.lean db-s28-check \
+    "$GWB_DB_S28_JSON" "$GWB_DB_S28_EVENT_REF"
+fi
+
 
 if [[ "$mode" == "--proof-only" ]]; then
   cat <<'EOF'

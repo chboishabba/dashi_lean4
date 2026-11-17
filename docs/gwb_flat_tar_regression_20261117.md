@@ -68,6 +68,13 @@ structured carrier identity also matched its 256-bit `carrier_ref`:
 
 `mention-licensing:3ef79fd2fc6e44351edd6defb0c8aa21a72c3a19a757c203b1d328eb9abbed1e`.
 
+Additional independent corruption tests were run against temporary modified
+TARs. **7/7 were rejected:** licence kind, licence priority, mention
+span, suppressed-span classification, carrier content-address, original
+source POS tag, and original source token surface. These checks exercise
+the full-record reconstruction, rather than merely trusting the carrier
+SHA or validating that licence references exist.
+
 This is a proof by exhaustive finite comparison of the archived P0b
 derivation to the recorded rules under the assumption that the supplied
 token/POS observations are the intended inputs. It is NOT a kernel proof,

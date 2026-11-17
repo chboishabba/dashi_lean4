@@ -48,6 +48,7 @@ compile_slr GwbProofComposition
 compile_slr GwbWorldGraphProof
 compile_slr GwbHyperfabricTransport
 compile_slr GwbArticleSystemSoundness
+compile_slr GwbP4SourceLicence
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"

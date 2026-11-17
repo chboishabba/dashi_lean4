@@ -208,3 +208,55 @@ sitelink/revision; world-truth promotion.
   status, cached OLEAN or `sorry` provides an external-evidence theorem.
 * The new code in this update is SOURCE-WRITTEN and not reported as kernel
   accepted until an actual Lean 4.28.0 run succeeds.
+
+## Final source implementation / first-run gates (PR #112)
+
+The source implementation has advanced beyond the original L1–L10 table:
+
+| Cut | Concrete executable / theorem | Source state |
+|---|---|---|
+| L1 | `GwbArticleIdentity.checkGwbRootIdentity`, `article-qid-check` | Checked Q207/sitelink/revision **code written**; needs original EntityData and Lean run |
+| L2 | Reused PR #111 `checkNativeM12Literal`, `checkS28Provenance`; `db-m12-check`, `db-s28-check` | Structural checker written, actual DB receipt still required |
+| L3 | `GwbTypedFibre.decodeCheckedRows?`, `typedRowsRemainSourceBound` | Exact original Rust candidate/alternative/residual view written; semantic completeness not implied |
+| L4/L5 | `GwbHyperfabric.Fragment`, `join`, `restrict`, `restrictionCommutesWithJoin`, `narrowMention` | Same-checked-source transport and candidate-history laws written; positive real actor identity still open |
+| L6/L7 | Existing S28 provenance reconstruction and Agda event/chronology owners | Real governed event/time admission still open |
+| L8 | `FiniteConsumer.completeFiniteFibreConsumerClosed`, `omittedLiveReadingBlocksCompleteness` | Generic theorem and negative theorem source written; production-live reading coverage open |
+| L9 | `GwbProofComposition.independentArticleAndKBResultsSound` | KB proof kept separate from article reading; actual semantic alignment open |
+| L10 | `GwbWorldGraph.checkCandidateWorldGraph`, `proofForEdge?`, `checkedWorldPropertySound`, `world-graph-check` | JMD snapshot-relative per-edge proof and unresolved inventory written; automatic article-semantic graph elaboration still open |
+| System | `GwbArticleSystem.checkedArticleLocalSystemSound`, `checkedArticleAndRootKBPropertySound` | Conditional end-to-end article-local theorem source written |
+
+**Every row above remains unaccepted as a new Lean kernel result until your
+pinned local run passes.** The pre-existing PR #112 Rust and Lean receipts
+remain the last completed empirical evidence. Compile success of this new
+code will close source-level and conditional theorem gates; it will not by
+itself establish a complete semantic resolver or independent historical
+event truth. The original SLR native output, JMD entity data and live
+M12/S28 ledger must be consumed under their own checked scopes.
+
+### Recommended first run
+
+```bash
+cd /home/c/Documents/code/dashi_lean4
+git switch feat/gwb-targeted-proof-cache
+git pull --ff-only
+bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+```
+
+Then, using your existing original SLR checkout and locally retained
+`.dashi/gwb-source/` data:
+
+```bash
+SLR_ROOT=/home/c/Documents/code/slr \
+  bash scripts/run_gwb_maxcut_acceptance.sh --full
+```
+
+If the larger GWB graph is available from the original `dashi_agda` world
+follow, set `GWB_WORLD_GRAPH_JSON` to that JSON before the first command
+to include source-backed 51-QID JMD reimport. Do not run the historical
+`run_gwb_wikimedia_world_follow.sh` solely to get a TAR: that legacy
+script packages a TAR on exit. The new proof handoff consumes an existing
+graph JSON directly and creates no TAR.
+
+The `--strict` option deliberately exits nonzero while full production
+semantic coverage, reviewed event/time and article-to-world alignment are
+unpaid, even if all existing structural certificates pass.

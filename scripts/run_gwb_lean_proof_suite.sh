@@ -34,8 +34,13 @@ trap 'rm -rf "$tmp" "$out"' EXIT
 tar -xf "$archive" -C "$tmp" article.txt slr-record.json article-candidates.json
 cd "$root"
 
-# Compile only the small proof runner.  Its imports resolve through the
-# existing .olean cache; do not build the unrelated wikidata executable.
+# Compile the ONE newly introduced source-bound counterexample module
+# into the existing project-local .olean cache. Reuse already cached
+# WikipediaArticleProof, Batteries and Mathlib; do NOT build Wikidata.
+mkdir -p "$root/.lake/build/lib/lean/RequestProject/Slr"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceConsumer.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbRealSourceConsumer.lean" \
+  2>&1 | tee "$out/source-consumer-build.log"
 lake env lean tools/GwbProofRunner.lean 2>&1 | tee "$out/lean-build.log"
 lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"

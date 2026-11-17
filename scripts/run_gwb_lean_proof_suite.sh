@@ -105,6 +105,11 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbNativeFibreRe
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/DbSourceProducer.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/DbSourceProducer.lean" \
   2>&1 | tee "$out/db-m12-s28-build.log"
+# Reuse JMD's verified property checker before compiling the composed
+# world-graph proof. Keep its checked import boundary source-attributed.
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/Proof.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/Proof.lean" \
+  2>&1 | tee "$out/jmd-property-proof-build.log"
 # Build the previously source-written finite consumer theorem and the
 # same-owner JMD/SLR composition theorem before loading the GWB runner.
 # Keeping each OLEAN path explicit makes missing imports fail closed.
@@ -114,6 +119,9 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/FiniteConsumerCe
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbProofComposition.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbProofComposition.lean" \
   2>&1 | tee "$out/proof-composition-build.log"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbWorldGraphProof.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbWorldGraphProof.lean" \
+  2>&1 | tee "$out/world-graph-proof-build.log"
 lake env lean tools/GwbProofRunner.lean 2>&1 | tee "$out/lean-build.log"
 lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"

@@ -293,3 +293,29 @@ owners: `dashi_agda`. JMD Wikidata KB and property consistency
 theorems: original `meta-introspector` RequestProject import.
 No attribution of JMD ontology consistency as author of article
 semantic interpretation.
+
+## Executable original-source witness checks
+
+`tools/audit_gwb_original_semantic_cases.py` now reopens the exact
+four **actual** source/token witnesses embedded in the committed native
+receipt (sentences 5, 9, 18, 131) and fails if the cited parser labels
+or source spans have changed. For the Iraq sentence it also checks that
+the `overthrow`, `citing` and `possessed` clause positions retain
+their alternative sites; for the Presidency example it asserts the
+original heading/paragraph newline boundary is visibly inside the
+single parser sentence. It emits a *problem inventory* with original
+source text and existing owner paths, **not** a hand-labeled gold
+interpretation or a claim that the canonical owner was executed.
+
+The unified acceptance script executes this check with the exact
+committed Rust JSON, alongside the nine negative controls for the
+fine-label rejoin, and writes the generated original case diagnostics
+into the **ignored** `.dashi/gwb-audit/` location. The complete
+12,543-label breakdown additionally requires the original ignored
+SLR JSON from the already passing full run.
+
+This code and prior-art mapping are committed, but the new negative
+test suite and full original-source fine audit have not yet been
+locally executed with the operator's pinned source fixture. This
+is deliberately distinct from the previously verified P4/P5–P10
+Lean kernel receipts.

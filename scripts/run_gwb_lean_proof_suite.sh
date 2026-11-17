@@ -144,6 +144,9 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbArticleSystem
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbP4SourceLicence.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbP4SourceLicence.lean" \
   2>&1 | tee "$out/p4-source-licence-build.log"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbP4ArticleEndToEnd.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbP4ArticleEndToEnd.lean" \
+  2>&1 | tee "$out/p4-article-end-to-end-build.log"
 lake env lean tools/GwbProofRunner.lean 2>&1 | tee "$out/lean-build.log"
 lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"

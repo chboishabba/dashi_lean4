@@ -83,6 +83,9 @@ mkdir -p "$root/.lake/build/lib/lean/RequestProject/Slr"
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceConsumer.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbRealSourceConsumer.lean" \
   2>&1 | tee "$out/source-consumer-build.log"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbNativeFibreReceipt.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbNativeFibreReceipt.lean" \
+  2>&1 | tee "$out/native-fibre-lean-build.log"
 lake env lean tools/GwbProofRunner.lean 2>&1 | tee "$out/lean-build.log"
 lake env lean --run tools/GwbProofRunner.lean fibre \
   | tee "$out/consumer-fibre-proof.log"
@@ -106,6 +109,10 @@ lake env lean --run tools/GwbProofRunner.lean article-check \
 lake env lean --run tools/GwbProofRunner.lean semantic-scope \
   "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
   | tee "$out/semantic-scope-proof.log"
+lake env lean --run tools/GwbProofRunner.lean rust-fibre-check \
+  "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+  "$out/slr-rust-observations.json" \
+  | tee "$out/native-fibre-source-proof.log"
 
 # Adversarial replay of the *same* Lean checker. jq modifies only
 # negative fixtures: it does not parse/produce language interpretations.

@@ -17,6 +17,7 @@ PIN_SHA = "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
 PIN_REV = "enwiki-revid:1385850169"
 OUTPUT = Path("artifacts/gwb-semantic-proof")
 LOGS = (
+    "jmd-targeted-prerequisites-build.log",
     "source-consumer-build.log", "native-fibre-lean-build.log",
     "typed-semantic-fibre-build.log", "q207-identity-proof-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",

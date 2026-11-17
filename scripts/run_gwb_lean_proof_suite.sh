@@ -58,6 +58,7 @@ edition = "2021"
 [dependencies]
 sensiblaw-core = { path = "$SLR_ROOT/crates/sl-core" }
 sensiblaw-semantic-expansion = { path = "$SLR_ROOT/crates/sl-semantic-expansion" }
+sensiblaw-legal-runtime = { path = "$SLR_ROOT/crates/sl-legal-runtime" }
 serde_json = "1"
 sha2 = "0.10"
 

@@ -32,7 +32,8 @@ def require(ok, error):
     if not ok:
         raise ValueError(error)
 
-def pack(path, report, logs=None, lean_version=None, head=None):
+def pack(path, report, logs=None, lean_version=None, head=None,
+         slr_expansion=None, slr_head=None):
     archive_path = Path(path).resolve()
     report_path = Path(report).resolve()
     payload = json.loads(report_path.read_text(encoding="utf-8"))
@@ -44,6 +45,42 @@ def pack(path, report, logs=None, lean_version=None, head=None):
     require(payload == audit_source(*load_source(str(archive_path))),
             "supplied semantic audit is not derived from original TAR evidence")
     additional = {AUDIT: report_path.read_bytes()}
+    rust_status = "NOT_EXECUTED_IN_THIS_REFRESH"
+    if slr_expansion is not None:
+        require(bool(slr_head), "missing exact SLR Rust git head")
+        rust_bytes = Path(slr_expansion).read_bytes()
+        native = json.loads(rust_bytes)
+        require(native["schema"] ==
+                "gwb-slr-native-semantic-expansion-observations-v1",
+                "unexpected Rust semantic-expansion schema")
+        require(native["source_revision"] == PINNED_REVISION and
+                native["source_text_sha256"] == PINNED_SOURCE_SHA256,
+                "native Rust semantic evidence source identity")
+        require(native["source_sentences"] == 643 and
+                native["source_tokens"] == 17547 and
+                native["direct_reference_parity_complete"] is True and
+                native["projection_failures"] == 0,
+                "Rust semantic direct/reference replay incomplete")
+        require(native["engine"] == "sensiblaw-semantic-expansion" and
+                native["engine_certification"] ==
+                "EXPERIMENTAL_CANDIDATE_ONLY_OUTSIDE_CERTIFIED_DIRECT_PATH",
+                "native expansion overstates production certification")
+        require(native["consumer_specific_semantic_licence_paid"] is False and
+                native["full_production_s28_or_hyperfabric_closure"] is False and
+                native["world_occurrence_paid"] is False,
+                "unreviewed semantic/truth promotion in Rust receipt")
+        require(len(native["sentence_observations"]) == 643,
+                "incomplete per-sentence semantic fibre observations")
+        require(len(native["real_source_witnesses"]) >= 3,
+                "missing real-source semantic discriminators")
+        require(sum(len(x["candidates"]) for x in native["sentence_observations"]) ==
+                native["native_candidate_count"], "candidate count forged")
+        require(sum(len(x["residuals"]) for x in native["sentence_observations"]) ==
+                native["typed_residual_count"], "residual count forged")
+        require(sum(len(x["alternative_fibres"]) for x in native["sentence_observations"]) ==
+                native["alternative_fibre_count"], "fibre count forged")
+        additional["proof/slr-rust-semantic-expansion.json"] = rust_bytes
+        rust_status = "SLR_RUST_CANDIDATE_EXPANSION_PARITY_CHECKED_NOT_DB_NATIVE"
     status = "NOT_EXECUTED_IN_THIS_REFRESH"
     if logs is not None:
         root = Path(logs)
@@ -71,7 +108,16 @@ def pack(path, report, logs=None, lean_version=None, head=None):
                     "missing counterexample rejection log: " + name)
             additional["proof/rejected-" + name + ".log"] = (
                 root / ("rejected-" + name + ".log")).read_bytes()
-        status = "TARGETED_LEAN_SOURCE_SCOPE_AND_FIVE_NEGATIVE_CONTROLS_RUN"
+        require(slr_expansion is not None,
+                "no actual SLR semantic alternative/residual replay with Lean proof")
+        for logname in ("slr-rust-expansion.log", "slr-rust-test.log"):
+            logfile = root / logname
+            require(logfile.is_file(), "missing real SLR Rust execution log: " + logname)
+            additional["proof/" + logname] = logfile.read_bytes()
+        require(b"GWB_SLR_RUST_SEMANTIC_EXPANSION_PARITY_PASS" in
+                additional["proof/slr-rust-expansion.log"],
+                "native SLR direct/reference Rust execution missing")
+        status = "TARGETED_LEAN_SOURCE_SCOPE_RUST_EXPANSION_AND_FIVE_NEGATIVE_CONTROLS_RUN"
     manifest = {
         "schema": "gwb-single-tar-proof-manifest-v1",
         "source_revision": PINNED_REVISION,
@@ -81,6 +127,11 @@ def pack(path, report, logs=None, lean_version=None, head=None):
         "git_head": head if logs else None,
         "source_observation_consistency": "ARCHIVE_AUDITED",
         "production_rust_semantic_fibre": "NOT_IN_INPUT_ARCHIVE",
+        "rust_candidate_semantic_expansion": rust_status,
+        "rust_source_repo_head": slr_head if slr_expansion else None,
+        "rust_fibre_observations": (
+            "proof/slr-rust-semantic-expansion.json" if slr_expansion else None
+        ),
         "reviewed_s28_event_join": "NOT_IN_INPUT_ARCHIVE",
         "consumer_relative_semantic_closure": "NOT_IN_INPUT_ARCHIVE",
         "world_event_occurrence": "NOT_LICENSED",
@@ -110,6 +161,8 @@ def pack(path, report, logs=None, lean_version=None, head=None):
         "A targeted abstract Lean theorem is not a real-article semantic closure.",
         "",
         f"Targeted Lean in this refresh: {status}.",
+        f"Actual SLR Rust alternative/residual replay: {rust_status}.",
+        "That candidate engine is experimental; DB-native semantic closure is still unpaid.",
         ""
     ]
     additional[SUMMARY] = "\n".join(md).encode("utf-8")
@@ -164,5 +217,8 @@ if __name__ == "__main__":
     p.add_argument("--logs")
     p.add_argument("--lean-version")
     p.add_argument("--head")
+    p.add_argument("--slr-expansion")
+    p.add_argument("--slr-head")
     a = p.parse_args()
-    pack(a.tar, a.audit, a.logs, a.lean_version, a.head)
+    pack(a.tar, a.audit, a.logs, a.lean_version, a.head,
+         a.slr_expansion, a.slr_head)

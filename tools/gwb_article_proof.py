@@ -405,9 +405,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--self-check", action="store_true")
     p.add_argument("--revision", help="Wikipedia oldid for exact replay")
     p.add_argument("--source-text", type=Path, help="offline fixture/plain article text")
+    p.add_argument("--source-html", type=Path,
+                   help="saved MediaWiki HTML; must reproduce exact --source-text and sections")
     p.add_argument("--source-revision", help="required with --source-text")
     p.add_argument("--slr-record", type=Path, help="reuse an already produced SLR source-unit record")
     args = p.parse_args(argv)
+    if args.source_html and not args.source_text:
+        p.error("--source-html is valid only with --source-text")
     if args.self_check:
         return self_check()
     if args.agda_root is None or args.output_dir is None:
@@ -421,6 +425,12 @@ def main(argv: list[str] | None = None) -> int:
         origin = "offline-source-file"
         sections = [{"kind": "paragraph", "heading": "Offline fixture",
                      "start_char": 0, "end_char": len(source)}]
+        if args.source_html:
+            saved_html = args.source_html.read_text(encoding="utf-8")
+            from_html, sections = html_to_source(saved_html)
+            if from_html != source:
+                raise ValueError("saved article HTML does not reproduce exact source text")
+            (args.output_dir / "article.html").write_text(saved_html, encoding="utf-8")
     else:
         revision, html, origin = fetch_article(args.revision)
         (args.output_dir / "article.html").write_text(html, encoding="utf-8")

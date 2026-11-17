@@ -4,42 +4,56 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-archive="${1:?Usage: bash scripts/run_gwb_lean_proof_suite.sh /path/to/gwb_article_proof.tar}"
-archive="$(realpath "$archive")"
-# One permanent artifact: the SAME TAR. All proof logs and staged files
-# live inside project-local temporary directories and are packed back into it.
-out="$(mktemp -d "$root/.gwb-proof-run.XXXXXX")"
-trap 'rm -rf "$out"' EXIT
+cd "$root"
+# Historical TAR is optional *import-only* for the first run. There is no
+# new TAR, no repacking and no TAR required on subsequent proof runs.
+source_dir="$root/.dashi/gwb-source"
+legacy="${1:-}"
+if [[ -n "$legacy" && "$legacy" != "--no-commit" ]]; then
+  [[ -f "$legacy" ]] || { echo "Input TAR not found: $legacy" >&2; exit 2; }
+  legacy="$(realpath "$legacy")"
+fi
+commit_flag=""
+if [[ "$legacy" == "--no-commit" || "${2:-}" == "--no-commit" ]]; then
+  commit_flag="--no-commit"
+  [[ "$legacy" == "--no-commit" ]] && legacy=""
+fi
+mkdir -p "$root/.dashi"
+if [[ ! -f "$source_dir/slr-record.json" ]]; then
+  [[ -n "$legacy" ]] || {
+    echo "One-time source import needed: bash scripts/run_gwb_lean_proof_suite.sh gwb_article_proof.tar" >&2
+    exit 2
+  }
+  stage_source="$(mktemp -d "$root/.dashi/.gwb-source-stage.XXXXXX")"
+  trap 'rm -rf "$stage_source"' EXIT
+  # Import original evidence only; never import stale proof/ summaries.
+  tar -xf "$legacy" -C "$stage_source" \
+    article.html article.txt article-candidates.json slr-record.json \
+    slr-source-units.jsonl summary.md gwb_sensiblaw_p0b_mention_licences.json
+  mv "$stage_source" "$source_dir"
+fi
 command -v sha256sum >/dev/null || { echo "sha256sum unavailable" >&2; exit 2; }
-command -v lake >/dev/null || { echo "Pinned Lake/Lean unavailable; install repo lean-toolchain through elan" >&2; exit 2; }
-command -v tar >/dev/null || { echo "tar unavailable" >&2; exit 2; }
-command -v jq >/dev/null || { echo "jq required for strict negative controls" >&2; exit 2; }
-command -v python3 >/dev/null || { echo "python3 needed for read-only evidence archive auditing (NOT NLP)" >&2; exit 2; }
-command -v cargo >/dev/null || { echo "Cargo required to execute existing SLR Rust semantic expansion" >&2; exit 2; }
+command -v lake >/dev/null || { echo "Lean/Lake required" >&2; exit 2; }
+command -v jq >/dev/null || { echo "jq required for negative controls" >&2; exit 2; }
+command -v python3 >/dev/null || { echo "Python read-only audit tools unavailable" >&2; exit 2; }
+command -v cargo >/dev/null || { echo "SLR Rust Cargo unavailable" >&2; exit 2; }
 SLR_ROOT="${SLR_ROOT:-$root/../slr}"
 SLR_ROOT="$(realpath "$SLR_ROOT")"
 [[ -f "$SLR_ROOT/crates/sl-semantic-expansion/Cargo.toml" ]] || {
-  echo "Set SLR_ROOT to the production SLR Rust checkout" >&2
-  exit 2
+  echo "Set SLR_ROOT to existing production Rust checkout" >&2; exit 2;
 }
 if ! lake env lean --version | grep -q '4.28.0'; then
-  echo "Pinned root Lean 4.28.0 not active; do not use /usr/bin/lean 4.27.0" >&2
-  exit 2
+  echo "Pinned targeted Lean 4.28.0 not active" >&2; exit 2
 fi
-
-# A refreshed archive has a different TAR SHA. Pin the ORIGINAL source
-# bytes and revision instead; the immutable seven-member evidence payload is
-# retained across updates by refresh_gwb_single_tar.py.
 expected="a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
-actual="$(tar -xOf "$archive" article.txt | sha256sum | cut -d ' ' -f 1)"
-if [[ "$actual" != "$expected" ]]; then
-  echo "GWB canonical source UTF-8 SHA mismatch: expected $expected, found $actual" >&2
-  exit 2
-fi
-tmp="$(mktemp -d "$root/.gwb-lean-stage.XXXXXX")"
+actual="$(sha256sum "$source_dir/article.txt" | cut -d ' ' -f 1)"
+[[ "$actual" == "$expected" ]] || {
+  echo "Original source UTF-8 SHA mismatch" >&2; exit 2;
+}
+# All build/proof staging is project-local and removed on exit.
+tmp="$(mktemp -d "$root/.dashi/.gwb-lean-stage.XXXXXX")"
+out="$(mktemp -d "$root/.dashi/.gwb-proof-run.XXXXXX")"
 trap 'rm -rf "$tmp" "$out"' EXIT
-tar -xf "$archive" -C "$tmp" article.txt slr-record.json article-candidates.json
-cd "$root"
 
 # Real SLR semantic alternatives/residuals over the same original
 # dependency rows. Build a transient Cargo manifest in the project worktree
@@ -72,7 +86,7 @@ mkdir -p "$CARGO_TARGET_DIR"
 cargo test --quiet --manifest-path "$tmp/slr-cargo/Cargo.toml" \
   2>&1 | tee "$out/slr-rust-test.log"
 cargo run --quiet --manifest-path "$tmp/slr-cargo/Cargo.toml" -- \
-  "$tmp/article.txt" "$tmp/slr-record.json" "$out/slr-rust-observations.json" \
+  "$source_dir/article.txt" "$source_dir/slr-record.json" "$out/slr-rust-observations.json" \
   | tee "$out/slr-rust-expansion.log"
 SLR_HEAD="$(git -C "$SLR_ROOT" rev-parse HEAD)"
 
@@ -99,7 +113,7 @@ fi
 # Independent Lean structural check: original article characters,
 # sentence/role/predicate completeness, 311 lexical years and exact hierarchy.
 lake env lean --run tools/GwbProofRunner.lean article-check \
-  "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+  "$source_dir/article.txt" "$source_dir/slr-record.json" "$source_dir/article-candidates.json" \
   | tee "$out/article-source-proof.log"
 
 # The first real-article consumer theorem: the original dependency rows
@@ -107,10 +121,10 @@ lake env lean --run tools/GwbProofRunner.lean article-check \
 # scope label. Lean checks the source graph and constructs a no-factorisation
 # certificate; no PNF or world event is promoted.
 lake env lean --run tools/GwbProofRunner.lean semantic-scope \
-  "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+  "$source_dir/article.txt" "$source_dir/slr-record.json" "$source_dir/article-candidates.json" \
   | tee "$out/semantic-scope-proof.log"
 lake env lean --run tools/GwbProofRunner.lean rust-fibre-check \
-  "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+  "$source_dir/article.txt" "$source_dir/slr-record.json" "$source_dir/article-candidates.json" \
   "$out/slr-rust-observations.json" \
   | tee "$out/native-fibre-source-proof.log"
 
@@ -121,7 +135,7 @@ reject_rust_semantic_mutation() {
   local filter="$2"
   jq "$filter" "$out/slr-rust-observations.json" > "$tmp/forged-slr-$name.json"
   if lake env lean --run tools/GwbProofRunner.lean rust-fibre-check \
-      "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/article-candidates.json" \
+      "$source_dir/article.txt" "$source_dir/slr-record.json" "$source_dir/article-candidates.json" \
       "$tmp/forged-slr-$name.json" \
       > "$out/rejected-slr-$name.log" 2>&1; then
     echo "UNSOUND: Lean accepted forged native SLR semantic evidence ($name)" >&2
@@ -145,9 +159,9 @@ reject_rust_semantic_mutation false-residual-closure \
   reject_mutation() {
     local name="$1"
     local filter="$2"
-    jq "$filter" "$tmp/article-candidates.json" > "$tmp/forged-$name.json"
+    jq "$filter" "$source_dir/article-candidates.json" > "$tmp/forged-$name.json"
     if lake env lean --run tools/GwbProofRunner.lean article-check \
-        "$tmp/article.txt" "$tmp/slr-record.json" "$tmp/forged-$name.json" \
+        "$source_dir/article.txt" "$source_dir/slr-record.json" "$tmp/forged-$name.json" \
         > "$out/rejected-$name.log" 2>&1; then
       echo "UNSOUND: Lean accepted forged article evidence ($name)" >&2
       exit 1
@@ -172,12 +186,12 @@ complete selected candidate predicates and direct syntactic role children;
 year and proper-noun tokens, article paragraph/heading partition.
 Not proved: externally reviewed PNF semantic admission, real S28 event identity,
 world occurrence, actual event chronology, or a complete SLR semantic fibre.
-The TAR is historical Python-parser evidence, not a Rust DB M12 receipt.
+The source fixture is archived parser evidence, not a Rust DB M12 receipt.
 EOF
 # Examine the real GWB sentences, original dependency graph, P0b
 # mention eligibility and temporal candidate associations. This is an
 # auditor only, never a SensibLaw/Python language producer.
-python3 tools/gwb_semantic_observer_audit.py "$archive" \
+python3 tools/gwb_semantic_observer_audit.py "$source_dir" \
   --output "$out/semantic_observer_audit.json"
 # Real-sentence, cross-layer semantic regression. A generic Lean theorem alone
 # cannot pay this gate, and changing parser output must not silently rebaseline.
@@ -200,12 +214,11 @@ assert r["status"]["reviewed_slr_fibres"]=="NOT_IN_ARCHIVE"
 assert r["status"]["query_relative_closure"]=="NOT_IN_ARCHIVE"
 print("GWB_REAL_SOURCE_SEMANTIC_WITNESSES_PASS")
 PY
-python3 tools/refresh_gwb_single_tar.py "$archive" \
-  --audit "$out/semantic_observer_audit.json" \
-  --slr-expansion "$out/slr-rust-observations.json" \
+python3 tools/publish_gwb_proof_receipts.py \
+  --repo "$root" --source "$source_dir" --run "$out" \
   --slr-head "$SLR_HEAD" \
-  --logs "$out" \
   --lean-version "$(lake env lean --version)" \
-  --head "$(git rev-parse HEAD)"
-echo "GWB_LEAN_CONSUMER_AND_ARCHIVE_PROOF_SUITE_PASS"
-echo "All proof logs, semantic witnesses and status are INSIDE: $archive"
+  ${commit_flag:+$commit_flag}
+echo "GWB_RUST_LEAN_RECEIPTS_GIT_PASS"
+echo "Tracked results: artifacts/gwb-semantic-proof/"
+echo "No TAR created or modified."

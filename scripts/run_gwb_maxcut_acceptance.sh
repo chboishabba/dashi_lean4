@@ -32,6 +32,7 @@ compile_slr Producer
 compile_slr DocumentQuerySound
 compile_slr TemporalDocumentProof
 compile_slr WikipediaArticleProof
+compile_slr GwbArticleIdentity
 compile_slr GwbConsumerFibreProof
 compile_slr GwbRealSourceConsumer
 compile_slr GwbNativeFibreReceipt
@@ -81,6 +82,27 @@ if [[ -n "${GWB_WORLD_GRAPH_JSON:-}" ]]; then
     graph_command="world-graph-check-offline"
   lake env lean --run tools/GwbProofRunner.lean \
     "$graph_command" "$GWB_WORLD_GRAPH_JSON" "$cache" "$report"
+fi
+
+# The exact archived article source is local/uncommitted, not transported
+# through the world graph. Independently recheck the Q207 sitelink whenever
+# its JMD EntityData cache or an explicit EntityData file is available.
+qid_json="${GWB_Q207_ENTITY_JSON:-}"
+if [[ -z "$qid_json" && -n "${GWB_WORLD_GRAPH_JSON:-}" ]]; then
+  qid_json="${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}/Q207.json"
+fi
+if [[ -n "$qid_json" ]]; then
+  [[ -f "$qid_json" ]] || { echo "Missing Q207 original EntityData: $qid_json" >&2; exit 2; }
+  source_dir="$root/.dashi/gwb-source"
+  for f in article.txt slr-record.json article-candidates.json; do
+    [[ -f "$source_dir/$f" ]] || {
+      echo "Original exact GWB source required for Q207 proof: $source_dir/$f" >&2
+      exit 2
+    }
+  done
+  lake env lean --run tools/GwbProofRunner.lean article-qid-check \
+    "$source_dir/article.txt" "$source_dir/slr-record.json" \
+    "$source_dir/article-candidates.json" "$qid_json"
 fi
 
 if [[ "$mode" == "--proof-only" ]]; then

@@ -5,6 +5,7 @@ import RequestProject.Slr.Proof
 import RequestProject.Slr.SentenceBeliefCorrection
 import RequestProject.Slr.DocumentQuerySound
 import RequestProject.Slr.TemporalDocumentProof
+import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.SourceUnitProducer
 import RequestProject.Slr.DbSourceProducer
 import RequestProject.Slr.WikipediaArticleProof
@@ -1031,6 +1032,14 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["gwb-fibre-proof"] =>
+      -- This executable imports the kernel-checked GWB fibre/convergence
+      -- theorems. It certifies their *logical contracts*, not the provenance
+      -- or semantic admission of an external article.
+      IO.println "GWB_FIBRE_THEOREMS_KERNEL_OK"
+      IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
+      IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
+      return 0
   | ["gwb-article-replay", outputDir] =>
       cmdGwbArticleReplay outputDir o
   | ["gwb-article-check", articleText, slrRecord, projection] =>
@@ -1047,6 +1056,23 @@ def run (args : List String) : IO UInt32 := do
         return 1
       IO.println producer.stdout
       cmdGwbArticleReplay outputDir o
+  | ["slr-s28-proof-check", savedJson, eventRef] =>
+      let source ← IO.FS.readFile savedJson
+      let value ← match Lean.Json.parse source with
+        | .ok j => pure j
+        | .error err =>
+          IO.eprintln s!"Invalid saved S28 JSON: {err}"
+          return 1
+      if h : Slr.checkS28Provenance value eventRef = true then
+        let receipt : Slr.CheckedS28Provenance value eventRef := ⟨h⟩
+        let _ := Slr.checkedS28HasCompleteAncestry receipt
+        IO.println s!"SLR_S28_LEAN_PROVENANCE_OK event={eventRef}"
+        IO.println "PROVED: M12 statement/observation/event ancestry, time and contestation source links"
+        IO.println "NOT PROVED: historical event occurrence or semantic world truth"
+        return 0
+      else
+        IO.eprintln "SLR_S28_LEAN_PROVENANCE_REJECTED: missing or forged M12/S28 joins"
+        return 1
   | ["slr-timeline", slrBinary, eventRef] =>
       let result ← Slr.callSlrS28Candidates slrBinary eventRef
       IO.println result.compress

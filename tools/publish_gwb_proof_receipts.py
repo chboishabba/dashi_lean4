@@ -19,6 +19,8 @@ OUTPUT = Path("artifacts/gwb-semantic-proof")
 LOGS = (
     "source-consumer-build.log", "native-fibre-lean-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
+    "finite-consumer-build.log", "proof-composition-build.log",
+    "proof-composition-proof.log",
     "article-source-proof.log", "semantic-scope-proof.log",
     "native-fibre-source-proof.log", "slr-rust-test.log",
     "slr-rust-expansion.log",
@@ -33,6 +35,7 @@ RUST_NEGATIVE = (
 )
 MARKERS = {
     "consumer-fibre-proof.log": "GWB_FIBRE_THEOREMS_KERNEL_OK",
+    "proof-composition-proof.log": "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK",
     "article-source-proof.log": "JMD_LEAN_SOURCE_PROOF_OK sha256=" + PIN_SHA,
     "semantic-scope-proof.log": "GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED",
     "native-fibre-source-proof.log": "GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS",
@@ -138,6 +141,7 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit,
         "typed_residuals": native["typed_residual_count"],
         "direct_reference_parity": True,
         "lean_source_fibre_receipt": "PASSED",
+        "finite_consumer_composition": "KERNEL_PROVED_CONDITIONAL_ON_SEMANTIC_COVERAGE",
         "negative_controls_rejected": len(NEGATIVE) + len(RUST_NEGATIVE),
         "reviewed_semantic_transports": "NOT_TESTED",
         "production_db_s28": "NOT_TESTED",

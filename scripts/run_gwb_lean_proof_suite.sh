@@ -100,6 +100,12 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceCon
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbNativeFibreReceipt.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbNativeFibreReceipt.lean" \
   2>&1 | tee "$out/native-fibre-lean-build.log"
+# Reify the fully checked raw JSON into source-indexed typed candidates,
+# alternatives and residuals without discarding any failed row.
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbTypedSemanticFibre.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbTypedSemanticFibre.lean" \
+  2>&1 | tee "$out/typed-semantic-fibre-build.log"
+
 # Verify the reused PR #111 DB-native source/span and S28 provenance
 # checker even when this run has no live PostgreSQL ledger to accept.
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/DbSourceProducer.olean" \

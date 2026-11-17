@@ -11,7 +11,7 @@ PIN="a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
 REV="enwiki-revid:1385850169"
 NEGATIVE=("missing-predicate","missing-direct-actor","false-year-index",
           "promoted-world-truth","forged-paragraph-boundary")
-FILES=("original-source-inventory.json","original-source-inventory.log",
+FILES=("canonical-source-regression.log","original-source-inventory.json","original-source-inventory.log",
        "article-source-proof.log","semantic-scope-proof.log",
        "original-scope-and-mention-audit.json","original-scope-and-mention.log")
 def require(ok,why):
@@ -50,6 +50,10 @@ def publish(source,run,dest):
       "original-scope-and-mention.log":b"GWB_SEMANTIC_OBSERVER_AUDIT_PASS"
     }.items():
         require(marker in (run/name).read_bytes(),"missing original proof "+name)
+    regression=(run/"canonical-source-regression.log").read_text(encoding="utf-8")
+    require("Ran 8 tests" in regression and "OK" in regression and
+            "FAILED" not in regression and "ERROR" not in regression,
+            "canonical original-SLR source regression suite did not pass")
     for label in NEGATIVE:
         raw=(run/("rejected-"+label+".log")).read_bytes()
         require(b"JMD Lean rejected a forged or unsupported source/PNF projection" in raw,
@@ -69,6 +73,7 @@ def publish(source,run,dest):
       "source_lean_article_checker":"PASSED",
       "original_scope_nonfactorability":"PASSED",
       "adversarial_source_controls_rejected":len(NEGATIVE),
+      "canonical_regression_tests_passed":8,
       "experimental_rust_semantic_expansion_executed":False,
       "world_or_event_truth_promoted":False,
       "reviewed_identity_time_requires_original_owner_receipts":True,

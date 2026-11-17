@@ -7,9 +7,9 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 mode="${1:---proof-only}"
 case "$mode" in
-  --proof-only|--full|--strict) ;;
+  --proof-only|--full|--strict|--legacy-rust) ;;
   *)
-    echo "usage: bash scripts/run_gwb_maxcut_acceptance.sh [--proof-only|--full|--strict]" >&2
+    echo "usage: bash scripts/run_gwb_maxcut_acceptance.sh [--proof-only|--full|--strict|--legacy-rust]" >&2
     exit 2 ;;
 esac
 
@@ -60,25 +60,20 @@ echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
 python3 -m unittest discover -s tests -p 'test_gwb_p5_p10_evidence_audit.py'
 python3 tools/gwb_p5_p10_evidence_audit.py \
   --manifest "$root/artifacts/gwb-semantic-proof/proof_run_manifest.json"
-# Audit ALL original unsupported dependency coordinates if the local
-# ignored original parser receipt is present. No automatic TAR extraction,
-# no new parser/ontology, no reliance on the older 41k-sentence totals.
-python3 -m unittest discover -s tests -p 'test_gwb_original_dependency_fibre.py'
-# Source-anchored semantic counterexamples are checked directly from the
-# actual committed Rust witness rows even in proof-only mode.
-python3 tools/audit_gwb_original_semantic_cases.py \
-  --native "$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json" \
-  --output "$root/.dashi/gwb-audit/original_semantic_cases.json"
-
-if [[ -f "$root/.dashi/gwb-source/slr-record.json" ]]; then
+# Experimental Rust residual diagnostics are NOT part of canonical acceptance.
+# They can be run only on explicit operator request, never by the default path.
+if [[ "${GWB_ENABLE_EXPERIMENTAL_RESIDUAL_DIAGNOSTICS:-0}" == "1" ]]; then
+  python3 -m unittest discover -s tests -p 'test_gwb_original_dependency_fibre.py'
   mkdir -p "$root/.dashi/gwb-audit"
-  python3 tools/audit_gwb_original_dependency_fibre.py \
-    --slr "$root/.dashi/gwb-source/slr-record.json" \
+  python3 tools/audit_gwb_original_semantic_cases.py \
     --native "$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json" \
-    --output "$root/.dashi/gwb-audit/unsupported_dependency_fine.json"
-  echo "GWB_EXACT_FINE_DEPENDENCY_REPORT=$root/.dashi/gwb-audit/unsupported_dependency_fine.json"
-else
-  echo "GWB_EXACT_FINE_DEPENDENCY_AUDIT_NOT_RUN: original ignored slr-record.json not present" >&2
+    --output "$root/.dashi/gwb-audit/original_semantic_cases.json"
+  if [[ -f "$root/.dashi/gwb-source/slr-record.json" ]]; then
+    python3 tools/audit_gwb_original_dependency_fibre.py \
+      --slr "$root/.dashi/gwb-source/slr-record.json" \
+      --native "$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json" \
+      --output "$root/.dashi/gwb-audit/unsupported_dependency_fine.json"
+  fi
 fi
 
 
@@ -158,7 +153,7 @@ CONDITIONAL: finite consumer closure requires exhaustive live-reading evidence
 and independently checked source/reading interpretation correspondence.
 Still OPEN: DB-native same-source M12/S28, real cross-sentence identity,
 reviewed event/time joins, source-to-JMD alignment, 51-QID proof elaboration.
-Run --full on the original source/SLR checkout to refresh evidence.
+Run --full to verify original SLR records directly (no Rust probe or SLR_ROOT required).
 EOF
   exit 0
 fi
@@ -167,13 +162,16 @@ fi
   echo "Missing local exact original GWB fixture .dashi/gwb-source/article.txt" >&2
   exit 2
 }
-[[ -n "${SLR_ROOT:-}" ]] || {
-  echo "Set SLR_ROOT to your original SLR checkout (no TAR required)" >&2
-  exit 2
-}
-bash "$root/scripts/run_gwb_lean_proof_suite.sh" --no-commit
-echo "GWB_MAXCUT_ARTICLE_SOURCE_AND_NEGATIVE_CONTROLS_PASS"
-echo "Review and commit only the regenerated artifacts/gwb-semantic-proof/ results."
+# SLR_ROOT is only needed by the explicitly opted-in historical Rust probe.
+if [[ "$mode" == "--legacy-rust" ]]; then
+  echo "GWB_EXPERIMENTAL_RUST_DIAGNOSTIC_LEGACY_OPT_IN"
+  bash "$root/scripts/run_gwb_lean_proof_suite.sh" --no-commit
+else
+  echo "GWB_ORIGINAL_SLR_PRODUCER_CANONICAL_ACCEPTANCE"
+  bash "$root/scripts/run_gwb_original_slr_acceptance.sh"
+fi
+echo "GWB_MAXCUT_ORIGINAL_SLR_SOURCE_AND_NEGATIVE_CONTROLS_PASS"
+echo "Review and commit only the new artifacts/gwb-original-slr-proof/ results; historical Rust artifacts remain unchanged."
 
 if [[ "$mode" == "--strict" ]]; then
   # This is a fail-closed research acceptance mode: source/kernel passage is

@@ -92,6 +92,19 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                 consumers["factors_through_kernel_proof_paid"] is False and
                 consumers["semantic_identity_temporal_and_truth_remain_unpaid"] is True,
                 "invalid production SLR consumer boundary")
+        actual_source = json.loads(
+            next(data for name, data in (
+                ("slr-record.json", tarfile.open(archive_path).extractfile(
+                    "slr-record.json").read()),)
+                 if name == "slr-record.json")
+        )
+        original_claim = next(row["claim_candidate_id"]
+            for row in actual_source["pnf_candidates"]
+            if row["sentence_index"] == 18)
+        require(consumers["semantic_target_ref"] == original_claim and
+                consumers["empty_reference_identity_is_not_accepted_as_reviewed_evidence"] is True and
+                isinstance(consumers["empty_reference_identity_vacuity_detected"], bool),
+                "consumer semantic target is not the real GWB claim candidate")
         outcomes = {
             row["query_ref"]: row
             for row in consumers["runtime_outcomes"]

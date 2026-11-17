@@ -39,6 +39,7 @@ compile_slr Proof
 compile_slr DbSourceProducer
 compile_slr FiniteConsumerCertificate
 compile_slr GwbProofComposition
+compile_slr GwbWorldGraphProof
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
@@ -62,6 +63,24 @@ if [[ -n "${GWB_DB_S28_JSON:-}" || -n "${GWB_DB_S28_EVENT_REF:-}" ]]; then
     "$GWB_DB_S28_JSON" "$GWB_DB_S28_EVENT_REF"
 fi
 
+
+# Optional bounded GWB world: re-open every source QID via the original
+# JMD entity getter, then prove each supported P-relation inside its
+# independently imported PKB. Unmatched acquisition edges remain obligations.
+if [[ -n "${GWB_WORLD_GRAPH_JSON:-}" ]]; then
+  [[ -f "$GWB_WORLD_GRAPH_JSON" ]] || {
+    echo "Missing original SLR GWB world graph: $GWB_WORLD_GRAPH_JSON" >&2
+    exit 2
+  }
+  cache="${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}"
+  report="${GWB_WORLD_JMD_REPORT:-$root/.dashi/gwb-world/jmd-property-proof.json}"
+  mkdir -p "$cache" "$(dirname "$report")"
+  graph_command="world-graph-check"
+  [[ "${GWB_WIKIDATA_OFFLINE:-0}" == "1" ]] &&
+    graph_command="world-graph-check-offline"
+  lake env lean --run tools/GwbProofRunner.lean \
+    "$graph_command" "$GWB_WORLD_GRAPH_JSON" "$cache" "$report"
+fi
 
 if [[ "$mode" == "--proof-only" ]]; then
   cat <<'EOF'

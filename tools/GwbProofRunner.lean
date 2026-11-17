@@ -7,6 +7,7 @@ import RequestProject.Slr.DbSourceProducer
 import RequestProject.Slr.GwbWorldGraphProof
 import RequestProject.Slr.GwbTypedSemanticFibre
 import RequestProject.Slr.GwbArticleIdentity
+import RequestProject.Slr.GwbArticleSystemSoundness
 
 open Wikidata
 open Lean
@@ -285,6 +286,7 @@ def main (args : List String) : IO UInt32 := do
       runSavedS28Check json event
   | ["composition"] =>
       IO.println "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK"
+      IO.println "GWB_ARTICLE_LOCAL_SYSTEM_THEOREM_KERNEL_OK"
       IO.println "PROVED: checked finite semantic consumer constancy under explicit complete live-fibre enumeration and source correspondence"
       IO.println "PROVED: independent article answer and JMD KB property witness composition, without semantic or world-truth promotion"
       IO.println "UNPAID: production semantic coverage, checked cross-sentence identity/event join, JMD article-to-KB semantic alignment"
@@ -326,3 +328,8 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbTypedFibre.typedRowsRemainSourceBound
 
 #print axioms Wikidata.Slr.GwbArticleIdentity.checkedGwbRootSourceAndSitelink
+
+#print axioms Wikidata.Slr.GwbHyperfabric.restrictionCommutesWithJoin
+#print axioms Wikidata.Slr.GwbHyperfabric.narrowingPreservesIdentity
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedArticleLocalSystemSound
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedArticleAndRootKBPropertySound

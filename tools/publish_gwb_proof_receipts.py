@@ -23,7 +23,7 @@ LOGS = (
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
     "db-m12-s28-build.log", "jmd-property-proof-build.log",
     "world-graph-proof-build.log", "hyperfabric-proof-build.log",
-    "article-system-proof-build.log", "p4-source-licence-build.log",
+    "article-system-proof-build.log", "p4-source-licence-build.log", "p4-article-end-to-end-build.log",
     "finite-consumer-build.log",
     "proof-composition-build.log",
     "proof-composition-proof.log",

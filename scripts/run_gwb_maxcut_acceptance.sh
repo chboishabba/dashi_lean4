@@ -60,6 +60,21 @@ echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
 python3 -m unittest discover -s tests -p 'test_gwb_p5_p10_evidence_audit.py'
 python3 tools/gwb_p5_p10_evidence_audit.py \
   --manifest "$root/artifacts/gwb-semantic-proof/proof_run_manifest.json"
+# Audit ALL original unsupported dependency coordinates if the local
+# ignored original parser receipt is present. No automatic TAR extraction,
+# no new parser/ontology, no reliance on the older 41k-sentence totals.
+python3 -m unittest discover -s tests -p 'test_gwb_original_dependency_fibre.py'
+if [[ -f "$root/.dashi/gwb-source/slr-record.json" ]]; then
+  mkdir -p "$root/.dashi/gwb-audit"
+  python3 tools/audit_gwb_original_dependency_fibre.py \
+    --slr "$root/.dashi/gwb-source/slr-record.json" \
+    --native "$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json" \
+    --output "$root/.dashi/gwb-audit/unsupported_dependency_fine.json"
+  echo "GWB_EXACT_FINE_DEPENDENCY_REPORT=$root/.dashi/gwb-audit/unsupported_dependency_fine.json"
+else
+  echo "GWB_EXACT_FINE_DEPENDENCY_AUDIT_NOT_RUN: original ignored slr-record.json not present" >&2
+fi
+
 
 # Optional real DB-native outputs. These files must be produced by the
 # original checked SLR/PostgreSQL path; no JSON or event identity is invented.

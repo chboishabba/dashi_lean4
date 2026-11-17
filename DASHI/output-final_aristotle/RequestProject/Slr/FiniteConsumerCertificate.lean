@@ -19,17 +19,19 @@ namespace FiniteConsumer
 /-- Check that one consumer returns the same result on all listed readings.
     The supplied list is NOT assumed to be semantically exhaustive. -/
 def checkConstant {Reading Answer : Type}
-    [DecidableEq Reading] [DecidableEq Answer]
+    [DecidableEq Answer]
     (readings : List Reading) (answer : Reading → Answer) : Bool :=
-  decide (∀ x ∈ readings, ∀ y ∈ readings, answer x = answer y)
+  readings.all (fun x =>
+    readings.all (fun y => decide (answer x = answer y)))
 
 /-- If the executable test succeeds, answers agree on its concrete rows. -/
 theorem checkConstant_sound {Reading Answer : Type}
-    [DecidableEq Reading] [DecidableEq Answer]
+    [DecidableEq Answer]
     (readings : List Reading) (answer : Reading → Answer)
     (h : checkConstant readings answer = true) :
     ∀ x ∈ readings, ∀ y ∈ readings, answer x = answer y := by
-  exact of_decide_eq_true h
+  simp only [checkConstant, List.all_eq_true, decide_eq_true_eq] at h
+  exact h
 
 /-- Exhaustive enumeration is supplied as a proof, not inferred from a
     candidate count or the absence of reported parser failures. -/
@@ -45,7 +47,7 @@ structure CompleteEnumeration
     witness. This is the crucial input that PR #112 does not yet supply. -/
 theorem completeFiniteFibreConsumerClosed
     {Source Observation Reading Query Answer : Type}
-    [DecidableEq Reading] [DecidableEq Answer]
+    [DecidableEq Answer]
     (m : DocumentQueryModel Source Observation Reading Query Answer)
     (o : Observation) (q : Query)
     (rows : CompleteEnumeration m o)
@@ -63,7 +65,7 @@ theorem completeFiniteFibreConsumerClosed
     from the output of SLR or from a string-valued review reference. -/
 def licenceOfCompleteFiniteCheck
     {Source Observation Reading Query Answer : Type}
-    [DecidableEq Reading] [DecidableEq Answer]
+    [DecidableEq Answer]
     (m : DocumentQueryModel Source Observation Reading Query Answer)
     (source : Source) (q : Query) (o : Observation)
     (sourceEq : o = m.observe source)

@@ -167,6 +167,14 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                 root / ("rejected-" + name + ".log")).read_bytes()
         require(slr_expansion is not None,
                 "no actual SLR semantic alternative/residual replay with Lean proof")
+        for name in ("passive-by-as-actor", "event-date-falsely-closed",
+                     "forged-occurrence", "dropped-ambiguity",
+                     "false-residual-closure"):
+            filename = "rejected-slr-" + name + ".log"
+            file_path = root / filename
+            require(file_path.is_file(),
+                    "missing adversarial native SLR semantic rejection: " + name)
+            additional["proof/" + filename] = file_path.read_bytes()
         for logname in ("slr-rust-expansion.log", "slr-rust-test.log"):
             logfile = root / logname
             require(logfile.is_file(), "missing real SLR Rust execution log: " + logname)
@@ -234,6 +242,10 @@ def pack(path, report, logs=None, lean_version=None, head=None,
     owned.update("proof/rejected-" + name + ".log" for name in (
         "missing-predicate", "missing-direct-actor", "false-year-index",
         "promoted-world-truth", "forged-paragraph-boundary"))
+    owned.update("proof/rejected-slr-" + name + ".log" for name in (
+        "passive-by-as-actor", "event-date-falsely-closed",
+        "forged-occurrence", "dropped-ambiguity",
+        "false-residual-closure"))
     fd, temp_path = tempfile.mkstemp(
         prefix=".gwb-single-tar-", suffix=".tar", dir=archive_path.parent)
     os.close(fd)

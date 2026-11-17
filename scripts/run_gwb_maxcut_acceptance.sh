@@ -51,6 +51,7 @@ compile_slr GwbArticleSystemSoundness
 compile_slr GwbP4SourceLicence
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
+lake env lean --run tools/GwbProofRunner.lean p4
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"
 # Optional real DB-native outputs. These files must be produced by the
 # original checked SLR/PostgreSQL path; no JSON or event identity is invented.

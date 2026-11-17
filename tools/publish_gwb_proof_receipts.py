@@ -27,6 +27,7 @@ LOGS = (
     "finite-consumer-build.log",
     "proof-composition-build.log",
     "proof-composition-proof.log",
+    "p4-source-licence-proof.log",
     "article-source-proof.log", "semantic-scope-proof.log",
     "native-fibre-source-proof.log", "slr-rust-test.log",
     "slr-rust-expansion.log",
@@ -42,6 +43,7 @@ RUST_NEGATIVE = (
 MARKERS = {
     "consumer-fibre-proof.log": "GWB_FIBRE_THEOREMS_KERNEL_OK",
     "proof-composition-proof.log": "GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK",
+    "p4-source-licence-proof.log": "GWB_P4_SOURCE_THEOREMS_KERNEL_OK",
     "article-source-proof.log": "JMD_LEAN_SOURCE_PROOF_OK sha256=" + PIN_SHA,
     "semantic-scope-proof.log": "GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED",
     "native-fibre-source-proof.log": "GWB_RUST_FIBRE_AND_CONSUMER_SOURCE_BOUND_LEAN_PASS",

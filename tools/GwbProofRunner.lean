@@ -7,6 +7,7 @@ import RequestProject.Slr.DbSourceProducer
 import RequestProject.Slr.GwbWorldGraphProof
 
 open Wikidata
+open Lean
 
 def printAxiomAudit : IO Unit := do
   IO.println "GWB_FIBRE_THEOREMS_KERNEL_OK"

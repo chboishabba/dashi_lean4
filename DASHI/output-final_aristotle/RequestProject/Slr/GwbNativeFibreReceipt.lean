@@ -34,8 +34,8 @@ private def spanPair? (j : Json) : Option (Nat × Nat) := do
     let b ← (pair[1]!).getNat?.toOption
     some (a, b)
 
-private def rowAt? (rows : Array Json) (local : Nat) : Option Json :=
-  rows[local]?
+private def rowAt? (rows : Array Json) (ordinal : Nat) : Option Json :=
+  rows[ordinal]?
 
 private def candidateSourceBound (rows : Array Json) (c : Json) : Bool :=
   match nat? c "token_ordinal", spanPair? c, str? c "kind",
@@ -52,8 +52,8 @@ private def candidateSourceBound (rows : Array Json) (c : Json) : Bool :=
           rev == 1385850169 &&
           bool? c "candidate_only" == some true &&
           (if kind == "Role(Actor)" then
-            (["nsubj", "nsubjpass", "csubj", "csubjpass"].contains
-              ((str? raw "dep").getD ""))
+            List.contains ["nsubj", "nsubjpass", "csubj", "csubjpass"]
+              ((str? raw "dep").getD "")
           else if kind == "ReferenceRelation" then
             str? raw "dep" == some "agent"
           else true)
@@ -65,8 +65,8 @@ private def alternativeSourceBound (rows : Array Json) (a : Json) : Bool :=
       match rowAt? rows ordinal with
       | none => false
       | some raw =>
-          (["acl", "relcl", "advcl", "ccomp", "xcomp"].contains
-             ((str? raw "dep").getD "")) &&
+          List.contains ["acl", "relcl", "advcl", "ccomp", "xcomp"]
+             ((str? raw "dep").getD "") &&
           alts.toList == [Json.str "Condition", Json.str "Temporal",
                          Json.str "Qualifier"] &&
           bool? a "semantic_admission_paid" == some false
@@ -82,13 +82,13 @@ private def residualSourceBound (rows : Array Json) (r : Json) : Bool :=
           (if kind == "ReferenceAttachmentUnresolved" then
             str? raw "dep" == some "agent"
            else if kind == "ClauseInterpretationAmbiguous" then
-            (["acl", "relcl", "advcl", "ccomp", "xcomp"].contains
-              ((str? raw "dep").getD ""))
+            List.contains ["acl", "relcl", "advcl", "ccomp", "xcomp"]
+              ((str? raw "dep").getD "")
            else if kind == "UnsupportedDependency" then
-            !((["nsubj", "nsubjpass", "csubj", "csubjpass",
+            !(List.contains ["nsubj", "nsubjpass", "csubj", "csubjpass",
                 "dobj", "obj", "iobj", "neg",
-                "acl", "relcl", "advcl", "ccomp", "xcomp", "agent"].contains
-                ((str? raw "dep").getD "")))
+                "acl", "relcl", "advcl", "ccomp", "xcomp", "agent"]
+                ((str? raw "dep").getD ""))
            else true)
   | _, _ => false
 
@@ -125,7 +125,7 @@ private def hasQuery (outcomes : Array Json) (name status : String)
     (match arr? o "missing_axes" with
      | none => false
      | some missing => mandatoryMissing.all (fun axis =>
-         missing.toList.contains (Json.str axis))))
+         List.contains missing.toList (Json.str axis))))
 
 /-- The actual Rust alternatives/residuals are source-bound observations.
     The source-only consumers reach operational adequacy while the identity,

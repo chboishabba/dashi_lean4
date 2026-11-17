@@ -64,6 +64,12 @@ python3 tools/gwb_p5_p10_evidence_audit.py \
 # ignored original parser receipt is present. No automatic TAR extraction,
 # no new parser/ontology, no reliance on the older 41k-sentence totals.
 python3 -m unittest discover -s tests -p 'test_gwb_original_dependency_fibre.py'
+# Source-anchored semantic counterexamples are checked directly from the
+# actual committed Rust witness rows even in proof-only mode.
+python3 tools/audit_gwb_original_semantic_cases.py \
+  --native "$root/artifacts/gwb-semantic-proof/slr-rust-semantic-expansion.json" \
+  --output "$root/.dashi/gwb-audit/original_semantic_cases.json"
+
 if [[ -f "$root/.dashi/gwb-source/slr-record.json" ]]; then
   mkdir -p "$root/.dashi/gwb-audit"
   python3 tools/audit_gwb_original_dependency_fibre.py \

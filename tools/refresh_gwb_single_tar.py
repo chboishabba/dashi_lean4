@@ -70,6 +70,12 @@ def pack(path, report, logs=None, lean_version=None, head=None,
                 native["full_production_s28_or_hyperfabric_closure"] is False and
                 native["world_occurrence_paid"] is False,
                 "unreviewed semantic/truth promotion in Rust receipt")
+        source_checks = native["real_source_contract_checks"]
+        require(source_checks["passive_by_as_unresolved_reference"] == 59 and
+                source_checks["iraq_claim_possessed_had_ambiguity_preserved"] is True and
+                source_checks["consumer_did_not_promote_agent_preposition"] is True and
+                source_checks["candidate_expansion_transports_emitted"] is False,
+                "actual Rust semantic fibre failed GWB by/possessed/had discrimination")
         require(len(native["sentence_observations"]) == 643,
                 "incomplete per-sentence semantic fibre observations")
         require(len(native["real_source_witnesses"]) >= 3,

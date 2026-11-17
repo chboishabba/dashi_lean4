@@ -391,8 +391,8 @@ fn run(article: &str, record: &Value) -> Result<Value, String> {
             "sentence count mismatch");
     require(actual_tokens == number(&record["parser_receipt"], "token_count")? as usize,
             "token count mismatch");
-    require(passive_by_reference_count == 59,
-            "GWB passive-agent source surfaces changed; review new source parser fibre")?;
+    require(passive_by_reference_count == 62,
+            "Original SLR source has 62 agent:by attachments (flat event subset has 59)")?;
     require(iraq_coordination_guard_verified,
             "GWB 2003 Iraq coordination semantic discrimination missing")?;
     Ok(json!({

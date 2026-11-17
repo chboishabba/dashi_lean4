@@ -20,6 +20,9 @@ mkdir -p "$root/.dashi"
 stage="$(mktemp -d "$root/.dashi/.gwb-original-slr-run.XXXXXX")"
 trap 'rm -rf "$stage"' EXIT
 
+python3 -m unittest discover -s tests -p 'test_gwb_canonical_source_boundary.py' \
+  2>&1 | tee "$stage/canonical-source-regression.log"
+
 python3 tools/gwb_canonical_slr_acceptance.py \
   --source-dir "$source_dir" --output "$stage/original-source-inventory.json" \
   | tee "$stage/original-source-inventory.log"

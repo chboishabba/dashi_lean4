@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Run the *existing* verified JMD/Lean kernel on the user's exact GWB TAR.
+# LEGACY EXPERIMENTAL DIAGNOSTIC ONLY: the original Rust sl-semantic-expansion
+# candidate/residual observer. Not the canonical SLR/ITIR/SensibLaw producer.
+# New canonical acceptance entrypoint: run_gwb_maxcut_acceptance.sh --full
+# (or run_gwb_original_slr_acceptance.sh after the Lean builds).
 # Never starts spaCy, a Python producer, or unreviewed semantic admission.
 set -euo pipefail
 

@@ -85,6 +85,21 @@ def licenceOfCompleteFiniteCheck
     exact completeFiniteFibreConsumerClosed m o q rows checked
       reading live chosen chosenLive
 
+/-- A real production-live reading omitted from a finite Rust enumeration
+is an exact obstruction to claiming that enumeration complete. This is the
+fibre-coverage negative gate, not a heuristic based on candidate counts. -/
+theorem omittedLiveReadingBlocksCompleteness
+    {Source Observation Reading Query Answer : Type}
+    (m : DocumentQueryModel Source Observation Reading Query Answer)
+    (o : Observation) (readings : List Reading)
+    (missing : Reading)
+    (stillLive : m.live o missing)
+    (omitted : missing ∉ readings) :
+    ¬ ∃ rows : CompleteEnumeration m o, rows.readings = readings := by
+  rintro ⟨rows, hRows⟩
+  apply omitted
+  simpa [hRows] using rows.complete missing stillLive
+
 end FiniteConsumer
 end Slr
 end Wikidata

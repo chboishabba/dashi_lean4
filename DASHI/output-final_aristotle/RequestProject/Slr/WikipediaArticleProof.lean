@@ -126,8 +126,8 @@ private def selectedOriginalPredicate (raw : Json) : Bool :=
 
 private def expectedOriginalPredicateCount (original : Array Json) : Nat :=
   original.foldl (fun acc sentence =>
-    acc + ((arr? sentence "dependency_rows").getD #[]).filter
-      selectedOriginalPredicate |>.size) 0
+    acc + (((arr? sentence "dependency_rows").getD #[]).filter
+      selectedOriginalPredicate).size) 0
 
 private def projectedPredicateKey (event : Json) : Option (String × Nat) := do
   let candidate ← str? event "slr_claim_candidate_id"

@@ -17,15 +17,28 @@ command -v lake >/dev/null || { echo "Lean 4.28.0/Lake required" >&2; exit 2; }
 if ! lake env lean --version | grep -q '4.28.0'; then
   echo "Wrong Lean pin: required 4.28.0" >&2; exit 2
 fi
-mkdir -p "$root/.lake/build/lib/lean/RequestProject/Slr"
-echo "GWB_MAXCUT_BUILDING_FINITE_CONSUMER"
-lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/FiniteConsumerCertificate.olean" \
-  "$root/DASHI/output-final_aristotle/RequestProject/Slr/FiniteConsumerCertificate.lean"
-echo "GWB_MAXCUT_BUILDING_COMPOSITION"
-lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbProofComposition.olean" \
-  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbProofComposition.lean"
-# Reuse existing cached JMD/SLR OLEANs; the next command fails closed
-# if an imported owner has not been built at the pinned toolchain.
+# Deterministic targeted dependency build: no whole Wikidata executable.
+# The original JMD Cli.Derive/PropertyEngine OLEANs remain pinned, while all
+# SLR proof-owner imports needed by this handoff are explicitly rebuilt.
+outdir="$root/.lake/build/lib/lean/RequestProject/Slr"
+srcdir="$root/DASHI/output-final_aristotle/RequestProject/Slr"
+mkdir -p "$outdir"
+compile_slr() {
+  local module="$1"
+  echo "GWB_MAXCUT_BUILDING_${module}"
+  lake env lean -o "$outdir/${module}.olean" "$srcdir/${module}.lean"
+}
+compile_slr Producer
+compile_slr DocumentQuerySound
+compile_slr TemporalDocumentProof
+compile_slr WikipediaArticleProof
+compile_slr GwbConsumerFibreProof
+compile_slr GwbRealSourceConsumer
+compile_slr GwbNativeFibreReceipt
+compile_slr Proof
+compile_slr DbSourceProducer
+compile_slr FiniteConsumerCertificate
+compile_slr GwbProofComposition
 lake env lean tools/GwbProofRunner.lean
 lake env lean --run tools/GwbProofRunner.lean composition
 echo "GWB_MAXCUT_CONDITIONAL_THEOREMS_KERNEL_ACCEPTED"

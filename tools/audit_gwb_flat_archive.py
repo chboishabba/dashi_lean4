@@ -11,6 +11,10 @@ import hashlib
 import json
 import tarfile
 
+FIXTURE_SHA256 = "6bbad0f9bcc2f0aa2e0e6f77f15692a945c1331a6337cfe202c19a58e2460f9e"
+FIXTURE_SOURCE_REVISION = "enwiki-revid:1385850169"
+FIXTURE_SOURCE_SHA256 = "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
+
 FILES = (
     "article.txt", "slr-record.json", "article-candidates.json",
     "gwb_sensiblaw_p0b_mention_licences.json",
@@ -257,7 +261,15 @@ def main():
     args.add_argument("--json", action="store_true")
     ns = args.parse_args()
     try:
+        with open(ns.archive, "rb") as source_file:
+            actual_archive_sha = hashlib.file_digest(source_file, "sha256").hexdigest()
+        require(actual_archive_sha == FIXTURE_SHA256,
+                "exact GWB archive SHA-256 mismatch; regression requires the supplied fixture")
         report = validate(*load_tar(ns.archive))
+        require(report["source_revision_ref"] == FIXTURE_SOURCE_REVISION and
+                report["source_sha256_raw_utf8"] == FIXTURE_SOURCE_SHA256,
+                "archived GWB source revision/content changed")
+        report["archive_sha256"] = actual_archive_sha
     except (ValueError, KeyError, IndexError, TypeError, AssertionError) as exc:
         raise SystemExit("GWB_ARCHIVE_REGRESSION_FAIL: " + str(exc))
     if ns.json:

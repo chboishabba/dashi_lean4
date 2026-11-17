@@ -15,6 +15,13 @@ command -v lake >/dev/null || { echo "Pinned Lake/Lean unavailable; install repo
 command -v tar >/dev/null || { echo "tar unavailable" >&2; exit 2; }
 command -v jq >/dev/null || { echo "jq required for strict negative controls" >&2; exit 2; }
 command -v python3 >/dev/null || { echo "python3 needed for read-only evidence archive auditing (NOT NLP)" >&2; exit 2; }
+command -v cargo >/dev/null || { echo "Cargo required to execute existing SLR Rust semantic expansion" >&2; exit 2; }
+SLR_ROOT="${SLR_ROOT:-$root/../slr}"
+SLR_ROOT="$(realpath "$SLR_ROOT")"
+[[ -f "$SLR_ROOT/crates/sl-semantic-expansion/Cargo.toml" ]] || {
+  echo "Set SLR_ROOT to the production SLR Rust checkout" >&2
+  exit 2
+}
 if ! lake env lean --version | grep -q '4.28.0'; then
   echo "Pinned root Lean 4.28.0 not active; do not use /usr/bin/lean 4.27.0" >&2
   exit 2
@@ -33,6 +40,40 @@ tmp="$(mktemp -d "$root/.gwb-lean-stage.XXXXXX")"
 trap 'rm -rf "$tmp" "$out"' EXIT
 tar -xf "$archive" -C "$tmp" article.txt slr-record.json article-candidates.json
 cd "$root"
+
+# Real SLR semantic alternatives/residuals over the same original
+# dependency rows. Build a transient Cargo manifest in the project worktree
+# depending on EXISTING SLR crates by path: no duplicate fibre engine and no
+# spaCy/Python language producer. The SLR crate itself labels this candidate
+# expansion EXPERIMENTAL, so the receipt cannot masquerade as DB-native S28.
+mkdir -p "$tmp/slr-cargo"
+cat > "$tmp/slr-cargo/Cargo.toml" <<EOF
+[package]
+name = "gwb-slr-original-observation-probe"
+version = "0.0.1"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+sensiblaw-core = { path = "$SLR_ROOT/crates/sl-core" }
+sensiblaw-semantic-expansion = { path = "$SLR_ROOT/crates/sl-semantic-expansion" }
+serde_json = "1"
+sha2 = "0.10"
+
+[[bin]]
+name = "gwb-slr-original-observation-probe"
+path = "$root/tools/gwb_slr_fibre_probe.rs"
+EOF
+# Keep Cargo's compiled artifacts in the project, not a second archive.
+export CARGO_TARGET_DIR="$root/.dashi/gwb-slr-observation-target"
+mkdir -p "$CARGO_TARGET_DIR"
+cargo test --quiet --manifest-path "$tmp/slr-cargo/Cargo.toml" \
+  2>&1 | tee "$out/slr-rust-test.log"
+cargo run --quiet --manifest-path "$tmp/slr-cargo/Cargo.toml" -- \
+  "$tmp/article.txt" "$tmp/slr-record.json" "$out/slr-rust-observations.json" \
+  | tee "$out/slr-rust-expansion.log"
+SLR_HEAD="$(git -C "$SLR_ROOT" rev-parse HEAD)"
 
 # Compile the ONE newly introduced source-bound counterexample module
 # into the existing project-local .olean cache. Reuse already cached
@@ -128,6 +169,8 @@ print("GWB_REAL_SOURCE_SEMANTIC_WITNESSES_PASS")
 PY
 python3 tools/refresh_gwb_single_tar.py "$archive" \
   --audit "$out/semantic_observer_audit.json" \
+  --slr-expansion "$out/slr-rust-observations.json" \
+  --slr-head "$SLR_HEAD" \
   --logs "$out" \
   --lean-version "$(lake env lean --version)" \
   --head "$(git rev-parse HEAD)"

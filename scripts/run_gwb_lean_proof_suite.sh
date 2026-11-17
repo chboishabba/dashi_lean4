@@ -92,6 +92,27 @@ EOF
 # auditor only, never a SensibLaw/Python language producer.
 python3 tools/gwb_semantic_observer_audit.py "$archive" \
   --output "$out/semantic_observer_audit.json"
+# Real-sentence, cross-layer semantic regression. A generic Lean theorem alone
+# cannot pay this gate, and changing parser output must not silently rebaseline.
+python3 - "$out/semantic_observer_audit.json" <<'PY'
+import json,sys
+r=json.load(open(sys.argv[1],encoding="utf-8"))
+w=r["scope_label_observer_collision"]
+assert r["source_revision"]=="enwiki-revid:1385850169"
+assert r["embedded_parent_conjunctions"]==57
+assert r["embedded_conjunction_flat_assertion_labels"]==57
+assert w["same_observation"] and w["different_consumer_answers"]
+assert w["embedded_witness"]["predicate"]=="had"
+assert w["embedded_witness"]["parent"]=="possessed"
+assert w["embedded_witness"]["parent_dep"]=="acl"
+assert w["root_witness"]["parent_dep"]=="ROOT"
+assert r["unmaterialized_grammatical_role_tokens"]==73
+assert r["role_missing_surfaces"]["actors:by"]==59
+assert len(r["p0b_candidate_fibre_examples"])>=7
+assert r["status"]["reviewed_slr_fibres"]=="NOT_IN_ARCHIVE"
+assert r["status"]["query_relative_closure"]=="NOT_IN_ARCHIVE"
+print("GWB_REAL_SOURCE_SEMANTIC_WITNESSES_PASS")
+PY
 python3 tools/refresh_gwb_single_tar.py "$archive" \
   --audit "$out/semantic_observer_audit.json" \
   --logs "$out" \

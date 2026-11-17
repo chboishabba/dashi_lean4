@@ -87,6 +87,31 @@ The script fails if the pinned real article no longer produces these
 specific negative controls. The JSON ledger records source sentences,
 predicate coordinates, parser dependency heads and exact source spans.
 
+## Source-specific Lean consumer proof
+
+New `RequestProject.Slr.GwbRealSourceConsumer` constructs dependency-
+parent witnesses **from the actual saved 643-sentence SLR record and
+1,468 projected events**, after rerunning the exact-source Lean checker.
+
+The theorem `flatScopeCannotAnswerEmbeddedParent` proves that no
+function of the *single flattened scope-label string* can answer
+`is_conj_parent_embedded` for two source-backed witnesses with the
+same label but different original dependency-parent kinds.
+
+The targeted runner executes this as `semantic-scope`, emitting
+`GWB_REAL_SOURCE_FLAT_SCOPE_NONFACTORABILITY_PROVED` and the actual
+sentence/predicate/parent pair. Its kernel build is compiled narrowly
+into the project-local `.olean` cache; there is no `lake build
+wikidata`. The source-specific log is included in the refreshed TAR
+as `proof/semantic-scope-proof.log`. The packer will NOT mark the
+targeted proof run successful if this log or its expected marker is
+missing.
+
+**Scope of theorem:** this refutes only a lossy projection,
+not SLR's production fibre/coordination semantics. The full SLR
+semantic-fibre ledger and review receipts remain an independent,
+still-unpaid empirical obligation.
+
 ## What the Lean kernel establishes
 
 `GwbConsumerFibreProof.lean` proves the abstract ACI fibre union,

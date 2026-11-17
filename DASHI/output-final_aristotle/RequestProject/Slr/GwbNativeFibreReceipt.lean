@@ -137,6 +137,9 @@ def checkRealGwbNativeFibreReceipt (article : String)
   let observations := (arr? receipt "sentence_observations").getD #[]
   let parser := (slr.getObjVal? "parser_receipt").toOption.getD Json.null
   let consumers := (receipt.getObjVal? "consumer_adequacy").toOption
+  let realIraqClaim := (original.toList.find? (fun row =>
+    nat? row "sentence_index" == some 18)).bind (fun row =>
+      str? row "claim_candidate_id")
   let candidateCount := observations.foldl (fun count row =>
     count + ((arr? row "candidates").getD #[]).size) 0
   let fibreCount := observations.foldl (fun count row =>
@@ -172,6 +175,10 @@ def checkRealGwbNativeFibreReceipt (article : String)
    | some c =>
        str? c "engine" ==
          some "sensiblaw-legal-runtime::assess_consumer_adequacy" &&
+       str? c "semantic_target_ref" == realIraqClaim &&
+       bool? c "empty_reference_identity_is_not_accepted_as_reviewed_evidence" ==
+         some true &&
+       (bool? c "empty_reference_identity_vacuity_detected").isSome &&
        bool? c "factors_through_kernel_proof_paid" == some false &&
        bool? c "semantic_identity_temporal_and_truth_remain_unpaid" ==
          some true &&

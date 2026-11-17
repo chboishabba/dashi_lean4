@@ -94,6 +94,9 @@ SLR_HEAD="$(git -C "$SLR_ROOT" rev-parse HEAD)"
 # into the existing project-local .olean cache. Reuse already cached
 # WikipediaArticleProof, Batteries and Mathlib; do NOT build Wikidata.
 mkdir -p "$root/.lake/build/lib/lean/RequestProject/Slr"
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbArticleIdentity.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbArticleIdentity.lean" \
+  2>&1 | tee "$out/q207-identity-proof-build.log"
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceConsumer.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbRealSourceConsumer.lean" \
   2>&1 | tee "$out/source-consumer-build.log"

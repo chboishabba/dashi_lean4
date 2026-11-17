@@ -90,6 +90,10 @@ cargo run --quiet --manifest-path "$tmp/slr-cargo/Cargo.toml" -- \
   | tee "$out/slr-rust-expansion.log"
 SLR_HEAD="$(git -C "$SLR_ROOT" rev-parse HEAD)"
 
+# Keep direct --full runs self-contained as well: the same narrow JMD
+# prerequisite closure is required by the new Q207 and property proof modules.
+bash "$root/scripts/build_gwb_jmd_prerequisites.sh" \
+  2>&1 | tee "$out/jmd-targeted-prerequisites-build.log"
 # Compile the ONE newly introduced source-bound counterexample module
 # into the existing project-local .olean cache. Reuse already cached
 # WikipediaArticleProof, Batteries and Mathlib; do NOT build Wikidata.

@@ -100,6 +100,11 @@ lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbRealSourceCon
 lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/GwbNativeFibreReceipt.olean" \
   "$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbNativeFibreReceipt.lean" \
   2>&1 | tee "$out/native-fibre-lean-build.log"
+# Verify the reused PR #111 DB-native source/span and S28 provenance
+# checker even when this run has no live PostgreSQL ledger to accept.
+lake env lean -o "$root/.lake/build/lib/lean/RequestProject/Slr/DbSourceProducer.olean" \
+  "$root/DASHI/output-final_aristotle/RequestProject/Slr/DbSourceProducer.lean" \
+  2>&1 | tee "$out/db-m12-s28-build.log"
 # Build the previously source-written finite consumer theorem and the
 # same-owner JMD/SLR composition theorem before loading the GWB runner.
 # Keeping each OLEAN path explicit makes missing imports fail closed.

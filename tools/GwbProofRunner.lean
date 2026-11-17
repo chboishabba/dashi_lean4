@@ -4,6 +4,7 @@ import RequestProject.Slr.GwbRealSourceConsumer
 import RequestProject.Slr.GwbNativeFibreReceipt
 import RequestProject.Slr.GwbProofComposition
 import RequestProject.Slr.DbSourceProducer
+import RequestProject.Slr.GwbWorldGraphProof
 
 open Wikidata
 
@@ -147,6 +148,84 @@ def runSavedS28Check (jsonPath eventRef : String) : IO UInt32 := do
     IO.eprintln "GWB_S28_SOURCE_TRACE_REJECTED: incomplete or promoted M12/S28 ancestry"
     return 1
 
+/-- Recheck every SLR candidate graph property through JMD's original
+    Wikidata entity importer and verified PKB property-support theorem.
+    The result is a SNAPSHOT-RELATIVE KB proof inventory, never a claim that
+    all 51 QIDs share a simultaneous Wikidata revision or that an article
+    sentence expresses a checked KB statement. -/
+def runWorldGraphCheck
+    (graphPath cacheDir outputPath : String) (offline requireAll : Bool) :
+    IO UInt32 := do
+  let text ← IO.FS.readFile graphPath
+  let graph ← match Lean.Json.parse text with
+    | .ok value => pure value
+    | .error err =>
+        IO.eprintln s!"GWB_WORLD_GRAPH_REJECTED: JSON parse {err}"
+        return 1
+  if h : Slr.GwbWorldGraph.checkCandidateWorldGraph graph = true then
+    let checked : Slr.GwbWorldGraph.CheckedCandidateWorldGraph graph := ⟨h⟩
+    let _ := Slr.GwbWorldGraph.candidateWorldGraphNeverClaimsNativeStatementContext checked
+    pure ()
+  else
+    IO.eprintln "GWB_WORLD_GRAPH_REJECTED: malformed/promoted source graph"
+    return 1
+  let nodes := (graph.getObjValAs? (Array Lean.Json) "nodes").toOption.getD #[]
+  let mut entities : List Cli.Entity := []
+  let mut snapshots : Array Lean.Json := #[]
+  for node in nodes do
+    let some qid := (node.getObjValAs? String "node_id").toOption
+      | IO.eprintln "GWB_WORLD_GRAPH_REJECTED: missing QID"
+        return 1
+    let raw ← Cli.fetchEntityJson (System.FilePath.mk cacheDir) offline qid
+    let parsed ← match Lean.Json.parse raw with
+      | .ok value => pure value
+      | .error err =>
+          IO.eprintln s!"GWB_WORLD_GRAPH_REJECTED: invalid JMD entity {qid}: {err}"
+          return 1
+    if !Slr.GwbWorldGraph.jsonEntityMatchesQid qid parsed then
+      IO.eprintln s!"GWB_WORLD_GRAPH_REJECTED: JMD getter did not return {qid}"
+      return 1
+    entities := entities ++ Cli.entitiesOfJson parsed
+    let data := (parsed.getObjVal? "entities").toOption.getD Lean.Json.null
+    let record := (data.getObjVal? qid).toOption.getD Lean.Json.null
+    let revision := (record.getObjValAs? Nat "lastrevid").toOption.getD 0
+    snapshots := snapshots.push (Lean.Json.mkObj [
+      ("qid", toJson qid),
+      ("wikidata_lastrevid", toJson revision),
+      ("cache_path", toJson ((Cli.cachePath (System.FilePath.mk cacheDir) qid).toString))
+    ])
+  let pkb := Slr.GwbWorldGraph.pkbFromImportedEntities entities
+  let inventory := Slr.GwbWorldGraph.checkGraphAgainstImportedKB graph pkb
+  let mut supported : Nat := 0
+  let mut unresolved : Array Lean.Json := #[]
+  for (edge, proof?) in inventory do
+    match proof? with
+    | some proof =>
+        let _ := Slr.GwbWorldGraph.checkedWorldPropertySound proof
+        supported := supported + 1
+    | none => unresolved := unresolved.push edge
+  let summary := Lean.Json.mkObj [
+    ("schema", toJson ("gwb-jmd-world-graph-property-verification-v1" : String)),
+    ("source_graph_schema", toJson ("slr-wikimedia-world-follow-v1" : String)),
+    ("nodes_reimported", toJson nodes.size),
+    ("source_candidate_edges", toJson inventory.size),
+    ("jmd_kb_property_proofs", toJson supported),
+    ("unresolved_edges_count", toJson unresolved.size),
+    ("unresolved_candidate_edges", Lean.Json.arr unresolved),
+    ("wikidata_source_snapshots", Lean.Json.arr snapshots),
+    ("all_imported_entities_checked", toJson true),
+    ("source_claims_are_world_truth", toJson false),
+    ("article_semantic_alignment_paid", toJson false),
+    ("synchronous_51_qid_snapshot_proved", toJson false)
+  ]
+  IO.FS.writeFile outputPath (summary.pretty ++ "\n")
+  IO.println s!"GWB_JMD_WORLD_GRAPH_CHECKED qids={nodes.size} edges={inventory.size} jmd_supported={supported} unresolved={unresolved.size}"
+  IO.println s!"Receipt: {outputPath}"
+  if requireAll && !unresolved.isEmpty then
+    IO.eprintln "GWB_WORLD_GRAPH_PROPERTY_COVERAGE_OPEN: at least one SLR edge not supported by independently imported JMD data"
+    return 3
+  return 0
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["fibre"] =>
@@ -154,6 +233,12 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["world-graph-check", graph, cacheDir, output] =>
+      runWorldGraphCheck graph cacheDir output false false
+  | ["world-graph-check-offline", graph, cacheDir, output] =>
+      runWorldGraphCheck graph cacheDir output true false
+  | ["world-graph-strict", graph, cacheDir, output] =>
+      runWorldGraphCheck graph cacheDir output true true
   | ["db-m12-check", json, literal] =>
       runSavedM12Check json literal
   | ["db-s28-check", json, event] =>
@@ -174,7 +259,7 @@ def main (args : List String) : IO UInt32 := do
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF"
+      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -194,3 +279,6 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.checkedM12AllSourceSpansExact
 #print axioms Wikidata.Slr.checkedS28HasCompleteAncestry
+
+#print axioms Wikidata.Slr.GwbWorldGraph.checkedWorldPropertySound
+#print axioms Wikidata.Slr.GwbWorldGraph.checkedGraphInventoryExact

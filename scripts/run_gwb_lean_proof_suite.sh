@@ -12,6 +12,10 @@ out="$(realpath "$out")"
 command -v sha256sum >/dev/null || { echo "sha256sum unavailable" >&2; exit 2; }
 command -v lake >/dev/null || { echo "Pinned Lake/Lean unavailable; install repo lean-toolchain through elan" >&2; exit 2; }
 command -v tar >/dev/null || { echo "tar unavailable" >&2; exit 2; }
+if ! lake env lean --version | grep -q '4.35.0-rc3'; then
+  echo "Pinned root Lean 4.35.0-rc3 not active; do not use /usr/bin/lean 4.27.0" >&2
+  exit 2
+fi
 
 expected="6bbad0f9bcc2f0aa2e0e6f77f15692a945c1331a6337cfe202c19a58e2460f9e"
 actual="$(sha256sum "$archive" | cut -d ' ' -f 1)"
@@ -36,7 +40,7 @@ lake exe wikidata gwb-article-check \
   | tee "$out/article-source-proof.log"
 
 cat > "$out/proof-boundary.txt" <<'EOF'
-LEIN_GWB_CONSUMER_PROOF_BOUNDARY_V1
+LEAN_GWB_CONSUMER_PROOF_BOUNDARY_V1
 Kernel proved: generic provenance-preserving fibre join ACI;
 source-relative reported-claim and year-string consumer sufficiency;
 nonfactorability of world occurrence, actor identity, event date, embedded scope

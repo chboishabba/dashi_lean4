@@ -17,6 +17,10 @@ command -v lake >/dev/null || { echo "Lean 4.28.0/Lake required" >&2; exit 2; }
 if ! lake env lean --version | grep -q '4.28.0'; then
   echo "Wrong Lean pin: required 4.28.0" >&2; exit 2
 fi
+# The cached Lean build may have the SLR owner OLEANs but not original JMD
+# Cli.Import/Fetch/Derive. Build their exact transitive dependency closure
+# before GwbArticleIdentity imports Cli.Import.
+bash "$root/scripts/build_gwb_jmd_prerequisites.sh"
 # Deterministic targeted dependency build: no whole Wikidata executable.
 # The original JMD Cli.Derive/PropertyEngine OLEANs remain pinned, while all
 # SLR proof-owner imports needed by this handoff are explicitly rebuilt.

@@ -52,24 +52,40 @@ in `.dashi/gwb-source/`, excluded from Git. The source SHA is pinned to
 at `enwiki-revid:1385850169`. These are observations, not model truth
 or semantic admissions.
 
-## One-time migration (if source fixture exists only in old TAR)
+## One-time migration: import the ALREADY EXECUTED local result
 
-From JMD repository root, with existing Rust SLR at the sibling checkout
-or set `SLR_ROOT`:
+**No Rust/Lean rerun needed** when the passing proof receipt already exists
+inside the previously refreshed local TAR. From JMD repository root, on
+PR #112's branch:
+
+```bash
+python3 tools/import_gwb_existing_receipts.py \
+  gwb_article_proof.tar --delete-on-success
+git push
+```
+
+The import tool validates the original UTF-8 source and every captured
+Rust/Lean success marker, all five actual consumer receipts, counts,
+nonpromotion gates, and all ten negative-control logs using the
+**same** publisher as a fresh run. It imports the original source
+fixture into ignored `.dashi/gwb-source/`, commits only the genuine
+results to `artifacts/gwb-semantic-proof/`, and then deletes the old
+TAR **only after** verifying that the results directory is clean
+(committed). It creates no new TAR.
+
+If you do want a new proof run rather than import existing receipts,
+pass the legacy input TAR to the runner once:
 
 ```bash
 SLR_ROOT=/path/to/slr \
   bash scripts/run_gwb_lean_proof_suite.sh gwb_article_proof.tar
 ```
 
-This **imports** the original source members into ignored
-`.dashi/gwb-source/`, runs the full tests on those files, validates
-the Rust/Lean receipts and **commits only the validated result directory**
-to the currently checked-out PR branch. It never writes a TAR.
-
-After a successful import and committed proof results you may remove
-`gwb_article_proof.tar` locally; it is not deleted automatically to
-avoid losing original evidence on a failed run.
+This imports original source evidence to `.dashi/gwb-source/`,
+runs the checks, and commits the outputs; the TAR itself is unchanged.
+For safety, this alternate route does not delete the legacy input.
+Use the import command with `--delete-on-success` to retire the TAR
+after confirming the existing captured results.
 
 ## Subsequent runs — no TAR
 

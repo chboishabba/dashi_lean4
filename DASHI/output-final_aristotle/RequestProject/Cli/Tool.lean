@@ -985,6 +985,45 @@ Options: --out FILE, --cache DIR, --offline, --depth N, --name NAME, --quiet, --
          --warn / --no-warn (the redundancy scan; on by default for small bases),
          --module NAME, --kernel, --highlights N (for `lean`), --dedup, --infer-levels"
 
+/-! Reopen the saved SLR article through JMD source evidence and native Q207
+    ontology proof. This works without re-running a trained NLP model. -/
+def cmdGwbArticleReplay (outputDir : String) (o : Opts) : IO UInt32 := do
+  let article := outputDir ++ "/article.txt"
+  let source := outputDir ++ "/slr-record.json"
+  let projection := outputDir ++ "/article-candidates.json"
+  let verified ← Slr.ArticleProof.verifyFiles article source projection
+  if !verified then return 1
+  IO.println "JMD Wiki ontology crosswalk: importing Wikidata item Q207 separately."
+  let ontologyFile := outputDir ++ "/gwb-q207.wdkb"
+  let ontologyOpts := { o with out := some ontologyFile, depth := 1 }
+  let ontologyStatus ← cmdFetch ["Q207"] ontologyOpts
+  if ontologyStatus != 0 then return ontologyStatus
+  let proofFile := outputDir ++ "/GwbArticleQ207Proof.lean"
+  let proofOpts := { o with
+    module := some "GwbArticleQ207Proof",
+    out := some proofFile,
+    kernel := true,
+    highlights := 8 }
+  let codegenStatus ← cmdLean ontologyFile proofOpts
+  if codegenStatus != 0 then return codegenStatus
+  let kernel ← IO.Process.output {
+    cmd := "lake"
+    args := #["env", "lean", proofFile]
+  }
+  if kernel.exitCode != 0 then
+    IO.eprintln s!"JMD Q207 proof kernel failed: {kernel.stderr}"
+    return 1
+  IO.println "JMD_Q207_KERNEL_OK: Wikidata-derived facts rechecked by Lean."
+  IO.println "This does not promote any article event candidate to a world fact."
+  let scanFile := outputDir ++ "/gwb-q207.scan"
+  let scanStatus ← cmdScan o.cache o.offline ["Q207"] ["en"] 40 20
+    (some scanFile)
+  if scanStatus != 0 then return scanStatus
+  IO.println s!"GWB article candidate proof and JMD source scan: {outputDir}"
+  IO.println "JMD link scan is independently fetched and NOT certified to share the article's MediaWiki revision."
+  IO.println "No article mention has been equated to a Wikidata QID without alignment."
+  return 0
+
 /-- The entry point. -/
 def run (args : List String) : IO UInt32 := do
   let (pos, o) := parseOpts args
@@ -992,6 +1031,8 @@ def run (args : List String) : IO UInt32 := do
   | [] => IO.println usage; return 0
   | "help" :: _ => IO.println usage; return 0
   | "--help" :: _ => IO.println usage; return 0
+  | ["gwb-article-replay", outputDir] =>
+      cmdGwbArticleReplay outputDir o
   | ["gwb-article-check", articleText, slrRecord, projection] =>
       let ok ← Slr.ArticleProof.verifyFiles articleText slrRecord projection
       return if ok then 0 else 1
@@ -1005,41 +1046,7 @@ def run (args : List String) : IO UInt32 := do
         IO.eprintln s!"Wikipedia/SLR producer failed: {producer.stderr}"
         return 1
       IO.println producer.stdout
-      let article := outputDir ++ "/article.txt"
-      let source := outputDir ++ "/slr-record.json"
-      let projection := outputDir ++ "/article-candidates.json"
-      let verified ← Slr.ArticleProof.verifyFiles article source projection
-      if !verified then return 1
-      IO.println "JMD Wiki ontology crosswalk: importing Wikidata item Q207 separately."
-      let ontologyFile := outputDir ++ "/gwb-q207.wdkb"
-      let ontologyOpts := { o with out := some ontologyFile, depth := 1 }
-      let ontologyStatus ← cmdFetch ["Q207"] ontologyOpts
-      if ontologyStatus != 0 then return ontologyStatus
-      let proofFile := outputDir ++ "/GwbArticleQ207Proof.lean"
-      let proofOpts := { o with
-        module := some "GwbArticleQ207Proof",
-        out := some proofFile,
-        kernel := true,
-        highlights := 8 }
-      let codegenStatus ← cmdLean ontologyFile proofOpts
-      if codegenStatus != 0 then return codegenStatus
-      let kernel ← IO.Process.output {
-        cmd := "lake"
-        args := #["env", "lean", proofFile]
-      }
-      if kernel.exitCode != 0 then
-        IO.eprintln s!"JMD Q207 proof kernel failed: {kernel.stderr}"
-        return 1
-      IO.println "JMD_Q207_KERNEL_OK: Wikidata-derived facts rechecked by Lean."
-      IO.println "This does not promote any article event candidate to a world fact."
-      let scanFile := outputDir ++ "/gwb-q207.scan"
-      let scanStatus ← cmdScan o.cache o.offline ["Q207"] ["en"] 40 20
-        (some scanFile)
-      if scanStatus != 0 then return scanStatus
-      IO.println s!"GWB article candidate proof and JMD source scan: {outputDir}"
-      IO.println "JMD link scan is independently fetched and NOT certified to share the article's MediaWiki revision."
-      IO.println "No article mention has been equated to a Wikidata QID without alignment."
-      return 0
+      cmdGwbArticleReplay outputDir o
   | ["slr-timeline", slrBinary, eventRef] =>
       let result ← Slr.callSlrS28Candidates slrBinary eventRef
       IO.println result.compress

@@ -84,6 +84,9 @@ def inspect(native, slr):
     total_candidates = total_alternatives = total_residuals = 0
     observed = set()
     unsupported_locations = set()
+    candidate_locations = set()
+    alternative_locations = set()
+    total_source_tokens = sum(map(len, original.values()))
     for row in observations:
         s = row.get("sentence_index")
         if s not in original or s in observed:
@@ -95,6 +98,18 @@ def inspect(native, slr):
         residuals = _array(row, "residuals")
         total_candidates += len(candidate)
         total_alternatives += len(alternatives)
+        for entries, locations, label in (
+            (candidate, candidate_locations, "candidate"),
+            (alternatives, alternative_locations, "alternative"),
+        ):
+            for entry in entries:
+                ordinal = entry.get("token_ordinal")
+                if not isinstance(ordinal, int) or not 0 <= ordinal < len(toks):
+                    raise ValueError(f"bad {label} token ordinal: {s}:{ordinal}")
+                key = (s, ordinal)
+                if key in locations:
+                    raise ValueError(f"duplicate {label} token site: {s}:{ordinal}")
+                locations.add(key)
         total_residuals += len(residuals)
         if row.get("projection_failures") != []:
             raise ValueError(f"projection failures in sentence {s}")
@@ -135,6 +150,14 @@ def inspect(native, slr):
         native.get("typed_residual_count"),
     ):
         raise ValueError("original semantic count mismatch")
+    if native.get("source_tokens") != total_source_tokens:
+        raise ValueError("source token count disagrees with original per-sentence tokens")
+    if (candidate_locations & alternative_locations or
+        candidate_locations & unsupported_locations or
+        alternative_locations & unsupported_locations):
+        raise ValueError("candidate/alternative/unsupported site categories overlap")
+    if len(candidate_locations | alternative_locations | unsupported_locations) != total_source_tokens:
+        raise ValueError("candidate/alternative/unsupported do not partition original parser tokens")
     if count_unsupported != sum(hist.values()) or count_unsupported != sum(by_route.values()):
         raise ValueError("fine diagnostic doesn't sum back to coarse")
     if len(observed) != len(original):
@@ -149,6 +172,7 @@ def inspect(native, slr):
         "unsupported_dependency_count": count_unsupported,
         "unsupported_share_of_residual_entries": count_unsupported / total_residuals,
         "unsupported_coarse_refinement_exact": sum(hist.values()) == count_unsupported,
+        "exact_parser_token_partition": total_source_tokens == total_candidates + total_alternatives + count_unsupported,
         "v04_source_owner": "DASHI/Cognition/PNF/SensibLawGWBv01UnsupportedResidualCertificationV04Exact.agda",
         "v04_work_routing_owner": "DASHI/Cognition/PNF/SensibLawUnsupportedDemandRoutingExact.agda",
         "v04_historical_scope": "41,044-sentence GWB tranche; do not import its measured counts as 643-sentence counts",

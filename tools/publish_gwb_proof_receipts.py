@@ -21,7 +21,8 @@ LOGS = (
     "typed-semantic-fibre-build.log", "q207-identity-proof-build.log",
     "lean-build.log", "axiom-audit.log", "consumer-fibre-proof.log",
     "db-m12-s28-build.log", "jmd-property-proof-build.log",
-    "world-graph-proof-build.log", "finite-consumer-build.log",
+    "world-graph-proof-build.log", "hyperfabric-proof-build.log",
+    "article-system-proof-build.log", "finite-consumer-build.log",
     "proof-composition-build.log",
     "proof-composition-proof.log",
     "article-source-proof.log", "semantic-scope-proof.log",
@@ -133,6 +134,9 @@ def publish(repo, source, run, slr_head, lean_version, auto_commit,
         log = (run / name).read_bytes()
         require(b"GWB_RUST_FIBRE_LEAN_REJECTED:" in log,
                 "adversarial semantic control failed for the wrong reason: " + name)
+    require(b"GWB_ARTICLE_LOCAL_SYSTEM_THEOREM_KERNEL_OK" in
+            (run / "proof-composition-proof.log").read_bytes(),
+            "end-to-end conditional article theorem was not loaded in Lean")
     require(b"GWB_TYPED_SEMANTIC_FIBRE_LEAN_PASS" in
             (run / "native-fibre-source-proof.log").read_bytes(),
             "typed SLR candidate/alternative/residual decoder was not executed")

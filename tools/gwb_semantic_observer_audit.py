@@ -10,6 +10,7 @@ import argparse
 import collections
 import hashlib
 import json
+from pathlib import Path
 import tarfile
 
 EMBED = frozenset(("acl", "relcl", "ccomp", "xcomp", "advcl"))
@@ -19,17 +20,25 @@ def require(ok, why):
         raise ValueError(why)
 
 def load(path):
-    with tarfile.open(path, "r:") as archive:
-        members = archive.getmembers()
-        require(len(set(m.name for m in members)) == len(members),
-                "duplicate TAR members")
-        require(all(m.isfile() for m in members), "unsafe TAR member")
-        def text(name):
-            return archive.extractfile(name).read().decode("utf-8")
-        return (text("article.txt"),
-                json.loads(text("slr-record.json")),
-                json.loads(text("article-candidates.json")),
-                json.loads(text("gwb_sensiblaw_p0b_mention_licences.json")))
+    """Read existing source evidence from a directory; legacy TAR is import-only."""
+    source = Path(path)
+    names = ("article.txt", "slr-record.json",
+             "article-candidates.json", "gwb_sensiblaw_p0b_mention_licences.json")
+    if source.is_dir():
+        content = {name: (source / name).read_text(encoding="utf-8")
+                   for name in names}
+    else:
+        with tarfile.open(source, "r:") as archive:
+            members = archive.getmembers()
+            require(len(set(m.name for m in members)) == len(members),
+                    "duplicate legacy input TAR members")
+            require(all(m.isfile() for m in members), "unsafe TAR member")
+            content = {name: archive.extractfile(name).read().decode("utf-8")
+                       for name in names}
+    return (content["article.txt"],
+            json.loads(content["slr-record.json"]),
+            json.loads(content["article-candidates.json"]),
+            json.loads(content["gwb_sensiblaw_p0b_mention_licences.json"]))
 
 def check(article, slr, proj, p0b):
     digest = hashlib.sha256(article.encode("utf-8")).hexdigest()

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Re-run the exact uploaded GWB SLR source record through the repaired
-# lexical year/PROPN projection and JMD Lean without spaCy or Wikipedia re-fetch.
+# HISTORICAL REPLAY ONLY: this uses the archived Python article projection.
+# Production must use scripts/run_gwb_native_proof_acceptance.sh and the
+# existing Rust SLR DB-native M12/S28 CLI, not a Python semantic producer.
 set -euo pipefail
+if [[ "${ALLOW_LEGACY_GWB_PYTHON_REPLAY:-}" != "1" ]]; then
+  echo 'Legacy Python article replay disabled. Use scripts/run_gwb_native_proof_acceptance.sh with original SLR DB parser/run refs.' >&2
+  exit 2
+fi
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 input="${1:-$here/.gwb_article_proof}"
 output="${2:-$here/.gwb_article_replay}"
@@ -30,16 +35,6 @@ cd "$here"
   --source-revision "$revision" \
   --slr-record "$input/slr-record.json" \
   "${html_arg[@]}"
-# Optional canonical SensibLaw P0b handoff: reuse the original SLR
-# tokens and dependency rows, without a second parser or identity decisions.
-# The explicit root avoids accidentally importing an unrelated src package.
-if [[ -n "${SENSIBLAW_ROOT:-}" ]]; then
-  "$py" tools/slr_existing_mention_fibre_handoff.py \
-    --source-text "$input/article.txt" \
-    --slr-record "$input/slr-record.json" \
-    --sensiblaw-root "$SENSIBLAW_ROOT" \
-    --output "$output/sensiblaw-p0b-mention-licences.json"
-fi
 lake build wikidata
 lake exe wikidata gwb-article-replay "$output"
 echo "Summary: $output/summary.md"

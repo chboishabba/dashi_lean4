@@ -66,6 +66,12 @@ def decodeDbM12Observation (j : Json) : Option DbM12Observation := do
     let candidates ← (j.getObjValAs? (Array Json) "candidates").toOption
     let tokens ← (j.getObjValAs? (Array Json) "tokens").toOption
     let entities ← (j.getObjValAs? (Array Json) "entities").toOption
+    let candidateSpansValid := candidates.all (fun candidate =>
+      (candidate.getObjValAs? Bool "candidate_only").toOption == some true &&
+      (match (candidate.getObjValAs? Nat "start_char").toOption,
+             (candidate.getObjValAs? Nat "end_char").toOption with
+       | some a, some b => decide (startChar <= a ∧ a < b ∧ b <= endChar)
+       | _, _ => false))
     if statementRef.isEmpty || documentRef.isEmpty ||
         sourceRevisionRef.isEmpty || parserRunRef.isEmpty ||
         regionRef.isEmpty || parserReceiptRef.isEmpty ||
@@ -73,13 +79,7 @@ def decodeDbM12Observation (j : Json) : Option DbM12Observation := do
         decide (startChar >= endChar) ||
         !sameLiteral || !headsCovered || !revisionJoined ||
         !candidateOnly || semanticPaid || occurrencePaid || truthPaid ||
-        tokens.isEmpty ||
-        !(candidates.all fun candidate =>
-            (candidate.getObjValAs? Bool "candidate_only").toOption == some true &&
-            match (candidate.getObjValAs? Nat "start_char").toOption,
-                  (candidate.getObjValAs? Nat "end_char").toOption with
-            | some a, some b => decide (startChar <= a ∧ a < b ∧ b <= endChar)
-            | _, _ => false) then
+        tokens.isEmpty || !candidateSpansValid then
       none
     else
       some ⟨statementRef, documentRef, sourceRevisionRef,
@@ -219,7 +219,8 @@ private def strArray? (j : Json) (key : String) : Option (Array String) :=
 
 private def noRepeatedRefs (rows : Array Json) (field : String) : Bool :=
   let refs := rows.toList.map (fun r => field? r field)
-  refs.all Option.isSome && decide refs.Nodup
+  refs.all (fun ref => ref.isSome && !((ref.getD "").isEmpty)) &&
+    decide refs.Nodup
 
 private def sourceForStatement
     (sources : Array Json) (statement : String) : Option Json :=
@@ -229,17 +230,17 @@ private def hasSourceBackedLink
     (sources links : Array Json) (observation : String) : Bool :=
   links.toList.any (fun link =>
     field? link "observation_ref" == some observation &&
-    match field? link "statement_ref" with
-    | none => false
-    | some statement =>
-      match sourceForStatement sources statement with
-      | none => false
-      | some source =>
-        field? link "source_revision_ref" ==
-          field? source "source_revision_ref" &&
-        field? link "exact_span_ref" == field? source "exact_span_ref" &&
-        (field? source "source_revision_ref").isSome &&
-        (field? source "exact_span_ref").isSome)
+    (match field? link "statement_ref" with
+     | none => false
+     | some statement =>
+       match sourceForStatement sources statement with
+       | none => false
+       | some source =>
+         field? link "source_revision_ref" ==
+           field? source "source_revision_ref" &&
+         field? link "exact_span_ref" == field? source "exact_span_ref" &&
+         (field? source "source_revision_ref").isSome &&
+         (field? source "exact_span_ref").isSome))
 
 private def sourceAndObservationRefsBacked
     (sources assemblies links : Array Json) (row : Json) : Bool :=
@@ -266,6 +267,20 @@ def checkS28Provenance (j : Json) (eventRef : String) : Bool :=
   match sources, assemblies, links, times, claims, disputes with
   | some sourceRows, some eventLinks, some statementLinks,
     some temporal, some leaves, some contestations =>
+      field? j "schema" == some "slr-s28-event-chronology-candidates-v1" &&
+      field? j "event_ref" == some eventRef &&
+      bool? j "candidate_only" == some true &&
+      bool? j "source_or_review_receipts_are_world_truth" == some false &&
+      bool? j "event_occurrence_paid" == some false &&
+      bool? j "semantic_promotion" == some false &&
+      bool? j "source_trace_join_complete" == some true &&
+      (!temporal.isEmpty || !leaves.isEmpty) &&
+      (sourceRows ++ eventLinks ++ statementLinks ++ temporal ++
+        leaves ++ contestations).toList.all (fun row =>
+          bool? row "candidate_only" == some true &&
+          bool? row "creates_semantic_authority" == some false &&
+          bool? row "applicability_promoted" == some false &&
+          bool? row "claim_truth_promoted" == some false) &&
       !sourceRows.isEmpty && !eventLinks.isEmpty &&
       !statementLinks.isEmpty && !eventRef.isEmpty &&
       noRepeatedRefs sourceRows "statement_ref" &&

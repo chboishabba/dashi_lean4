@@ -783,3 +783,20 @@ and C4.05 governed admission remain open. Do not confuse structural head
 parity with semantic role or identity resolution. Next cut: retain original
 relation rows with per-mention fibres, inspect the 59 by/9 to cases and
 candidate endpoint spans, then reuse existing SLR refinement receipts.
+
+## C4.04a — structural relation/mention inspection and adversarial transport
+
+C4.02–03 positive operator acceptance remains 4304 rows. New source-written
+packet strengthens Lean uniqueness checks, adds explicit rejection marker
+and four actual runner mutations (forged head, missing row, duplicate row,
+candidate promotion). inspect_gwb_relation_mentions.py consumes the original
+checked rows, joins both endpoints to overlapping original P0b mentions
+and full nomination licences, exports all relations and selected individual
+fibres with incident edges, and all previously unmaterialized by/to role
+observations with marker/child relations and sentence context. Overlap is
+not identity; children are structural candidates, not resolved participants.
+Run existing relation transport script after compiling new Lean module via
+maxcut --full. Inspect .dashi/gwb-relation/mention-inspection.json, especially
+the actual 59 by and 9 to cases; counts are expectations, not new receipts.
+No reviewed identity or antecedent resolver was executed; C4.04b and C4.05
+remain open. No TAR, CI or tracked result mutation. Local acceptance pending.

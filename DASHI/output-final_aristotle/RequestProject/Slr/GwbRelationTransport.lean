@@ -35,6 +35,8 @@ def check (slr receipt : Json) : Bool :=
   field receipt "source_revision" == field slr "revision_ref" &&
   field receipt "source_unit_ref" == field slr "source_unit_ref" &&
   actual.length == targets.length &&
+  actual.eraseDups.length == actual.length &&
+  targets.eraseDups.length == targets.length &&
   actual.all (fun r => targets.contains r) &&
   targets.all (fun r => actual.contains r)
 
@@ -60,7 +62,9 @@ def run (articlePath slrPath projectionPath receiptPath : String) : IO UInt32 :=
         let _ := retainsOriginal c
         IO.println s!"GWB_RELATION_TRANSPORT_OK count={(rows receipt "relations").length}"
         return 0
-      else return 1
+      else
+        IO.eprintln "GWB_RELATION_TRANSPORT_REJECTED"
+        return 1
     else return 1
   | _, _, _ => return 1
 

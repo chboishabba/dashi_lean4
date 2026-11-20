@@ -524,3 +524,55 @@ original DB-owning runtime; only then query JMD's imported KB for
 independent consistency of explicitly aligned propositions.
 Do NOT require Wikidata coverage for an entirely article-internal
 consumer and do NOT treat a QID sitelink as an article proposition.
+
+
+## 2026-11-20 — authoritative ownership and canonical proof population
+
+Supersedes earlier commands that made the experimental Rust observer
+mandatory. SLR (chboishabba/slr) is the production runtime; SensibLaw
+is historical planning/prototype prior art, not the production owner.
+Lean and Agda are golden. ITIR orchestrates. Original JMD supplies
+independent Wikidata ontology and KB-relative reasoning.
+
+Accepted baseline 891d4e7ca: original source acceptance, 1468 predicate
+observations, 17547 parser tokens, 43 dependency labels. Do not confuse
+these with reviewed events or historical claims.
+
+Implemented canonical first cut: GwbCanonicalSourceProof.lean constructs
+SourceAnchor from CheckedArticleExtraction and actual original event
+membership; populate elaborates one instance per event. The canonical
+runner invokes canonical-populate and publishes the full unchanged event
+values, checking equality against the original projection. Expected 1468
+instances, pending local Lean execution. No new semantic producer.
+These are runtime proof-bearing values; JSON is a replayable result
+inventory, not a serialized Lean kernel proof.
+
+The historical GwbP5P10ExactWeld still contains unconstrained Prop
+premises and Rust-indexed anchors. Do not use it as a production semantic
+certificate. The next migration must use concrete source/mention and
+review coordinates, actual admitted identity/binding evidence and
+event joins, and the existing SourceQueryLicence consumer theorem.
+
+Production prior art recovered:
+- slr/crates/sl-pg-source-store/src/gwb_chronology_capstone.rs and
+  examples/gwb_chronology_capstone.rs: reviewed GWB statement/observation/
+  event/temporal/claim/contestation materialisation and persisted ancestry.
+  The capstone uses a heterogeneous reviewed corpus; do not assume it
+  is identical to the pinned single Wikipedia article.
+- slr/docs/architecture/formal_proof_bridge.md:
+  FormalProofDemand -> independent kernel checker -> FormalEvidenceReceipt
+  -> exact obligation/digest payment -> sparse_wake recurrence.
+  Consume this contract rather than inventing a parallel payment ledger.
+
+Remaining cuts:
+P5 actual original SLR admitted identity witness transport; P6/P7 persisted
+same-source M12/S28 event and time coordinates; P8 evaluate a real producer
+consumer with its source-relative licence and return proof-bearing answers;
+P9 independently reviewed proposition alignment; P10 original JMD KB
+consistency/derivation, followed by existing formal proof bridge payment.
+P9/P10 are optional for article-internal queries.
+
+Run canonical acceptance with bash scripts/run_gwb_maxcut_acceptance.sh --full.
+Historical Rust probe remains opt-in. TAR and unrelated local outputs are
+untouched. The newly written Lean module has not yet been kernel checked
+in the patch author's environment.

@@ -4,6 +4,8 @@
   "canonical_source_output": true,
   "experimental_rust_semantic_expansion_executed": false,
   "historical_experimental_output_role": "diagnostic only",
+  "lean_predicate_queries": 760,
+  "lean_source_instances": 1468,
   "original_dependency_label_count": 43,
   "original_p0b_json_sha256": "c235674366a69b674be1ea43924590c08ba3334453bb0e1565f39d38fc2f7f48",
   "original_parser_token_count": 17547,

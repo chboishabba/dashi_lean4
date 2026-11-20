@@ -46,6 +46,10 @@
 'Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbCanonicalSource.anchorRetainsOriginal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbCanonicalSource.predicateQuerySound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbProductionTrace.checkedTraceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbProductionTrace.temporalQueryOriginal' depends on axioms: [propext, Classical.choice, Quot.sound]
 JMD_LEAN_SOURCE_PROOF_OK sha256=a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233
 source_blocks=225 (heading/paragraph spans fully covered)
 ner_people_mentions=0 proper_noun_tokens=2620 event_candidates=1468 ner_date_mentions=0 literal_year_mentions=311 timeline_candidates=311 text_order_edges=1467

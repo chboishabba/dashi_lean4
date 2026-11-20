@@ -67,6 +67,15 @@ def publish(source,run,dest):
     require("GWB_CANONICAL_LEAN_INSTANCES count="+str(counts["original_predicates"]) in
             (run/"lean-source-instances.log").read_text(),
             "missing Lean population execution")
+    expected_queries={}
+    for event in projection["event_candidates"]:
+        surface=event["predicate"]["surface"]
+        expected_queries.setdefault(surface,[]).append(event)
+    queries=instances["predicate_queries"]
+    require(len(queries)==len(expected_queries) and
+            {q["query"]:q["answer"] for q in queries}==expected_queries and
+            all(q["scope"]=="original-predicate-surface-only" for q in queries),
+            "Lean predicate query inventory is incomplete or altered")
     manifest={
       "schema":"gwb-original-slr-source-lean-proof-v1",
       "source_revision":REV, "source_utf8_sha256":PIN,
@@ -81,6 +90,7 @@ def publish(source,run,dest):
       "original_dependency_label_count":counts["dependency_labels"],
       "source_lean_article_checker":"PASSED",
       "lean_source_instances":len(instances["instances"]),
+      "lean_predicate_queries":len(queries),
       "original_scope_nonfactorability":"PASSED",
       "adversarial_source_controls_rejected":len(NEGATIVE),
       "canonical_regression_tests_passed":8,

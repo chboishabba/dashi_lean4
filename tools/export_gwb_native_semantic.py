@@ -134,23 +134,42 @@ def main():
                 WHERE product_ref=ANY(%s::text[])
                 ORDER BY product_ref,detector_ref
             """, (products,))
+            # This database revision does not have the proposed
+            # corpus_reconciliation_review_delta_fibre relation.  The native
+            # reconciliation review population is represented by review_item;
+            # its reconciliation item reference carries the source revision
+            # and its semantic_ref carries the fingerprint.
             review_fibres = fetch(cur, """
-                SELECT * FROM semantic.corpus_reconciliation_review_delta_fibre
-                WHERE (source_revision_ref=%s AND parser_run_ref=%s)
-                   OR (source_revision_ref=%s AND parser_run_ref=%s)
-                ORDER BY parser_run_ref,detector_ref,semantic_kind_ref,semantic_fingerprint_ref
-            """, (REV_A, RUN_A, REV_B, RUN_B))
+                SELECT * FROM semantic.review_item
+                WHERE review_item_ref LIKE %s
+                   OR review_item_ref LIKE %s
+                ORDER BY review_item_ref
+            """, (
+                'review-item:reconciliation:' + REV_A + ':%',
+                'review-item:reconciliation:' + REV_B + ':%',
+            ))
+            review_receipts = fetch(cur, """
+                SELECT r.* FROM semantic.review_receipt r
+                JOIN semantic.review_item i USING(review_item_ref)
+                WHERE i.review_item_ref LIKE %s
+                   OR i.review_item_ref LIKE %s
+                ORDER BY r.review_item_ref,r.command_ref
+            """, (
+                'review-item:reconciliation:' + REV_A + ':%',
+                'review-item:reconciliation:' + REV_B + ':%',
+            ))
             pressure = fetch(cur, """
                 SELECT p.* FROM semantic.reconciliation_pressure_candidate p
                 WHERE EXISTS (
-                    SELECT 1 FROM semantic.corpus_reconciliation_review_delta_fibre f
-                    WHERE f.semantic_kind_ref=p.semantic_kind_ref
-                      AND f.semantic_fingerprint_ref=p.semantic_fingerprint_ref
-                      AND ((f.source_revision_ref=%s AND f.parser_run_ref=%s)
-                        OR (f.source_revision_ref=%s AND f.parser_run_ref=%s))
+                    SELECT 1 FROM semantic.review_item i
+                    WHERE i.semantic_ref=p.semantic_fingerprint_ref
+                      AND (i.review_item_ref LIKE %s OR i.review_item_ref LIKE %s)
                 )
                 ORDER BY p.pressure_ref
-            """, (REV_A, RUN_A, REV_B, RUN_B))
+            """, (
+                'review-item:reconciliation:' + REV_A + ':%',
+                'review-item:reconciliation:' + REV_B + ':%',
+            ))
     finally:
         conn.close()
 
@@ -184,6 +203,8 @@ def main():
             "entity_factors": entity_factors,
             "product_summaries": summaries,
             "review_delta_fibres": review_fibres,
+                "review_receipts": review_receipts,
+                "review_delta_storage": "semantic.review_item (the installed native schema has no corpus_reconciliation_review_delta_fibre table)",
             "matching_global_pressure_candidates": pressure,
         },
         "semantic_authority": {

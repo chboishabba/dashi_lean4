@@ -46,6 +46,24 @@ theorem predicateQuerySound (projection : Json) (surface : String) (e : Json)
   have hh := List.mem_filter.mp h
   exact ⟨hh.1, beq_iff_eq.mp hh.2⟩
 
+/-- Exact source-observation consumer. The observation is the complete
+    original checked event array, not a semantic interpretation. -/
+def sourceModel : DocumentQueryModel Json Json Unit String (List Json) where
+  observe := id
+  live := fun _ _ => True
+  documentAnswer := predicateQuery
+  readingAnswer := fun _ _ => []
+
+/-- A source-bound evaluated query with both directions of membership.
+    No arbitrary evidence proposition or external identity premise. -/
+theorem predicateQueryComplete (projection : Json) (surface : String) (e : Json) :
+    e ∈ predicateQuery projection surface ↔
+      e ∈ events projection ∧ predicateSurface e = surface := by
+  constructor
+  · exact predicateQuerySound projection surface e
+  · intro h
+    exact List.mem_filter.mpr ⟨h.1, beq_iff_eq.mpr h.2⟩
+
 def run (articlePath sourcePath projectionPath outputPath : String) : IO UInt32 := do
   let ok ← ArticleProof.verifyFiles articlePath sourcePath projectionPath
   if !ok then return 1
@@ -58,11 +76,16 @@ def run (articlePath sourcePath projectionPath outputPath : String) : IO UInt32 
       let output := anchors.map fun a =>
         let _ := anchorRetainsOriginal a
         Json.mkObj [("event", a.event), ("predicate_surface", toJson (predicateSurface a.event))]
+      let surfaces := (events projection).map predicateSurface
+      let queries := surfaces.eraseDups.map fun surface =>
+        let answer := predicateQuery projection surface
+        Json.mkObj [("query", toJson surface), ("answer", toJson answer),
+          ("scope", toJson ("original-predicate-surface-only" : String))]
       IO.FS.writeFile outputPath ((Json.mkObj [
         ("schema", toJson ("gwb-canonical-lean-source-instances-v1" : String)),
         ("source_revision", toJson (field slr "revision_ref")),
         ("source_unit_ref", toJson (field slr "source_unit_ref")),
-        ("instances", toJson output)]).pretty ++ "\n")
+        ("instances", toJson output), ("predicate_queries", toJson queries)]).pretty ++ "\n")
       IO.println s!"GWB_CANONICAL_LEAN_INSTANCES count={anchors.length}"
       return 0
     else return 1

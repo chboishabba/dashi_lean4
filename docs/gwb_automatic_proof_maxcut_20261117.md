@@ -766,3 +766,20 @@ source-written; exact original fixture execution pending. No TAR or CI changes.
 ## C4.02–03 original relation row transport
 
 SLR #5 commit 2284bdccff751ee2634efcecabdc0923c380c7a9 adds opt-in --export-relations directly to the original candidate producer. DASHI replay_gwb_relation_rows.py streams original archived tokens (no NLP), checks exact source spans and producer parity, and carries rows to GwbRelationTransport.lean. Lean independently checks relation kind, original sentence/token/head/span and full row coverage against checked original source. No semantic admission. Build original SLR #5 executable locally, run canonical --full to compile new owner, then GWB_RELATION_BIN=/absolute/path/to/sensiblaw-expanded-cert bash scripts/run_gwb_relation_transport.sh. Output .dashi/gwb-relation/rows.json; inspect actual rows before publishing. C4.02–03 source-written, local Rust/Lean execution pending; C4.04 onward open. C1/C2 accepted baseline unchanged. No TAR or CI change.
+
+## 2026-11-20 — operator acceptance of C4.02–03
+
+Operator reports successful local build of SLR PR #5 relation executable
+and actual GWB_ORIGINAL_RELATION_ROWS 4304 and Lean
+GWB_RELATION_TRANSPORT_OK count=4304. Expected category census:
+prep 1993, pobj 1956, case 158, pcomp 96, agent 62, prt 23, dative 16;
+total 4304 (previous assistant figure 4314 was an arithmetic error).
+Positive execution ACCEPTED by operator report, not independently replayed
+here. No tracked result files produced; raw rows remain local. TAR unchanged
+and untracked outputs preserved. C4.02–03 positive gate closed; semantic
+inspection of actual rows, adversarial transport controls, and source-bound
+participant/mention joins remain pending. C4.04 identity/antecedent refinement
+and C4.05 governed admission remain open. Do not confuse structural head
+parity with semantic role or identity resolution. Next cut: retain original
+relation rows with per-mention fibres, inspect the 59 by/9 to cases and
+candidate endpoint spans, then reuse existing SLR refinement receipts.

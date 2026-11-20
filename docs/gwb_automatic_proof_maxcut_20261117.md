@@ -576,3 +576,62 @@ Run canonical acceptance with bash scripts/run_gwb_maxcut_acceptance.sh --full.
 Historical Rust probe remains opt-in. TAR and unrelated local outputs are
 untouched. The newly written Lean module has not yet been kernel checked
 in the patch author's environment.
+
+
+## 2026-11-20 — C1–C6 executable roadmap and cross-PR dependency correction
+
+Audited Lean implementation head 02ec59d2ab4db2d1a638a76d82b2d79cd4137776.
+Last accepted canonical source receipt: 891d4e7ca.
+C1 and C2 code committed; new local Lean 4.28.0 execution not yet performed.
+
+The previous search of SLR main missed the actual CLI because it lives in
+OPEN SLR PR #78, head 0bbcd0f118ef504428c06fe829f1ab9e12334ac0,
+branch feat/source-bound-parser-evidence-reopen.
+https://github.com/chboishabba/slr/pull/78
+
+Inspected exact head:
+- crates/sl-cli/src/main.rs dispatches pnf-db-checked and timeline-candidates.
+- crates/sl-cli/src/pnf_db_checked.rs invokes the original
+  compile_db_statement_pnf_checked with DB-native parser snapshot, exact
+  source coordinates, literal and complete parser product.
+- crates/sl-cli/src/timeline_candidates.rs retrieves persisted event,
+  temporal, claim, contestation and M12 ancestry rows, and rejects
+  incomplete source traces.
+- Both argument layouts and schema names match DbSourceProducer.lean.
+  No second producer and no merge prerequisite. Pin the original SLR
+  worktree/executable revision; do not infer a CLI absence from main.
+- M12 response is candidate-only, semantic_admission_paid=false.
+  S28 response is candidate-only, event_occurrence_paid=false.
+  The CLI does not automatically admit semantic identity.
+
+Related open prior art: SLR #77 native PostgreSQL grammar export,
+#76 deliberation/S29 review, #44 GWB chronology capstone, #42 chronology
+and contestation, #18 semantic reader. These are not blanket merge
+dependencies. Reuse actual owners at explicit revisions.
+
+| Cut | Implementation | Acceptance / remaining deliverable |
+| --- | --- | --- |
+| C1 canonical source instances | GwbCanonicalSourceProof.populate, 69a1aca; canonical runner and publisher wired | Local Lean run pending; expected 1468 event anchors |
+| C2 evaluated source queries | c583028b, 02ec59d2, predicateQueryComplete and full per-surface query inventory | Local Lean run pending; source observations only |
+| C3 same-source M12/S28 | Original SLR #78 CLI and Lean DbSourceProducer callers present | Implement exact same-source join and executable batch retrieval over existing DB coordinates; reject unrelated statement/document/revision/region/parser receipt/event linkage |
+| C4 admitted identity/event/time | SLR production review/admission and typed chronology prior art | Concrete checked admitted relation instances, not arbitrary Prop fields or candidate-only flags |
+| C5 consumer closure | Existing golden SourceQueryLicence, finite closure and nonfactorability laws | Populate real semantic query answers using production-live evidence; retain unresolved fibres |
+| C6 external corroboration/payment | Original JMD KB import/derivation and SLR formal proof bridge | Optional reviewed article/KB alignment, actual independent KB receipts, exact proof-demand/statement-digest payment and selective reopening |
+
+Next implementation: C3. Reuse native PR #78 executable built from the
+pinned head (or independently verified compatible successor). Join original
+M12 literal and S28 trace on concrete statement_ref, document_ref,
+source_revision_ref, exact_span_ref/region_ref and parser_receipt_ref;
+check the literal against the pinned article itself. Use an existing
+event_ref, not a generated event identity. S28 statement_sha256 must
+not be assumed equal to M12 literal_sha256 without checking its actual
+hash contract. Keep heterogeneous GWB capstone sources distinct from
+the pinned Wikipedia article; record which sources do and do not join.
+Then transport typed time/claim/contestation records without promoting
+source assertion to occurrence. C4–C6 remain open.
+
+Do not ask the operator for another intermediate run: finish integration
+first, then provide a single pinned local acceptance handoff. Keep
+SLR production, SensibLaw prototype, Lean/Agda golden, JMD independent.
+No TAR change, CI requirement, source replacement, or untracked cleanup.
+This section is a roadmap reconciliation, not a new kernel receipt.

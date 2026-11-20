@@ -883,3 +883,37 @@ C4.04c extraction source-written; DB execution pending. C4.04d census,
 C4.05 Lean proof transport and downstream gates remain open. C1/C2 and
 4304 structural baseline unchanged. Need actual source-revision/DB run
 mapping, full integration marker audit and source-bound adversarial tests.
+
+
+## 2026-11-20 — C4.04c.5 native persistence recovery
+
+Operator reports reachable sensiblaw_sparse_ready_20260818, 12 legacy
+parser sources, zero exact pinned SHA matches; local ports 5433/55434
+offline. No fabricated coordinates or extraction output. This is source
+availability, not resolver failure. SLR #77 e8cd02fe documents original
+native Rust corpus.canonical_content / ingest.generic_source_revision /
+ingest.parser_run/job/token, separate from legacy execution schema.
+At that head python/gwb_scale1_ingest.py is the actual GWB DB-native
+driver (prepare-stdin-family, worker, finalize). Receipt schema
+sensiblaw.gwb-scale1-db-native.v0_1 retains per-document raw/projected
+hash, source/revision/canonical/document/parser run refs, and final
+M12/reconciliation/review coordinates. Recover original receipt before
+re-ingesting. SLR #44 reviewed chronology overlay is distinct and was
+source-written, not proof of already-resolved article coreference.
+SLR #78 native parser reopen remains the original exact-source owner.
+
+New tools/discover_gwb_persistence.py searches both schemas read-only,
+exact digest and native GWB namespace / optional original receipt
+locators; verifies native payload SHA, preserves different revisions
+and parser job status. No automatic selection, no parser or writes.
+Run in SLR Python environment with psycopg2 and each existing DATABASE_URL:
+    python tools/discover_gwb_persistence.py --output .dashi/gwb-relation/persistence-discovery.json
+Optional --receipt PATH to original SCALE-1 multi-document JSON.
+Different normalization/revisions are not same-source proof. Absence
+from this bounded lookup is not global absence: opaque non-GWB refs
+without receipt or known digest may not be found. Native semantic
+antecedent/review export still open; do not apply legacy extractor to
+native store or create parallel schema. C4.04c.5 discovery source-written,
+local execution pending; C4.04c.6 persistence weld deferred until actual
+original rows/receipt recovered. C4.04d/C4.05 onward open.
+No CI/TAR changes.

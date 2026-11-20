@@ -375,7 +375,7 @@ def self_check() -> int:
     assert result["timeline_candidates"][0]["year_candidate"] == 1977; count += 1
     assert result["summary"]["literal_year_mentions"] == 1; count += 1
     assert result["summary"]["proper_noun_token_candidates"] == 2; count += 1
-    assert result["timeline_candidates"][0]["kind"] == "source-date-mention-not-event-date"; count += 1
+    assert result["timeline_candidates"][0]["kind"] == "source-year-mention-not-event-date"; count += 1
     assert not result["event_candidates"][0]["world_event_occurrence_paid"]; count += 1
     for mutate in ("bad-hash", "bad-head", "bad-span", "promote"):
         bad = copy.deepcopy(record)

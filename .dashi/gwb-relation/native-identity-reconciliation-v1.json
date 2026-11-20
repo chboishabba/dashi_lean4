@@ -1,0 +1,65 @@
+{
+  "schema": "gwb-native-identity-reconciliation-v1",
+  "database": "sensiblaw_sparse_ready_20260818",
+  "source": {
+    "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "source_revision_refs": [
+      "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+      "source-revision:sha256:bc5c811a8e10281f3d6ebd3a6284e84711b4bd350906097f95a44569784259a8"
+    ],
+    "parser_run_refs": [
+      "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+      "parser-run:sha256:0071e359b56b3e31342f45a59752cbbeb35636e7d4180ad6ad892b9884723b7c"
+    ]
+  },
+  "authority_boundary": {
+    "candidate_only": true,
+    "creates_identity": false,
+    "claim_truth_promoted": false
+  },
+  "native_counts": {
+    "named_entity_candidates": 16500,
+    "entity_mention_candidates": 29043,
+    "statement_candidate_batches": 6678,
+    "product_factors": 155968,
+    "events": 4597,
+    "propositions": 4652,
+    "review_items": 17202,
+    "review_receipts": 0
+  },
+  "identity_surface_columns": {
+    "entity_mention_candidate": [
+      "mention_ref",
+      "entity_fingerprint_ref",
+      "statement_ref",
+      "candidate_ref",
+      "role_ref",
+      "surface",
+      "lemma",
+      "source_start_char",
+      "source_end_char",
+      "detector_ref",
+      "candidate_only",
+      "creates_entity_identity",
+      "creates_semantic_authority",
+      "claim_truth_promoted"
+    ],
+    "external_identity_columns": [
+      "entity_fingerprint_ref",
+      "creates_entity_identity"
+    ]
+  },
+  "identity_named_tables": [
+    "semantic.entity_mention_candidate",
+    "semantic.l2_candidate_product_entity_factor",
+    "semantic.named_entity_candidate"
+  ],
+  "promotion_flags": {
+    "entity_mention_non_candidate_or_promoting": 0
+  },
+  "legacy_alignment": {
+    "legacy_parser_source_rows_for_pinned_gwb": 0,
+    "legacy_numeric_runs_available": 14
+  },
+  "conclusion": "Native GWB candidate and review evidence is present, but no native document-local identity binding or Wikidata/QID attachment is present in the inspected schema. The existing typed-binding benchmark is stored in a separate legacy schema and has no source-coordinate match to this native GWB corpus."
+}

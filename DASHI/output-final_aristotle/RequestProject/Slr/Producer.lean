@@ -1,3 +1,5 @@
+import Lean
+
 /-!
 JMD Wikidata -> SLR direct producer extension.
 Original JMD Wikidata Lean CLI: meta-introspector, attributed in Cli/Fetch and Cli/Tool.
@@ -9,7 +11,6 @@ surface. It has no DB-native attestation; never claim that it does. Future
 production callers should use the same typed interface with SLR's checked
 PostgreSQL source/PNF entry point.
 -/
-import Lean
 
 namespace Wikidata
 namespace Slr

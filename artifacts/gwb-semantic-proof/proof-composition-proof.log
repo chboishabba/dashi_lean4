@@ -1,0 +1,53 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.FiniteConsumer.checkConstant_sound' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.FiniteConsumer.completeFiniteFibreConsumerClosed' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbProofComposition.checkedFiniteArticleAnswerSound' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbProofComposition.independentArticleAndKBResultsSound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.checkedM12AllSourceSpansExact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.checkedS28HasCompleteAncestry' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbWorldGraph.checkedWorldPropertySound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbWorldGraph.checkedGraphInventoryExact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbTypedFibre.typedRowsRemainSourceBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbArticleIdentity.checkedGwbRootSourceAndSitelink' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbHyperfabric.restrictionCommutesWithJoin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbHyperfabric.narrowingPreservesIdentity' does not depend on any axioms
+'Wikidata.Slr.GwbArticleSystem.checkedArticleLocalSystemSound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbArticleSystem.checkedArticleAndRootKBPropertySound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness' does not depend on any axioms
+'Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer' depends on axioms: [propext]
+'Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP5P10.p5OriginalSourceSurvivesReview' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p6PreservesBothOriginalChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p8ConsumerAnswerSound' does not depend on any axioms
+'Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence' depends on axioms: [propext, Classical.choice, Quot.sound]
+GWB_FINITE_CONSUMER_COMPOSITION_KERNEL_OK
+GWB_ARTICLE_LOCAL_SYSTEM_THEOREM_KERNEL_OK
+PROVED: checked finite semantic consumer constancy under explicit complete live-fibre enumeration and source correspondence
+PROVED: independent article answer and JMD KB property witness composition, without semantic or world-truth promotion
+UNPAID: production semantic coverage, checked cross-sentence identity/event join, JMD article-to-KB semantic alignment

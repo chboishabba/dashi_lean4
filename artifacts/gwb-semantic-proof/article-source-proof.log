@@ -1,0 +1,53 @@
+'Wikidata.Slr.GwbConsumer.fibreJoinAssociative' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbConsumer.sourceMentionQueryCloses' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actualPossessionNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.actorIdentityNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.eventDateNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbConsumer.embeddedScopeNotLicensed' does not depend on any axioms
+'Wikidata.Slr.GwbRealSource.flatScopeCannotAnswerEmbeddedParent' does not depend on any axioms
+'Wikidata.Slr.GwbNativeFibre.checkedGwbFibreObservationsRetainResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.FiniteConsumer.checkConstant_sound' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.FiniteConsumer.completeFiniteFibreConsumerClosed' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbProofComposition.checkedFiniteArticleAnswerSound' depends on axioms: [propext, Quot.sound]
+'Wikidata.Slr.GwbProofComposition.independentArticleAndKBResultsSound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.checkedM12AllSourceSpansExact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.checkedS28HasCompleteAncestry' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbWorldGraph.checkedWorldPropertySound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbWorldGraph.checkedGraphInventoryExact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbTypedFibre.typedRowsRemainSourceBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbArticleIdentity.checkedGwbRootSourceAndSitelink' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbHyperfabric.restrictionCommutesWithJoin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbHyperfabric.narrowingPreservesIdentity' does not depend on any axioms
+'Wikidata.Slr.GwbArticleSystem.checkedArticleLocalSystemSound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbArticleSystem.checkedArticleAndRootKBPropertySound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.FiniteConsumer.omittedLiveReadingBlocksCompleteness' does not depend on any axioms
+'Wikidata.Slr.GwbP4.checkedGwbP4SourceLicenceSound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4.unresolvedAxesDoNotChangeSourceAnswer' depends on axioms: [propext]
+'Wikidata.Slr.GwbP4.joinedFragmentHasPositiveLicence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP4Article.originalGwbArticlePositiveSourceQuery' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP4Article.sourceActorCandidatesAndReferenceResiduals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbP5P10.p5OriginalSourceSurvivesReview' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p6PreservesBothOriginalChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p8ConsumerAnswerSound' does not depend on any axioms
+'Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence' depends on axioms: [propext, Classical.choice, Quot.sound]
+JMD_LEAN_SOURCE_PROOF_OK sha256=a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233
+source_blocks=225 (heading/paragraph spans fully covered)
+ner_people_mentions=0 proper_noun_tokens=2620 event_candidates=1468 ner_date_mentions=0 literal_year_mentions=311 timeline_candidates=311 text_order_edges=1467
+PROVED: exact source spans and original SLR parser-row support; textual ordering only.
+OPEN: entity identity, interpretation licence, event occurrence, historical chronology.

@@ -1,0 +1,68 @@
+{
+  "schema": "gwb-persistence-discovery-v1",
+  "pinned_sha256": "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233",
+  "database": "sensiblaw_sparse_ready_20260818",
+  "tables": {
+    "native_run": "ingest.parser_run",
+    "native_revision": "ingest.generic_source_revision",
+    "native_document": "corpus.document",
+    "native_content": "corpus.canonical_content",
+    "native_job": "ingest.parser_job",
+    "legacy_source": "execution.semantic_parser_source"
+  },
+  "native": [
+    {
+      "source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+      "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "content_digest_ref": "sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+      "status": "complete",
+      "model_ref": "en_core_web_sm",
+      "config_digest_ref": "sha256:7cf4b3ea3b7fb829169af19d641905eb04c1a23d6057cbe10a975ba5bcfaa21e",
+      "candidate_only": true,
+      "creates_semantic_authority": false,
+      "claim_truth_promoted": false,
+      "canonical_ref": "canonical:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "actual_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "byte_count": 783635,
+      "digest_consistent": true,
+      "exact_pinned_bytes": false,
+      "receipt_locator": false,
+      "job_status_counts": [
+        {
+          "status": "succeeded",
+          "count": 6678
+        }
+      ]
+    },
+    {
+      "source_revision_ref": "source-revision:sha256:bc5c811a8e10281f3d6ebd3a6284e84711b4bd350906097f95a44569784259a8",
+      "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "content_digest_ref": "sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "parser_run_ref": "parser-run:sha256:0071e359b56b3e31342f45a59752cbbeb35636e7d4180ad6ad892b9884723b7c",
+      "status": "complete",
+      "model_ref": "en_core_web_sm",
+      "config_digest_ref": "sha256:7cf4b3ea3b7fb829169af19d641905eb04c1a23d6057cbe10a975ba5bcfaa21e",
+      "candidate_only": true,
+      "creates_semantic_authority": false,
+      "claim_truth_promoted": false,
+      "canonical_ref": "canonical:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "actual_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+      "byte_count": 783635,
+      "digest_consistent": true,
+      "exact_pinned_bytes": false,
+      "receipt_locator": false,
+      "job_status_counts": [
+        {
+          "status": "succeeded",
+          "count": 6678
+        }
+      ]
+    }
+  ],
+  "legacy": [],
+  "receipt_locators": [],
+  "native_exact_count": 0,
+  "legacy_exact_count": 0,
+  "semantic_resolution_checked": false
+}

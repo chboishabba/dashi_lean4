@@ -123,6 +123,42 @@ def check(article, slr, proj, p0b):
         selected.append({"surface": surface, "mentions": len(ms),
                          "candidate_types": kinds,
                          "semantic_identity_paid": False})
+    # Exact per-mention inspection, not a new identity or attachment producer.
+    # Retain the original nomination rows and the source parser context.
+    per_mention = []
+    selected_surfaces = {x["surface"] for x in selected}
+    for m in p0b["mentions"]:
+        if m["canonical_surface"] not in selected_surfaces:
+            continue
+        a, b = m["start_char"], m["end_char"]
+        require(0 <= a < b <= len(article), "invalid mention span")
+        contexts = []
+        for idx, sentence in sentences.items():
+            if sentence["source_span_start"] <= a and b <= sentence["source_span_end"]:
+                rows = sentence["dependency_rows"]
+                overlapping = [t for t in rows
+                               if t["idx"] < b and a < t["idx"] + len(t["text"])]
+                ids = {t["i"] for t in overlapping}
+                heads = {t["head_i"] for t in overlapping}
+                contexts.append({
+                    "sentence_index": idx,
+                    "sentence_text": article[sentence["source_span_start"]:sentence["source_span_end"]],
+                    "mention_tokens": overlapping,
+                    "adjacent_dependency_rows": [t for t in rows
+                        if t["i"] in heads or t["head_i"] in ids],
+                    "event_observations": event_by_sentence[idx],
+                })
+        original = licences[m["mention_ref"]]
+        per_mention.append({
+            "mention": m, "literal": article[a:b],
+            "original_licences": original,
+            "candidate_types": sorted({k for lic in original
+                                       for k in lic["expected_candidate_kinds"]}),
+            "parser_contexts": contexts,
+            "reviewed_identity_status": "NOT_IN_ARCHIVE",
+        })
+    require(len(per_mention) == sum(x["mentions"] for x in selected),
+            "selected per-mention census mismatch")
     missing_types = collections.Counter(
         f'{x["role"]}:{x["surface"]}' for x in missing)
     return {
@@ -149,6 +185,8 @@ def check(article, slr, proj, p0b):
             {str(k):v for k,v in sorted(histogram.items())},
         "ambiguous_year_examples": year_examples,
         "p0b_candidate_fibre_examples": selected,
+        "p0b_selected_individual_fibres": per_mention,
+        "p0b_individual_fibre_count": len(per_mention),
         "status": {
             "source_observation": "CHECKED",
             "p0b_candidates": "CANDIDATE_ONLY",

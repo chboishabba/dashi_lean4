@@ -740,3 +740,25 @@ resolver, and unresolved alternatives. C3 batch and C4 concrete admission
 remain open. Use #24/#25 for external identity and gap-directed recurrence,
 not as a substitute for article-local coreference. Semantic object inspection
 is mandatory independently of kernel success. No TAR changes or new parser.
+
+## 2026-11-20 — C4 individual fibre inspection packet
+
+C1/C2 remain accepted at 1e535ad90. Existing audit now exports every
+selected individual P0b mention (Bush, George Walker Bush, Laura Welch,
+He/he, 1977, possessed), exact source literal, full original licence rows,
+per-mention candidate kinds, overlapping original parser tokens, adjacent
+head/child rows and original sentence event observations. The census must
+match the previous aggregate. This is a read-only diagnostic extension,
+not a resolver, not semantic admission, not a new Lean certificate.
+The existing canonical full runner publishes this audit without a new parser.
+
+Inspected SLR #5 exact fa175b51 source: direct_candidates and
+reference_candidates in crates/sl-expanded-cert/src/relation_attachment.rs
+produce candidate kind, span, FibreAddress and StableRelationHead; the
+existing Python certification runner reparses and reports counts only.
+Do not rerun it as the canonical article producer. The remaining C4a cut
+is an original Rust per-row export over existing source observations,
+then Lean coordinate transport. C4b actual admitted identity/antecedent
+resolver export remains unlocated; #6 status types alone are not that export.
+C3 live DB, C4 admission, C5 and C6 remain open. New individual audit
+source-written; exact original fixture execution pending. No TAR or CI changes.

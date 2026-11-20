@@ -851,3 +851,35 @@ schema not received; C4.04b 41/68 structural marker joins confirmed, actual
 original identity/role resolver execution OPEN; C4.05 admission, C4.06 time,
 C5 semantic answers, C6 linked expansion OPEN. Adversarial transport local
 execution not independently confirmed. No new Lean acceptance claimed.
+
+
+## 2026-11-20 — C4.04c read-only original persisted identity extraction
+
+SensibLaw migration 180 is the delta projector, not an identity resolver.
+Original 062 frontier resolution and 069 identity witness/admission/projection
+schemas plus E0d certification and identity-yield report establish the
+persistence interface. New tools/export_gwb_persisted_identity.py reads
+the existing PostgreSQL snapshot in a read-only repeatable-read transaction.
+Explicit run/document refs required; parser source digest and byte length
+must match the original pinned article, sentences must join the matching
+parser source partition, source objects must remain in scope. All 534
+archived source mention spans are retained including zero/multiple DB
+coordinate matches; no surname-based binding, no refresh, no writes.
+Preserve original demands/candidates/frontier outcomes/witnesses/constraints/
+admissions/projections/witnessed Level-1 and Level-3 hyperedges and scoped
+target object supports. Candidate target factor/demand payloads and external
+target objects are not expanded in this first observation export. DB IDs
+are snapshot-local, not portable proof identities. Exact byte correspondence
+does not alone establish revision metadata or identical parser segmentation.
+No claims of Lean checking or semantic admission by this export.
+
+Operator owns PostgreSQL and local acceptance; no CI/TAR changes.
+From DASHI root, with SensibLaw's Python environment and DATABASE_URL:
+
+    python tools/export_gwb_persisted_identity.py --sensiblaw-root /path/to/SensibLaw --run-ref ACTUAL_RUN_REF --document-ref ACTUAL_DOCUMENT_REF
+
+Output .dashi/gwb-relation/persisted-identity.json. No refresh before read.
+C4.04c extraction source-written; DB execution pending. C4.04d census,
+C4.05 Lean proof transport and downstream gates remain open. C1/C2 and
+4304 structural baseline unchanged. Need actual source-revision/DB run
+mapping, full integration marker audit and source-bound adversarial tests.

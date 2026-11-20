@@ -692,3 +692,51 @@ Record exact head and successful local receipts; update this roadmap in the
 same work packet whenever implementation or acceptance changes. The next
 implementation priority remains C3 batch retrieval and concrete C4 production
 admission, not additional generic conditional wrappers.
+
+## 2026-11-20 — executed canonical acceptance and SLR owner reconciliation
+
+Supersedes the preceding pending C1/C2 status. Operator receipt commit
+1e535ad9044426e53e99bfa66ba2050b2f40521b records 1468 canonical Lean
+source anchors, 760 predicate surface queries, 8 regression tests and
+5 adversarial controls passed. Original revision enwiki-revid:1385850169.
+C1/C2 ACCEPTED for source observations only. C3 compiled, live DB run OPEN.
+
+Production SLR cross-PR owners (inspected PR metadata and #6 source):
+- #2 7c3364186fffea3bc4853df504bf7163243697f6: governed semantic
+  admission, exact candidate/address/span and resolver/policy coordinates;
+  operator certified 41044 sentences, 6 admission tests. Not an automatic resolver.
+- #5 fa175b51b7acd44e01c374f99708cdcd764b6626: relation attachment
+  candidate producer; certified 159562 relations and 41044/41044 parity.
+- #6 be53eebe97509814ae13f01e9b02440b2ce624ec: sl-semantic-status/src/lib.rs
+  separates ReferentKind, IdentityStatus, AntecedentStatus, occurrence,
+  attribution, modality, scope, time, truth. IdentityResolutionReceipt carries
+  subject, candidate-set, evidence, resolver and policy refs;
+  AntecedentResolutionReceipt carries accessibility-witness refs. These are
+  carriers, not an executed antecedent resolver. Golden Agda counterpart #694.
+- #18 1712885cb53d223f5cb237a7d525b19c503257cc: production Reader/runtime,
+  reviewed PNF and proposition payment with residual reopening.
+- #24 efba015c78480c324c4f99d7ec8dab4a31020640: reviewed world identity
+  classes; representation alias equality differs from mention coreference.
+- #25 96da3b9f7db956f9d98a1308b722ff1651b172c6: adaptive residual-driven
+  world acquisition and re-entry, not a fixed BFS schedule.
+- #78 0bbcd0f118ef504428c06fe829f1ab9e12334ac0: native source parser reopening.
+  Open PR branches are not presumed merged or mutually compatible.
+
+Actual committed scope audit: 73 unmaterialized grammatical roles (59 by,
+9 to, 4 hyphens, 1 percent); 57 embedded conjunctions sharing a flat scope
+label; 226/311 year occurrences in multi-predicate sentences. P0b categories
+are aggregated candidate nominations by surface, not reviewed per-mention
+referents or a measured coreference error rate. Preserve broad nominations
+and compare actual SLR refinement on each exact mention/span. Do not delete
+alternatives by heuristic or treat status constructors as evidence.
+
+Next implementation cut: transport existing #5 attachment candidates and
+#6/#2 evidence/status/admission records on the pinned source, retaining exact
+source coordinates and all alternatives/residuals; locate actual production
+resolver/export and its acceptance before claiming narrowed fibres. Inspect
+per-mention Bush/He/he/Laura Welch/1977/possessed and the embedded Iraq claim,
+including before/after candidate identities, accessibility witnesses, policy,
+resolver, and unresolved alternatives. C3 batch and C4 concrete admission
+remain open. Use #24/#25 for external identity and gap-directed recurrence,
+not as a substitute for article-local coreference. Semantic object inspection
+is mandatory independently of kernel success. No TAR changes or new parser.

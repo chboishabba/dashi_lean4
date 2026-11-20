@@ -1,3 +1,4 @@
+import RequestProject.Slr.GwbProductionTrace
 import RequestProject.Slr.GwbCanonicalSourceProof
 import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.WikipediaArticleProof
@@ -341,6 +342,13 @@ def runArticleP4Check
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["native-trace", article, source, projection, executable, parserRun,
+      statement, document, revision, region, startStr, endStr, literal, event, output] =>
+      match startStr.toNat?, endStr.toNat? with
+      | some startChar, some endChar =>
+          Slr.GwbProductionTrace.run article source projection executable parserRun
+            statement document revision region literal event output startChar endChar
+      | _, _ => return 2
   | ["canonical-populate", article, source, projection, output] =>
       Slr.GwbCanonicalSource.run article source projection output
   | ["fibre"] =>
@@ -435,3 +443,6 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbCanonicalSource.anchorRetainsOriginal
 #print axioms Wikidata.Slr.GwbCanonicalSource.predicateQuerySound
+
+#print axioms Wikidata.Slr.GwbProductionTrace.checkedTraceSound
+#print axioms Wikidata.Slr.GwbProductionTrace.temporalQueryOriginal

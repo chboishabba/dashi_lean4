@@ -762,3 +762,7 @@ then Lean coordinate transport. C4b actual admitted identity/antecedent
 resolver export remains unlocated; #6 status types alone are not that export.
 C3 live DB, C4 admission, C5 and C6 remain open. New individual audit
 source-written; exact original fixture execution pending. No TAR or CI changes.
+
+## C4.02–03 original relation row transport
+
+SLR #5 commit 2284bdccff751ee2634efcecabdc0923c380c7a9 adds opt-in --export-relations directly to the original candidate producer. DASHI replay_gwb_relation_rows.py streams original archived tokens (no NLP), checks exact source spans and producer parity, and carries rows to GwbRelationTransport.lean. Lean independently checks relation kind, original sentence/token/head/span and full row coverage against checked original source. No semantic admission. Build original SLR #5 executable locally, run canonical --full to compile new owner, then GWB_RELATION_BIN=/absolute/path/to/sensiblaw-expanded-cert bash scripts/run_gwb_relation_transport.sh. Output .dashi/gwb-relation/rows.json; inspect actual rows before publishing. C4.02–03 source-written, local Rust/Lean execution pending; C4.04 onward open. C1/C2 accepted baseline unchanged. No TAR or CI change.

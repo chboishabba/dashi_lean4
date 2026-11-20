@@ -37,6 +37,7 @@ compile_slr DocumentQuerySound
 compile_slr TemporalDocumentProof
 compile_slr WikipediaArticleProof
 compile_slr GwbCanonicalSourceProof
+compile_slr GwbRelationTransport
 compile_slr GwbArticleIdentity
 compile_slr GwbConsumerFibreProof
 compile_slr GwbRealSourceConsumer

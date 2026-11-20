@@ -1,5 +1,6 @@
 import RequestProject.Slr.GwbProductionTrace
 import RequestProject.Slr.GwbCanonicalSourceProof
+import RequestProject.Slr.GwbRelationTransport
 import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.WikipediaArticleProof
 import RequestProject.Slr.GwbRealSourceConsumer
@@ -349,6 +350,8 @@ def main (args : List String) : IO UInt32 := do
           Slr.GwbProductionTrace.run article source projection executable parserRun
             statement document revision region literal event output startChar endChar
       | _, _ => return 2
+  | ["relation-check", article, source, projection, receipt] =>
+      Slr.GwbRelationTransport.run article source projection receipt
   | ["canonical-populate", article, source, projection, output] =>
       Slr.GwbCanonicalSource.run article source projection output
   | ["fibre"] =>

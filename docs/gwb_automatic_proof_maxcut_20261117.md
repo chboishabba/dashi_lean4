@@ -1,5 +1,7 @@
 # GWB → JMD → SLR → Lean/Agda automatic proof programme
-Updated: 2026-11-17 · execution branch: dashi_lean4 PR #112
+Updated: 2026-11-20 · execution branch: dashi_lean4 PR #112
+
+**Current controlling plan:** see C4.09 canonical next cut at the end of this document; earlier status tables are historical checkpoints.
 
 ## Acceptance objective
 
@@ -935,3 +937,101 @@ Compare canonical text with pinned article before any cross-source transport;
 no assumption that differing digest is merely a Wikipedia revision change.
 Do not reingest until existing native semantic outputs inspected. C4.04c.6,
 C4.04d and C4.05 open. No new DB execution or CI changes.
+
+
+## 2026-11-20 — C4.09 canonical next cut: native identity adapter → JMD
+
+**Current controlling status (supersedes earlier pending/discovery entries).**
+Original goal: given a QID/title, derive source-grounded semantic relations
+and independently checked JMD Lean KB answers, not more lexical diagnostics.
+The occurrence replay was an integrity prerequisite, not a research endpoint.
+
+### Accepted evidence and exact scope
+
+- bedad7427: native observation v2 gzip, original full candidate carrier.
+- cc9eadbf6: native-entity-audit-v1.json, 29,043/29,043 fingerprint and
+  occurrence replay, zero missing; 4,280 lexical keys, 3,078 lexical
+  pronoun-like candidates. No further standalone lexical quotient work.
+- 5ebc5f5b3: .dashi/gwb-relation/native-identity-reconciliation-v1.json,
+  read-only installed-schema census, independently inspected.
+  29,043 general mentions, 16,500 named mentions, 6,678 batches,
+  155,968 reported persisted factor occurrences, 4,597 event and
+  4,652 proposition candidates, 17,202 review items, **zero review
+  receipts** and zero promoting entity mentions. The v2 audit separately
+  counts 154,292 distinct product-factor rows and 29,000 entity-factor
+  rows; do not equate product-deduplicated rows with occurrence totals.
+- Native canonical SHA 7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30
+  is not the pinned 643-sentence Wikipedia SHA a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233
+  (enwiki-revid:1385850169). Keep both scopes and the historical
+  10-document/41,044-sentence certification separate.
+- Same-content parser parity operator PASS: 6,678/6,678 region digests,
+  155,968 tokens per run, compilation keys retained for provenance
+  but excluded from content equality. Run B is a locality control;
+  downstream materialization is not equivalent.
+- Installed native schema has candidate entity fingerprints, no
+  document-local identity binding/QID attachment in the inspected
+  relations. Legacy execution schema has 14 numeric runs but zero
+  matching pinned GWB parser source rows. A legacy identity-yield
+  report cannot establish native identity yield. This is an actual
+  integration gap, not absence of upstream coreference algorithms.
+
+### Reuse owners and authority
+
+SLR Rust remains production source/PNF/review owner. SLR #78
+(0bbcd0f118ef504428c06fe829f1ab9e12334ac0) reopens source-bound
+parser tokens, morphology, dependency heads, NER and product key;
+strict path requires a non-null parser product key. Local Cargo/live DB
+acceptance still required. #77 supplies existing DB-native source export.
+SensibLaw src/pnf/binding_candidate_sets.py supplies typed reference
+demands, accessibility, morphology compatibility and binding meets;
+PROOF_RELEVANT_IDENTITY_ACCEPTANCE.md and migrations 075–080 supply
+resolved_unique proof, local identity projection, reversibility and
+external-authority boundary. Its existing positive regression explicitly
+substitutes he-object with a document entity while preserving Level-1.
+Reuse this logic/contracts via an explicit native adapter; do not run a
+legacy benchmark on an unrelated run or use Python as a second parser.
+First inspect the existing native/legacy producer interfaces and choose
+the narrowest compatible port/adapter with original owner tests.
+tools/export_gwb_persisted_identity.py is pinned to the old article and
+534 fibres; reuse its witness extraction shape, not its source assumptions.
+
+SLR #22/#24/#27: pinned acquisition/QID adapters, reviewed world identity
+classes and bounded P31/P279 type closure; #10 source/review handoff;
+#44/#45 chronology and event discovery; #65 formal evidence/reopening
+bridge. These are existing interfaces, not all live-paid for this source.
+#65 legal obligation persistence is not automatically a GWB payment route;
+reuse only a compatible typed demand. A supplied kernel-certified flag
+does not replace actual independent kernel checking.
+
+JMD original meta-introspector owners RequestProject.Cli.Import,
+PropertyEngine, PKB.supportsB_iff, KB.checkSubChain_sound, and existing
+GwbArticleIdentity, GwbProofComposition, GwbWorldGraph are the downstream
+proof consumers. Q207 root sitelink is not authority for every Bush mention;
+distinguish Q207 (George W. Bush) and Q23505 (George H. W. Bush).
+Keep document identity, external identity, event equivalence, attribution,
+temporal scope and world truth separate. QIDs are optional for local
+semantic consumers but required for this external KB acceptance lane.
+
+### Ordered implementation and acceptance
+
+| Gate | Current status | Next decisive result |
+|---|---|---|
+| C4.04c / C4.04c.8 | Operator PASS, compact receipt inspected | Preserve exact native source and occurrence replay |
+| C4.09a / C4.04d | Explicit native binding adapter OPEN | Reopen same run/revision/span, exact token/heads/POS/morphology/NER, statement/batch/product/factor coordinates; map to existing typed binding inputs, prove coordinate round trip, no parser rerun |
+| C4.09b / P5 / L4 | Existing binder and witness model; native execution OPEN | Actual he → document-local Bush object through resolved_unique demand and admitted witness; reversible Level-3 substitution; ambiguous/plural/generic/foreign-source controls |
+| C4.09c / P5 / L1 | External identity attachment OPEN | Independent revision-pinned QID/sitelink or equivalent external witness for that exact document entity, reject surname-only, root-only, wrong QID and mismatched source; record residual if insufficient |
+| P6 / C3 / L2–L5 | Native candidate extraction paid, strict same-object M12/S28 weld OPEN | Original checked DB source/PNF and reviewed observation ancestry; no invented semantic joins |
+| P7 / L6–L7 | Existing chronology and event owners | Reviewed event equivalence/time attachment and conflicting claims retained |
+| P8 / C5 / L8 | Existing finite consumer and licence machinery | Actual identity-aware source queries with checked supported answers or explicit residuals; completeness only for declared consumer |
+| P9 / L9 | Existing JMD composition | Reviewed semantic alignment of exact source relation to independently imported property statement |
+| P10 / C4.09d / L10 | Existing JMD proof engine; actual source-aligned KB execution OPEN | Independently run Lean 4.28.0 checker on pinned QID snapshots, positive property and ontology derivations, reject forged/wrong QID/property/source evidence, then expand to historical 51-QID target with measured coverage |
+| C6 | Existing recurrence/payment owners | Exact evidence-demand matching and dependency-driven reopening without global reparse or unlicensed authority |
+
+Start with one real source-anchored positive he/Bush binding, one independent
+QID witness and one meaningful JMD property query; then scale by native
+occurrence coverage and outstanding consumer demands, not by creating more
+diagnostic modules. Do not declare the first binding until the original
+owner actually executes and exports a checked receipt. Keep no-TAR,
+project-directory-only, local verification, pinned Lean and no remote CI
+rules. This update is roadmap-only; no adapter, DB write, semantic
+admission, new kernel run or proof closure claimed.

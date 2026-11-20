@@ -1,0 +1,1 @@
+GWB_CANONICAL_SLR_SOURCE_VALIDATED {'sentences': 643, 'parser_tokens': 17547, 'dependency_labels': 43, 'original_predicates': 1468, 'actor_role_observations': 1036, 'patient_role_observations': 801, 'year_occurrences': 311, 'proper_noun_tokens': 2620, 'sections': 225, 'p0b_mentions': 11975, 'p0b_licenses': 16034} experimental_projector=false

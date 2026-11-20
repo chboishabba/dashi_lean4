@@ -39,6 +39,11 @@ lake env lean --run tools/GwbProofRunner.lean semantic-scope \
   "$source_dir/article-candidates.json" \
   | tee "$stage/semantic-scope-proof.log"
 
+lake env lean --run tools/GwbProofRunner.lean canonical-populate \
+  "$source_dir/article.txt" "$source_dir/slr-record.json" \
+  "$source_dir/article-candidates.json" "$stage/lean-source-instances.json" \
+  | tee "$stage/lean-source-instances.log"
+
 # Original-source negative controls only: no experimental candidate / residual
 # mutation and no false claim that Rust's syntactic alternatives are semantic.
 reject_article_mutation () {

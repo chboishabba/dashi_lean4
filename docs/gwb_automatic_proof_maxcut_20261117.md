@@ -800,3 +800,54 @@ maxcut --full. Inspect .dashi/gwb-relation/mention-inspection.json, especially
 the actual 59 by and 9 to cases; counts are expectations, not new receipts.
 No reviewed identity or antecedent resolver was executed; C4.04b and C4.05
 remain open. No TAR, CI or tracked result mutation. Local acceptance pending.
+
+
+## 2026-11-20 — C4.04b committed-source reconciliation and resolver priority
+
+Operator commit 9e4706377 supplies rows.json and mention-inspection.json.
+Independent read of the actual Git blobs confirms 4304 unique relation rows,
+605 represented sentences, all candidate-only/context-required, no reversed
+spans or self heads. The uploaded mention-inspection.json is actually
+gwb-consumer-observer-evidence-audit-v1, not the integration schema
+gwb-relation-mention-inspection-v1. It contains 534 distinct mention refs
+(384 Bush, 83 he, 59 He, 2 George Walker Bush, 2 Laura Welch, 3 1977,
+1 possessed), all with parser contexts, 1096 distinct candidate events,
+all reviewed identity statuses NOT_IN_ARCHIVE. Of the 68 by/to cases,
+41 (34 by, 7 to) are recoverable from these contexts and all 41 have
+exact marker-coordinate parity and one structural relation child.
+Remaining 27 need the actual integration output; no role paid.
+
+Required next cut is original-owner execution, not a new resolver:
+- Reuse SensibLaw binding_candidate_sets.py, proof-relevant identity
+  admission migrations 077–080, SLR #6 antecedent accessibility receipts,
+  #2 governed admission, #18 reviewed PNF, #24 world identity and #25
+  gap-driven recurrence. Locate executable producer, pin actual revisions.
+- Resolve George Walker Bush / George W. Bush / George Bush / Bush and
+  he/He/him/his at individual source coordinates when licensed. Existing
+  GwbArticleIdentity.checkGwbRootIdentity verifies Q207 article/sitelink
+  correspondence; it does not resolve every mention. Keep local entity
+  identity separate from external QID attachment and mention identity.
+- Preserve unresolved alternatives, query-relative closure, exact source
+  span, predicate/argument phrase, accessibility, resolver and policy
+  refs; no blanket Bush assignment or nearest-name substitution.
+- Corpus negative controls: sentence 164 he refers to Obama, not Bush;
+  sentence 82 he refers to Bush despite Richards; sentence 485 retains
+  attributed clause scope. Require original-owner receipts, not analyst
+  annotations represented as native resolution.
+- Marker role controls: sentence 63 economic cause vs 182 intentional
+  agent; 434 foreword/work vs recipient; 531 her requires antecedent;
+  183 evidential proposition; 369 normative authority. Preserve full
+  endpoint phrase and coordination via original annotation graph/reductions.
+- Scope control sentences 9/18: identical flat label, different embedded
+  parent consumer; 57 embedded conjunctions reported. Reuse existing
+  query-relative refinement. Time: event-specific attachment remains open.
+- C6 follow source hyperlinks/independent KB links when the specific
+  unresolved fibre demands external evidence; re-enter original PNF/SLR
+  rather than using external lookup as automatic mention resolution.
+
+Current gates: C1/C2 accepted baseline 1468/760; C3 partial; C4.02–03
+4304 audited; C4.04a 534 individual audit fibres confirmed, full integration
+schema not received; C4.04b 41/68 structural marker joins confirmed, actual
+original identity/role resolver execution OPEN; C4.05 admission, C4.06 time,
+C5 semantic answers, C6 linked expansion OPEN. Adversarial transport local
+execution not independently confirmed. No new Lean acceptance claimed.

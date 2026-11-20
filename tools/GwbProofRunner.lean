@@ -1,3 +1,4 @@
+import RequestProject.Slr.GwbCanonicalSourceProof
 import RequestProject.Slr.GwbConsumerFibreProof
 import RequestProject.Slr.WikipediaArticleProof
 import RequestProject.Slr.GwbRealSourceConsumer
@@ -340,6 +341,8 @@ def runArticleP4Check
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["canonical-populate", article, source, projection, output] =>
+      Slr.GwbCanonicalSource.run article source projection output
   | ["fibre"] =>
       IO.println "GWB_FIBRE_THEOREMS_KERNEL_OK"
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
@@ -429,3 +432,6 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbP5P10.p9AlignmentRetainsIndependentChecks
 #print axioms Wikidata.Slr.GwbP5P10.p10AllEdgesJmdSupported
 #print axioms Wikidata.Slr.GwbP5P10.fullChainKeepsSeparateEvidence
+
+#print axioms Wikidata.Slr.GwbCanonicalSource.anchorRetainsOriginal
+#print axioms Wikidata.Slr.GwbCanonicalSource.predicateQuerySound

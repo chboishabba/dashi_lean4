@@ -44,6 +44,7 @@ compile_slr GwbNativeFibreReceipt
 compile_slr GwbTypedSemanticFibre
 compile_slr Proof
 compile_slr DbSourceProducer
+compile_slr GwbProductionTrace
 compile_slr FiniteConsumerCertificate
 compile_slr GwbProofComposition
 compile_slr GwbWorldGraphProof

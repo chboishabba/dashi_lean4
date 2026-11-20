@@ -47,19 +47,40 @@ theorem checkedTraceSound {article : String} {slr projection : Json}
     joined article slr m s28 eventRef = true :=
   ⟨t.source.checked, t.sameTrace⟩
 
-/-- Return only temporal records explicitly citing a matching statement
-    AND a matching observation. Not a historical date theorem. -/
+/-- A source-relative row is selected only through a single matching
+    statement/observation edge. Independent global membership is not enough.
+    This is provenance selection, not semantic admission. -/
+def rowMatchesTrace (m : DbM12Observation) (s28 r : Json) : Bool :=
+  ((r.getObjValAs? (Array String) "statement_refs").toOption.getD #[]).contains m.statementRef &&
+  (matchingLinks m s28).any (fun link =>
+    ((r.getObjValAs? (Array String) "observation_refs").toOption.getD #[]).contains
+      (field link "observation_ref"))
+
+def traceQuery (m : DbM12Observation) (s28 : Json) (key : String) : List Json :=
+  (rows s28 key).filter (rowMatchesTrace m s28)
+
 def temporalQuery (m : DbM12Observation) (s28 : Json) : List Json :=
-  (rows s28 "temporal_assertions").filter fun r =>
-    ((r.getObjValAs? (Array String) "statement_refs").toOption.getD #[]).contains m.statementRef &&
-    (matchingLinks m s28).any (fun link =>
-      ((r.getObjValAs? (Array String) "observation_refs").toOption.getD #[]).contains
-        (field link "observation_ref"))
+  traceQuery m s28 "temporal_assertions"
+
+def claimQuery (m : DbM12Observation) (s28 : Json) : List Json :=
+  traceQuery m s28 "claim_leaves"
+
+def contestationQuery (m : DbM12Observation) (s28 : Json) : List Json :=
+  traceQuery m s28 "contestation_relations"
+
+/-- Exact membership, including completeness for the selected provenance
+    relation; does not assert completeness of production-live readings. -/
+theorem traceQueryExact (m : DbM12Observation) (s28 : Json) (key : String)
+    (row : Json) :
+    row ∈ traceQuery m s28 key ↔
+      row ∈ rows s28 key ∧ rowMatchesTrace m s28 row = true := by
+  unfold traceQuery
+  exact List.mem_filter
 
 theorem temporalQueryOriginal (m : DbM12Observation) (s28 row : Json)
     (h : row ∈ temporalQuery m s28) :
     row ∈ rows s28 "temporal_assertions" :=
-  (List.mem_filter.mp h).1
+  ((traceQueryExact m s28 "temporal_assertions" row).mp h).1
 
 private def readJson (path : String) : IO Json := do
   match Json.parse (← IO.FS.readFile path) with
@@ -96,6 +117,8 @@ def run (articlePath slrPath projectionPath executable parserRun statementRef
         ("statement_observation_links", toJson (matchingLinks m s28)),
         ("original_s28", s28),
         ("temporal_query", toJson (temporalQuery m s28)),
+        ("claim_query", toJson (claimQuery m s28)),
+        ("contestation_query", toJson (contestationQuery m s28)),
         ("semantic_identity_paid", toJson false),
         ("event_occurrence_paid", toJson false)]).pretty ++ "\n")
       IO.println "GWB_NATIVE_SAME_SOURCE_TRACE_OK"

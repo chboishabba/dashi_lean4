@@ -319,3 +319,36 @@ test suite and full original-source fine audit have not yet been
 locally executed with the operator's pinned source fixture. This
 is deliberately distinct from the previously verified P4/P5–P10
 Lean kernel receipts.
+
+
+## C4.04c.7–8 — native multi-document semantic population
+
+Operator receipt at bedad7427: 29,043 general mentions, 6,678 batch
+bindings, 17,202 reconciliation review-item rows, 9,121 matching global
+pressure candidates. The installed schema uses semantic.review_item and
+semantic.review_receipt, not the later review-delta-fibre table.
+These are candidate populations, not admitted semantic identities.
+
+C4.04c.8 offline implementation:
+
+```bash
+python3 tools/audit_gwb_native_entity_fibres.py \
+  --input .dashi/gwb-relation/native-semantic-observation-v2.json.gz \
+  --output .dashi/gwb-relation/native-entity-audit-v1.json
+```
+
+Replay lexical fingerprints and original occurrence references; compare
+PNF and L2 factors; report pronoun/role census, repeated lexical fibres,
+same-statement preceding NER candidates, and revision-specific review
+semantic-reference overlap. The latter is not run-level review parity.
+The compact result is bound to the input artifact SHA-256.
+No database or parser is invoked. Actual full receipt execution remains
+pending; binary retrieval through the connector returned empty content.
+Python/Rust Unicode lowercase parity is subject to the observed replay.
+
+C4.04c.8a–d/g: implementation present, native acceptance pending.
+C4.04c.8e: bounded candidate search only; exact original statement
+literal and discourse accessibility are unpaid. C4.04c.8f and empirical
+same-fingerprint/different-referent witness remain open. Reuse the
+SensibLaw binder and reviewed identity acceptance owners above; do not
+promote same-statement NER proximity into identity. C4.05/C5/C6 remain open.

@@ -917,3 +917,21 @@ native store or create parallel schema. C4.04c.5 discovery source-written,
 local execution pending; C4.04c.6 persistence weld deferred until actual
 original rows/receipt recovered. C4.04d/C4.05 onward open.
 No CI/TAR changes.
+
+## 2026-11-20 — C4.04c.5 native source discovery accepted
+
+Operator receipt 37302dd36 independently inspected: native schema present in
+sensiblaw_sparse_ready_20260818. Two distinct source revision/run refs share
+one canonical document and exact verified digest
+7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30
+(783635 bytes). Each complete run has 6678 succeeded jobs, same model and
+config digest; candidate-only, no semantic authority or truth promotion.
+Zero exact pinned bytes and zero legacy matches. Discovery gate accepted;
+not evidence of resolved antecedents or identical parser observations.
+Next recover original native source metadata, tokens and M12/reconciliation/
+review results separately for both runs. Compare same-content parser parity
+by source coordinates rather than compilation keys; retain source revisions.
+Compare canonical text with pinned article before any cross-source transport;
+no assumption that differing digest is merely a Wikipedia revision change.
+Do not reingest until existing native semantic outputs inspected. C4.04c.6,
+C4.04d and C4.05 open. No new DB execution or CI changes.

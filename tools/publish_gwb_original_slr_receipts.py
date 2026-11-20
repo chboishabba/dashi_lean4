@@ -11,7 +11,7 @@ PIN="a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233"
 REV="enwiki-revid:1385850169"
 NEGATIVE=("missing-predicate","missing-direct-actor","false-year-index",
           "promoted-world-truth","forged-paragraph-boundary")
-FILES=("canonical-source-regression.log","original-source-inventory.json","original-source-inventory.log",
+FILES=("lean-source-instances.json","lean-source-instances.log","canonical-source-regression.log","original-source-inventory.json","original-source-inventory.log",
        "article-source-proof.log","semantic-scope-proof.log",
        "original-scope-and-mention-audit.json","original-scope-and-mention.log")
 def require(ok,why):
@@ -58,6 +58,15 @@ def publish(source,run,dest):
         raw=(run/("rejected-"+label+".log")).read_bytes()
         require(b"JMD Lean rejected a forged or unsupported source/PNF projection" in raw,
                 "wrong negative reason "+label)
+    instances=json.loads((run/"lean-source-instances.json").read_bytes())
+    projection=json.loads((source/"article-candidates.json").read_bytes())
+    require(instances["source_revision"]==REV and
+            instances["source_unit_ref"]==data["source_unit_ref"] and
+            [x["event"] for x in instances["instances"]]==projection["event_candidates"],
+            "Lean population lost or changed original event rows")
+    require("GWB_CANONICAL_LEAN_INSTANCES count="+str(counts["original_predicates"]) in
+            (run/"lean-source-instances.log").read_text(),
+            "missing Lean population execution")
     manifest={
       "schema":"gwb-original-slr-source-lean-proof-v1",
       "source_revision":REV, "source_utf8_sha256":PIN,
@@ -71,6 +80,7 @@ def publish(source,run,dest):
       "original_parser_token_count":counts["parser_tokens"],
       "original_dependency_label_count":counts["dependency_labels"],
       "source_lean_article_checker":"PASSED",
+      "lean_source_instances":len(instances["instances"]),
       "original_scope_nonfactorability":"PASSED",
       "adversarial_source_controls_rejected":len(NEGATIVE),
       "canonical_regression_tests_passed":8,

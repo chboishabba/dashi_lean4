@@ -96,11 +96,66 @@ def main():
                 SELECT * FROM semantic.scale1_auto_observation_candidate
                 WHERE parser_run_ref=%s ORDER BY statement_ref,observation_ref
             """, (RUN_A,))
+            mentions = fetch(cur, """
+                SELECT m.*
+                FROM semantic.entity_mention_candidate m
+                JOIN corpus.source_statement s USING(statement_ref)
+                WHERE s.source_revision_ref=%s
+                  AND starts_with(m.candidate_ref, 'candidate-pnf-db:' || %s || ':')
+                ORDER BY m.source_start_char,m.source_end_char,m.mention_ref
+            """, (REV_A, RUN_A))
+            bindings = fetch(cur, """
+                SELECT b.batch_ref,b.statement_ref,b.candidate_product_ref,
+                       s.exact_span_ref,j.region_start_char,j.compilation_key
+                FROM pnf.statement_candidate_batch b
+                JOIN corpus.source_statement s USING(statement_ref)
+                JOIN ingest.parser_job j
+                  ON j.source_revision_ref=s.source_revision_ref
+                 AND j.region_ref=s.exact_span_ref
+                 AND ('db-parser:' || j.parser_run_ref || ':' || j.region_ref)=b.parser_receipt_ref
+                WHERE s.source_revision_ref=%s AND j.parser_run_ref=%s
+                  AND j.status='succeeded'
+                ORDER BY b.batch_ref
+            """, (REV_A, RUN_A))
+            products = sorted({b["candidate_product_ref"] for b in bindings
+                               if b["candidate_product_ref"] is not None})
+            factors = fetch(cur, """
+                SELECT * FROM pnf.candidate_semantic_product_factor
+                WHERE product_ref=ANY(%s::text[])
+                ORDER BY product_ref,factor_ordinal
+            """, (products,))
+            entity_factors = fetch(cur, """
+                SELECT * FROM semantic.l2_candidate_product_entity_factor
+                WHERE product_ref=ANY(%s::text[])
+                ORDER BY product_ref,detector_ref,factor_ordinal
+            """, (products,))
+            summaries = fetch(cur, """
+                SELECT * FROM semantic.l2_candidate_product_summary
+                WHERE product_ref=ANY(%s::text[])
+                ORDER BY product_ref,detector_ref
+            """, (products,))
+            review_fibres = fetch(cur, """
+                SELECT * FROM semantic.corpus_reconciliation_review_delta_fibre
+                WHERE (source_revision_ref=%s AND parser_run_ref=%s)
+                   OR (source_revision_ref=%s AND parser_run_ref=%s)
+                ORDER BY parser_run_ref,detector_ref,semantic_kind_ref,semantic_fingerprint_ref
+            """, (REV_A, RUN_A, REV_B, RUN_B))
+            pressure = fetch(cur, """
+                SELECT p.* FROM semantic.reconciliation_pressure_candidate p
+                WHERE EXISTS (
+                    SELECT 1 FROM semantic.corpus_reconciliation_review_delta_fibre f
+                    WHERE f.semantic_kind_ref=p.semantic_kind_ref
+                      AND f.semantic_fingerprint_ref=p.semantic_fingerprint_ref
+                      AND ((f.source_revision_ref=%s AND f.parser_run_ref=%s)
+                        OR (f.source_revision_ref=%s AND f.parser_run_ref=%s))
+                )
+                ORDER BY p.pressure_ref
+            """, (REV_A, RUN_A, REV_B, RUN_B))
     finally:
         conn.close()
 
     result = {
-        "schema": "gwb-native-semantic-observation-v1",
+        "schema": "gwb-native-semantic-observation-v2",
         "authority": "candidate-only-native-persistence",
         "source_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
         "pinned_comparison_sha256": PINNED,
@@ -120,6 +175,16 @@ def main():
             "events": events,
             "propositions": propositions,
             "auto_observations": observations,
+        },
+        "native_entity_fibres": {
+            "general_mentions": mentions,
+            "mention_scope": "selected revision and native DB parser candidate prefix",
+            "batch_bindings": bindings,
+            "product_factors": factors,
+            "entity_factors": entity_factors,
+            "product_summaries": summaries,
+            "review_delta_fibres": review_fibres,
+            "matching_global_pressure_candidates": pressure,
         },
         "semantic_authority": {
             "candidate_only": True,

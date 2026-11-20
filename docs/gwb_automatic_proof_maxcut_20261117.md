@@ -650,3 +650,45 @@ if these representations differ, an original producer identity weld is needed.
 Structural statement digest recomputation and batch enumeration remain open;
 S28 statement_sha256 is a length-prefixed structural digest, not literal SHA.
 C3 partial implementation, C4-C6 open; no new local kernel receipt.
+
+## 2026-11-20 — current handoff and C3 provenance consumers
+
+Audited PR #112 head c68d7ff838856a1a97a684a7bde402686748339d.
+Implementation commit 9445f9b60062a179297e4cbdc2b19efa47d395c2 extends
+GwbProductionTrace with one exact provenance-selection relation and executable
+temporal, claim and contestation queries. traceQueryExact proves membership
+in the original row array iff the original row matches a statement/observation
+edge at the checked source coordinates. This does not impose an unverified
+pairwise completeness contract on the heterogeneous S28 producer or admit
+semantic identity/event occurrence/claim truth. Existing temporal output is
+preserved; claim_query and contestation_query are added to the native receipt.
+
+Operator-confirmed acceptance history (not a new run):
+- f429e5573: Lean 4.28 proof-only/full legacy integration and nine audit tests;
+  all six original semantic gates remained open.
+- 891d4e7ca: canonical original-SLR acceptance and five negative controls,
+  original source artifacts committed; Rust diagnostics historical only.
+
+| Cut | Current status | Remaining acceptance |
+|---|---|---|
+| C1 | Implemented, unexecuted at latest head | 1468 original source anchors in canonical receipt |
+| C2 | Implemented, unexecuted at latest head | Full exact predicate-query inventory |
+| C3 | Partial, source-written | Kernel check new queries; live original PR #78 M12/S28 coordinates; structural digest recomputation, batch enumeration and adversarial same-source tests |
+| C4 | Open | Actual governed identity/event/time witnesses, canonical consumers; remove legacy arbitrary Prop premises |
+| C5 | Open | Real production-live consumer licence and evaluated answer or unresolved witness |
+| C6 | Open | Independent JMD imports/alignment/derivation, link/gap-directed expansion and formal proof receipt payment |
+
+Run once from feat/gwb-targeted-proof-cache with the original local fixtures:
+
+```bash
+git pull --ff-only
+bash scripts/run_gwb_maxcut_acceptance.sh --full
+```
+
+This checks C1/C2 and compiles C3, not live DB execution. Native-trace still
+requires the actual original SLR executable and persisted coordinates listed
+above. No fabricated coordinates, alternate parser, TAR change, or CI changes.
+Record exact head and successful local receipts; update this roadmap in the
+same work packet whenever implementation or acceptance changes. The next
+implementation priority remains C3 batch retrieval and concrete C4 production
+admission, not additional generic conditional wrappers.

@@ -635,3 +635,18 @@ first, then provide a single pinned local acceptance handoff. Keep
 SLR production, SensibLaw prototype, Lean/Agda golden, JMD independent.
 No TAR change, CI requirement, source replacement, or untracked cleanup.
 This section is a roadmap reconciliation, not a new kernel receipt.
+
+## C3 first executable native trace weld
+
+GwbProductionTrace.lean (21039363) now calls the original PR #78 CLI via
+DbSourceProducer and checks source revision/document, exact article literal,
+statement/span/parser receipt and S28 ancestry. It evaluates temporal
+records citing both the matching statement and observation. No new parser.
+Runner subcommand native-trace takes ARTICLE SOURCE PROJECTION EXECUTABLE
+PARSER_RUN STATEMENT DOCUMENT REVISION REGION START END LITERAL EVENT OUTPUT.
+Requires original persisted coordinates, not fabricated examples. The archived
+parser receipt document coordinate must equal the native DB document coordinate;
+if these representations differ, an original producer identity weld is needed.
+Structural statement digest recomputation and batch enumeration remain open;
+S28 statement_sha256 is a length-prefixed structural digest, not literal SHA.
+C3 partial implementation, C4-C6 open; no new local kernel receipt.

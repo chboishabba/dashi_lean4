@@ -1,3 +1,48 @@
+## 21 November 2026 — P0 next: actually check the ALREADY-EXISTING Main admission
+
+Do **not** duplicate the existing direct original `RHAdmission.lean`.
+It already imports the author's pinned `Main` and consumes precisely
+the five published `Main.lean` theorem declarations. It is a
+better proof-admission P0 root than the later selective RowSrc
+experiment, whose import closure is a separate optional diagnostic.
+
+**New committed fail-closed local acceptance harness:**
+
+```sh
+bash proofs/alpoge-lean433/check_original_p0_admission.sh
+```
+
+This reuses `checkout_fork_source.sh` (same original fork, immutable
+commit and Main/Statements blob hashes, pinned Lean/Mathlib; no copied
+author source), requires the local `lake`, runs `lake build Main`,
+checks `RHAdmission.lean` in that original v4.33.1 environment,
+and inspects all five actual `#print axioms` outputs, allowing
+only `propext`, `Classical.choice`, `Quot.sound`.
+Wrong checkout, unavailable toolchain, failed build, absent axiom
+printout or unexpected axiom is a hard failure.
+
+For the separate source-selective historical RowSrc donor, opt in
+with `GRH_P0_CHECK_DIRECTIONAL=1`. This is **not required** for the
+direct original `Main` acceptance.
+
+**Current authority:** harness committed but **not run here**:
+this execution environment has no Lean/Lake. Successful outside
+independent kernel/source checks for the original author's theorem
+do not certify this new local adapter or prove root/Agda transport.
+After a true local receipt, the next cut is 4.33.1→root compatible
+trusted Lean theorem handoff and precise ALL-character original
+analytic L(s,χ)/zero-predicate Agda mapping.
+
+**Single controlling GRH roadmap:** Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+`GRHP0OriginalEveryCharacterMellinForwardWeld20261121.md`
+is an original-source/evidence annex, **not** another plan.
+Both existing Mellin families are already implemented.
+Keep updates to the controlling roadmap committed alongside
+the concrete source/checker changes, without resetting GRH to P1.
+
+---
+
 ## 21 November 2026 — P0 weld-forward: single ORIGINAL EveryCharacter source, all five terminals
 
 The newest direct source lemma in `RHGRHP0DirectionalSourceCut.lean` is

@@ -1,3 +1,11 @@
+## 21 November — P1: actual selected TLiftK Hecke/IsLift fibre (latest)
+
+New `RHSelectedThetaLiftConsumer.lean` consumes the **real original** `UpperTheory.TP.K.tLiftK` from the pinned fork. The source-readback `UpperTheory.TP.TLiftK` is a universal CM-field/Hecke/theta statement. Our consumer fixes an original (E,B,n,X) and retains literally the resulting (∃ d₀,∀ d≥d₀) telescope, the source `IsHecke`, `ResEtaPow`, `HasExp`, automorphic weights and an actual lifted submodule `U'` with `IsLift`. Its proof is simply application of the original author theorem, not independent reconstruction. Original typecheck/axiom receipt **OPEN**.
+
+In Agda #1533, `RHGRHIndexedZeroZetaResidualFluxExact.agda` now admits source-accounted (r→r+δ) along a (k→k+1) commuting phase-reflection transition and retains mode, sign and observed-zero. Locally executed stdlib Python **1,728/1,728 PASS** on these finite laws. This is strictly **different from** a source `IsLift` theorem: the genuine next source weld requires identification of an actual order-3 restriction of one of the original `χX,χW` Hecke characters (if present) and a proved source theta/Galois consumer action retaining phase/sign/residual. The C3 finite model does not by itself imply a CM automorphic lift.
+
+Do not reimport all 175187 modules just for P0: our minimal RH top-cut remains separate. No CI, no local Lean kernel proof check or Agda check.
+
 # Alpöge/Claude RH source-admission sidecar (21 November 2026)
 
 **Status:** P0 fork-pinned source dependency and Lean admission adapters committed, **not executed**; no CI. The original full proof is available through the user's existing fork and is consumed by immutable Git reference, not recopied into DASHI. This directory contains only DASHI-authored integration code, lock data and a local checkout script.

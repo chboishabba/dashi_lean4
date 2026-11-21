@@ -171,3 +171,30 @@ where (u_2=u^3), (u_3=u^4), `u=normalizer(z)`, selected by CRT inverse of the SA
 **Independent locally executed exact SymPy 1.14.0**: 80/80 original HNF generator instances, **480/480** associates, **400/400** HNF-ideal-product/commuting CRT character weld comparisons PASS. Local earlier HNF owner used `generator_from_hnf` / `ideal_character`, while committed GitHub #114 owner uses `ideal_generator` / `psi`; new weld explicitly accepts **either** existing export signature, with unchanged underlying ring/ideals. **Committed new weld file was source-written from the equivalent local test, but remote exact bytes not rerun**. Do not promote this finite acceptance to a universal Lean `HeckeCharacter` proof.
 
 **Forward next mathematical gate:** check actual K/Q local/global Hecke normalization and modular-form/elliptic identification at p2 and p3, using original main sources. Keep full Fp 2/3-torsion and special -Jacobi unit semantics separate from CRT unit factor split; power map (u↦u²) and (u↦u³) is NOT the same thing as conductor primes 2 and 3 or elliptic scalar multiplication [2]/[3]. All these operators coexist but need explicit same-object welds; do not collapse them by identical numerals. Kernel/CI deferred; GRH P0 original `UpperTheory.EveryCharacter` stays logically first.
+
+
+## 21 November — bad-prime and Euler-coefficient WELD-FORWARD: p=2,3 now sourced
+
+**Strategy:** Original `dashi_lean4@main` has #69 same-curve (E:y^2=x^3+1) good-prime Jacobi/inert Euler owners and #73 primary ray normalization. Keep them untouched. #114 is a main-derived narrow adapter and SymPy execution producer. User explicitly **defers Lean/Agda kernel and CI**, not the mathematical work.
+
+### Exact same-curve exceptional prime reduction
+
+The model (y^2=x^3+1) has discriminant (Delta=-432=-2^4 3^3), so this integral Weierstrass equation is locally minimal at p2/p3 (valuations <12, preventing an integral change lowering discriminant). At p=2 the unique singular point is ((0,1)), and p=3 the singular point is ((2,0)). Translate the singularity: (overline{F}(u,v)=v^2-u^3) over each finite field, **cusp (additive)**. Enumerate the smooth locus of the original reduced projective model (all affine solutions except singular point, plus infinity):
+- p=2: **2** smooth Fp-rational points, equal p;
+- p=3: **3** smooth Fp-rational points, equal p.
+
+For a minimal additive elliptic curve reduction, `a_p=0`, local inverse Euler polynomial `1`. See external standard classification https://www.mdpi.com/2227-7390/14/4/697 (Definitions 14/15/17) and independent authoritative LMFDB **exact original same curve** https://www.lmfdb.org/EllipticCurve/Q/36/a/ (row **36.a4 / Cremona 36a1**, coefficients [0,0,0,0,1], discriminant -432, CM -3, conductor 36). LMFDB lists **bad L-factors (p2:1, p3:1)**, and good factors p5/7/11/13/17/19 equal original Jacobi/inert results. **Conductor (N_E=36=2²3²) is externally corroborated**, NOT independently derived by local SymPy wild-Tate algorithm. Do not mix the norm12 *Hecke ray modulus* with the integer norm36 *elliptic Artin conductor*; their relationship demands the CM conductor/discriminant formula, separate from source-model singularity.
+
+### Reproducible exact tests (kernel deferred)
+
+- **Actually executed** local `/mnt/data/check_jzero_bad_primes_20261121.py` with SymPy 1.14.0: both translated cusp equations, exact minimal discriminant valuations, singularity point enumeration and smooth point counts, inverse bad Euler polynomial 1: **2/2 PASS**. It also computed the 600-slot same-curve good/bad Dirichlet recurrence with bad-prime zeros, PASS.
+- **Actually executed** independent `/mnt/data/check_jzero_hecke_euler_weld_20261121.py`: split prime local value from **canonical cubic/quadratic Jacobi** `Jp` ray-normalized via the same original `−Jp`, inert local ideal `(p)` ray-normalized to `−p`, ramified conductor primes p2/p3 explicitly **omitted**, producing Euler polynomial 1; compare to an **independent elliptic Legendre-character finite-field point count**. **107/107** good primes up to 600 and **600/600** exact rational Dirichlet coefficient slots agree. Bad factors and sample good coefficients match LMFDB 36.a. Test includes actual prime-power recurrences `a(p^k)=a(p)a(p^(k-1))−p a(p^(k-2))`, and zero all n divisible by p2 or p3.
+- Committed corresponding files in **main-based PR #114**: `scripts/check_jzero_bad_prime_reduction_sympy_20261121.py` and `scripts/check_jzero_hecke_euler_weld_sympy_20261121.py`. Both committed files implement the same tests; **exact byte-identical post-commit replay not asserted**.
+
+### What is closed versus open
+
+- **CLOSED finite/arithmetical local acceptance:** exact additive cusp and bad polynomial 1 for BOTH bad p2,p3, 107 good primes tested, 600 Dirichlet coefficients independently matched to the same original CM ray prime-ideal assignments. The *definition* of the Hecke Euler product on unramified prime ideals omits those dividing the conductor; no artificial p2/p3 eigenvalues.
+- **EXTERNAL lookup confirmed:** same curve LMFDB 36.a4 / conductor 36 = 2²3²; new arithmetic runs do **not** independently pay wild conductor exponents or proof of global character identification.
+- **STILL OPEN:** source-typed global Hecke ideal character/Psi well-definedness on *every* coprime fractional ideal (SymPy bounded checks and algebraic construction exist), exact conductor/infinity type to modulus/conductor formula, p2/p3 Tate wild exponents, equality of **analytic functions** `L(E,s)=L_K(Psi,s)`, completed L-functions and GRH P0 all-character result. Kernel/CI **DEFERRED** by user direction, not proof closed.
+
+**Next maximum cut:** use main's original ideal character carrier plus source LMFDB modular form **36.2.a.a** or original modular/L-series source, test deeper finite q-coefficient or modular-form correspondence, preserve exact same-object provenance. Do not posit a new elliptic curve just because 36.a has 4 isogenous curves. GRH P0 original `UpperTheory.EveryCharacter` remains higher priority; kernels deferred.

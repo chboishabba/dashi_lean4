@@ -10,41 +10,30 @@ alpha=-Jp, its conjugate; compare trace with independent Fp point count.
 Exact coefficient comparison through n<=600. NOT an analytic equality
 or independent Tate wild conductor computation. Lean kernel deferred.
 """
-from sympy import primerange, primitive_root, __version__
+from sympy import primerange, __version__
 from math import gcd
 from functools import lru_cache
 
-W=((1,0),(0,1),(-1,-1))
-U=((1,0),(-1,0),(0,1),(0,-1),(-1,-1),(1,1))
+# WELD FORWARD: reuse exact original CRT/Jacobi and ray-normalizer
+# producer rather than maintaining a second choice of cubic character.
+from pathlib import Path
+from importlib.util import spec_from_file_location, module_from_spec
 
-def mul(z,w):
-    a,b=z;c,d=w
-    return a*c-b*d,a*d+b*c-b*d
+_ray_source=Path(__file__).with_name("check_jzero_hecke_ray_quotient_sympy_20261121.py")
+_ray_spec=spec_from_file_location("jzero_original_ray",_ray_source)
+_ray=module_from_spec(_ray_spec)
+_ray_spec.loader.exec_module(_ray)
 
-def norm(z):
-    a,b=z
-    return a*a-a*b+b*b
-
-def chi(v,p):
-    v%=p
-    return 0 if not v else (1 if pow(v,(p-1)//2,p)==1 else -1)
+mul=_ray.mul
+norm=_ray.norm
+chi=_ray.chi
 
 def normalize(z):
-    values=[mul(q,z) for q in U
-            if (mul(q,z)[0]%2,mul(q,z)[1]%2,sum(mul(q,z))%3)==(1,0,1)]
-    assert len(values)==1
-    return values[0]
+    return _ray.normalize(z)[0]
 
 @lru_cache(None)
 def jacobi(p):
-    g=int(primitive_root(p));v=1;psi={0:(0,0)}
-    for k in range(p-1):
-        psi[v]=W[k%3];v=v*g%p
-    a=b=0
-    for t in range(p):
-        x,y=psi[t];q=chi(1-t,p)
-        a+=x*q;b+=y*q
-    return a,b
+    return _ray.jacobi(p)
 
 @lru_cache(None)
 def point_trace(p):

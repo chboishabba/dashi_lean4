@@ -86,6 +86,27 @@ theorem primitive_strip_of_original_galois_row :
     PrimitiveDirichletLZerosOnLine :=
   Formalism.VW.critLine every_character_of_original_galois_row
 
+/-- P0 *single original producer* -> all five ORIGINAL terminal surfaces.
+This is a direct weld-forward from UpperTheory.EveryCharacter proved via the
+original Gal.Int/RowSrc source, not a separately assumed GRH theorem or a
+reconstruction of any character/Dirichlet L-function.
+
+In particular the three original Dirichlet conclusions retain their full
+scope; ordinary zeta RH is only a consequence, not its converse. -/
+theorem all_original_grh_and_rh_endpoints_from_galois_row :
+    DirichletLNonvanishingRightOfHalf ∧
+    DirichletLZerosOnLine ∧
+    PrimitiveDirichletLZerosOnLine ∧
+    RiemannHypothesis ∧
+    Claim.Zeta :=
+  ⟨ dirichlet_right_half_of_original_galois_row
+  , dirichlet_strip_of_original_galois_row
+  , primitive_strip_of_original_galois_row
+  , rh_of_original_galois_row
+  , zeta_of_original_galois_row ⟩
+
+#print axioms all_original_grh_and_rh_endpoints_from_galois_row
+
 #print axioms halfplane_iff_original_all_character
 #print axioms original_zeta_zeros_iff_mathlib_rh
 #print axioms original_zeta_iff_rh

@@ -30,6 +30,16 @@ lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
 
 The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
 
+## 21 November latest — our strongest RH BIDI gap pays a minimal consumer, not G2 cancellation
+
+The smallest mathematical bridge worth importing for DASHI G2 is elementary. Original Mathlib `RiemannHypothesis`, on a **source-identified nontrivial zeta zero**, forces `Re(s)-1/2=0`, hence `cosh((Re(s)-1/2)u)=1`. The new [`RHZeroHorizontalBridge.lean`](RHZeroHorizontalBridge.lean) uses only Mathlib and proves precisely those two consequences, preserving nontrivial-zero and pole-exclusion hypotheses. **It has not been compiled** at the selected toolchain.
+
+This is an explicit, small, cross-version re-elaboratable **consumer theorem**, not a backdoor proof transfer. To consume the *proof* of RH, the original source fork theorem must still be checked/imported in the compatible environment. Compile source `RHTopCut` separately; then apply this bridge to the actual source theorem.
+
+On the Agda side, `DASHI.Analysis.RiemannG2AlpogeZeroLineCosineCollapseExact` consumes the existing original G2 `LiteralTargetCenteredScalarProblem` and the existing `dSigmaIsLiteralKernel` and **conditionally** proves the pure cosine integral identity. The missing actual `G2.ZeroIndex↔Mathlib nontrivialZero` and literal `G2.offRealPart = Re(s)-1/2` identification are isolated and uninhabited. This does not pay arbitrary signed cosine bounds, the balance-breaking premise, or the distinct authoritative universal pole-quotient Off/Gamma taper.
+
+Local finite SymPy regression in Agda #1533 passes the exact source kernel collapse, with positive and negative cosine-integral counterexamples. Do not claim Agda or Lean kernel typechecking. The canonical gap matrix is [RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md](https://github.com/chboishabba/dashi_agda/blob/research/alpoge-grh-geometry-bridge-20261121/Docs/roadmaps/RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md). No CI, no source-world/PostgreSQL work.
+
 ## Current source-backed BIDI gap comparison (21 November)
 
 New `RHClaimBidiExact.lean` is an authored **Lean 4.33.1 source adapter** that consumes the fork's original `Claim.HalfPlane`, `UpperTheory.EveryCharacter`, `Claim.zeta_iff` and `Formalism.VW.rh_of_every`. No new RH or Dirichlet character carrier is defined:

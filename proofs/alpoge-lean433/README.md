@@ -1,3 +1,50 @@
+## 21 November 2026 — P0 weld-forward: single ORIGINAL EveryCharacter source, all five terminals
+
+The newest direct source lemma in `RHGRHP0DirectionalSourceCut.lean` is
+`all_original_grh_and_rh_endpoints_from_galois_row`.
+It combines the **existing original** Galois RowSrc `every_character_of_original_galois_row`
+with the actual `DirichletLNonvanishingRightOfHalf`,
+`DirichletLZerosOnLine`, `PrimitiveDirichletLZerosOnLine`,
+Mathlib `RiemannHypothesis` and original `Claim.Zeta` consumers
+in ONE proof term. None of its inputs are a new fake character, toy L-series,
+Mellin carrier, or extra axiom. The Lean v4.33.1 external-adapter source
+is **uncompiled locally**, while the independent full ORIGINAL author's
+`Main.lean` formal proof has been checked separately.
+
+External verification as of MIT 20 Nov 2026 22:05 UTC:
+https://math.mit.edu/~drew/grh/ reports all 175,187 original modules
+compile, full leanchecker module replay, five theorem axiom audit using only
+`propext`, `Classical.choice` and `Quot.sound`, independent nanoda,
+con-leche and lean4lean acceptance, and con-leche comparison of the
+five challenge statements. The full lake comparator run and a few
+export-replay checks remained running at that snapshot.
+https://github.com/aapolipponen/rh-lean-check-lumi independently
+reports sandboxed original compilation and identical `Main.olean` hash,
+but its own audit was marked ongoing when last checked.
+
+**Already-owned Mellin**: Agda `MellinSplitFunctionalEquationExact` and
+`RiemannG2GammaMellinProofRelevantActionCompilerExact`; original
+BSD E32 `EllipticCMLevel32FrickeMellinExact`. Do not rebuild these.
+Their original analytic realization differs from the external
+all-Dirichlet `UpperTheory.EveryCharacter` theorem: the exact
+per-character Dirichlet L(s,chi) and zero-predicate identification
+is not supplied by importing an existing Mellin split.
+
+**Current P0 real gate** is permission-compatible local checkout/pin of the
+existing original fork, v4.33.1 adapter kernel/axiom receipt, the root
+Mathlib version-compatible proof handoff, and an Agda all-character
+same-analytic-object bridge. The Agda #1533
+`AlpogeRHOriginalClayEndpointBidiExact.originalClayWitnessToAnalyticRH`
+is a valid source-written projection back from the *actual* Clay RH
+record, but is not a reverse ordinary-RH-to-GRH theorem.
+No universal automorphic/Hecke GRH, BSD or YM proof follows.
+New original source file and this README change are not local
+Lean kernel acceptance. Preserve Levent Alpöge/Claude authorship,
+Sutherland/Lipponen independent verification, and original DASHI
+reuse attribution.
+
+---
+
 
 ## 21 November 2026 — P0 GRH-first directional BIDI (CURRENT)
 

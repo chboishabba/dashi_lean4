@@ -1,3 +1,36 @@
+## 21 Nov 2026 — final local P0 source audit, fresh 32-modulus regression
+
+Fresh local SymPy 1.14 regression on the expanded existing
+`check_grh_p0_original_all_characters_sympy.py`
+(`--max-modulus 32 --cutoff 180`) PASS:
+**324/324** Dirichlet characters, **58,320/58,320** exact
+cyclotomic coefficient identities, **100,074** multiplicativity
+instances, **205** primitive characters. Also PASS:
+all-modulus symbolic open-strip Euler nonzero certificate,
+exact critical-line bound, boundary negative controls and
+**1,000/1,000** χ₅→χ₁₀ coefficient weld. These source tests
+are not proof of analytic GRH.
+
+Root original theorem attribution was corrected in existing
+`MillenniumExternal/AlpogeRHBoundaryExact.lean`: the
+published theorem is `_root_.riemannHypothesis` IN THE
+module `Main`, not a namespaced constant `Main.riemannHypothesis`.
+Source comment correction commit `65ca8922`.
+The prior block-comment syntax repair `4b45d7ef` remains.
+The root consumer STILL requires a supplied proof
+`(admitted : _root_.RiemannHypothesis)`; no accepted
+original proof has yet crossed from v4.33.1 to the root.
+Independently reported original kernel validation cannot be
+relabelled as local DASHI admission.
+
+Single controlling GRH plan: Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`,
+updated concurrently. GRH P0 stays OPEN for version-compatible
+proof admission and source-identical Agda per-character zero
+transport; no CI or Agda/Lean kernel invoked.
+
+---
+
 ## 21 Nov 2026 — actual P0 source and primitive/imprimitive semantic weld
 
 - Root exact target: fixed the malformed block-comment `-/-` to

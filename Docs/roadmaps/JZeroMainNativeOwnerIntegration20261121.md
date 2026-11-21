@@ -1,3 +1,11 @@
+## 21 Nov 2026 — Agda BSD P0 same-curve boundary
+
+Source audit of `chboishabba/dashi_agda` master, historical #1500 and new BSD P0 #1538 confirms that the original Agda selected BSD curve is **E:y²=x³−x** (conductor 32, Gaussian CM). Its actual K1--K5, level-32 eta/Newman/Ligozat arithmetic, Fricke/Mellin and original selected S4 classical closure have their own owners. They must not be silently replaced by this PR #114's **E:y²=x³+1** (conductor 36, Eisenstein CM) local Hecke algebra. Original p=5 point counts already discriminate: a5(E32)=−2, a5(E36)=0.
+
+Our j=0 `EisensteinJZeroHasseEulerConvergenceWeldExact` is a *mathematical method donor* for the BSD original analytic work, not a same-curve global L-function receipt. Reuse summability and finite norm/trace techniques while preserving each curve's characteristic, conductor, local Euler factors, normalization, isogeny class and source provenance.
+
+Agda new P0 #1538: https://github.com/chboishabba/dashi_agda/pull/1538 ; YM master-based #1536: https://github.com/chboishabba/dashi_agda/pull/1536 ; YM historical #1444 must not be merged wholesale. New Agda owner/source roots are source-written only: Agda compiler and transitive axioms not run, actual modularity + Mellin positivity + original E32 L(E,s) equality remain open natively, and universal BSD is unsolved. Do not fold elliptic/Hecke GRH into Dirichlet GRH.
+
 ## 21 Nov 2026 — follow-on H0 local inequality and nonvanishing SOURCE-WRITTEN
 
 Following the main-owner audit below, **the narrow H0 source proof candidate was extended** in `Integration/EisensteinJZeroHasseEulerConvergenceWeldExact.lean` (latest commit `a4a5275574f7`). New declarations include `jZeroOriginalEulerPerturbation_norm_le_majorant`, `jZeroOriginalEulerDenominators_multipliable`, `jZeroOriginalEulerPerturbation_summable`, `jZeroOriginalEulerDenominator_ne_zero`, `jZeroOriginalEulerDenominatorProduct_ne_zero`. They use the original j=0 Hasse certificate, `Nat.Primes.summable_rpow`, `multipliable_one_add_of_summable` and `tprod_one_add_ne_zero_of_summable`; the bad p=2/3 factors are 1 and their perturbations are zero. The historical `_of_bound` lemma still exposes `hlocal` as the minimal interface, but the new same-file candidate directly supplies `hlocal` without changing curve.

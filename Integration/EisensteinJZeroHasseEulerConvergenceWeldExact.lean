@@ -3,6 +3,7 @@ import Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 import Integration.EisensteinJZeroInertPrimeLocalFactorExact
 import Mathlib.NumberTheory.SumPrimeReciprocals
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.Tactic
 
 /-!
@@ -245,7 +246,8 @@ theorem jZeroHasseEulerMajorant_lt_one_of_good
     (p : RationalPrime) (hp3 : 3 < p.1) :
     jZeroHasseEulerMajorant p s < 1 := by
   have hp4 : (4 : ℝ) ≤ (p.1 : ℝ) := by
-    exact_mod_cast hp3
+    have hNat : 4 ≤ p.1 := by omega
+    exact_mod_cast hNat
   have hp1 : (1 : ℝ) < (p.1 : ℝ) := by
     exact_mod_cast p.2.one_lt
   have hfirst :

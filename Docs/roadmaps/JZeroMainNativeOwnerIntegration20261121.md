@@ -151,3 +151,23 @@ The **literal commuting-square/cube weld** for an original Eisenstein unit (u\in
 This is complete for the finite quotient/units, bounded for the 304 nonunit generators, not a Lean kernel or universal GRH proof.
 
 **Same-object next weld (do not start a new character):** consume original #114 `Psi(I)=normalize(gcd(HNF(I)))` and `Psi(A/B)`, compare its unique ray normalizer to independently reconstructed `C2\times C3` component inverses on actual HNF ideals and fractional ideal representatives; then inspect bad-prime (2,3) conductor/local-factor data using existing published owners before new Tate machinery. Kernel/CI remain deferred, and the global analytic (L(E,s)=L_K(\Psi,s)) remains OPEN. Universal all-Dirichlet GRH P0 original `EveryCharacter` remains higher-priority and independent.
+
+
+### 21 November weld-forward completion — actual HNF IDEAL commuting diagram
+
+The smallest next bridge has now been written as `scripts/check_jzero_commuting_ideal_weld_sympy_20261121.py`, importing the **two existing source-owned scripts**: `check_jzero_hecke_ideal_hnf_sympy_20261121.py` (HNF ideals, Euclidean-generator/Psi owner) and `check_jzero_commuting_square_cube_sympy_20261121.py` (complete CRT/unit (C_2\times C_3) owner). It does NOT introduce another ideal ring, quotient, normalization, character or generator.
+
+**Commuting source diagram:**
+[
+\begin{array}{ccc}
+ I\subset \mathbf Z[\omega] &\xrightarrow{\mathrm{HNF\ gcd}}& z\in\mathbf Z[\omega]\\
+ \downarrow\Psi &&\downarrow\bigl(u_2(z),u_3(z)\bigr)\\
+ \alpha_I=\mathrm{normalize}(z)&\xleftarrow{\quad(u_2,u_3)\mapsto u_2u_3 z\quad}&
+ C_2\times C_3
+\end{array}
+]
+where (u_2=u^3), (u_3=u^4), `u=normalizer(z)`, selected by CRT inverse of the SAME original HNF generator. Multiplication of ideals uses all four basis-vector products, then integer HNF. Unit-associate replacement `z→v z` must not change either end of the diagram.
+
+**Independent locally executed exact SymPy 1.14.0**: 80/80 original HNF generator instances, **480/480** associates, **400/400** HNF-ideal-product/commuting CRT character weld comparisons PASS. Local earlier HNF owner used `generator_from_hnf` / `ideal_character`, while committed GitHub #114 owner uses `ideal_generator` / `psi`; new weld explicitly accepts **either** existing export signature, with unchanged underlying ring/ideals. **Committed new weld file was source-written from the equivalent local test, but remote exact bytes not rerun**. Do not promote this finite acceptance to a universal Lean `HeckeCharacter` proof.
+
+**Forward next mathematical gate:** check actual K/Q local/global Hecke normalization and modular-form/elliptic identification at p2 and p3, using original main sources. Keep full Fp 2/3-torsion and special -Jacobi unit semantics separate from CRT unit factor split; power map (u↦u²) and (u↦u³) is NOT the same thing as conductor primes 2 and 3 or elliptic scalar multiplication [2]/[3]. All these operators coexist but need explicit same-object welds; do not collapse them by identical numerals. Kernel/CI deferred; GRH P0 original `UpperTheory.EveryCharacter` stays logically first.

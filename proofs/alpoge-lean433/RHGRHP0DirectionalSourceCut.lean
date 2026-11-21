@@ -29,6 +29,12 @@ namespace DASHI.AlpogeRH.P0Directional
 theorem halfplane_iff_original_all_character :
     Claim.HalfPlane ↔ UpperTheory.EveryCharacter := Iff.rfl
 
+/-- The first published original theorem is definitionally the actual
+Mathlib RiemannHypothesis target, with exactly the same nontrivial-zero
+and pole-exclusion predicate as the original Statements file. -/
+theorem original_zeta_zeros_iff_mathlib_rh :
+    RiemannZetaZerosOnLine ↔ RiemannHypothesis := Iff.rfl
+
 /-- Original plain zeta claim is the precise Mathlib RH proposition. -/
 theorem original_zeta_iff_rh :
     Claim.Zeta ↔ RiemannHypothesis := Claim.zeta_iff
@@ -81,6 +87,7 @@ theorem primitive_strip_of_original_galois_row :
   Formalism.VW.critLine every_character_of_original_galois_row
 
 #print axioms halfplane_iff_original_all_character
+#print axioms original_zeta_zeros_iff_mathlib_rh
 #print axioms original_zeta_iff_rh
 #print axioms every_character_of_original_galois_row
 #print axioms rh_of_original_galois_row

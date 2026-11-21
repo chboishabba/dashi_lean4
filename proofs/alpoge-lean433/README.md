@@ -30,6 +30,21 @@ lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
 
 The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
 
+## Current source-backed BIDI gap comparison (21 November)
+
+New `RHClaimBidiExact.lean` is an authored **Lean 4.33.1 source adapter** that consumes the fork's original `Claim.HalfPlane`, `UpperTheory.EveryCharacter`, `Claim.zeta_iff` and `Formalism.VW.rh_of_every`. No new RH or Dirichlet character carrier is defined:
+- `Claim.HalfPlane ↔ UpperTheory.EveryCharacter`: definitionally the same right-half-plane nonvanishing proposition.
+- `Claim.Zeta ↔ RiemannHypothesis`: the **original fork's** exact `Claim.zeta_iff`, which is proved by `Iff.rfl`.
+- `Claim.HalfPlane → RiemannHypothesis`: original `VW.rh_of_every`.
+
+**Do not mistake this for an equivalence RH ↔ EveryCharacter**: the former is only ordinary Riemann ζ and the latter covers every Dirichlet character, hence stronger GRH scope.
+
+**Our existing mathematical G2/Pole BIDI is NOT the same logical surface**. The Agda original `RiemannG2BidiCutReconciliationExact` has an uninhabited signed scalar→post-Schur estimate; `RiemannAristotleG2CurrentCutExact` records a target-centered signed sum and projective-balance no-go; the later authoritative `RiemannAristotleCurrentFrontierExact` uses a universal pole-quotient Off/Gamma budget rather than G2d's determinant taper. None of their inequalities follows merely from the external RH conclusion. **For terminal Clay, stop at Mathlib RH and reuse the already-existing Clay equivalence; for improved geometric proof, look only for source-typed theta and determinant donor statements.**
+
+The exact original-owner comparison and debt table is in Agda [RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md](https://github.com/chboishabba/dashi_agda/blob/research/alpoge-grh-geometry-bridge-20261121/Docs/roadmaps/RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md).
+
+`RHClaimBidiExact.lean`, `RHTopCut.lean` and `RHSelectiveProducerCut.lean` are all **source-written and uncompiled**, and local kernel / axiom / import-closure receipts remain open. No CI.
+
 ## More selective original source splice (P0 candidate, not yet checked)
 
 `RHSelectiveProducerCut.lean` goes one level further than `RHTopCut.lean`: it **avoids importing original `MainConclusion` as well as `MainTheoremsAll`**, and spells out only the few-line composition `every_character_of_literature_of_vWin (... original RowSrc ...) (vwin_of_row ...)` found literally in `MainConclusion.lean`. It then consumes existing `Formalism.VW.rh_of_every`, `Formalism.VW.critLine` and `Claim.strip` without rewriting any deep producer. All five original theorem statements are exposed. This cuts *top-level convenience-wrapper imports*, but there may still be huge source transitive closures (the direct `EveryCharacterOfLiteratureOfVWin.lean` itself has a large import list). **No runtime reduction is measured yet**.

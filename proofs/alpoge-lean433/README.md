@@ -1,11 +1,11 @@
 # Alpöge/Claude RH source-admission sidecar (21 November 2026)
 
-**Status:** P0 admission source adapter committed, **not executed**; no CI. This directory does **not** contain the original author's unlicensed proof source, nor copied challenge proofs. It is an integration recipe and DASHI-authored adapter.
+**Status:** P0 fork-pinned source dependency and Lean admission adapters committed, **not executed**; no CI. The original full proof is available through the user's existing fork and is consumed by immutable Git reference, not recopied into DASHI. This directory contains only DASHI-authored integration code, lock data and a local checkout script.
 
 ## Provenance and exactly what is paid
 
 Original announcement: https://alpo.ge/remark.pdf (20 Nov 2026).
-Byte-exact verification mirror: https://github.com/Deicyde/riemann-hypothesis .
+**User-selected source fork:** https://github.com/chboishabba/riemann-hypothesis-lean at pinned commit `7cbf7a0c32fca1badf05931879a37c3f8a2b03b4` (exact `src/Main.lean` Git blob `dbd5db70bc11b35f18fa5751216ab335321e7bfc`, verified against Deicyde's checking mirror). Independent verification comparator mirror: https://github.com/Deicyde/riemann-hypothesis .
 Independent verification: https://math.mit.edu/~drew/grh/ (20 Nov 22:05 UTC).
 
 Source archive: 14-part `lean.tar.gz`, **239275554 bytes**, sha256 `9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc`.
@@ -14,9 +14,21 @@ Exported challenge sha256 `bd484ac9886a96f26b1d9a7a59ebd45b7a70d102c015d4f31f930
 Exported solution sha256 `5ea74b912147c5c93cc2b6d70cc727cf908df2f62ac6a20480a3fa02f6be244e` (**uncompressed**).
 Independent MIT audit reports 175187 modules compile and kernel replay; con-leche, nanoda and lean4lean accept, and independent challenge statement comparison accepts all five. Additional checks were underway at that audit timestamp; **not a DASHI-local acceptance**.
 
-## License constraint
+## Git dependency: fork is the intended vendor source
 
-The mirror explicitly says the 175187-module source submission **was published without a license**. Consequently copying it into the public DASHI repository as vendored source is blocked pending author's redistribution permission or an applicable license. Do not silently treat public GitHub visibility as permission to republish. Obtain the archive individually from the original author for local verification, preserve hashes and attribution, and keep it outside version control.
+User has already forked the 175,187-file original source into `chboishabba/riemann-hypothesis-lean`. **Do not request a second archive or rewrite theorems.** `fork_pin.json` stores the immutable Git commit, two selected blob hashes, exact mathlib SHA and Lean v4.33.1. `checkout_fork_source.sh` clones/checks out the user's fork at that commit into `dashi_lean4/.local/alpoge-rh-v4331`, checks source identity and stops before any checker. This is an external Git dependency, not copied code or a same-version proof import.
+
+Local opt-in:
+```sh
+bash proofs/alpoge-lean433/checkout_fork_source.sh
+# In the pinned source checkout (separate from root):
+cd .local/alpoge-rh-v4331
+lake exe cache get
+lake build Main
+lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
+```
+
+The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
 
 ## P0 source-local handoff
 
@@ -27,7 +39,7 @@ The original source tree provides `Main.lean` with exactly:
 - `LFunction_eq_zero_re : DirichletLZerosOnLine`
 - `LFunction_eq_zero_re_of_isPrimitive : PrimitiveDirichletLZerosOnLine`
 
-DASHI's separately authored `RHAdmission.lean` imports **actual** `Main` and exposes these five unchanged statements as typed handoffs. This adapter is NOT compiled here because the 1.03 GB external source package is not materialized and the current DASHI Lean root's Mathlib pin differs. Do not use `sorry`/axioms or swap a similarly named declaration.
+DASHI's separately authored `RHAdmission.lean` imports **actual** `Main` and exposes these five unchanged statements as typed handoffs. This adapter is NOT compiled here because the fork checkout and the pinned Lean toolchain are not available in this tool environment; current DASHI Lean root uses **Lean 4.35.0-rc3**, while the fork uses **4.33.1**. Neither source identity nor a clone alone transports a proof across those environments. Do not use `sorry`/axioms or swap a similarly named declaration.
 
 The already existing `MillenniumExternal/ExactTargetSurface.lean` in DASHI's root proves:
 `Millennium.ClayRiemannHypothesis ↔ Mathlib.RiemannHypothesis`.
@@ -35,7 +47,7 @@ The new `MillenniumExternal/AlpogeRHBoundaryExact.lean` directly consumes that *
 
 ### Exact remaining version + source weld
 
-1. Individually acquire original source, verify archive sha256 and the precise five statement types in clean Lean 4.33.1.
+1. Use the already-forked source via `checkout_fork_source.sh`; pin Git commit, Main/Statements Git blobs, Mathlib commit and toolchain. The author archive digest is an additional provenance check if original tarball is obtained separately.
 2. Build only locally and isolate from DASHI's older-root Lean/Mathlib; **no CI**, no mixed-olean imports.
 3. Establish a trusted cross-version theorem transfer or migrate original DASHI Clay BIDI target to 4.33.1 with matched Mathlib definitions. A printed statement or SHA hash is **not** a proof-transfer mechanism.
 4. Import `DASHI.AlpogeRH.original_mathlib_rh` as an actual theorem in the **same** environment as `Millennium.ClayRiemannHypothesis.of_mathlib`.

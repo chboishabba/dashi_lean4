@@ -1,3 +1,33 @@
+## 21 Nov 2026 — SymPy P0 source repair and exact Git-byte acceptance (LATEST)
+
+The original `RHAdmission.lean` had a real one-character source bug:
+the documentation block ended `-/-` instead of the Lean
+comment terminator `-/`. Repaired in THIS existing adapter
+(Lean #113 commit `69dedf37`); no new admission wrapper.
+The corrected file blob is
+`43a3f106e09a013fada4d1868f3bf9b0ba7dbf87`.
+
+The local GRH SymPy regression now also **pins the corrected actual
+adapter Git blob**, rather than merely scanning a possibly different
+adapter text, alongside the two original author source blobs.
+The locally executed byte-exact script and current committed script
+share blob `b9ecb9afcf0c41e0e77d8f2b2dbff86dc2b8f1fb`:
+`proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py`.
+Python AST parsing PASS; original three blobs 3/3; original source
+five terminal mappings 5/5; deliberate source/qualifier/adapter
+negative controls 3/3. SymPy 1.14 local full 64-modulus acceptance:
+1,260/1,260 characters, 1,415,034/1,415,034 unit products,
+226,800/226,800 cyclotomic Dirichlet coefficient equalities,
+496 omitted Euler factors and 757 primitive original characters.
+
+**Scope:** this is a checked finite source/number-theory weld,
+not compilation of the corrected Lean declaration or universal
+analytic GRH. The previous theorem statements remain unchanged.
+Kernel/CI were NOT run. The original external author's verification
+is a distinct source authority.
+
+---
+
 ## 21 November 2026 — CURRENT P0 local SymPy acceptance (no CI / no Lean or Agda compiler)
 
 The **existing** author's theorem and five-terminal `RHAdmission.lean`

@@ -1,6 +1,5 @@
 import Integration.EisensteinJZeroPrimaryNormalizationExact
 import Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
-import Integration.EisensteinJZeroAllGoodPrimeLocalExact
 
 /-!
 # Main-owned CM source integration: ORIGINAL Jacobi → ORIGINAL unique primary unit

@@ -15,7 +15,7 @@ Both directions use the existing LeanDojo ↔ Mathlib weld, not another RH
 proposition or a substitute zero carrier.
 
 Source owner: MillenniumExternal.ExactTargetSurface.
--/-
+-/
 
 namespace MillenniumExternal.AlpogeRH
 

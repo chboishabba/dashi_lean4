@@ -1,3 +1,77 @@
+## 22 Nov 2026 — actual author allChi → ζ RH descent pinned and checked
+
+**Original dependency, NOT RH→GRH:** at author/fork commit
+`7cbf7a0c32fc`, `MainTheorems.lean` sets
+`allChi : UpperTheory.EveryCharacter := UpperTheory.FinalTheorems.everyCharacter`
+and `rhOfAll : RiemannHypothesis := Formalism.VW.rh_of_every allChi`.
+Original `CritLine.lean` proves
+`rh_of_every` by specialization `h 1
+(1 : DirichletCharacter ℂ 1)` and the ORIGINAL
+`LFunction_modOne_eq` lemma, then invokes the
+original reflection/zero-free-to-RH proof. Thus
+**all-character nonvanishing → zeta RH via N=1**
+is already in the author source. `Claim.strip allChi`
+uses primitive/reflection and omitted Euler factors
+to derive all-character zero location on the
+same stronger source. No second zeta or GRH
+proof is needed in DASHI.
+
+**Current source audit:** six exact pinned author source blobs
+(including `src/Main.lean`) were independently
+read on 22 Nov: 10/10 original source graph
+edges/statement references PASS, 3/3
+changed-source countercontrols rejected. The
+existing local script
+`check_grh_p0_original_all_characters_sympy.py`
+was **extended in place** (commit `30f0b1b2`)
+to pin the five additional author-source modules
+and fail closed if the original N=1, mod-one,
+allChi derivation changes. It is *not*
+an additional theorem adapter. Locally reconstructed
+script's `git hash-object` matched committed
+blob `7ff7fb44eff87dabef83e3973f3535793f7b7daf`;
+Python syntax and local SymPy 1.14.0 run on
+moduli 1–4 (6 characters, 120 coefficients,
+18 products, 3 primitive) PASS, together
+with the exact χ5→χ10 1000-coefficient weld
+and critical-line nonzero Euler factor controls.
+The **new source-graph Python mode requires a
+pinned source checkout and was not executed
+end-to-end in this runtime**; its graph guards
+were independently run on the actual GitHub
+pinned source via source readback.
+
+**Shortest trusted endpoint:** existing
+`RHAdmission.original_mathlib_rh` consumes
+original `Main.riemannHypothesis` as a term;
+the root `MillenniumExternal.clayRiemannHypothesis_of_mathlib`
+already compiles a Mathlib RH term into the
+literal pinned Clay statement. What remains
+for **DASHI's native RH Clay claim** is a
+trusted compatible-version proof import /
+kernel acceptance, not a new all-character
+Agda carrier. If *also* claiming native
+Agda all-character Dirichlet GRH, genuine
+all-N/all-χ actual `LFunction` zero
+semantics must be transported separately,
+and is not paid by zeta RH alone.
+
+**Independent earlier DASHI RH manuscript found:**
+`Riemann_Pole_Quotient_Reduction_2026.tex`
+and matching PDF (21 Sep 2026) in the user's
+ChatGPT file Library; its separate literal
+pole–quotient high-ordinate inequality remains
+unproved and is not retrospectively paid by
+the original external all-character theorem.
+Paper discovery/source attribution is
+synchronized in Agda #1533 controlling
+GRH roadmap and its existing publication router.
+
+No new Lean/Agda kernel or GRH/RH mathematical
+theorem has been claimed by this local audit.
+
+---
+
 ## 21 Nov 2026 — final local P0 source audit, fresh 32-modulus regression
 
 Fresh local SymPy 1.14 regression on the expanded existing

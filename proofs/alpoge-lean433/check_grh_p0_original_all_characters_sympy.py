@@ -140,6 +140,48 @@ def audit_modulus(N, cutoff):
     assert totals[0] == int(S.totient(N)), (N, totals[0])
     return totals
 
+
+def audit_open_strip_euler_factor_weld():
+    """Universal algebraic proof obligation for primitive -> imprimitive L.
+
+    For each omitted prime p, a primitive-character value z lies on the
+    unit circle. With sigma=Re(s)>0, r=p**(-sigma) is in (0,1).
+    The identity |1-r*z|^2=(1-r)^2+2*r*(1-Re(z)) proves strictly
+    positive squared norm. Boundary sigma=0 can genuinely give zero.
+    This does NOT construct L-functions or prove their continuation.
+    """
+    r, x, y = S.symbols("r x y", real=True)
+    sqnorm = (1-r*x)**2 + (r*y)**2
+    lower = (1-r)**2
+    # Exact polynomial identity mod the unit-circle equation x^2+y^2=1.
+    identity = S.expand(sqnorm - lower - 2*r*(1-x) - r*r*(x*x+y*y-1))
+    assert identity == 0
+    # Under 0<r<1, x<=1, the RHS is >=(1-r)^2>0, universally.
+    center = S.expand((1-1/S.sqrt(2))**2)
+    assert S.simplify(center-(S.Rational(3,2)-S.sqrt(2))) == 0
+    assert center.is_positive is True
+    # Exact positive controls plus critical boundary and non-unit negatives.
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:1,y:0})-S.Rational(1,4)) == 0
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:-1,y:0})-S.Rational(9,4)) == 0
+    assert S.simplify(sqnorm.subs({r:1,x:1,y:0})) == 0
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:2,y:0})) == 0
+    # Selected actual primitive quadratic chi_5, induced chi_10. The
+    # omitted Euler factor at p=2 is 1+2^(-s); compare formal coefficients.
+    from sympy import kronecker_symbol
+    def primitive(n):
+        return 0 if math.gcd(n,5)>1 else int(kronecker_symbol(5,n))
+    def induced(n):
+        return 0 if math.gcd(n,10)>1 else primitive(n)
+    assert primitive(2) == -1
+    for n in range(1,1001):
+        formal = primitive(n) + (primitive(n//2) if n%2 == 0 else 0)
+        assert formal == induced(n), (n,formal,induced(n))
+    print("PASS all-modulus open-strip Euler-factor nonvanishing symbolic certificate")
+    print("PASS exact critical-line lower bound 3/2-sqrt(2)>0, 4 guard controls")
+    print("PASS chi5->chi10 original coefficient weld: 1000/1000")
+    print("BOUNDARY counterexample: Re(s)=0 may have zero omitted Euler factor")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-modulus", type=int, default=64)
@@ -158,6 +200,7 @@ def main():
         print("PASS pinned source and corrected adapter Git blobs 3/3, direct mappings 5/5, negative controls 3/3")
     else:
         print("Original source fingerprint: SKIPPED (supply --source-root AND --adapter)")
+    audit_open_strip_euler_factor_weld()
     totals = [0] * 5
     for N in range(1, args.max_modulus+1):
         for i, value in enumerate(audit_modulus(N, args.cutoff)):

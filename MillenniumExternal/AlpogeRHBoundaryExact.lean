@@ -4,7 +4,7 @@ import MillenniumExternal.ExactTargetSurface
 # RH/Clay precise terminal handoff — source-independent and bidirectional
 
 The external Alpöge Lean v4.33.1 submission defines
-`Main.riemannHypothesis : Mathlib.RiemannHypothesis`.
+`_root_.riemannHypothesis : RiemannHypothesis` (module `Main`).
 This local file deliberately **does not import the unlicensed submission**,
 nor assume that a theorem name in another toolchain is a proof.
 

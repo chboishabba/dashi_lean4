@@ -81,4 +81,33 @@ theorem source_split_pair_expansion
 #print axioms source_split_trace_is_negative_of_coefficient
 #print axioms source_split_pair_expansion
 
+/-- General all-good-prime negative control: the elliptic Euler polynomial
+has T² coefficient p, while the quadratic Dirichlet/Dedekind inverse
+Euler polynomial has T² coefficient χ_(-3)(p) ∈ {+1,-1}.
+Their L-functions cannot be identified coefficientwise at any p>3,
+regardless of the successful Jacobi local trace correspondence.
+This does not assume or construct a global Hecke character. -/
+theorem elliptic_vs_quadratic_dirichlet_t2_coefficient_ne
+    (p : Nat) (hp3 : 3 < p) (chi : Int)
+    (hchi : chi = 1 ∨ chi = -1) :
+    (p : Int) ≠ chi := by
+  rcases hchi with h | h <;> omega
+
+/-- At a split good prime χ_(-3)(p)=+1; these quadratic
+Dirichlet and elliptic local second coefficients differ. -/
+theorem split_quadratic_dedekind_not_elliptic
+    (p : Nat) (hp3 : 3 < p) :
+    (p : Int) ≠ 1 :=
+  elliptic_vs_quadratic_dirichlet_t2_coefficient_ne p hp3 1 (Or.inl rfl)
+
+/-- At an inert good prime χ_(-3)(p)=-1; likewise. -/
+theorem inert_quadratic_dedekind_not_elliptic
+    (p : Nat) (hp3 : 3 < p) :
+    (p : Int) ≠ -1 :=
+  elliptic_vs_quadratic_dirichlet_t2_coefficient_ne p hp3 (-1) (Or.inr rfl)
+
+#print axioms elliptic_vs_quadratic_dirichlet_t2_coefficient_ne
+#print axioms split_quadratic_dedekind_not_elliptic
+#print axioms inert_quadratic_dedekind_not_elliptic
+
 end Integration.EisensteinJZeroSplitPrimeConjugateEulerFactorExact

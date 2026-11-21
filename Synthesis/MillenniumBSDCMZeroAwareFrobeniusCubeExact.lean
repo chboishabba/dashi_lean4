@@ -124,22 +124,6 @@ theorem cmFaceTwistTransport0 (F : R →+* R) (i : R) (v : CMChart) :
   · simp [cmTransport, cmTwist]
   · simp [cmTransport, cmTwist]
 
-/-- Face xz at y=1, with the omega action also retained. -/
-theorem cmFaceTwistTransport1 (F : R →+* R)
-    (i omega : R) (v : CMChart) :
-    cmTransport F (cmTwist i (cmRotate omega v)) =
-      cmTwist (F i) (cmRotate (F omega) (cmTransport F v)) := by
-  rw [cmFaceTwistTransport0, cmFaceRotateTransport0]
-  where
-    cmFaceRotateTransport0 (F : R →+* R) (omega : R)
-        (v : CMChart) :
-        cmTransport F (cmRotate omega v) =
-          cmRotate (F omega) (cmTransport F v) := by
-      rcases v with ⟨x,y⟩
-      apply Prod.ext
-      · simp [cmRotate, cmTransport]
-      · rfl
-
 /-- Face yz at x=0: C3 action vs transported Frobenius. -/
 theorem cmFaceRotateTransport0 (F : R →+* R) (omega : R)
     (v : CMChart) :
@@ -150,6 +134,12 @@ theorem cmFaceRotateTransport0 (F : R →+* R) (omega : R)
   · simp [cmRotate, cmTransport]
   · rfl
 
+/-- Face xz at y=1, with the omega action also retained. -/
+theorem cmFaceTwistTransport1 (F : R →+* R)
+    (i omega : R) (v : CMChart) :
+    cmTransport F (cmTwist i (cmRotate omega v)) =
+      cmTwist (F i) (cmRotate (F omega) (cmTransport F v)) := by
+  rw [cmFaceTwistTransport0, cmFaceRotateTransport0]
 /-- Face yz at x=1: same rotating action after twisting, including i. -/
 theorem cmFaceRotateTransport1 (F : R →+* R)
     (i omega : R) (v : CMChart) :
@@ -179,7 +169,7 @@ theorem cmCubeAllSixEndpointPaths (F : R →+* R)
     rfl
   · rw [cmFaceRotateTransport0, cmFaceTwistRotate1]
     rfl
-  · exact (cmFaceTwistRotate1 F i omega v).symm
+  · exact cmFaceTwistRotate1 F i omega v
 
 end SixFaces
 

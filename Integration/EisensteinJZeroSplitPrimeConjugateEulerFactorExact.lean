@@ -22,6 +22,7 @@ namespace Integration.EisensteinJZeroSplitPrimeConjugateEulerFactorExact
 
 open Dashi.EisensteinQuadraticAlgebraExact
 open Integration.EisensteinJZeroAllGoodPrimeLocalExact
+open Integration.EisensteinJZeroFiniteFieldTraceExact
 open Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 open Polynomial
 

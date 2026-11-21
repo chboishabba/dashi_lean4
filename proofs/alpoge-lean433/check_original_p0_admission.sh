@@ -16,12 +16,10 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SIDECAR="$ROOT/proofs/alpoge-lean433"
 CHECKOUT="${1:-$ROOT/.local/alpoge-rh-v4331}"
 REPORT_DIR="${GRH_P0_REPORT_DIR:-$ROOT/.local/grh-p0-admission}"
-mkdir -p "$REPORT_DIR"
+# Custom paths should remain relative to the DASHI root, not the build cwd.
+if [[ "$REPORT_DIR" != /* ]]; then REPORT_DIR="$ROOT/$REPORT_DIR"; fi
 
-# Already-owned provenance checker (fail closed on wrong source and dirty
-# checkout). Do not clone another upstream or accept stale olean identities.
-bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT"
-
+# Fail fast BEFORE a potentially large original source checkout.
 if ! command -v lake >/dev/null 2>&1; then
   echo 'BLOCKED: local pinned Lean/lake toolchain unavailable; no kernel receipt.' >&2
   exit 12
@@ -34,6 +32,11 @@ if [[ ! -f "$SIDECAR/RHAdmission.lean" ]]; then
   echo 'BLOCKED: missing existing original Main admission adapter.' >&2
   exit 14
 fi
+
+mkdir -p "$REPORT_DIR"
+# Already-owned provenance checker (fail closed on wrong source and dirty
+# checkout). Do not clone another upstream or accept stale olean identities.
+bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT"
 
 # Build ORIGINAL source module first. No newly postulated theorem, no
 # Mathlib version drift and no claim of success from mere text presence.

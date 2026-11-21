@@ -24,6 +24,7 @@ This is a conditional algebra lemma, no kernel/axiom check.
 namespace Integration.EisensteinJZeroRayModulusLocalCandidateExact
 
 open Dashi.EisensteinQuadraticAlgebraExact
+open Dashi.EisensteinLatticeCounting
 open Integration.EisensteinJZeroSplitPrimeConjugateEulerFactorExact
 open Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 open Polynomial

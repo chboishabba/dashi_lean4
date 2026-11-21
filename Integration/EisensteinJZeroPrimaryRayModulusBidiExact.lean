@@ -145,4 +145,68 @@ theorem splitPrime_ray_unit_existsUnique
 #print axioms primary_iff_ray_of_split_norm
 #print axioms splitPrime_ray_unit_existsUnique
 
+/-- Source-agnostic test for the selected unit -1:
+a Jacobi element z with original elliptic trace a_p=-Tr(z),
+and a_p≡2 mod 6, has trace(z)≡4 mod 6. This alone makes
+the unit -1 its unique ray normalizer. The source-specific
+Frobenius congruence is a separate universal theorem gate. -/
+theorem neg_is_primary_of_trace_mod_six
+    (z : EisensteinQA)
+    (htrace : jZeroTrace z % 6 = 4) :
+    IsJZeroPrimary (-z) := by
+  have hbmod : z.im % 2 = 0 := by
+    simp only [jZeroTrace] at htrace
+    omega
+  obtain ⟨v, hv⟩ : (2 : Int) ∣ z.im :=
+    (Int.dvd_iff_emod_eq_zero).2 hbmod
+  constructor
+  · refine ⟨-v, ?_⟩
+    simp only [QuadraticAlgebra.im_neg]
+    omega
+  · change jZeroTrace (-z) ≡ 2 [ZMOD 3]
+    have ht : jZeroTrace (-z) = -jZeroTrace z := by
+      simp [jZeroTrace]
+    rw [ht]
+    simp only [Int.ModEq]
+    omega
+
+/-- The *exact missing author-side donor* for canonical -Jacobi
+normalization is a trace modulo 6 theorem, rather than
+reconstructing Jacobi residues term by term. -/
+theorem neg_is_ray_of_trace_mod_six
+    (p : Nat) (hp : p.Prime) (hmod : p % 3 = 1)
+    (z : EisensteinQA) (hz : QuadraticAlgebra.norm z = p)
+    (htrace : jZeroTrace z % 6 = 4) :
+    OneModRay (-z) := by
+  have hzneg : QuadraticAlgebra.norm (-z) = p := by
+    simpa using hz
+  exact (primary_iff_ray_of_split_norm p hp hmod (-z) hzneg).mp
+    (neg_is_primary_of_trace_mod_six z htrace)
+
+/-- Trace residue determines not only existence but the *unique*
+unit -1 among the actual six source units, for every such norm-p
+element; this is the all-primes source theorem sought for
+canonical Jacobi sums once its own a_p mod 6 is proved. -/
+theorem neg_one_is_unique_ray_unit_of_trace_mod_six
+    (p : Nat) (hp : p.Prime) (hmod : p % 3 = 1)
+    (z : EisensteinQA) (hz : QuadraticAlgebra.norm z = p)
+    (htrace : jZeroTrace z % 6 = 4)
+    (u : EisensteinQA) (hu : u ∈ eisensteinUnits)
+    (huray : OneModRay (u * z)) :
+    u = unitNegOne := by
+  have hn : OneModRay (unitNegOne * z) := by
+    simpa [unitNegOne, asQuadraticAlgebra] using
+      neg_is_ray_of_trace_mod_six p hp hmod z hz htrace
+  have hprimary_u : IsJZeroPrimary (u * z) :=
+    primary_of_ray (u * z) huray
+  have hprimary_neg : IsJZeroPrimary (unitNegOne * z) :=
+    primary_of_ray (unitNegOne * z) hn
+  exact splitPrime_primary_unit_unique p hp hmod z hz
+    u unitNegOne hu (by simp [eisensteinUnits])
+    hprimary_u hprimary_neg
+
+#print axioms neg_is_primary_of_trace_mod_six
+#print axioms neg_is_ray_of_trace_mod_six
+#print axioms neg_one_is_unique_ray_unit_of_trace_mod_six
+
 end Dashi.EisensteinJZeroPrimaryRayModulusBidiExact

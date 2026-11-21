@@ -26,7 +26,7 @@ _ray_spec.loader.exec_module(_ray)
 
 mul=_ray.mul
 norm=_ray.norm
-chi=_ray.chi
+chi=_ray.quadratic
 
 def normalize(z):
     return _ray.normalize(z)[0]

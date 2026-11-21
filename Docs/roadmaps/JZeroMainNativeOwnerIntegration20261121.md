@@ -123,3 +123,31 @@ Committed `scripts/check_jzero_ray_conductor_sympy_20261121.py`, with independen
 ### D. Reconciled remaining gates
 
 **CM algebraic:** completed exact finite quotient; constructive integral and fractional ideal-character model with exact SymPy acceptance (bounded tests + general structural derivation). Still need source-typed global domain/infinity-type/ray conductor proof, especially theorem that `Psi` is independent of `A/B` and multiplicative for **arbitrary** coprime fractional ideals, not only tested corpus. **CM analytic:** compute and verify bad p=2,3 local Euler factors via actual Tate/reduction data, derive conductor 36 rigorously, then Euler-product/global analytic equality `L_K(Psi,s)=L(E,s)`. **GRH P0 remains highest logical objective**: original pinned all-character `UpperTheory.EveryCharacter`; formal kernel admission remains DEFERRED by user direction, never marked proved. SymPy cannot verify universal GRH.
+
+
+## 21 November — WELD-FORWARD exact commuting square/cube in the original conductor ray (NEW)
+
+**Methodology (user explicitly reinforced):** **weld forward** = start from existing strongest source owners **on actual `main`**; search modern merged/active donor proofs before assuming absence; retain source carrier and identities; implement only the smallest missing same-object bridge; test it directly and append to canonical roadmap/PR. When an equality fails, inspect original geometry/normalization/representation before inventing a new object. Use steelman BIDI: start from the solved consumer and trace backward to the earliest genuinely missing producer; distinguish already-owned theorem, equivalent representation, unproved identification and new mathematics. Preserve original #69 Jacobi, #73 six units/primary, Euclidean lattice/HNF, and #114 fractional `Psi`; avoid rebuilding any. **SymPy exact acceptance**, Lean/Agda kernel and CI deferred.
+
+### Commuting C2 sign × C3 cubic factor square
+
+**Original same ring:** (O_K=\mathbf Z[\omega]), (\omega^2+\omega+1=0), (f=2\sqrt{-3}=2+4\omega).
+Existing exact CRT quotient (O_K/(f)\simeq\mathbf F_4\times\mathbf F_3) has unit group (\mathbf F_4^\times\times\mathbf F_3^\times\simeq C_3\times C_2\simeq\mu_6).
+
+The **literal commuting-square/cube weld** for an original Eisenstein unit (u\in\mu_6) is
+[
+ u_2=u^3\in\{\pm1\},\qquad u_3=u^4\in\{1,\omega,\omega^2\},
+\qquad u=u_2u_3=u_3u_2.
+]
+(u_2^2=1), (u_3^3=1), and powers commute: ((u^2)^3=(u^3)^2=u^6=1). In CRT terms (u_2\equiv1\pmod2) (lives entirely in (\mathbf F_3^\times)) and (u_3\equiv1\pmod{\sqrt{-3}}) (lives entirely in (\mathbf F_4^\times)). The residue diagram commutes because (\mu_6\xrightarrow{\sim}(O_K/f)^\times\), projecting to the respective factors and multiplying the canonical inverse residues is equivalent to ray-normalizing at once. **Do not identify** square map with a ring automorphism: powering acts multiplicatively on units, while (F_4\times F_3) is the underlying ring CRT.
+
+**Correct conductor obstruction ordering:** modulus (2) alone retains kernel \(\{1,-1\}\) (cannot separate sign); modulus (\(\sqrt{-3}\)) alone retains kernel \(\{1,\omega,\omega^2\}\) (cannot separate cubic phase); full product modulus has trivial unit kernel. Both conductor prime-power factors essential **among divisors of f** for a type-one principal ray normalization. This is distinct from a Tate/Artin conductor calculation.
+
+**Committed NEW exact test** `scripts/check_jzero_commuting_square_cube_sympy_20261121.py` on main-derived #114; actual byte-matched local Python/SymPy 1.14.0 was executed **before commit**:
+- PASS **12/12** quotient elements and all **144/144** multiplicative quotient pairs;
+- PASS entire six-unit group (u=u^3u^4=u^4u^3), `C2 x C3` projections and **36/36** ordered pairs' commute/multiplicative power identities;
+- PASS both reduced-modulus unit kernel negative controls and full trivial kernel;
+- PASS **304/304** coprime coordinate generators (range [-12,12]) under commuting split-normalizer reconstruction.
+This is complete for the finite quotient/units, bounded for the 304 nonunit generators, not a Lean kernel or universal GRH proof.
+
+**Same-object next weld (do not start a new character):** consume original #114 `Psi(I)=normalize(gcd(HNF(I)))` and `Psi(A/B)`, compare its unique ray normalizer to independently reconstructed `C2\times C3` component inverses on actual HNF ideals and fractional ideal representatives; then inspect bad-prime (2,3) conductor/local-factor data using existing published owners before new Tate machinery. Kernel/CI remain deferred, and the global analytic (L(E,s)=L_K(\Psi,s)) remains OPEN. Universal all-Dirichlet GRH P0 original `EveryCharacter` remains higher-priority and independent.

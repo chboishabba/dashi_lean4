@@ -146,4 +146,95 @@ theorem jZeroOriginalEulerDenominators_multipliable_of_bound
   simpa [JZeroOriginalEulerPerturbation, add_comm, add_left_comm,
     add_assoc] using hproduct
 
+
+/-- The actual j=0 local perturbation bound, including BOTH bad factors as
+zero perturbation. This uses the original j=0 Hasse trace theorem above,
+not the similarly named BSD curve's coefficient. -/
+theorem jZeroOriginalEulerPerturbation_norm_le_majorant
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re) (p : RationalPrime) :
+    ‖JZeroOriginalEulerPerturbation p s‖
+      ≤ jZeroHasseEulerMajorant p s := by
+  by_cases h2 : p.1 = 2
+  · simp [JZeroOriginalEulerPerturbation,
+      ellipticComplexLocalDenominator, h2, jZeroHasseEulerMajorant]
+    positivity
+  · by_cases h3 : p.1 = 3
+    · simp [JZeroOriginalEulerPerturbation,
+        ellipticComplexLocalDenominator, h2, h3, jZeroHasseEulerMajorant]
+      positivity
+    · letI : Fact p.1.Prime := ⟨p.2⟩
+      have hp3 : 3 < p.1 := by
+        have := p.2.two_le
+        omega
+      have hpR : 0 < (p.1 : ℝ) := by positivity
+      let T : ℂ := (p.1 : ℂ)^(-s)
+      have hsource :
+          JZeroOriginalEulerPerturbation p s =
+            -(jZeroFrobeniusTraceInt (ZMod p.1) : ℂ)*T
+              + (p.1 : ℂ)*T^2 := by
+        simp [JZeroOriginalEulerPerturbation,
+          ellipticComplexLocalDenominator, h2, h3, T]
+        ring
+      have hcoef :
+          ‖(jZeroFrobeniusTraceInt (ZMod p.1) : ℂ)‖
+            ≤ 2 * (p.1 : ℝ)^((1 : ℝ)/2) := by
+        rw [Complex.norm_intCast]
+        simpa [Real.sqrt_eq_rpow] using
+          jZero_good_frobenius_trace_abs_le_two_sqrt p hp3
+      have hpow1 : ‖T‖ = (p.1 : ℝ)^(-s.re) := by
+        simpa [T] using norm_natCast_cpow_of_pos p.2.pos (-s)
+      have hpow2 : ‖T^2‖ = (p.1 : ℝ)^(-2*s.re) := by
+        rw [norm_pow, hpow1, pow_two, ← Real.rpow_add hpR]
+        congr 1
+        ring
+      have hfirst :
+          (2*(p.1 : ℝ)^((1 : ℝ)/2)) * (p.1 : ℝ)^(-s.re)
+            = 2*(p.1 : ℝ)^((1 : ℝ)/2-s.re) := by
+        rw [mul_assoc, ← Real.rpow_add hpR]
+        congr 2
+        ring
+      have hsecond :
+          (p.1 : ℝ) * (p.1 : ℝ)^(-2*s.re)
+            = (p.1 : ℝ)^(1-2*s.re) := by
+        rw [show (p.1 : ℝ) = (p.1 : ℝ)^(1 : ℝ) by
+          rw [Real.rpow_one], ← Real.rpow_add hpR]
+        congr 1
+        ring
+      rw [hsource]
+      calc
+        ‖-(jZeroFrobeniusTraceInt (ZMod p.1) : ℂ)*T
+              + (p.1 : ℂ)*T^2‖
+            ≤ ‖(jZeroFrobeniusTraceInt (ZMod p.1) : ℂ)‖ * ‖T‖
+              + ‖(p.1 : ℂ)‖ * ‖T^2‖ := by
+                simpa [norm_mul] using norm_add_le
+                  (-(jZeroFrobeniusTraceInt (ZMod p.1) : ℂ)*T)
+                  ((p.1 : ℂ)*T^2)
+        _ ≤ (2 * (p.1 : ℝ)^((1 : ℝ)/2)) * (p.1 : ℝ)^(-s.re)
+              + (p.1 : ℝ) * (p.1 : ℝ)^(-2*s.re) := by
+              rw [hpow1, hpow2]
+              simp only [Complex.norm_natCast]
+              gcongr
+        _ = jZeroHasseEulerMajorant p s := by
+              rw [hfirst, hsecond]
+              rfl
+
+/-- The actual original j=0 Euler denominator is multipliable in
+Re(s)>3/2; no second Euler family is introduced. -/
+theorem jZeroOriginalEulerDenominators_multipliable
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re) :
+    Multipliable (fun p : RationalPrime =>
+      ellipticComplexLocalDenominator p s) :=
+  jZeroOriginalEulerDenominators_multipliable_of_bound hs
+    (jZeroOriginalEulerPerturbation_norm_le_majorant hs)
+
+/-- The j=0 *denominator* product now has an unconditional source-written
+summability proof candidate. Do not confuse this with analytic L-series
+identification, continuation or a critical-line zero theorem. -/
+theorem jZeroOriginalEulerPerturbation_summable
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re) :
+    Summable (fun p : RationalPrime =>
+      JZeroOriginalEulerPerturbation p s) :=
+  jZeroOriginalEulerPerturbation_summable_of_bound hs
+    (jZeroOriginalEulerPerturbation_norm_le_majorant hs)
+
 end Integration.EisensteinJZeroHasseEulerConvergenceWeldExact

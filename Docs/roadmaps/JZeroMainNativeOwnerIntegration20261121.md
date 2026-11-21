@@ -53,3 +53,19 @@ The source-written composition is a real **proof-candidate theorem application**
 - Bring only NEW source-written modules forward in small, reviewable, main-derived commits.
 - Treat source-written `#print axioms` lines as pending tests until an actual toolchain runs them.
 - Update this roadmap and controlling RH/GRH roadmap with exact branch/ref SHA and PASS vs OPEN whenever a gate changes. Do not overwrite concurrent H07 indexed-cube work.
+
+
+## 2026-11-21 latest execution policy — defer kernel; SymPy primary local acceptance
+
+**User-directed policy:** defer Lean/Agda kernel acceptance. Do not run CI, do not block iteration on old toolchain/Mathlib version mismatch. Use reproducible exact SymPy algebra + finite-field regression as the working acceptance gate. **Do not call finite tests a universal mathematical proof or a kernel proof**, and do not mark `OriginalSplitTraceModSixTarget` inhabited in Lean merely from finite acceptance. Original GRH P0 source remains first priority, with its formal proof/kernel admission explicitly **DEFERRED** rather than marked completed or impossible.
+
+**Independent local execution** of exact script `/mnt/data/check_main_jzero_sympy_20261121.py` using SymPy 1.14.0:
+- PASS symbolic Eisenstein norm-multiplicativity and explicit ray-quotient coordinate identity, exact integer/polynomial algebra;
+- PASS 301/301 rational primes (3<p<2000): elliptic group addition on the original SAME curve `E:y²=x³+1`; (P=(0,1)) has (2P=-P,3P=O), (Q=(-1,0)) has (2Q=O); all six combinations of P and Q distinct and (6\mid\#E(\mathbf F_p)) by exhaustive finite point count;
+- PASS 148/148 split rational primes in that range: `a_p ≡ 2 mod 6`; original chosen cubic/quadratic Jacobi (J_p) has `N(J_p)=p`, `a_p=-Tr(J_p)`, unique ray-one normalizer precisely `-1`, and `-J_p` is both primary and `1 mod (2+4ω)`;
+- PASS all 1,776 norm-p Eisenstein elements on these split shells, primary predicate ↔ exact ray congruence and precisely one ray-one six-unit multiplier.
+- Committed standalone corresponding SymPy regression in **THIS main-derived PR**, `scripts/check_jzero_main_native_sympy_acceptance_20261121.py`; its content is constructed from the locally executed mathematical checks, but the exact GitHub file bytes were **not rerun in the local runtime**. Do not misreport a byte-identical replay.
+
+**Universal mathematical observation independent of finite tests:** for any field of characteristic other than 2,3, the curve points P=(0,1), Q=(-1,0) are visibly defined; tangent at P is horizontal, so 2P=-P and 3P=O; y=0 at Q gives 2Q=O. In the elliptic group, 2- and 3-order rational points produce a subgroup of order 6. To promote this into the repository's **original same-field finite-field point-count theorem**, a source-written exact group/cardinality adapter remains OPEN. SymPy finite acceptance supports—but does not instantiate—the Lean all-primes theorem. It is reasonable to pursue the next Hecke ideal-conductor / multiplicativity cut while kernel acceptance remains deferred.
+
+**PR acceptance labels now:** original #69/#73 source ownership/real main import = confirmed by GitHub blobs; symbolic algebra and finite regression = PASS; universal actual `OriginalSplitTraceModSixTarget` Lean proof = OPEN/deferred; all-prime unique primary↔ray Lean source-written candidate = not kernel accepted/deferred; global ideal Ψ, conductor/infinity type, all bad-prime factors, Euler/L-series = OPEN; original pinned all-character GRH P0 source/kernel admission = DEFERRED per user, not mathematically closed.

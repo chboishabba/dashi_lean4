@@ -1,3 +1,38 @@
+## 21 Nov 2026 — actual P0 source and primitive/imprimitive semantic weld
+
+- Root exact target: fixed the malformed block-comment `-/-` to
+  `-/` in the **existing** `MillenniumExternal/AlpogeRHBoundaryExact.lean`
+  (commit `4b45d7ef`), keeping the original Mathlib→Clay target
+  untouched. This is syntax repair, **not** imported proof acceptance.
+- Extended, rather than duplicated, the existing
+  `check_grh_p0_original_all_characters_sympy.py` (commit
+  `2e6ecdc1`) with the universal exact unit-circle certificate
+  `|1-rz|²=(1-r)²+2r(1-Re z)` under `|z|=1`, `r=p^{-Re(s)}∈(0,1)`.
+  Therefore the missing Euler factors of an induced character have
+  no zeros in the open positive real half-plane; they **can**
+  vanish on `Re(s)=0`. This is an algebraic + elementary inequality
+  proof, not a claim that SymPy constructs complex L-functions.
+- Selected primitive χ₅ → imprimitive χ₁₀ exact coefficient
+  acceptance **1000/1000**; critical-line bound
+  `3/2−√2>0` PASS; four exact boundary/guard controls PASS.
+  Re-ran the existing all-character SymPy on moduli 1..16:
+  80/80 characters, 8000/8000 coefficients, 4682 group
+  multiplication instances, and 45 primitive characters PASS.
+  The previous full moduli 1..64 run remains historical.
+- Source identity and all-zero predicate transport still require
+  the ORIGINAL infinite analytic Dirichlet functions and their
+  real completions. The genuine original external `Main` already
+  proves all-character GRH at the pinned author-version theorem
+  level; we must ACCEPT that same theorem in a compatible toolchain
+  before the root or Agda statements can be discharged.
+
+**Single controlling P0 plan** (updated alongside this work):
+Agda #1533 `Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+No CI, Lean, Agda or exact all-64 extended-script run in this step.
+Do not promote finite acceptance into GRH.
+
+---
+
 ## 21 Nov 2026 — SymPy P0 source repair and exact Git-byte acceptance (LATEST)
 
 The original `RHAdmission.lean` had a real one-character source bug:

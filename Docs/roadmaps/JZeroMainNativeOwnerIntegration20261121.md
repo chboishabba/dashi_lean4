@@ -88,3 +88,38 @@ Original source owners still reside on `dashi_lean4@main` (#69 Jacobi, #73 prima
 - The committed GitHub Python files encode the same exact computations; **they were not byte-for-byte rerun after remote commit**. The local equivalents were run and passed. Keep these two receipts distinct.
 
 **NEXT maximal cut:** source-own the actual ray-normalized integral ideal generator as a multiplicative map on `Ideal (Z[ω])` prime to `f`, using existing main `EisensteinEuclideanDomainExact` and PID/ideal-class machinery; compute the conductor, infinity-type and the exceptional p2/p3 local factors; then global Hecke L-series as a genuine same-object `Ψ` rather than a matching finite-factor catalogue. Maintain GRH P0 universal `UpperTheory.EveryCharacter` priority with kernel admission deferred.
+
+
+## 2026-11-21 — NEW highest local CM cut: HNF integral ideals → fractional ray character → conductor obstructions
+
+**Execution policy:** user requested **SymPy, kernel acceptance DEFERRED**. The original #69 Jacobi and #73 six-unit primary modules are BOTH in main. Do not duplicate or create another identity carrier. New scripts below are on the main-derived draft #114.
+
+### A. Actual integral IDEAL multiplication, not just element multiplication
+
+Committed `scripts/check_jzero_hecke_ideal_hnf_sympy_20261121.py`, with independent **executed** SymPy 1.14.0 local equivalent `/mnt/data/check_jzero_ideal_hnf_sympy_20261121.py`:
+
+- `O_K=Z[ω]` identified as lattice `Z²`; principal ideal `(z)` represented by actual integer HNF lattice of span `{z,ωz}`, multiplication matrix `[[a,-b],[b,a-b]]`, determinant `N(z)`.
+- Recover a generator **from the HNF itself** using exact nearest-coordinate Eisenstein Euclidean gcd of its two basis columns (the original main `EisensteinEuclideanDomainExact` corresponds to this source algorithm). Verify recovered generator norm = ideal lattice determinant and reconstructed HNF equals original, no arbitrary chosen generating element retained.
+- Define candidate integral ideal character `Psi(I)=normalize(gcd(HNF(I) columns))` when `gcd(N(I),6)=1`. Check unit-associate independence; form ideal products using **all four pairwise basis-vector products**, take their lattice HNF and verify `Psi(IJ)=Psi(I)Psi(J)`.
+- Exact local acceptance: symbolic norm multiplicativity PASS; **80** coprime coordinate elements across **20** distinct integral ideals, all generator/HNF character checks PASS; **400/400** ideal HNF products, norm determinant equality and character multiplicativity PASS; **384** associate-choice negative controls PASS.
+- This is a true integral ideal lattice model; the mathematical all-integral-ideal extension follows from Eisenstein PID + six-unit quotient, but **actual Lean `Ideal` proof/character source remains uncompiled and kernel deferred**. No analytic theorem claimed.
+
+### B. Fractional ideal character as ratio of the above actual integral ideals
+
+Committed `scripts/check_jzero_hecke_fractional_ideal_sympy_20261121.py`. Independent **executed** local equivalent `/mnt/data/check_jzero_fractional_ideal_sympy_20261121.py` uses exact `Fraction` coefficients in `Q(ω)`, with `Psi(A/B)=Psi(A)/Psi(B)` and ratio equality via cross-ideal HNF multiplication `AD=CB`:
+- **9** distinct integral ideals in smaller chosen corpus; **81/81** localized ideal fraction equivalence/inverse/identity tests PASS; **441/441** fraction multiplication homomorphism tests PASS.
+- **7** source principal-ray evaluations `Psi((z))=z` for `z≡1 mod 2√−3` PASS, explicitly recording the candidate algebraic **infinity type one**.
+- Mathematical construction is now explicit on the localization of ideals coprime to conductor, rather than merely a hypothetical map on rational primes. It is **not** an installed Lean type `HeckeCharacter`, not a fully formal proof about all ideals and not an analytic Euler-product/L-series equality.
+
+### C. Ray-conductor necessity / bad model negative controls
+
+Committed `scripts/check_jzero_ray_conductor_sympy_20261121.py`, with independently **executed** local exact equivalent `/mnt/data/check_jzero_ray_conductor_sympy_20261121.py`.
+- `f=2(1+2ω)=2√−3`, norm `12`, has trivial six-unit congruence kernel.
+- Omitting `2`: `−1≡1 mod (2)` — violates type-one principal-unit rule.
+- Omitting `√−3`: `ω≡1 mod (√−3)` — violates the same rule.
+- Both factors thus necessary **among divisors of f**; this supports the modulus/conductor minimality of the candidate but is not a separate full Artin/Tate conductor computation.
+- Original curve (y²=x³+1) has singular reductions at both `p=2` and `p=3`, confirmed exact Fp derivative/equation enumeration. **DO NOT infer** exceptional Euler factors, Kodaira symbols, additive conductor exponents or analytic level from singularity alone.
+
+### D. Reconciled remaining gates
+
+**CM algebraic:** completed exact finite quotient; constructive integral and fractional ideal-character model with exact SymPy acceptance (bounded tests + general structural derivation). Still need source-typed global domain/infinity-type/ray conductor proof, especially theorem that `Psi` is independent of `A/B` and multiplicative for **arbitrary** coprime fractional ideals, not only tested corpus. **CM analytic:** compute and verify bad p=2,3 local Euler factors via actual Tate/reduction data, derive conductor 36 rigorously, then Euler-product/global analytic equality `L_K(Psi,s)=L(E,s)`. **GRH P0 remains highest logical objective**: original pinned all-character `UpperTheory.EveryCharacter`; formal kernel admission remains DEFERRED by user direction, never marked proved. SymPy cannot verify universal GRH.

@@ -9,7 +9,7 @@ published original source from its author, checked the exact archive SHA-256,
 and provided its original `Main` and dependencies in this isolated toolchain.
 
 Do NOT expose `sorry`, `axiom` or a synthesized witness to satisfy this import.
--/-
+-/
 
 namespace DASHI.AlpogeRH
 

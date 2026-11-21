@@ -1,4 +1,5 @@
 import Integration.EisensteinJZeroPrimaryNormalizationExact
+import Integration.EisensteinJZeroPrimaryRayModulusBidiExact
 import Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 
 /-!
@@ -20,9 +21,8 @@ character, not a second normalization, and not a global Hecke Ψ.
 
 The stronger SPECIFIC unit = -1 is intentionally not asserted:
 it requires an actual all-prime Frobenius trace mod-six proof on
-the same finite-field elliptic curve, and the primary↔ray ideal
-congruence adapter from the newer topic branch remains pending
-a main-based imported source closure.
+the same finite-field elliptic curve, and the primary↔ray adapter is now separately source-imported on
+this main-based branch, with actual kernel acceptance still pending.
 
 Source written against current main, kernel/axiom receipt pending.
 No CI.
@@ -32,6 +32,7 @@ namespace Integration.EisensteinJZeroMainJacobiPrimaryWeldExact
 
 open Dashi.EisensteinQuadraticAlgebraExact
 open Dashi.EisensteinJZeroPrimaryNormalizationExact
+open Dashi.EisensteinJZeroPrimaryRayModulusBidiExact
 open Dashi.EisensteinSixUnitsExact
 open Integration.EisensteinJZeroSplitPrimeEisensteinCarrierExact
 open Integration.EisensteinJZeroFiniteFieldTraceExact
@@ -99,5 +100,55 @@ theorem jacobi_trace_mod_six_of_original_source
 #print axioms originalJacobi_primary_unit_existsUnique
 #print axioms originalJacobi_trace_eq_negative_frobenius
 #print axioms jacobi_trace_mod_six_of_original_source
+
+/-- MAIN-CLOSED, ORIGINAL-SOURCE ray unit uniqueness:
+source #69 canonical J_p + original #73 universal primary theorem +
+ported primary↔ray adapter, all on one **main-derived** branch.
+This is an all-split-prime theorem *candidate* without a selected -1
+normalizing unit, and with no global Hecke character. -/
+theorem originalJacobi_ray_unit_existsUnique
+    (p : Nat) [Fact p.Prime] (hp3 : 3 < p)
+    (hmod : p % 3 = 1) :
+    ∃! u : EisensteinQA,
+      u ∈ eisensteinUnits ∧
+      OneModRay (u * originalJacobi p hp3 hmod) :=
+  splitPrime_ray_unit_existsUnique
+    p Fact.out hmod (originalJacobi p hp3 hmod)
+    (originalJacobi_norm p hp3 hmod)
+
+/-- Conditional exact choice: if the ORIGINAL SAME-CURVE Frobenius
+trace has residue 2 mod 6, the actual canonical Jacobi value -J_p
+is ray-one, using the original source norm and primary/ray bridge. -/
+theorem originalJacobi_negative_ray_one_if_source_trace
+    (h : OriginalSplitTraceModSixTarget)
+    (p : Nat) [Fact p.Prime] (hp3 : 3 < p)
+    (hmod : p % 3 = 1) :
+    OneModRay (-(originalJacobi p hp3 hmod)) :=
+  neg_is_ray_of_trace_mod_six
+    p Fact.out hmod
+    (originalJacobi p hp3 hmod)
+    (originalJacobi_norm p hp3 hmod)
+    (jacobi_trace_mod_six_of_original_source h p hp3 hmod)
+
+/-- The *same* original point-count trace hypothesis identifies -1
+as THE unique source-listed normalizing unit. The hypothesis is not
+discharged by finite sample tests. -/
+theorem originalJacobi_only_negative_one_if_source_trace
+    (h : OriginalSplitTraceModSixTarget)
+    (p : Nat) [Fact p.Prime] (hp3 : 3 < p)
+    (hmod : p % 3 = 1)
+    (u : EisensteinQA) (hu : u ∈ eisensteinUnits)
+    (hRay : OneModRay (u * originalJacobi p hp3 hmod)) :
+    u = unitNegOne :=
+  neg_one_is_unique_ray_unit_of_trace_mod_six
+    p Fact.out hmod
+    (originalJacobi p hp3 hmod)
+    (originalJacobi_norm p hp3 hmod)
+    (jacobi_trace_mod_six_of_original_source h p hp3 hmod)
+    u hu hRay
+
+#print axioms originalJacobi_ray_unit_existsUnique
+#print axioms originalJacobi_negative_ray_one_if_source_trace
+#print axioms originalJacobi_only_negative_one_if_source_trace
 
 end Integration.EisensteinJZeroMainJacobiPrimaryWeldExact

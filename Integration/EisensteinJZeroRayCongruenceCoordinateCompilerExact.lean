@@ -66,12 +66,12 @@ minus one modulo f. This witness must not be filled by status flags
 or finite sampled primes. -/
 structure UniformSplitRayReceipt where
   rayResidues :
-    (p : Nat) → [Fact p.Prime] → (hp3 : 3 < p) →
-      (hmod : p % 3 = 1) →
+    ∀ (p : Nat) [Fact p.Prime] (hp3 : 3 < p)
+      (hmod : p % 3 = 1),
       OriginalJacobiRayResidues p hp3 hmod
   actualIdealCongruence :
-    (p : Nat) → [Fact p.Prime] → (hp3 : 3 < p) →
-      (hmod : p % 3 = 1) →
+    ∀ (p : Nat) [Fact p.Prime] (hp3 : 3 < p)
+      (hmod : p % 3 = 1),
       ∃ w : EisensteinQA,
         originalSplitElement p hp3 hmod + 1 =
           proposedRayModulus * w

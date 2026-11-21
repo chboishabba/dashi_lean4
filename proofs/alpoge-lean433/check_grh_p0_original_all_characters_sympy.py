@@ -66,6 +66,63 @@ def negative_sources(main, statements, adapter):
         else:
             raise AssertionError("altered theorem/qualifier/adapter accepted")
 
+# Original author source, not a new proof or a synthetic analytic model.
+# Each file is pinned to the exact external original used by RHAdmission.
+# This graph distinguishes the correct all-character -> zeta/RH direction.
+DERIVATION_PINS = {
+    "src/Supplements/Kernels/MainTheorems.lean": "6a542d7ce969a791fd12ce575f587e6bc29044bf",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/EveryCharacter.lean":
+        "6ac769568b67f85f33565ba3e1eef7b91f53c55f",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/MainConclusion.lean":
+        "ee340012ab19713a8acfecf8adc6a331cbc2f1a4",
+    "src/Formalism/GammaFactorNonvanishing/CritLine.lean":
+        "95fa4da5c50119db164aa93944d106f22fdb576d",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/ClaimStrip.lean":
+        "60b3e96d81c2cb7d821d14c978b38bd9fd0d97f8",
+}
+
+def original_zeta_descent_audit(source_root):
+    """Exact-text provenance check, not a substitute for Lean elaboration."""
+    owner = {}
+    for path, sha in DERIVATION_PINS.items():
+        original = (source_root / path).read_bytes()
+        assert git_blob(original) == sha, "wrong source version: " + path
+        owner[path.rsplit("/", 1)[-1]] = original.decode("utf-8")
+    m = owner["MainTheorems.lean"]
+    c = owner["MainConclusion.lean"]
+    e = owner["EveryCharacter.lean"]
+    h = owner["CritLine.lean"]
+    s = owner["ClaimStrip.lean"]
+
+    def check_graph(m, c, e, h, s):
+        assert "theorem allChi : UpperTheory.EveryCharacter := UpperTheory.FinalTheorems.everyCharacter" in m
+        assert "theorem rhOfAll : RiemannHypothesis := Formalism.VW.rh_of_every allChi" in m
+        assert "⟨allChi, Claim.strip allChi, Claim.zeta allChi⟩" in m
+        assert "theorem UpperTheory.FinalTheorems.everyCharacter : UpperTheory.EveryCharacter :=" in c
+        assert "everyCharacter_of_row UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter" in c
+        assert "def UpperTheory.EveryCharacter : Prop :=" in e
+        assert "DirichletCharacter.LFunction χ s ≠ 0" in e
+        assert "h 1 (1 : DirichletCharacter ℂ 1)" in h
+        assert "LFunction_modOne_eq" in h
+        assert "completedLFunction_one_sub" in h
+        assert "theorem factor_ne_zero" in s and "theorem prim_zero" in s
+    check_graph(m, c, e, h, s)
+    negatives = (
+        (m.replace("rh_of_every allChi", "rh_of_every rhOfAll"), c, e, h, s),
+        (m, c, e, h.replace("h 1 (1 : DirichletCharacter ℂ 1)",
+                            "h 2 (1 : DirichletCharacter ℂ 1)"), s),
+        (m, c, e, h.replace("LFunction_modOne_eq", "LFunction_changeLevel"), s),
+    )
+    for mutated in negatives:
+        try:
+            check_graph(*mutated)
+        except AssertionError:
+            continue
+        raise AssertionError("changed source descent accepted")
+    print("PASS original allChi -> RH via modulus-1 zeta: 5 original additional source pins, 11 semantic guards")
+    print("PASS 3/3 changed-source dependency controls rejected")
+    print("SCOPE: source graph only; no Lean kernel or external archive proof replay")
+
 def local_characters(p, exponent):
     q = p ** exponent
     if p != 2 or exponent == 2:
@@ -197,6 +254,7 @@ def main():
         adapter = args.adapter.read_bytes()
         source_audit(mainfile, statements, adapter)
         negative_sources(mainfile, statements, adapter)
+        original_zeta_descent_audit(args.source_root)
         print("PASS pinned source and corrected adapter Git blobs 3/3, direct mappings 5/5, negative controls 3/3")
     else:
         print("Original source fingerprint: SKIPPED (supply --source-root AND --adapter)")

@@ -31,7 +31,8 @@ def main():
     # Complex embedding of a+b omega: trace 2a-b and norm a²-ab+b².
     assert expand(crt.norm((a,b))-(a*a-a*b+b*b))==0
     conj=(a-b,-b)
-    assert crt.mul((a,b),conj)==(a*a-a*b+b*b,0)
+    product=crt.mul((a,b),conj)
+    assert expand(product[0]-(a*a-a*b+b*b))==0 and expand(product[1])==0
     assert (a+conj[0],b+conj[1])==(2*a-b,0)
     # For 0<q<1: -log(1-q) <= q/(1-q), derivative >=0 and value 0 at 0.
     assert simplify(diff(q/(1-q)+log(1-q),q)-q/(1-q)**2)==0

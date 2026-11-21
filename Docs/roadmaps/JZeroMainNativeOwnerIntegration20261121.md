@@ -1,3 +1,26 @@
+## 21 Nov 2026 — source-first j=0 Hasse/Euler donor closure audit
+
+**Canonical owner = `dashi_lean4@main`.** Do not reopen the all-split-prime ideal-character construction or universal local factors. The following source declarations are **already on main**, independently fetched and inspected:
+- `Integration/EisensteinJZeroIntegralHeckeCharacterExact.integralHeckeCharacter`: conductor-coprime **integral** ideal `MonoidHom`, with generator congruence, uniqueness, multiplicativity. This is not yet a fully analytic Hecke Größencharacter on fractional ideals.
+- `Integration/EisensteinJZeroHeckeLocalAgreementExact.hecke_elliptic_goodPrime_local_agreement`: **all** rational good primes, not 107 samples.
+- `Integration/EisensteinJZeroAllPrimeLocalExact.allPrimeLocalEulerPolynomial`: both bad local polynomials 1 and all split/inert rational prime cases.
+- `Integration/EisensteinJZeroConditionalAnalyticEulerExact`: `elliptic_hecke_complexLocal_agreement`, `ellipticEuler_multipliable_iff_hecke`, and `conditionalAnalyticEulerProduct_agreement` **given `Multipliable`**. Never relabel this as an unconditional convergence theorem.
+- **Analytic donor, different curve:** `Synthesis/MillenniumBSDHasseEulerConvergence.lean` proves the Hasse/prime-power convergence architecture for **y²=x³−x**, not our **y²=x³+1**. Reuse the mathematical method, never silently substitute the curve.
+
+**NEW on this #114 branch:** `Integration/EisensteinJZeroHasseEulerConvergenceWeldExact.lean` sources `jZero_split_frobenius_trace_sq_le_four_prime`, `jZero_good_frobenius_trace_sq_le_four_prime`, `jZero_good_frobenius_trace_abs_le_two_sqrt` from the **same original** Jacobi norm `N(a+bω)=a²−ab+b²=p`, Frobenius trace and inert-zero owner, with exact identity `4N−(2a−b)²=3b²`. It reuses `Nat.Primes.summable_rpow` for the prime-majorant `2p^(1/2−σ)+p^(1−2σ)` at `σ>3/2`. The selected original-denominator `Multipliable` compiler **explicitly retains** the local perturbation norm inequality as `hlocal`; source-level completion of that inequality and reciprocal-factor product convergence/nonvanishing is the **next narrow Lean weld**. This is a proof candidate, not kernel accepted.
+
+**Local execution:** independent SymPy 1.14.0 exact algebra `4N−trace²=3b²`, 107/107 good-prime original E:y²=x³+1 point-count/Hasse checks, 107/107 positive rational local Euler denominators at s=2, inert/split negative controls PASS. Executed locally; `scripts/check_jzero_hasse_euler_source_weld_sympy_20261121.py` added here. Neither exact committed Lean source nor Agda/Lean kernel/CI executed, per user policy. Finite samples do not prove an infinite theorem.
+
+**Minimal remaining gates, no broad redesign:**
+1. **H0** local original `‖ellipticComplexLocalDenominator p s−1‖ ≤ 2p^(1/2−σ)+p^(1−2σ)` for all rational primes and σ>3/2 (p=2,3 perturbation 0), using the now-written same-curve Hasse source. Complete `Multipliable` for actual denominator and reciprocal families with Mathlib's infinite-product algebra.
+2. **H1** use existing original `conditionalAnalyticEulerProduct_agreement` (no second Euler family), and identify the same actual `L(E,s)` and `L_K(Ψ,s)` on an absolute-convergence domain via Euler/Dirichlet sources, without borrowing the other BSD curve's localPolynomial.
+3. **H2** analytic continuation/completion/functional equation for the same curve and character; zero-location GRH for this weight-two Hecke L-series remains independent of Dirichlet GRH.
+4. **P0** trusted original external all-character Dirichlet GRH / RH source import stays separate on Lean #113 and Agda #1533, deferred kernel-compatibility and same-statement acceptance, not mathematically established by j=0 Euler equality.
+
+Do not change the underlying main owners or fabricate Lean #print axioms/kernel results. Retain original authorship and external LMFDB/Tate attribution.
+
+---
+
 # j=0 Eisenstein / GRH P0 — native main-source integration roadmap
 
 **Date:** 2026-11-21  

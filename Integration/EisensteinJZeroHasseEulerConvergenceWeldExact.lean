@@ -237,4 +237,85 @@ theorem jZeroOriginalEulerPerturbation_summable
   jZeroOriginalEulerPerturbation_summable_of_bound hs
     (jZeroOriginalEulerPerturbation_norm_le_majorant hs)
 
+
+/-- At all actual good primes, 2/p + 1/p² < 1, so the Hasse
+perturbation majorant is less than one for Re(s)>3/2. -/
+theorem jZeroHasseEulerMajorant_lt_one_of_good
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re)
+    (p : RationalPrime) (hp3 : 3 < p.1) :
+    jZeroHasseEulerMajorant p s < 1 := by
+  have hp4 : (4 : ℝ) ≤ (p.1 : ℝ) := by
+    exact_mod_cast hp3
+  have hp1 : (1 : ℝ) < (p.1 : ℝ) := by
+    exact_mod_cast p.2.one_lt
+  have hfirst :
+      (p.1 : ℝ)^((1 : ℝ)/2-s.re) < (p.1 : ℝ)^(-1) :=
+    Real.rpow_lt_rpow_of_exponent_lt hp1 (by linarith)
+  have hsecond :
+      (p.1 : ℝ)^(1-2*s.re) < (p.1 : ℝ)^(-2) :=
+    Real.rpow_lt_rpow_of_exponent_lt hp1 (by linarith)
+  have hbinv : (p.1 : ℝ)^(-1) ≤ (4 : ℝ)^(-1) := by
+    rw [Real.rpow_neg_one, Real.rpow_neg_one]
+    exact one_div_le_one_div_of_le (by norm_num) hp4
+  have hbinv2 : (p.1 : ℝ)^(-2) ≤ (4 : ℝ)^(-2) := by
+    rw [show (-2 : ℝ) = -(2 : ℝ) by norm_num,
+      Real.rpow_neg, Real.rpow_neg]
+    gcongr
+    exact Real.rpow_le_rpow (by positivity) hp4 (by norm_num)
+  unfold jZeroHasseEulerMajorant
+  calc
+    2 * (p.1 : ℝ)^((1 : ℝ)/2-s.re)
+        + (p.1 : ℝ)^(1-2*s.re)
+        < 2 * (p.1 : ℝ)^(-1)
+          + (p.1 : ℝ)^(-2) := by linarith
+    _ ≤ 2 * (4 : ℝ)^(-1) + (4 : ℝ)^(-2) := by gcongr
+    _ < 1 := by norm_num [Real.rpow_neg_one, Real.rpow_neg]
+
+theorem jZeroOriginalEulerPerturbation_norm_lt_one
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re)
+    (p : RationalPrime) :
+    ‖JZeroOriginalEulerPerturbation p s‖ < 1 := by
+  by_cases h2 : p.1 = 2
+  · simp [JZeroOriginalEulerPerturbation,
+      ellipticComplexLocalDenominator, h2]
+  · by_cases h3 : p.1 = 3
+    · simp [JZeroOriginalEulerPerturbation,
+        ellipticComplexLocalDenominator, h2, h3]
+    · have hp3 : 3 < p.1 := by
+        have := p.2.two_le
+        omega
+      exact (jZeroOriginalEulerPerturbation_norm_le_majorant hs p).trans_lt
+        (jZeroHasseEulerMajorant_lt_one_of_good hs p hp3)
+
+/-- Nonzero original local denominators on the selected half-plane. -/
+theorem jZeroOriginalEulerDenominator_ne_zero
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re)
+    (p : RationalPrime) :
+    ellipticComplexLocalDenominator p s ≠ 0 := by
+  intro hz
+  have hpert : JZeroOriginalEulerPerturbation p s = -1 := by
+    simp [JZeroOriginalEulerPerturbation, hz]
+  have hsmall := jZeroOriginalEulerPerturbation_norm_lt_one hs p
+  rw [hpert] at hsmall
+  norm_num at hsmall
+
+/-- Absolute convergence plus nonvanishing of every factor gives a
+nonzero infinite product of the SAME elliptic denominators. -/
+theorem jZeroOriginalEulerDenominatorProduct_ne_zero
+    {s : ℂ} (hs : (3 : ℝ)/2 < s.re) :
+    (∏' p : RationalPrime, ellipticComplexLocalDenominator p s) ≠ 0 := by
+  have hproduct :
+      (∏' p : RationalPrime, (1 + JZeroOriginalEulerPerturbation p s)) ≠ 0 := by
+    apply tprod_one_add_ne_zero_of_summable
+    · intro p
+      simpa [JZeroOriginalEulerPerturbation] using
+        jZeroOriginalEulerDenominator_ne_zero hs p
+    · exact (jZeroOriginalEulerPerturbation_summable hs).norm
+  have hfun :
+      (fun p : RationalPrime => 1 + JZeroOriginalEulerPerturbation p s)
+      = (fun p : RationalPrime => ellipticComplexLocalDenominator p s) := by
+    funext p
+    simp [JZeroOriginalEulerPerturbation]
+  simpa only [hfun] using hproduct
+
 end Integration.EisensteinJZeroHasseEulerConvergenceWeldExact

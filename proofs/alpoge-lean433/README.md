@@ -30,6 +30,26 @@ lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
 
 The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
 
+## More selective original source splice (P0 candidate, not yet checked)
+
+`RHSelectiveProducerCut.lean` goes one level further than `RHTopCut.lean`: it **avoids importing original `MainConclusion` as well as `MainTheoremsAll`**, and spells out only the few-line composition `every_character_of_literature_of_vWin (... original RowSrc ...) (vwin_of_row ...)` found literally in `MainConclusion.lean`. It then consumes existing `Formalism.VW.rh_of_every`, `Formalism.VW.critLine` and `Claim.strip` without rewriting any deep producer. All five original theorem statements are exposed. This cuts *top-level convenience-wrapper imports*, but there may still be huge source transitive closures (the direct `EveryCharacterOfLiteratureOfVWin.lean` itself has a large import list). **No runtime reduction is measured yet**.
+
+Inspect the first true geometric source chain before replacing anything:
+`RowSrc.galoisLocalGlobalStrong_recParameter = galoisRepresentations_of_thetaLift tLiftK`.
+`GaloisRepresentationsOfThetaLift.galoisRepresentations_of_thetaLift up = galoisLocalGlobalStrong_of_geometry_lift geoOne_holds up`.
+`ThetaKernels/TLiftK.tLiftK = tLift_holds_k`.
+These are the fork's actual real theta/geometric producer edges, not an inferred resemblance. A DASHI 369/Monster/Weil substitute must produce **the same** `UpperTheory.TP.TLiftK`, `UpperTheory.GalStar.Row0b recT` or a typed consumer-sufficient map to them before it can shorten the actual proof graph.
+
+Suggested strictly local experiment, **not run**:
+```sh
+# From pinned fork workspace with exact Lean 4.33.1 + its Mathlib
+lake build Supplements.Kernels.MainTheorems
+lake env lean /path/to/dashi_lean4/proofs/alpoge-lean433/RHTopCut.lean
+# Selective experiment: build its actual direct imports; no full Main target required
+lake env lean /path/to/dashi_lean4/proofs/alpoge-lean433/RHSelectiveProducerCut.lean
+```
+Record missing imported modules/axioms and actual `.olean` closure for each, and keep the smaller cut **only if kernel accepted**. The proof graph's full original dependencies remain necessary wherever the retained original lemmas depend on them; this is not a promise of a small overall proof.
+
 ## Current P0 priority — minimal top-cut, not full proof-tree reconstruction
 
 A direct fork source readback at pinned commit `7cbf7a0c` found:

@@ -38,3 +38,10 @@ Rational points `(-1,0)` (order 2) and `(0,1)` (order 3) motivate the universal 
 - All-prime congruence of original `J_p` by -1 is not yet kernel paid; uniform existence/uniqueness of **some** unit has a pre-existing #73 original proof.
 - Global prime ideal assignment/ideal-multiplicativity, exact conductor and infinity type, bad primes 2,3, analytic Hecke Euler product and L(E,s)=L_K(Ψ,s) still OPEN.
 - The universal `UpperTheory.EveryCharacter` P0 proof remains a separate, higher-priority admission track.
+
+
+## 21 November — canonical main check repaired apparent #69/#73 branch blocker
+
+Actual `dashi_lean4@main` already has BOTH original `Integration/EisensteinJZeroPrimaryNormalizationExact.lean` (#73) and `Integration/EisensteinJZeroSplitPrimeEisensteinCarrierExact.lean` (#69), with byte-identical SHA to these older topic branches. #73's original universal primary theorem was *not* missing from canonical main. The stale topic branch comparison was the error.
+
+Dedicated **main-based [draft PR #114](https://github.com/chboishabba/dashi_lean4/pull/114)** now imports original main #69/#73 modules and applies `splitPrime_primary_associate_existsUnique` directly to source `splitJacobiEisensteinElement`; ports ONLY our distinct new primary↔ray BIDI module and states unconditional all-split-prime `originalJacobi_ray_unit_existsUnique`. Conditional `originalJacobi_only_negative_one_if_source_trace` retains the actual pending `a_p≡2 mod6` same finite-field Frobenius proof. No copying original theorem owners, no old topic-branch wholesale merge. New original `main` integration living roadmap: `Docs/roadmaps/JZeroMainNativeOwnerIntegration20261121.md` on #114. `#print axioms` and Lean kernel/CI OPEN. This old branch roadmap is informational; perform new edits on main-based #114, not this stale branch. GRH P0 universal `EveryCharacter` remains first.

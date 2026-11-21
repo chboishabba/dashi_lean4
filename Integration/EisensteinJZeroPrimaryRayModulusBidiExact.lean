@@ -16,8 +16,10 @@ split prime p%3=1 admits EXACTLY ONE of the six units yielding
 ray-congruence one. This is a norm-prime algebraic theorem, NOT the
 claim that the original #69 Jacobi element uses specifically unit -1.
 
-Original #69 canonical Jacobi element belongs to ANOTHER BRANCH:
-do not import it here without a source-preserving dependency merge.
+The original #69 canonical Jacobi element ALREADY resides on main.
+This module intentionally does not import it: it proves the reusable
+source-carrier primary/ray equivalence generically. The main-native
+Jacobi specialization is in EisensteinJZeroMainJacobiPrimaryWeldExact.
 This code adds no global Hecke ideal character or L-function theorem.
 
 Source-written, uncompiled: Lean kernel/axioms/CI acceptance OPEN.

@@ -1,3 +1,76 @@
+## 21 November 2026 — CURRENT P0 local SymPy acceptance (no CI / no Lean or Agda compiler)
+
+The **existing** author's theorem and five-terminal `RHAdmission.lean`
+remain source owners. Local execution now uses SymPy 1.14 to check the
+original Dirichlet character conductor/induction seam without running
+Lean/Agda, GitHub CI, or any source reimplementation of analytic GRH.
+
+**Committed executable:** `proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py`.
+GitHub blob SHA `3317d544f6e8d6ab50e92a652b6c304edd7af0a6`, identical
+to the byte-for-byte locally executed script. Portable default:
+
+```sh
+python3 proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py
+```
+
+For *source-pinned* audit, when the original fork is already present locally:
+
+```sh
+python3 proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py \
+  --source-root .local/alpoge-rh-v4331 \
+  --adapter proofs/alpoge-lean433/RHAdmission.lean
+```
+
+If the paths are omitted, the executable prints
+`Original source fingerprint: SKIPPED` rather than pretending it
+validated source. No network or checkout required for the math cut.
+
+**Actual same-file local SymPy PASS:**
+- every character of every modulus `1 <= N <= 64`: **1,260/1,260**
+  complete finite character enumerations (`φ(N)` per modulus);
+- **1,415,034** exact unit group homomorphism/multiplication instances;
+- **757** characters recognized primitive at their actual N,
+  with every induced character's minimal conductor reconstructed from
+  source unit-character values (not CM order conductor/level);
+- **496** missing Euler factor instances for imprimitive chars,
+  with **226,800/226,800** exact Dirichlet coefficient identities
+  (through n=180) in genuine `Q[z]/Φ_m(z)` cyclotomic rings,
+  including complex-valued composite-modulus characters;
+- the source-audit mode, tested using exact original pinned Main and
+  Statements Git blob bytes and existing adapter bytes:
+  **2/2** source SHA, **5/5** original Main→RHAdmission declarations,
+  all-character/primitive/pole quantifiers retained, and **3/3**
+  deliberate mismatched source/adapter negative controls rejected.
+
+Mathematical source identity being tested:
+```text
+L(s, χ_N) = L(s, χ_d) × product_{p|N, p∤d}(1 - χ_d(p) p^(-s)),
+```
+for χ_N induced from a primitive χ_d of conductor d|N.
+For `Re(s)>0`, each missing finite factor is nonzero because
+`|χ_d(p)p^(-s)|<=p^(-Re(s))<1`. Therefore proving primitive
+critical-strip zeros can transfer to induced characters **once the
+genuine global analytic L-series equality has been established**.
+This is an exact classical analytic deduction conditional on the
+actual identity, NOT a consequence proved in Agda by the finite test.
+
+**OPEN:** the exact all-character analytic L-function/zero semantics
+in Agda, faithful root Lean version transport, unbounded moduli,
+infinite analytic continuation/functional equations, and universal
+GRH. This tool **cannot replace a proof assistant kernel** even
+though it is the user-authorized local regression in place of CI.
+
+The older `check_original_p0_admission.sh` remains available as
+an **optional future actual Lean kernel** check; it was NOT run
+here and is not the default SymPy check. No CI was invoked.
+
+The ONE controlling GRH roadmap is Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+This commit's exact math receipt must be kept synchronized with
+that roadmap and both active PR bodies.
+
+---
+
 ## 21 November 2026 — local acceptance-harness test receipt
 
 The committed `check_original_p0_admission.sh` Git blob

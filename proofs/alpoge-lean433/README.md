@@ -1,3 +1,19 @@
+
+## 21 November 2026 — P0 GRH-first directional BIDI (CURRENT)
+
+**Primary objective: pinned external original all-character GRH → five exact target statements; do not route P0 through Monster VOA or the 369 finite geometry.** New authored `RHGRHP0DirectionalSourceCut.lean` (in this original-version sidecar) imports the same actual 4.33.1 upstream `Statements`, original `ClaimStrip`, `EveryCharacter`, `CritLine`, `EveryCharacterOfLiteratureOfVWin`, `VwinOfRow`, `RecTExists` and `RowSrc` as the existing selective producer. It adds:
+- `halfplane_iff_original_all_character : Claim.HalfPlane ↔ UpperTheory.EveryCharacter := Iff.rfl`, original all-Dirichlet-character right half-plane predicate;
+- `original_zeta_zeros_iff_mathlib_rh : RiemannZetaZerosOnLine ↔ RiemannHypothesis := Iff.rfl`, directly verified at the **type-definition** level against pinned `src/Statements.lean`;
+- `original_zeta_iff_rh := Claim.zeta_iff`, exact original claim;
+- directional `zeta_of_every_character`, `rh_of_original_zeta`, `original_zeta_of_rh`, carefully without an unsupported RH→EveryCharacter theorem;
+- `every_character_of_original_galois_row` from the **unchanged original** `galoisLocalGlobalStrong_recParameter` and original `vwin_of_row`; original consumers yielding Mathlib RH and three stronger Dirichlet right-half/critical-strip propositions.
+
+This is a **source-written reassembly of original theorem applications**, not an independent mathematical proof of GRH or a kernel-accepted source transfer. No Lean executable on this task runtime. The direction is intentionally asymmetric: original `EveryCharacter` proves RH and the Dirichlet claims, while `RiemannHypothesis` alone does NOT supply a source proof of every-character nonvanishing. This is **not a mathematical assertion that RH→GRH is impossible**, only a precise missing implication/receipt.
+
+**P0 terminal BIDI:** still use root `MillenniumExternal.AlpogeRHBoundaryExact` / `ExactTargetSurface.clayRiemannHypothesis_iff_mathlib` after independently admitting the *same Mathlib* `RiemannHypothesis` theorem on compatible root Lean/Mathlib, with a transparent 4.33.1→root theorem/proof handoff. Never copy unlicensed 175,187-module source, invent a new RH proposition, or claim an olean from 4.33.1 works under 4.35.0-rc3. Actual source-header/hash readback is not a local trusted kernel replay.
+
+**P0 acceptance order:** (1) pin/refetch original theorem blobs and v4.33.1 mathlib; (2) local version-correct `lake env lean proofs/alpoge-lean433/RHGRHP0DirectionalSourceCut.lean`, inspect `#print axioms`; (3) check original all-character and all five published terminal statements under the pinned source; (4) transfer the *RH* statement into root `ExactTargetSurface` with a trusted compatible proof rather than an assumption; (5) transfer Dirichlet GRH targets separately with original character/formula equivalences; (6) Agda semantic identity/zero/critical-line mapping and proof transport remains independently open. Deep P1 C3/Monster/Hecke only if it repairs a specific P0 original source obligation.
+
 ## 21 November — P1: actual selected TLiftK Hecke/IsLift fibre (latest)
 
 New `RHSelectedThetaLiftConsumer.lean` consumes the **real original** `UpperTheory.TP.K.tLiftK` from the pinned fork. The source-readback `UpperTheory.TP.TLiftK` is a universal CM-field/Hecke/theta statement. Our consumer fixes an original (E,B,n,X) and retains literally the resulting (∃ d₀,∀ d≥d₀) telescope, the source `IsHecke`, `ResEtaPow`, `HasExp`, automorphic weights and an actual lifted submodule `U'` with `IsLift`. Its proof is simply application of the original author theorem, not independent reconstruction. Original typecheck/axiom receipt **OPEN**.

@@ -1,3 +1,11 @@
+## 21 Nov 2026 — follow-on H0 local inequality and nonvanishing SOURCE-WRITTEN
+
+Following the main-owner audit below, **the narrow H0 source proof candidate was extended** in `Integration/EisensteinJZeroHasseEulerConvergenceWeldExact.lean` (latest commit `a4a5275574f7`). New declarations include `jZeroOriginalEulerPerturbation_norm_le_majorant`, `jZeroOriginalEulerDenominators_multipliable`, `jZeroOriginalEulerPerturbation_summable`, `jZeroOriginalEulerDenominator_ne_zero`, `jZeroOriginalEulerDenominatorProduct_ne_zero`. They use the original j=0 Hasse certificate, `Nat.Primes.summable_rpow`, `multipliable_one_add_of_summable` and `tprod_one_add_ne_zero_of_summable`; the bad p=2/3 factors are 1 and their perturbations are zero. The historical `_of_bound` lemma still exposes `hlocal` as the minimal interface, but the new same-file candidate directly supplies `hlocal` without changing curve.
+
+**Status is SOURCE-WRITTEN / KERNEL DEFERRED**, not accepted Lean proof. The proof scripts may require compiler repairs, and no `lake`, `lean`, `#print axioms` or CI was run. The local SymPy exact 107/107 fixture does not verify the universal analytic Lean file. Do **not** mark H0 formally completed until compatible pinned Lean/Mathlib check. The next true semantic gate is the exact reciprocal Euler-product `Multipliable` and L-series identification on the same curve, then continuation/completion. These are not a weight-two GRH zero-location theorem. The independent external all-character Dirichlet GRH source import remains P0 on Lean #113 / Agda #1533.
+
+---
+
 ## 21 Nov 2026 — source-first j=0 Hasse/Euler donor closure audit
 
 **Canonical owner = `dashi_lean4@main`.** Do not reopen the all-split-prime ideal-character construction or universal local factors. The following source declarations are **already on main**, independently fetched and inspected:

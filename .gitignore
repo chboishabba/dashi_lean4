@@ -14,3 +14,6 @@ outputs/aristotle_mirror_waves_v3/
 outputs/aristotle_mirror_waves_v4/
 outputs/aristotle_mirror_waves_v5/
 .autonomous-orchestrator/aristotle/
+
+# Source-only external RH fork checkout; never commit its 175187 proof files
+/.local/alpoge-rh-v4331/

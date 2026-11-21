@@ -21,9 +21,9 @@ Main also has the original cubic Jacobi, finite-field, quadratic-algebra, inert 
 
 This is the integration failure: recent additions on stale branches are mistaken for source owners absent from the canonical main repository. Main is thousands of commits ahead of each older branch. As observed from GitHub compare at this point, #69 was 10 ahead / 2191 behind main, #73 was 4 ahead / 2251 behind main; do **not** merge stale topic branch wholesale.
 
-## First actual main-native theorem composition, no copied sources
+## Main-native theorem composition and the small ported NEW ray BIDI (no copied original owners)
 
-New `Integration/EisensteinJZeroMainJacobiPrimaryWeldExact.lean` imports **only two original main modules**:
+New `Integration/EisensteinJZeroMainJacobiPrimaryWeldExact.lean` consumes **two original main owner modules**, plus only the newer, distinct `EisensteinJZeroPrimaryRayModulusBidiExact` (ported byte-identically from #73 onto this main-based branch):
 
 1. #69 `splitJacobiEisensteinElement p (by omega) hmod : EisensteinQA` with actual `splitJacobiEisensteinElement_norm` and `splitPrime_jZero_trace_formula`.
 2. #73 `splitPrime_primary_associate_existsUnique` over original `IsJZeroPrimary z := Even z.im ∧ jZeroTrace z ≡ 2 [ZMOD 3]`, with actual six `eisensteinUnits`.
@@ -32,15 +32,17 @@ It source-writes:
 - `originalJacobi_norm`: exact source `Norm(J_p)=p`;
 - `originalJacobi_primary_unit_existsUnique`: **unconditional**, all split rational primes `p>3`, unique original Eisenstein unit carrying THE SOURCE CANONICAL JACOBI ELEMENT to original primary form (no prior cross-branch merge needed);
 - `originalJacobi_trace_eq_negative_frobenius`: SAME source `a_p=-Tr(J_p)`;
+- `originalJacobi_ray_unit_existsUnique`: **unconditional** all-split-prime existence and uniqueness of a six-unit normalizer with `OneModRay (u * originalJacobi)`; it composes the ORIGINAL main sources with only the new ray BIDI adapter;
 - `OriginalSplitTraceModSixTarget`: the genuine all-split-prime finite-field Frobenius congruence `a_p%6=2`, not a new abstract character;
-- `jacobi_trace_mod_six_of_original_source`: conditional arithmetic `a_p%6=2 ⇒ Tr(J_p)%6=4`.
+- `jacobi_trace_mod_six_of_original_source`: conditional arithmetic `a_p%6=2 ⇒ Tr(J_p)%6=4`;
+- `originalJacobi_negative_ray_one_if_source_trace` and `originalJacobi_only_negative_one_if_source_trace`: if the SAME original curve supplies `a_p≡2 mod6`, its exact canonical Jacobi is uniquely normalized by the specific unit `-1`.
 
-The source-written composition is a real **proof-candidate theorem application** of the original main declarations. It does NOT claim new mathematical input proving GRH, the **specific unit -1**, ray ideal congruence, or a global ideal character. Lean kernel and `#print axioms` execution still OPEN; `lean` / `lake` binaries were absent from the execution container; no CI.
+The source-written composition is a real **proof-candidate theorem application** of the original main declarations and the **new ported ray BIDI**. It does NOT claim new mathematical input proving GRH, an *unconditional* selected unit `-1`, the all-primes trace-mod-six premise, or a global ideal character. The newer BIDI module states ray congruence directly in original `EisensteinQA` using the original #73 primary predicate; no duplicate original six-unit theorem is present. Lean kernel and `#print axioms` execution still OPEN; `lean` / `lake` binaries were absent from the execution container; no CI.
 
 ## P1 next acceptance order (main-first)
 
-1. **Build main-source closure**: in compatible pinned Lean environment, `lake env lean Integration/EisensteinJZeroMainJacobiPrimaryWeldExact.lean`; inspect `#print axioms`. The repo `lean-toolchain` declares `v4.35.0-rc3`, `lakefile.toml` requests mathlib `v4.28.0`: inspect the effective resolved Lake manifest/toolchain; do not assume they work together.
-2. **Reconcile source-written ray BIDI from #73** onto an explicit **main-derived** branch and kernel-check `IsJZeroPrimary z ↔ z≡1 (mod 2√(-3))` on norm-p elements, then re-use the newly joint main `originalJacobi_primary_unit_existsUnique`. Do not duplicate original #73 six-unit proof.
+1. **Build main-source closure**: in compatible pinned Lean environment, first `lake env lean Integration/EisensteinJZeroPrimaryRayModulusBidiExact.lean`, then `lake env lean Integration/EisensteinJZeroMainJacobiPrimaryWeldExact.lean`; inspect `#print axioms`. All three added files in this PR are on the same main-derived branch. The repo `lean-toolchain` declares `v4.35.0-rc3`, `lakefile.toml` requests mathlib `v4.28.0`: inspect the effective resolved Lake manifest/toolchain; do not assume they work together.
+2. **Kernel-check the now-ported ray BIDI** `EisensteinJZeroPrimaryRayModulusBidiExact.lean` on this same main-derived branch: `IsJZeroPrimary z ↔ z≡1 (mod 2√(-3))` on original norm-p `EisensteinQA`. The new integrator already reuses this module to assert the **source-written unconditional unique ray unit** for the original `J_p`. Do not duplicate original #73 six-unit proof.
 3. **Prove finite-field same-curve point-count/torsion lemma**: for all p>3, rational ((-1,0)) order 2 and ((0,1)) order 3 on `y²=x³+1` imply `6 | #E(F_p)`, so for split `p≡1 (mod6)`, `a_p≡2 (mod6)`; with #69 `a_p=-Tr(J_p)`, this selects the unique primary ray unit exactly `-1`. Existing exact finite tests 301/301 primes and 1776 norm-shell checks are only regressions.
 4. **Global Hecke** still needs ideals (not just rational primes), generator/ideal multiplicativity, conductor/infinity type, p=2 and p=3 local factors, analytic Euler product and original `L(E,s)=L_K(Ψ,s)` equality.
 5. **Universal GRH P0 remains independent and first**: pinned 4.33.1 fork original `EveryCharacter` theorem, all 5 published statements, same-theorem Lean root admission, kernel/axiom and cross-kernel/Agda semantic transport. A selected CM Hecke example does not prove all-character GRH.

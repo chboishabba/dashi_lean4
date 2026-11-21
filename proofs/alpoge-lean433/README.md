@@ -1,3 +1,28 @@
+## 21 November 2026 — local acceptance-harness test receipt
+
+The committed `check_original_p0_admission.sh` Git blob
+`e08464dcf4c51978d9d6799289d6f4e0f9fe2c0c` was
+**materialized byte-for-byte locally and hash-matched**.
+Actual tests (not a kernel run):
+- `bash -n`: **PASS**;
+- missing Lean/Lake: **exit 12**, BLOCKED before any source clone;
+- extracted actual Python `#print axioms` parser: all five
+  standard-axiom receipts **PASS**;
+- one missing expected theorem: correctly **BLOCKED**;
+- one injected unexpected `sorryAx`: correctly **BLOCKED**.
+
+**Do not promote** this source/checker receipt to typechecked
+`RHAdmission`, Lean 4.33.1 proof admission, 4.35 root import,
+Agda analytic per-character transport or new proof of GRH.
+The external author's original independent kernel checks are a
+different already-reported authority. The single controlling
+GRH P0 roadmap is maintained in Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+New work must update that existing plan and the relevant PR as
+part of the same source iteration, not create another roadmap.
+
+---
+
 ## 21 November 2026 — P0 next: actually check the ALREADY-EXISTING Main admission
 
 Do **not** duplicate the existing direct original `RHAdmission.lean`.

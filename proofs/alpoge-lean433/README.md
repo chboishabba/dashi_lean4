@@ -30,6 +30,20 @@ lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
 
 The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
 
+## Current P0 priority — minimal top-cut, not full proof-tree reconstruction
+
+A direct fork source readback at pinned commit `7cbf7a0c` found:
+`src/Main.lean` imports `Statements` and `Supplements.Kernels.MainTheoremsAll`;
+`src/Supplements/Kernels/MainTheoremsAll.lean` imports `MainTheoremsCritical` and `...SmallClassNumbers.CorGKOf`; the core five theorem names are already defined in `src/Supplements/Kernels/MainTheorems.lean`.
+
+**New `RHTopCut.lean` imports ONLY `Statements` and `Supplements.Kernels.MainTheorems`**, and constructs all five original theorem statements directly from `rhOfAll`, `allChi`, `claimAll`, and `critAll`. This is the **shallowest confirmed top-level source cut**; it prunes the explicit `MainTheoremsAll` / `MainTheoremsCritical` / `CorGKOf` wrapper imports. It does **not** prove that the transitive Lean dependency closure of `MainTheorems` is small. Count/measure only if running the opt-in local build.
+
+The **next local check** (not executed here) is `lake build Supplements.Kernels.MainTheorems` on the fork's pinned Lean 4.33.1, followed by `lake env lean <DASHI-root>/proofs/alpoge-lean433/RHTopCut.lean`. The `Main` target may include unrelated downstream modules; do not insist on it when the goal is only importing these five theorems. Compare the source-pinned original `Main.lean` challenge names and the authored `RHTopCut` declarations with a checked type and axiom receipt before promoting.
+
+The terminal **BIDI** into Clay is already available in the independent DASHI Lean root (`MillenniumExternal.ExactTargetSurface.clayRiemannHypothesis_iff_mathlib`), but its v4.35.0-rc3 root is not binary compatible with v4.33.1. Prefer a source-coherent Clay adapter compiled *inside* the v4.33.1 fork if the original pinned Clay definitions can be made available there; otherwise build a genuine typed version translation. A path, file hash or compiled stale olean is not proof transport.
+
+**P1** starts from original theta/automorphic and G2/369 source functions only after this P0 cut. Compare exact operator/domain/action signatures before replacing proof steps; the goal is to *improve* the original proof using geometry, not reproduce the author's 175,187-file proof or synthesize a new dummy positivity target. No world/PG ingestion in the active maximum-cut.
+
 ## P0 source-local handoff
 
 The original source tree provides `Main.lean` with exactly:

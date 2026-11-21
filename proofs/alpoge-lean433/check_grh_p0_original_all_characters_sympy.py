@@ -15,7 +15,8 @@ from pathlib import Path
 import sympy as S
 
 BLOBS = {"Main.lean": "dbd5db70bc11b35f18fa5751216ab335321e7bfc",
-         "Statements.lean": "1cd1bce93344065936b2b392b23306254e0785ef"}
+         "Statements.lean": "1cd1bce93344065936b2b392b23306254e0785ef",
+         "RHAdmission.lean": "43a3f106e09a013fada4d1868f3bf9b0ba7dbf87"}
 OWNERS = (
     ("original_mathlib_rh", "riemannHypothesis", "RiemannHypothesis", "rhOfAll"),
     ("original_riemann_zero_location", "riemannZeta_eq_zero_re", "RiemannZetaZerosOnLine", "rhOfAll"),
@@ -30,6 +31,7 @@ def git_blob(data):
 def source_audit(main, statements, adapter):
     assert git_blob(main) == BLOBS["Main.lean"], "original Main blob mismatch"
     assert git_blob(statements) == BLOBS["Statements.lean"], "original Statements blob mismatch"
+    assert git_blob(adapter) == BLOBS["RHAdmission.lean"], "original admission adapter blob mismatch"
     main, statements, adapter = [x.decode("utf-8") for x in (main, statements, adapter)]
     assert "import Statements" in main and "import Main" in adapter
     assert statements.count("DirichletCharacter ℂ N") == 3
@@ -153,7 +155,7 @@ def main():
         adapter = args.adapter.read_bytes()
         source_audit(mainfile, statements, adapter)
         negative_sources(mainfile, statements, adapter)
-        print("PASS original pinned blobs 2/2, original direct adapters 5/5, negative controls 3/3")
+        print("PASS pinned source and corrected adapter Git blobs 3/3, direct mappings 5/5, negative controls 3/3")
     else:
         print("Original source fingerprint: SKIPPED (supply --source-root AND --adapter)")
     totals = [0] * 5

@@ -280,6 +280,62 @@ theorem primeApertureAnnihilatorSymbol_even
       = primeApertureAnnihilatorSymbol t r D := by
   simp [primeApertureAnnihilatorSymbol, primeAperturePoleModeSymbol]
 
+/-!
+## E2 normalized-annihilator correction, avoiding 52nd-jet derivative blowup
+
+The monic order-52 annihilator is exact but a poor conditioning
+normalization. Define Q_t(D)=A_t(D)/A_t(0), r=t/16. For t>0,
+A_t(0)>0. Q_t is EVEN, its constant coefficient is 1, and it
+annihilates the SAME eight integral source weights.
+
+An external exact-rational source regression proves the coefficientwise
+majorant for every t>=200:
+
+    Q_t(D)=sum_(j=0)^26 q_j(t) D^(2j),
+    q_0(t)=1,
+    0<=q_j(t)<=binom(26,j)(256/t²)^j.
+
+Choose an even compact smooth FLAT-TOP function b_p, equal one in a
+neighborhood of ±log p and zero at the other prime logs. Then
+Q_t(D)b_p(log p)=1 for EVERY t>0, since b_p's positive derivatives
+vanish at that evaluation. Exact integral constraints still vanish by
+the same even formal-adjoint and weight-annihilation argument.
+
+For each fixed smooth b_p and derivative k, the finite source bound
+
+    ||(Q_t(D)b_p)^(k)||1 <=
+      sum_j binom(26,j)(256/t²)^j ||b_p^(k+2j)||1
+
+converges to ||b_p^(k)||1 as t->infty. This is a mathematical E2
+Sobolev INCREMENT estimate, NOT a theorem formalized below, and it
+does not certify the full original far/zero/Gamma/post-sixth budget.
+-/
+
+/-- Non-monic, height-normalized source operator *symbol*. The analytic
+52nd-order differential operator itself remains an E0 Mathlib weld. -/
+def primeApertureNormalizedAnnihilatorSymbol (t D : ℝ) : ℝ :=
+  primeApertureAnnihilatorSymbol t (t/16) D /
+    primeApertureAnnihilatorSymbol t (t/16) 0
+
+theorem primeApertureAnnihilatorSymbol_at_zero_pos
+    {t : ℝ} (ht : 0 < t) :
+    0 < primeApertureAnnihilatorSymbol t (t/16) 0 := by
+  unfold primeApertureAnnihilatorSymbol primeAperturePoleModeSymbol
+  positivity
+
+theorem primeApertureNormalizedAnnihilatorSymbol_at_zero
+    {t : ℝ} (ht : 0 < t) :
+    primeApertureNormalizedAnnihilatorSymbol t 0 = 1 := by
+  unfold primeApertureNormalizedAnnihilatorSymbol
+  exact div_self (primeApertureAnnihilatorSymbol_at_zero_pos ht).ne'
+
+theorem primeApertureNormalizedAnnihilatorSymbol_even
+    (t D : ℝ) :
+    primeApertureNormalizedAnnihilatorSymbol t (-D)
+      = primeApertureNormalizedAnnihilatorSymbol t D := by
+  unfold primeApertureNormalizedAnnihilatorSymbol
+  rw [primeApertureAnnihilatorSymbol_even]
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

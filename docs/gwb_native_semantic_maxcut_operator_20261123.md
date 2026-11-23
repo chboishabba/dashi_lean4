@@ -50,7 +50,7 @@ string does not pay this proof.
    observed rivals. The output explicitly marks morphology and
    quotation/accessibility `UNASSESSED` and does **not** assert
    exhaustive semantic readings, identity, QID, or truth.
-4. Run 37 Python fixture regressions and the new independent
+4. Run 39 Python fixture regressions and the new independent
    Lean theorem+frontier checker. Lean proves the original-level
    retention/retraction contract, source/revision mismatch exclusion,
    consumer-coverage/invariance implication and an explicit

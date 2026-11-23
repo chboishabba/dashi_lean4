@@ -1,0 +1,72 @@
+{
+  "authority": "EVIDENCE_INVENTORY_WITH_EXPLICIT_UNPAID_GATES",
+  "book_lane": {
+    "answer_kind": "EXPLICIT_UNRESOLVED",
+    "answer_value": null,
+    "bounded_parser_nomination_count": 27,
+    "bounded_parser_source_regions": 5,
+    "candidate_set_ref": "native-antecedent-bounded-frontier:sha256:9ed84e1cce2b9f0a96b7ca138e6dd2ad920da934facb62480ba85e7bc908e63b",
+    "canonical_content_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "claim_truth_paid": false,
+    "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "exact_original_typed_binding_source_crosswalk": false,
+    "focus": {
+      "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:1:4534:4536",
+      "end_char": 4536,
+      "mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693",
+      "start_char": 4534,
+      "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+      "surface": "he"
+    },
+    "lean_bounded_frontier_boundary_checked": true,
+    "nominated_source_span": {
+      "end_char": 4314,
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "start_char": 4310,
+      "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "surface": "Bush"
+    },
+    "original_review_item_ref": "review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+    "original_s29_receipt_count": 0,
+    "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+    "possible_antecedent_surface": "Bush",
+    "question": "To whom does 'he' in original book sentence 23 refer?",
+    "s29_workflow_status": "Pending",
+    "semantic_exhaustiveness_paid": false,
+    "source_kind": "original_book_text_not_wikipedia_article",
+    "source_relative_identity_paid": false,
+    "source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+    "world_q207_book_attachment_paid": false,
+    "world_q23505_paid": false
+  },
+  "complete_semantic_system": false,
+  "consumer_scope_global_completeness_paid": false,
+  "externally_reviewed_book_to_wikipedia_alignment_paid": false,
+  "input_frontier_sha256": "20b0659904d007b1e51471858bb39257ebee8c1d8832916dd50b3166693c8242",
+  "input_inspection_sha256": "0f0b2f599c1e90e5edafad30503c79d8e215129fc5cdeb63a6f894ca6f69a76c",
+  "input_original_typed_binding_weld_sha256": null,
+  "open_obligations": [
+    "M1: full semantic accessibility / syntactic binding and quotation scope",
+    "M1: reviewed rival exclusions and independently admitted local antecedent witness",
+    "M1: reversible Level-3 local identity substitution with original owner",
+    "M2: live-reading consumer coverage or independent invariance certificate",
+    "M2: independently pinned book actor Q23505 world-authority witness",
+    "M3: independently reviewed Q207 Wikipedia article-property alignment",
+    "M3: JMD kernel-checked property/KB proof, exact demand and payment",
+    "C6: dependent selective reopening after a real evidence change"
+  ],
+  "schema": "gwb-native-m1-m3-joint-maxcut-ledger-v1",
+  "source_revision_scopes_distinct": true,
+  "wikipedia_lane": {
+    "article_semantic_relation_to_book": "NOT_ESTABLISHED",
+    "book_local_identity_from_Q207": false,
+    "canonical_content_sha256": "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233",
+    "complete_51_qid_world_proof_paid": false,
+    "independently_reviewed_article_kb_property_paid": false,
+    "minimum_source_field_kernel_checked_in_this_packet": false,
+    "root_qid": "Q207",
+    "source_kind": "pinned_wikipedia_george_w_bush_article",
+    "source_revision_ref": "enwiki-revid:1385850169"
+  }
+}

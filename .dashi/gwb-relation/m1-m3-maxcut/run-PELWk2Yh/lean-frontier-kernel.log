@@ -1,0 +1,7 @@
+'Wikidata.Slr.GwbNativeAntecedentMaxCut.licensed_source_answer' does not depend on any axioms
+'Wikidata.Slr.GwbNativeAntecedentMaxCut.counterexample_blocks_licence' does not depend on any axioms
+'Wikidata.Slr.GwbNativeAntecedentMaxCut.retraction_restores_original' does not depend on any axioms
+'Wikidata.Slr.GwbNativeAntecedentMaxCut.no_cross_document_antecedent' does not depend on any axioms
+GWB_NATIVE_FRONTIER_BOUNDARY_KERNEL_OK
+Book source/parser nominated frontier is bounded, nonpromoting, same-revision and unresolved
+Still open: typed accessibility, S29 judgment, local identity, Q23505, consumer-live coverage, JMD property

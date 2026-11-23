@@ -1,0 +1,86 @@
+{
+  "schema": "slr-native-antecedent-s29-inspection-v1",
+  "review_item_ref": "review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+  "proposal_ref": "native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+  "original_source_ref": "source:gwb:raw-sha256:1a83adf481ad2f97819719c102d7770f30c3a058572bf364982d15ee34db4e00",
+  "source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+  "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "canonical_content_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "original_context_sha256": "216125480523f7ce8b81d2fd6cac2e777ba8417c158831c69951d4bb5a05995b",
+  "focus": {
+    "mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+    "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:1:4534:4536",
+    "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693",
+    "start_char": 4534,
+    "end_char": 4536,
+    "surface": "he"
+  },
+  "candidate_antecedent": {
+    "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+    "start_char": 4310,
+    "end_char": 4314,
+    "surface": "Bush"
+  },
+  "before": [
+    {
+      "statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "start_char": 4053,
+      "end_char": 4141,
+      "literal": "Indeed, Bush seems highly qualified to be the \npresident of any community’s Rotary Club."
+    },
+    {
+      "statement_ref": "statement:sha256:ca338435533c2af28cf552fbc365ac522350aac1c5115f14fac1c871acb5b4c4",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:20:4144-4192",
+      "start_char": 4144,
+      "end_char": 4192,
+      "literal": "This does leave us, however, with a few puzzles."
+    },
+    {
+      "statement_ref": "statement:sha256:6e56193d6f5e8d604517ff46cf6ac5f5047e11cc41da9a470c48c92f91ceeadf",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:21:4195-4286",
+      "start_char": 4195,
+      "end_char": 4286,
+      "literal": "First, why was this amiable fellow both so successful and so unsuccessful as a \npolitician?"
+    },
+    {
+      "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "start_char": 4287,
+      "end_char": 4523,
+      "literal": "It is interesting that Bush’s abilities in winning people over at the per-\nsonal level, which was abundantly in evidence in foreign capitals and on Capitol \nHill, translated so poorly into abilities at the level of mass retail politics."
+    }
+  ],
+  "focus_statement": {
+    "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693",
+    "start_char": 4526,
+    "end_char": 4693,
+    "literal": "Perhaps he was not really all that outstandingly successful, except in the quali-\nties that recommended him to Ronald Reagan in 1980 as an appropriate vice \npresident."
+  },
+  "after": [
+    {
+      "statement_ref": "statement:sha256:d4e3f5943a8ba9816b83b7584b9478ed7fadebaa5647402e3bc78759eb2b3af6",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:24:4694-4736",
+      "start_char": 4694,
+      "end_char": 4736,
+      "literal": "And then that pairing led to other things."
+    },
+    {
+      "statement_ref": "statement:sha256:be752aba03284d46afef603bda5b486c47ebb32327f4a7fa330aab64784e1e0f",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:25:4737-4900",
+      "start_char": 4737,
+      "end_char": 4900,
+      "literal": "The oral histories compiled \nby the University of Virginia’s Miller Center and the perceptive essays in this vol-\nume that use them provide insightful conjectures."
+    }
+  ],
+  "s29_review_status": "Pending",
+  "s29_receipt_commands": [],
+  "candidate_only": true,
+  "antecedent_resolution": "REVIEW_REQUIRED",
+  "identity_admission_paid": false,
+  "external_qid_paid": false,
+  "claim_truth_paid": false
+}

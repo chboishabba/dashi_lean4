@@ -52,6 +52,22 @@ echo "No identity or QID promotion is performed."
     "$OUT/native-frontier.json"
 ) | tee "$OUT/lean-frontier-kernel.log"
 
+# Optional original SensibLaw typed-binding graph: this runs the ORIGINAL
+# producer on a full-book exact-content PNF/annotation graph, not a new binder.
+# Refuse foreign source revisions, source work aliases and missing factor spans.
+if [[ -n "${GWB_ORIGINAL_BINDING_ARTIFACTS:-}" ]]; then
+  : "${SENSIBLAW_ROOT:?Set SENSIBLAW_ROOT to original SensibLaw Python repo}"
+  (
+    cd "$ROOT"
+    python3 -m tools.gwb_original_binding_interop \
+      --slr-inspection "$OUT/native-inspection.json" \
+      --slr-frontier "$OUT/native-frontier.json" \
+      --original-sensiblaw-artifacts "$GWB_ORIGINAL_BINDING_ARTIFACTS" \
+      --sensiblaw-root "$SENSIBLAW_ROOT" \
+      --output "$OUT/original-typed-binding-crosswalk.json"
+  )
+fi
+
 # Optional independent Wikipedia Q207/JMD P5-P10 theorem lane.
 # It is not used to pay the book's local antecedent identity.
 if [[ "${GWB_RUN_WIKI_P10:-0}" == "1" ]]; then
@@ -70,6 +86,9 @@ LEDGER_OPTS=(
   --worksheet "$OUT/original-antecedent-review-worksheet.json"
   --adversarial
 )
+if [[ -f "$OUT/original-typed-binding-crosswalk.json" ]]; then
+  LEDGER_OPTS+=( --typed-binding-weld "$OUT/original-typed-binding-crosswalk.json" )
+fi
 if [[ -n "${GWB_Q207_KERNEL_LOG:-}" ]]; then
   LEDGER_OPTS+=( --q207-log "$GWB_Q207_KERNEL_LOG" )
 fi

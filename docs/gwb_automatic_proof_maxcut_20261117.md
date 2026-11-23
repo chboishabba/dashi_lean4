@@ -1057,7 +1057,11 @@ Implementation on PR #112:
   `src.pnf.reference_binding.build_set_valued_binding_artifacts`
   only after verifying an **externally owner-produced** graph:
   exact same region text, same document reference, exact one-to-one
-  parser span coordinates, and owner semantic factor types. The
+  parser span coordinates, and owner semantic factor types. It then
+  transports the original native POS, dependency, lemma, morphology and
+  dependency-head observations into the owner token-annotation layer;
+  conflicting existing owner annotations fail closed. Original semantic
+  factors and reductions are not synthesized or rewritten. The
   adapter does NOT manufacture semantic factor labels, pronoun
   alternatives, identity decisions, QIDs or truth. It refuses to bind
   if native parser_product_key is NULL (SLR #78 strict gate).
@@ -1065,7 +1069,8 @@ Implementation on PR #112:
   synthetic controls covering positive region/owner alignment,
   foreign run, dependency head, entity surface, token gap, promoted
   mention, missing strict parser product identity, wrong document,
-  shifted owner parser coordinate and unauthorised factor typing.
+  shifted owner parser coordinate, unauthorised factor typing,
+  native syntax-annotation transfer and pre-existing annotation conflict.
   This connector environment has **not** run Python tests or live DB.
 - Use explicit `--mention-ref` from the verified native audit:
   ```sh
@@ -1074,15 +1079,15 @@ Implementation on PR #112:
     --revision-ref 'source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00' \
     --mention-ref 'ACTUAL_NATIVE_MENTION_REF' \
     --output .dashi/gwb-relation/native-selected-binding-carrier-v1.json
-  python3 -m unittest tests.test_gwb_native_binding_adapter -v
+  python3 -m unittest discover -s tests -p 'test_gwb_native_binding_adapter.py' -v
   ```
   Optionally add `--owner-artifacts /path/to/existing-owner-artifacts.json
   --sensiblaw-root /path/to/SensibLaw` only after acquiring a genuinely
   compatible original owner artifact. These are *not* synthesized by
   this adapter.
 - **Paid at source level:** one-region read-only native carrier,
-  exact coordinate validation, optional invocation wiring and
-  fail-closed contract controls.
+  exact coordinate validation, native syntax-annotation transport,
+  optional invocation wiring and fail-closed contract controls.
 - **Unpaid:** local Python tests, live DB one-mention capture, original
   owner-produced semantic-factor correspondence, positive
   `build_set_valued_binding_artifacts` candidate output on the same

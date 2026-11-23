@@ -128,9 +128,21 @@ theorem primeAperture_primeChannel_eq
       primeAperture_primeTerm_eq_two_real_terms heven hfar t (-s)]
   simp only [Zeta23Bridge.LiteralWeilParityBalance.reim,
     Complex.ofReal_re, Complex.ofReal_im, add_zero]
-  rw [threeTap_prime_cosine_pair s t (Real.log 2),
-      threeTap_prime_cosine_pair s t (Real.log 3)]
-  ring
+  calc
+    _ =
+      (2 : ℝ) *
+        ((ArithmeticFunction.vonMangoldt 2 / Real.sqrt 2 : ℝ)
+          * g (Real.log 2) *
+          (Real.cos ((s-t)*Real.log 2)
+            + Real.cos ((-s-t)*Real.log 2))
+         + (ArithmeticFunction.vonMangoldt 3 / Real.sqrt 3 : ℝ)
+          * g (Real.log 3) *
+          (Real.cos ((s-t)*Real.log 3)
+            + Real.cos ((-s-t)*Real.log 3))) := by ring
+    _ = _ := by
+      rw [threeTap_prime_cosine_pair s t (Real.log 2),
+          threeTap_prime_cosine_pair s t (Real.log 3)]
+      ring
 
 /-- Literal projective prime source. The two online responses must be
 sampled on the SAME detector (not a replacement normalized fixture). -/
@@ -234,7 +246,7 @@ theorem QuarticFourFrozenPrimeAperture.poleChannel_zero
       = 0 := by
   unfold QuarticFourFrozenPrimeAperture.channel
   rw [A.halfPole, A.twoPole]
-  exact A.W.literalPole_cancel ht
+  convert A.W.literalPole_cancel ht using 1 <;> ring
 
 /-- The source-exact signed two-prime term, with no eps² projective error
 because both original on-line Fourier responses are frozen. -/

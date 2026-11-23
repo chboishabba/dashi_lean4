@@ -36,7 +36,7 @@ def capture(conn, *, run: str, revision: str, mention: str) -> dict:
         cur.execute("SET LOCAL statement_timeout = '120s'")
         scope = rows(cur, """
           SELECT m.*, s.exact_span_ref,s.literal_text,s.source_revision_ref,
-                 j.compilation_key,j.region_start_char,j.region_end_char,
+                 j.compilation_key,j.parser_run_ref,j.region_start_char,j.region_end_char,
                  j.parser_product_key,j.status AS job_status,
                  b.batch_ref,b.candidate_product_ref
           FROM semantic.entity_mention_candidate m
@@ -45,12 +45,6 @@ def capture(conn, *, run: str, revision: str, mention: str) -> dict:
             ON j.source_revision_ref=s.source_revision_ref
            AND j.region_ref=s.exact_span_ref
            AND j.parser_run_ref=%s
-           AND ('db-parser:' || j.parser_run_ref || ':' || j.region_ref)=
-               (SELECT bb.parser_receipt_ref
-                FROM pnf.statement_candidate_batch bb
-                WHERE bb.statement_ref=s.statement_ref
-                  AND bb.candidate_product_ref IS NOT NULL
-                ORDER BY bb.batch_ref LIMIT 1)
           JOIN pnf.statement_candidate_batch b ON b.statement_ref=s.statement_ref
            AND b.parser_receipt_ref=('db-parser:' || j.parser_run_ref || ':' || j.region_ref)
           WHERE m.mention_ref=%s AND s.source_revision_ref=%s
@@ -143,8 +137,15 @@ def validate_region(item, tokens, entities, factors, l2) -> None:
     for factor in l2:
         require(factor["product_ref"] == item["candidate_product_ref"],
                 "L2 foreign product")
-    expected = f'candidate-pnf-db:{item["candidate_ref"].split("candidate-pnf-db:",1)[1]}'
-    require(expected == item["candidate_ref"],"invalid native candidate")
+    matching = [t for t in tokens if t["start_char"] == item["source_start_char"]
+                and t["end_char"] == item["source_end_char"]]
+    require(len(matching) == 1, "mention does not align to a unique native token")
+    token = matching[0]
+    expected = (f'candidate-pnf-db:{item["parser_run_ref"]}:'
+                f'{item["exact_span_ref"]}:{token["token_ordinal"]}:'
+                f'{token["start_char"]}:{token["end_char"]}')
+    require(item["candidate_ref"] == expected,
+            "mention candidate reference does not match native token")
 
 
 def verify_owner_carrier(native: dict, owner: dict) -> dict:

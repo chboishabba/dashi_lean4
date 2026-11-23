@@ -54,6 +54,17 @@ echo "No identity or QID promotion is performed."
     "$OUT/native-frontier.json"
 ) | tee "$OUT/lean-frontier-kernel.log"
 
+# NEW: actual kernel check of the conditional semantic repair contract.
+# This is not a positive unique-antecedent admission. It proves
+# omission/refutation, S29 Pending impossibility, local uniqueness from
+# a complete reviewed typed set, consumer invariance and retraction.
+(
+  cd "$ROOT"
+  lake env lean \
+    DASHI/output-final_aristotle/RequestProject/Slr/GwbCoreferenceFormalRepair.lean
+) | tee "$OUT/lean-coreference-formal-repair.log"
+echo "GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK"
+
 # Optional original SensibLaw typed-binding graph: this runs the ORIGINAL
 # producer on a full-book exact-content PNF/annotation graph, not a new binder.
 # Refuse foreign source revisions, source work aliases and missing factor spans.

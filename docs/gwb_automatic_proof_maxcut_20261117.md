@@ -1167,3 +1167,80 @@ corpus, write identity rows from lexical candidates, or run the legacy
 numeric identity benchmark against the unrelated native source.
 No new schema, semantic admission or proof outcome was established
 by this checkpoint.
+
+## 2026-11-23 — C4.09b native identity proof inspection / P10 minimum JMD target
+
+Commits on open main-based PR #112:
+- 7012521cc42c: tools/gwb_native_identity_gate.py
+- abcd12e3debc: tests/test_gwb_native_identity_gate.py
+- 4e17d2434655 + f0b4b89f646f: tools/GwbQ207MinimalRunner.lean and scripts/run_gwb_q207_minimal.sh
+- 0e63e27ac5a4 + 8b27535fab08: require original migration-077 unique token-to-PNF-object anchor and test its negative cases.
+
+C4.09b now has a READ-ONLY, REPEATABLE READ inspection implementation. It
+consumes the actual original native carrier, an original-owner semantic graph,
+an independently exported exact numeric owner crosswalk and original SensibLaw
+PostgreSQL proof objects. Original native token/region alignment is checked
+through tools/gwb_native_binding_adapter.py. The new gate uses the original
+owner factor metadata.atom_span_ref or licensing.mentions/metadata.mention_ref,
+not any invented token-index metadata field.
+
+It then requires ALL of the following persisted owner evidence:
+1. Exact run/document/region/mention coordinates and owner-graph ref.
+2. A unique execution.semantic_pnf_parser_object_anchor from SensibLaw 077,
+   with the focus token ordinal, source characters, surface, PRON POS,
+   run and document. Same-sentence membership alone fails.
+3. The exact Level-1 hyperedge and original source object.
+4. A singular resolved_unique frontier demand, outcome_state=2,
+   candidate_count=1, selected_target_kind=1.
+5. Current authority_class=2 identity projection anchored to that target.
+6. Admitted witness of kind=5 (anaphor_demand_resolution),
+   candidate_count=1, admission_state=2 and projection membership.
+7. Original identity-substitution:v1 Level-3 derivation on that same
+   Level-1 premise, retaining the same admitted witness and entity.
+
+No identity row, parser, semantic factor, QID, authority or source is
+manufactured or modified. The reference-binding candidate/demand machinery
+still belongs to original SensibLaw; candidate sets are not positive
+identity admissions. Native he remains separate from Q207. The native
+sentence refers to the 1980 Reagan vice-presidency context, so retain
+Q23505 (George H. W. Bush) as a competing hypothesis rather than automatically
+attaching Q207 (George W. Bush).
+
+Local execution: 18/18 isolated Python tests PASS for the numeric proof
+discriminator. The test suite stubs the earlier native-to-owner verifier;
+it is NOT a live SensibLaw DB or same-source owner-graph receipt.
+C4.09a 12/12 and the real 31-token/2-NER capture remain accepted separately.
+
+Run local tests:
+  python3 -m unittest discover -s tests -p test_gwb_native_identity_gate.py -v
+With a genuinely original owner graph/crosswalk and local SensibLaw DB:
+  SENSIBLAW_DATABASE_URL=$SENSIBLAW_DATABASE_URL python3 -m tools.gwb_native_identity_gate --native .dashi/gwb-relation/native-he-binding-carrier-v1.json --owner ORIGINAL_OWNER_JSON --owner-crosswalk ORIGINAL_NUMERIC_CROSSWALK_JSON --output .dashi/gwb-relation/native-he-admitted-identity-v1.json
+
+Required crosswalk: source_revision_ref, parser_run_ref, region_ref,
+source_start_char, source_end_char, surface, candidate_ref,
+owner_document_ref, owner_run_ref, coordinate_frame (region_local or
+source_absolute), factor_ref, owner_graph_ref, source_object_id,
+premise_factor_id, demand_id. Unchecked user-supplied coordinates do
+not create semantic authority; the original graph/DB proof chain must
+independently match them.
+
+C4.09b status: INSPECTOR SOURCE-WRITTEN, UNIT TESTS PASS;
+LIVE NATIVE ADMISSION BLOCKED by absent original same-region SensibLaw
+semantic graph, numeric source crosswalk and original DB positive proof.
+
+P10 independent lane: tools/GwbQ207MinimalRunner.lean imports the original
+JMD RequestProject.Cli.Import, checks the Q207 ID / English label /
+enwiki title in supplied EntityData JSON, and constructs a small checked
+Lean equality witness without evaluating the full 643-sentence GWB article.
+Run after confirming the pinned 4.28.0 Cli.Import olean is fresh:
+  bash scripts/run_gwb_q207_minimal.sh /path/to/original-Q207-EntityData.json
+
+This runner has a 90-second deadline, local inspection log under
+.dashi/gwb-q207/minimal-kernel.log and requires the exact
+GWB_Q207_MINIMAL_KERNEL_OK marker with zero exit code.
+Absent/stale cache, timeout or mismatch is NOT a proof receipt.
+P10 status: SOURCE-WRITTEN, NO LEAN KERNEL RUN IN THIS ENVIRONMENT.
+This JMD source-field lemma does NOT prove the Wikipedia article digest,
+native he identity, Q207 property support, historical truth or simultaneous
+Wikidata/Wikipedia revision. Property/ontology proofs and source-to-KB
+alignment remain distinct future obligations. No CI, TAR or reparse.

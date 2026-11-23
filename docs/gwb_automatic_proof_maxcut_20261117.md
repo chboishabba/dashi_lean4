@@ -1,7 +1,174 @@
 # GWB → JMD → SLR → Lean/Agda automatic proof programme
-Updated: 2026-11-20 · execution branch: dashi_lean4 PR #112
+Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
 
-**Current controlling plan:** see C4.09 canonical next cut at the end of this document; earlier status tables are historical checkpoints.
+**Current controlling plan:** the executive roadmap immediately below. Earlier C4.09 "next cut", P0 and C4.11/C4.12 notes are historical receipts, not pending work.
+
+## Controlling executive roadmap — 23 November 2026 (supersedes historical gate plans)
+
+**Decision:** stop C4.xx inspection-by-inspection work. Ship **one
+source-to-checked-answer vertical slice per independent source lane**,
+using existing production owners. All dated sections below are retained
+as historical receipts, not as the controlling task queue.
+
+### Exact acceptance now paid
+
+| Cut | Evidence accepted | Still unpaid |
+| --- | --- | --- |
+| C1/C2 pinned 643-sentence Wikipedia source and source query surface | 1,468 source anchors, 760 predicate queries, targeted Lean acceptance already reported in this programme | No claim that candidate readings are all semantic interpretations |
+| C3 native M12/S28 provenance | Original parser/source/statement machinery, checked native consumers and exact coordinate audit exist; partial C3 trace compiled | Live coherent M12+S28 **same-source production batch** with reviewed ancestry, event/time source statements and negative controls; do not mix source hashes |
+| C4.09a–C4.12 book pronoun | C4.09 context read PASS; C4.10 Bush [4310,4314)→he [4534,4536) exact original Unicode geometry PASS (14/14); C4.11 source-store 4/4, CLI 1/1 and S29 PostgreSQL Pending PASS; C4.12 source-store **7/7**, CLI **1/1**, PostgreSQL inspect **PASS**, original sentences **19–25** reopened on SLR PR #78 commit `1c40100` | Reviewer judgment, accessible alternatives, typed unique antecedent proof, local identity admission/retraction |
+| P10 minimum Q207 JMD | Lean lightweight Q207 source-field check `GWB_Q207_MINIMAL_ACCEPTED` PASS; independent Q207 EntityData verified | Property/KB theorem and semantic article alignment, not simply label/sitelink equality |
+| C5/C6 consumers/formal | Original golden finite-consumer, SourceQueryLicence, JMD KB proof and formal-demand/reopen owners already exist | One *actual evaluated* licensed source answer, reviewed source ↔ KB correspondence, per-demand exact checker/payment and residual-ledger closure |
+
+The full programme is **not complete**. A Rust test, a pending S29
+item, a candidate coordinate check, a QID label test and an already
+compiled *conditional* Lean theorem are distinct, non-interchangeable
+payments.
+
+S29 persisted item (still **Pending**, no human command):
+`review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1`.
+C4.12 local inspect passed with no identity, QID, or claim-truth promotion.
+Do not repeat C4.09/C4.10/C4.11/C4.12 as outstanding diagnostics.
+
+### Critical scope correction: two distinct source lanes
+
+**Lane B (book / GHWB hypothesis)**: the native C4.10 `he` sentence
+comes from a source whose work-level match is *41: Inside the Presidency
+of George H. W. Bush* (2014), with original SLR document hash
+`7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30`.
+The exact source predecessor nominates `Bush`; the title, discourse
+and source-work evidence **suggest** George H. W. Bush/Q23505, but do
+not prove unique antecedence, exact work manifestation equivalence or
+external QID identity. The original 4+2 sentences now reopened and
+must be used for *semantic accessibility and competing referents*.
+
+**Lane W (Wikipedia / GWB Q207)**: the distinct pinned 643-sentence
+article `enwiki-revid:1385850169`, original digest
+`a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`,
+concerns George W. Bush / Q207. Its independently passing minimal
+source-field checker does not resolve the book's `he` or establish
+a cross-source assertion. Do not substitute Q207 for Q23505, and do
+not attach a GHWB theorem to the GWB article without a separately
+reviewed correspondence. Original Wikipedia, book, multi-document
+41k-sentence inventory and 51-QID world are *four evidence scopes*.
+
+### Next P0 work is one integrated **M1–M3 maximum-cut packet**, not serial micro-gates
+
+**M1. Book source-local semantic completion (SLR owns)**
+
+Use C4.12 native PostgreSQL inspect and **existing**
+SensibLaw `binding_candidate_sets.py` typed/accessibility/morphology
+semantics as the reference, rather than writing a second NLP parser
+or assuming surname proximity resolves identity. Enumerate the actual
+book discourse candidates from sentences 19–25 and relevant accessible
+region. For the focus `he`, record each candidate's exact original
+mention/span/factor refs; same document+revision; discourse access,
+quotation/speaker scope and compatibility; explicit exclusions and
+unresolved alternatives. `Bush` is an accepted *candidate span* only.
+If there is one independently justified referent, submit the **real**
+review command through original S29 and create a *separate* source-local
+antecedent/identity-resolution witness with reviewed authority,
+policy, resolver, candidate-set and accessibility refs. If the witness
+is insufficient, retain `Narrowed` or `CandidateSet`; it is a
+successful unresolved result, not licence to invent certainty.
+
+Exact S29 `Accept` is **not** semantic admission. Preserve Level-1
+source premise, separately reversible Level-3 identity substitution,
+and a retraction/replay that restores the original interpretation.
+Reopen evidence via native store; no untracked JSON assumed authority.
+Acceptance includes singular unique **positive only if evidence
+supports it**, multi-candidate ambiguity, expletive/plural,
+homonymous Bush, wrong statement/source, and forged S29 receipt.
+No fabricated reviewer action is permitted.
+
+**M2. Complete one licensed book query and one independently anchored
+world-check (SLR + DASHI + JMD).**
+
+On actual *paid* local identity (or explicit unresolved outcome),
+evaluate the concrete query **"To whom does 'he' in sentence 23
+refer?"** as a source-relative answer with exact original span,
+evidence lineage, reversible source back-reference and
+`SourceQueryLicence`/finite-consumer correctness; prove
+consumer-relative invariance over all supported compatible readings,
+or retain unresolved if it is not invariant. Avoid claiming global
+semantic completeness from finite enumeration.
+
+Separately, if source-relative identity is admitted and the document
+actor is independently identified, fetch and pin the actual GHWB
+EntityData `Q23505` revision, source/sitelink/external-authority
+witness and one JMD KB proposition. Check the original JMD property
+proof with Lean kernel; record property supported/not-supported as a
+KB-in-snapshot result, not as historical truth. Q207 is a mandatory
+negative mismatch control for this *book* pronoun. If no independent
+world identity evidence exists, keep a successful *local* answer and
+explicit `external_qid=UNPAID` residual rather than falsely closing.
+
+**M3. Independently close one Wikipedia article ↔ JMD property
+vertical slice (C3 + C5 + C6).**
+
+For the pinned 643-sentence Q207 article, bind one real source
+statement/typed PNF observation to native reviewed M12/S28
+provenance (only where actually relevant), event/time semantics where
+used, an explicitly reviewed article proposition ↔ JMD item/property
+alignment, a separately checked KB support theorem and a
+consumer-scoped answer. Require distinct source statement,
+proposition, event occurrence, temporal assertion and world-KB
+claims. Use original SLR source-bound admission, original JMD importer
+and PKB/checker and original formal demand/obligation/statement-digest
+payment **only if that demand actually exists**. An exact checker
+receipt must match its named obligation; generic "Lean passed" does not
+pay an unrelated source proposition.
+
+Perform positive/negative receipts together: wrong QID, changed
+Wikidata revision/property, mismatched article and book source
+hash, forged claim truth, wrong event/time attachment, missing
+source ancestry, nonexhaustive consumer, and source-independent
+cross-work surname match must remain rejected.
+
+### After M1–M3: one bounded batch, not 3,078 manual gate iterations
+
+Port/consume the original typed anaphor candidate and reviewed
+semantics into production SLR using the same source coordinate and
+witness contracts. Run a measured batch across the previously
+observed **29,043 mentions / 3,078 pronoun-like candidates**,
+reporting source-scoped candidate, uniquely reviewed, ambiguous,
+unresolved, reversible and externally corroborated counts. These
+are existing inventory counts, not promised production identity
+success counts. The historical 51 QIDs are a seed, not a proof of
+closed-world exhaustiveness. Reopen only actual changed evidence/
+dependent fibres through the existing SLR C6/formal bridge. Scale
+the answer certificate by **consumer-relevant completeness**, not
+"every reading of every document".
+
+### Non-goals, ownership and finish line
+
+- No further C4.xx-only exploratory tools until M1–M3 have an
+  actual positive or explicitly unresolved end-to-end receipt.
+- SLR Rust/PostgreSQL: original source/PNF/S29, candidate sets,
+  governed semantic resolutions and reversible consumption.
+- SensibLaw Python: original typed-binding/Level-3 *reference*
+  contracts, not a new native DB authority.
+- DASHI Lean/Agda: consumer-relative/source proof and executable
+  nonpromotion/negative controls; no arbitrary Prop hypothesis
+  represented as live evidence.
+- JMD meta-introspector: original EntityData import, KB property
+  proof and per-QID snapshot checks; **not** historical truth or
+  source-language reading.
+- Workflow: locally checked native Rust + PostgreSQL + pinned
+  Lean 4.28, targeted 90s/checkpointed paths, no GitHub CI,
+  TAR or archive rebuild, no automatic S29 reviewer impersonation,
+  no cleanup of unrelated untracked artifacts.
+
+**Cut closure criterion:** one real original-source pronoun answer
+(or traceable unresolved answer) with governed local review and
+consumer-relative Lean correctness; one independently checked JMD
+property answer with explicit alignment or gap; one mismatch-negative
+receipt; exact bidirectional original↔canonical coordinates and
+retraction/reopen ledger; a single reproducible joint acceptance
+manifest recording each paid and unpaid obligation. This is
+*one consumer-scope success*, **not** full historical/world completeness.
+
+---
 
 ## Acceptance objective
 

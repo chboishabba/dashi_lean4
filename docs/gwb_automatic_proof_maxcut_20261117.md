@@ -8,40 +8,40 @@ Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
 ### Implementation packet now source-written — M1/M2 consumer boundary + optional original M3
 
 **Source-written on PR #112, not yet operator-run:** the integrated
-\`scripts/run_gwb_native_maxcut_packet.sh\` drives real SLR
-PostgreSQL \`inspect\`, original parser-run discovery and exact POS/
+`scripts/run_gwb_native_maxcut_packet.sh` drives real SLR
+PostgreSQL `inspect`, original parser-run discovery and exact POS/
 morph/NER source nominations, 24+ new Python fixture contracts,
 14 real-input adversarial checks, and targeted
-\`GwbNativeAntecedentMaxCut.lean\` source/retraction/consumer-boundary
+`GwbNativeAntecedentMaxCut.lean` source/retraction/consumer-boundary
 proofs. Original SLR PR #78 adds
-\`native_antecedent_frontier.rs\`, exact original five-region parser
-coverage and \`native-antecedent-review runs/frontier\` CLI. The
-optional original SensibLaw \`compact_binding_artifacts\` weld executes
+`native_antecedent_frontier.rs`, exact original five-region parser
+coverage and `native-antecedent-review runs/frontier` CLI. The
+optional original SensibLaw `compact_binding_artifacts` weld executes
 the **original** typed binder on *exact same-book* PNF+annotation
 artifacts; cannot reuse a different GWB Wikipedia/article or book
 manifestation. Additional negative tests check the factor crosswalk.
 
 One command (assuming current PR branches):
-\`\`\`sh
+```sh
 SLR_ROOT=/path/to/slr DATABASE_URL="$DATABASE_URL" \
   bash scripts/run_gwb_native_maxcut_packet.sh
-\`\`\`
-Optional original type producer: \`SENSIBLAW_ROOT\` and
-\`GWB_ORIGINAL_BINDING_ARTIFACTS\`; optional original Q207 P5–P10
-conditional proof lane: \`GWB_RUN_WIKI_P10=1\`. Every run gets a new
-project-local \`.dashi/gwb-relation/m1-m3-maxcut/run-XXXXXXXX/\`
+```
+Optional original type producer: `SENSIBLAW_ROOT` and
+`GWB_ORIGINAL_BINDING_ARTIFACTS`; optional original Q207 P5–P10
+conditional proof lane: `GWB_RUN_WIKI_P10=1`. Every run gets a new
+project-local `.dashi/gwb-relation/m1-m3-maxcut/run-XXXXXXXX/`
 directory and preserves existing untracked data.
 
 The runner's successful **bounded result** is a real original-source
 parser candidate frontier, reviewed-identity **UNPAID** source
 answer, separate Q207 evidence lane and a review worksheet—not
-\`he=Bush\` or \`Q23505\`. Only exact source and bounded reader
+`he=Bush` or `Q23505`. Only exact source and bounded reader
 conditions are kernel checked. Full typed accessibility, an
 authorized original S29 human decision, separate admitted identity
 and Level-3 retraction, consumer-live coverage, Q23505 and reviewed
 JMD article-property alignment remain unimplemented/unpaid. Do not
 declare the programme complete on this marker. See
-\`docs/gwb_native_semantic_maxcut_operator_20261123.md\`.
+`docs/gwb_native_semantic_maxcut_operator_20261123.md`.
 
 
 

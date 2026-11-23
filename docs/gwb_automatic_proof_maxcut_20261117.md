@@ -1255,3 +1255,127 @@ negative controls raise the isolated read-only proof discrimination
 suite to 20/20 local PASS. The suite stubs native original validation
 because its original 12/12 acceptance belongs to C4.09a; do not promote
 the local DB simulation into original PostgreSQL evidence.
+
+## 2026-11-23 — C4.09 native SLR correction, source-work match, and Lean minimum dependency cut
+
+This is the **current controlling C4.09 path** and supersedes the older
+instruction to wait for a same-source SensibLaw *numeric prototype* graph.
+The 20/20 numeric inspector remains useful as optional parity, but its
+receipt now explicitly says production_slr_identity_admission=NOT_TESTED.
+It does not control original SLR production acceptance.
+
+### Actual SLR PR and main comparison
+
+Audited original SLR PRs #2, #5, #6, #18, #24, #25, #78 against current
+main. #5 relation-attachment and #6 semantic-status files are already
+byte-identical on main despite still-open draft PR metadata; original
+sl-semantic-admission is also on main with source-bound admission types
+that extend #2. #18 reviewed PNF and original SLR GWB chronology source
+materialization exist on main. #78 exposes the still-draft checked
+native parser/M12 CLI. These owners should be *reused*; do not
+cherry-pick old stacked PRs blindly or presume each open PR's unmerged
+status means its code is unavailable.
+
+Caution: sl-semantic-admission::admit_source_bound_candidate proves a
+candidate/scope *semantic admission boundary*, not that a pronoun
+resolves to a person. sl-semantic-status::IdentityResolutionReceipt
+and AntecedentResolutionReceipt are typed carriers, not a runtime
+automatic resolver. #24 reviewed world identity is different from
+same-article antecedent identity. Never promote source candidate,
+document topic, surname or normative delta into an admitted coreference.
+
+### Recovered original work-level provenance
+
+Original SLR native capture is
+.dashi/gwb-relation/native-he-binding-carrier-v1.json: sentence 23
+4526–4693, focus he at 4534–4536, 31 original parser tokens, two
+NER rows, original SHA-bound source revision 8dd2afe2..., and
+document:sha256:7ff2ec8f... . A separate source-work match was
+**actually checked** against SensibLaw
+demo/ingest/gwb/corpus_v1/wiki_timeline_gwb_corpus_v1.json
+Git blob 73b1b6cd5fc6f86bd6c70c64b1482fdc19e60c14:
+ev:0049's whitespace-normalized excerpt starts with the exact
+whitespace-normalized native 166-character sentence. The directly
+preceding same-source-*work* event ev:0045 discusses Bush. The
+inventory labels this work as 41: Inside the Presidency of
+George H. W. Bush (2014). This is strong source-work/discourse
+candidate evidence, **not** a check that the two manifests are
+the same exact content revision, nor an admitted he antecedent.
+George H. W. Bush/Q23505 is the natural *candidate* to review,
+not George W. Bush/Q207; neither QID is asserted for he.
+
+Committed artifacts/gwb-semantic-proof/native-he-source-work-crosscheck-v1.json
+and tools/gwb_source_work_crosscheck.py prove that candidate-level
+crosscheck deterministically from original source files, including
+pinned timeline blob, same work path, original span and
+nonpromotion. No work or QID equivalence is asserted.
+
+### Reopen canonical native discourse, no parser or duplicate database
+
+tools/gwb_original_source_context.py reads the original
+ingest.generic_source_revision + corpus.document +
+corpus.canonical_content + ingest.long_document_region +
+corpus.source_statement tables in one REPEATABLE READ READ ONLY
+transaction. It checks canonical SHA-256, document identity,
+complete captured native region, focus absolute character offsets
+(not UTF-8 byte offsets), original neighboring statement spans and
+candidate-only flags. It returns preceding/following original
+sentences as an *unresolved* antecedent review input, no parser,
+cross-source re-tokenisation, numeric SensibLaw materialisation,
+or database mutation.
+
+Run only with original local SLR PostgreSQL and original capture:
+
+    DATABASE_URL="$DATABASE_URL" python3 -m tools.gwb_original_source_context \
+      --native .dashi/gwb-relation/native-he-binding-carrier-v1.json \
+      --before 4 --after 2 \
+      --output .dashi/gwb-relation/native-he-original-context-v1.json
+
+Independent existing work-level crosscheck (requires checked-out
+SensibLaw timeline file, not an invented source):
+
+    python3 -m tools.gwb_source_work_crosscheck \
+      --native .dashi/gwb-relation/native-he-binding-carrier-v1.json \
+      --timeline /path/to/SensibLaw/demo/ingest/gwb/corpus_v1/wiki_timeline_gwb_corpus_v1.json \
+      --crosscheck artifacts/gwb-semantic-proof/native-he-source-work-crosscheck-v1.json \
+      --output .dashi/gwb-relation/native-he-source-work-crosscheck-result.json
+
+Acceptance scope: **40/40 Python controls PASS locally** in an isolated
+environment, covering the original 20 numeric-prototype discriminator
+fixtures, 12 source-context provenance/Unicode controls and 8
+independent work crosscheck controls. These test sources use mocked
+read-only row fixtures and do NOT prove original DB or semantic
+admission. In particular the native live context run remains
+UNTESTED in this execution environment.
+
+### P10 timeout root fixed at import graph, not by lengthening timeout
+
+Source owner: original JMD/meta-introspector. Extracted the exact
+entityLabelIn and entityEnwikiTitle JSON-only functions from
+RequestProject/Cli/Import.lean into
+RequestProject/Cli/EntityIdentityCore.lean. Import.lean now imports
+the same shared core definitions, so no forked importer semantics.
+tools/GwbQ207MinimalRunner.lean imports **only** this JSON source
+core, not the full JMD Engine/Mathlib/643-sentence article projection.
+scripts/build_gwb_jmd_prerequisites.sh compiles core before Import.
+scripts/run_gwb_q207_minimal.sh builds the core if needed and runs the
+small theorem, both bounded by independent 90-second local timeouts.
+A zero exit plus the distinct GWB_Q207_MINIMAL_KERNEL_OK marker is
+required for P10 source-field kernel admission; cache mere existence
+does not suffice. No Lean binary/kernel run was available here.
+The earlier c0b6fa8a7 timeout is not reclassified.
+
+NEXT DECISIVE GATES (not conditional test suites):
+1. Locally reopen the original sentence-23 predecessor and successor
+   statements with the new read-only original-store command. Compare
+   actual mention/antecedent coordinates and local discourse.
+2. Obtain a *genuinely governed* same-source SLR identity/antecedent
+   review and admitted witness, preserving competing alternatives.
+   Existing SLR typed-status/semantic-admission owners are mandatory,
+   not a standalone candidate-only JSON promotion.
+3. Only if the admitted local actor is independently joined to an
+   external pinned source, check Q23505 or another reviewed QID
+   separately. Do not reuse the valid Q207 root topic to pay that gate.
+4. Run the new lightweight P10 kernel target against original Q207
+   EntityData; then separately compile full JMD KB/property or article
+   alignment. No CI, no TAR, no whole-wikidata build, no false pass.

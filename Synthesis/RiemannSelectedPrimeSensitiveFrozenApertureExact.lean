@@ -401,6 +401,79 @@ theorem primeAperturePuncturedShellMajorantSymbol_at_zero :
     primeAperturePuncturedShellMajorantSymbol 0 = 1 := by
   norm_num [primeAperturePuncturedShellMajorantSymbol]
 
+/-!
+## P0 32768 dyadic flag, 208:26 allocation and ADAPTIVE E2 source budget
+
+Reused original source owner:
+  DASHI.Analysis.RHQuartic163840DyadicTailHXIntertwinerExact.
+It provides a genuine 32768=8^5=2^15 indexed-plus-continuous
+q^-6 tail chart, independent from any arbitrary HEIGHT t>=32768.
+
+Previous E2 \`208=26*8\` was also merely the choice to split the
+margin 1/8 (arising from a δ=1/32 support-mass upper bound) into
+26 equal derivative term budgets 1/208. Changing the bump width
+changes 208; it is not a canonical RH action or the Albert J0 product.
+
+The SHARP actual 26-slot coefficient envelope is the existing
+\`primeAperturePuncturedShellMajorantSymbol\` (9+8+9); the true
+bound uses its 27 coefficients and a single positive weighted
+polynomial H(r), not 26 equal budgets. See DASHI RH PR #1533:
+  Docs/proofs/RHP0GeomFlag32768EqualSplit208AdaptivePrimeE2Source20261123.md
+  scripts/check_rh_p0_geomflag_208_adaptive_e2_20261123.py
+
+An explicit compact C∞ even flat-top b_p is obtained using the
+infinite convolution of centered uniform interval kernels of
+halfwidth 1/(256n²), followed by convolution with 1_[-3/128,3/128],
+reflected at ±log p. The support halfwidth is 1/32, plateau at
+1/64, mass 3/32, and
+  ||b_p^(m)||1 <= 4*256^(m-1)*((m-1)!)², m>=1.
+This supplies FULL 52nd-derivative finite constants mathematically.
+
+Let r=t/16 and E_j be the 26-slot shell majorant coefficients.
+  H(r) = 3/32 + Σ_{j=1..26}
+    E_j * 4*256^(2j-1)*((2j-1)!)² / r^(2j).
+Then ||Q_t(D)b_p||1 <= H(r). Source selected-W M4/mass/support
+give the exact physical-strip target floor for EVERY t>=19440:
+  m_W > (1/100)/r^6.
+For each four original pole-weighted prime port,
+  C_i <= K*H(r)/r,
+  K=6484375/7134511104 < 1/1000.
+
+The *adaptive* amplitudes
+  eps_i = kappa_i/[r^5*(1+H(r))], |kappa_i|<=1
+therefore give
+  Σ_i |eps_i| C_i <4K/r^6 <64m_W
+for EVERY t>=19440. H(r)->3/32, so the high-t prime scale
+remains r^-6 with attenuation tending 32/35.
+The unattenuated bound eps_i=r^-5 also meets this sufficient gate
+for t>=429936. Independent full E2 FarExact/post-sixth and E3
+signed strict bound are OPEN, as is smooth-carrier kernel inhabitation.
+These are source proof notes and scalar receipts, not Lean kernel theorems.
+-/
+
+/-- Exact geometric flag numerology, with the genuine dyadic source
+owner in DASHI. Not a zeta action or mandatory t cutoff. -/
+theorem primeApertureDyadicEightFifthIs32768 :
+    (8 : ℕ)^5 = 32768 := by norm_num
+
+theorem primeApertureDyadicTailDenominator :
+    (5 : ℕ) * 32768 = 163840 := by norm_num
+
+/-- E2's former equal-split budget is arithmetic, not an invariant action. -/
+theorem primeApertureFormer208EqualsTwentySixTimesEight :
+    (26 : ℕ) * 8 = 208 := by norm_num
+
+/-- A LOCAL exact rational checkpoint: the original selected-W
+fourth-moment remainder bound already beats 1/100 at r=1215,
+so using t=32768 as a necessary lower height was unjustified.
+The monotonic t>=19440 lifting is a mathematical/source E2 proof
+documented externally, not formalized by this rational checkpoint. -/
+theorem primeApertureTargetFloorRationalAt1215 :
+    (567 / (1600*24) : ℚ)
+        - (28125 / (4 * 1215^2) : ℚ)
+            * (1 + (25 / (4 * 1215^2) : ℚ))
+      > 1 / 100 := by norm_num
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

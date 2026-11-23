@@ -1,0 +1,198 @@
+import Lean
+
+/-!
+GWB native semantic repair.
+
+Source coordinates -> original typed and complete antecedent candidate set
+-> independent S29 review plus semantic admission -> unique local referent
+-> source-local consumer agreement. No automatic world/QID identity.
+
+The original 27 parser nominations and 25 spans do not establish coverage.
+A 64-member binder cap requires a proof about omitted candidates.
+All non-computational original-source, typed-resolution and reviewer
+payments are explicit, rather than manufactured from parser flags.
+-/
+
+namespace Wikidata.Slr.GwbCoreferenceFormalRepair
+
+structure SourceKey where
+  documentRef : String
+  sourceRevisionRef : String
+  deriving Repr, DecidableEq, BEq
+
+structure Mention where
+  source : SourceKey
+  statementRef : String
+  regionRef : String
+  startChar : Nat
+  endChar : Nat
+  surface : String
+  deriving Repr
+
+def SameOriginalSpan (a b : Mention) : Prop :=
+  a.source = b.source ∧
+  a.statementRef = b.statementRef ∧
+  a.regionRef = b.regionRef ∧
+  a.startChar = b.startChar ∧
+  a.endChar = b.endChar
+
+/-- Same physical span across token/NER channels is only source co-location. -/
+theorem colocated_observations_share_coordinates
+    {a b : Mention} (h : SameOriginalSpan a b) :
+    a.source = b.source ∧ a.startChar = b.startChar ∧
+      a.endChar = b.endChar := by
+  exact ⟨h.1, h.2.2.2.1, h.2.2.2.2⟩
+
+/-- Scope has one immutable source revision and a declared live referent
+    domain; merely listing candidates cannot prove the domain complete. -/
+structure ScopedFrontier (Factor : Type) where
+  originalSource : SourceKey
+  focus : Mention
+  candidates : List Factor
+  isLive : Factor → Prop
+  focusOriginal : focus.source = originalSource
+
+def ScopedCoverage {Factor : Type} (f : ScopedFrontier Factor) : Prop :=
+  ∀ c, f.isLive c → c ∈ f.candidates
+
+/-- If an omitted candidate is live, the finite binder frontier is NOT
+    complete, regardless of nearest surface, list length or reviewer choice. -/
+theorem omitted_live_candidate_blocks_coverage
+    {Factor : Type} (f : ScopedFrontier Factor) (omitted : Factor)
+    (live : f.isLive omitted) (notListed : omitted ∉ f.candidates) :
+    ¬ ScopedCoverage f := by
+  intro coverage
+  exact notListed (coverage omitted live)
+
+/-- Coreference is a reviewed equivalence of referents; distinct factor
+    references and duplicate token/NER rows do not establish or refute it. -/
+structure ReviewedDispositions {Factor : Type}
+    (f : ScopedFrontier Factor) (chosen : Factor) where
+  chosenMember : chosen ∈ f.candidates
+  chosenLive : f.isLive chosen
+  sameActor : Factor → Factor → Prop
+  refl : ∀ x, sameActor x x
+  symm : ∀ x y, sameActor x y → sameActor y x
+  trans : ∀ x y z, sameActor x y → sameActor y z → sameActor x z
+  everySurvivingFactor :
+    ∀ c, c ∈ f.candidates → f.isLive c → sameActor c chosen
+
+inductive S29Status where
+  | pending | accepted | rejected | needsEvidence | qualified | abstained
+  deriving Repr, DecidableEq
+
+/-- Workflow acceptance and separately proven source-local semantic
+    authority must BOTH exist; checked receipt provenance is an
+    independent premise supplied by the original owner. -/
+structure GovernedSemanticPayment (status : S29Status) where
+  workflowAccepted : status = .accepted
+  originalS29CommandRef : String
+  originalReviewItemRef : String
+  reviewerRef : String
+  policyRef : String
+  resolverRef : String
+  typedCandidateSetRef : String
+  independentSemanticOwnerCheck : Prop
+  semanticProof : independentSemanticOwnerCheck
+
+theorem pending_s29_cannot_pay :
+    ¬ Nonempty (GovernedSemanticPayment .pending) := by
+  intro witness
+  cases witness with
+  | intro payment => cases payment.workflowAccepted
+
+theorem rejected_s29_cannot_pay :
+    ¬ Nonempty (GovernedSemanticPayment .rejected) := by
+  intro witness
+  cases witness with
+  | intro payment => cases payment.workflowAccepted
+
+structure ResolvedSourceLocal
+    {Factor : Type} (f : ScopedFrontier Factor)
+    (chosen : Factor) (status : S29Status) where
+  coverage : ScopedCoverage f
+  dispositions : ReviewedDispositions f chosen
+  governed : GovernedSemanticPayment status
+
+/-- Positive result is unique up to reviewed same-local-actor equivalence,
+    not equality of two Bush strings or two distinct span positions. -/
+theorem unique_source_local_referent
+    {Factor : Type} {f : ScopedFrontier Factor}
+    {chosen : Factor} {status : S29Status}
+    (paid : ResolvedSourceLocal f chosen status) :
+    ∀ c, f.isLive c →
+      paid.dispositions.sameActor c chosen := by
+  intro c live
+  exact paid.dispositions.everySurvivingFactor c
+    (paid.coverage c live) live
+
+/-- A consumer gets a source-relative stable answer only if evaluating two
+    reviewed equivalent local actors yields the same answer. -/
+theorem all_surviving_readings_agree
+    {Factor Answer : Type} {f : ScopedFrontier Factor}
+    {chosen : Factor} {status : S29Status}
+    (paid : ResolvedSourceLocal f chosen status)
+    (evaluate : Factor → Answer)
+    (congruent :
+      ∀ x y, paid.dispositions.sameActor x y →
+        evaluate x = evaluate y) :
+    ∀ r, f.isLive r → evaluate r = evaluate chosen := by
+  intro r live
+  exact congruent r chosen (unique_source_local_referent paid r live)
+
+/-- A genuine live rival with another answer defeats an unjustified
+    source-relative licence, including a convenient surname-first answer. -/
+theorem rival_reading_blocks_answer
+    {Factor Answer : Type} (f : ScopedFrontier Factor)
+    (chosen rival : Factor) (evaluate : Factor → Answer)
+    (liveRival : f.isLive rival)
+    (differentAnswer : evaluate rival ≠ evaluate chosen) :
+    ¬ (∀ r, f.isLive r → evaluate r = evaluate chosen) := by
+  intro invariant
+  exact differentAnswer (invariant rival liveRival)
+
+/-- Level-3 substitution is separate and reversible, preserving the
+    exact Level-1 immutable source premise. -/
+structure LevelThree (Factor : Type) where
+  original : Mention
+  localReferent : Option Factor
+  semanticPaymentRef : Option String
+
+def retract {Factor : Type} (p : LevelThree Factor) : LevelThree Factor :=
+  { p with localReferent := none, semanticPaymentRef := none }
+
+theorem retract_preserves_original {Factor : Type} (p : LevelThree Factor) :
+    (retract p).original = p.original := rfl
+
+theorem retract_clears_semantic_payment {Factor : Type}
+    (p : LevelThree Factor) :
+    (retract p).localReferent = none ∧
+    (retract p).semanticPaymentRef = none := ⟨rfl, rfl⟩
+
+/-- Original JMD/entity-data evidence remains an independent property
+    and world-identity payment, not a field on the local referent. -/
+structure IndependentWorldBridge where
+  originalSource : SourceKey
+  originalLocalActorRef : String
+  pinnedExternalQid : String
+  externalRevisionRef : String
+  JmdStatementRef : String
+  independentExternalAuthority : Prop
+  externalProof : independentExternalAuthority
+
+theorem q207_is_not_q23505 :
+    ("Q207" : String) ≠ "Q23505" := by decide
+
+theorem book_is_not_wikipedia_source :
+    ("7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30" : String) ≠
+    ("a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" : String) := by
+  decide
+
+end Wikidata.Slr.GwbCoreferenceFormalRepair
+
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.omitted_live_candidate_blocks_coverage
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.pending_s29_cannot_pay
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.unique_source_local_referent
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.all_surviving_readings_agree
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.rival_reading_blocks_answer
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.retract_preserves_original

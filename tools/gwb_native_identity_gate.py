@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""C4.09b: read-only proof-relevant native↔SensibLaw identity inspection.
+"""OPTIONAL C4.09b parity: native↔SensibLaw NUMERIC PROTOTYPE inspection.
 
 Requires *original* owner semantic factors and an explicit owner-produced
 source-object crosswalk. Reads the original SensibLaw numeric proof tables;
 never creates a factor, resolver decision, witness, QID or database mutation.
+This is NOT the native SLR production identity gate; its positive result stays
+within the separately identified SensibLaw numeric object/DB proof scope.
 """
 from __future__ import annotations
 
@@ -167,6 +169,8 @@ def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
             "derivation_ids": [row[0] for row in derivations],
             "source_alignment": alignment["source_alignment"],
             "identity_admission": "ORIGINAL_DB_ADMITTED_RESOLVED_UNIQUE",
+            "authority_scope": "sensiblaw_numeric_prototype_only",
+            "production_slr_identity_admission": "NOT_TESTED",
             "external_qid": "NOT_TESTED", "historical_truth": "NOT_LICENSED"}
 
 
@@ -187,6 +191,7 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(receipt, indent=2) + "\n")
     print("GWB_C409B_ORIGINAL_DB_IDENTITY_ADMISSION_OK")
+    print("SENSIBLAW_NUMERIC_PROTOTYPE_ONLY_NOT_NATIVE_SLR_ADMISSION")
 
 
 if __name__ == "__main__":

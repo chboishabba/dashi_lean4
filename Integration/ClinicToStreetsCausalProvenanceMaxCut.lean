@@ -4,7 +4,7 @@ import Integration.ClinicToStreetsCausalProvenance
 # Clinic-to-Streets causal-provenance max-cut
 
 Refines the earlier Boolean provenance-erasure witness onto one literal finite
-causal DAG.  The weights and responsibility coordinates are model coordinates,
+causal DAG. The weights and responsibility coordinates are model coordinates,
 not empirical estimates, diagnoses, legal responsibility, or moral fault.
 -/
 
@@ -13,19 +13,12 @@ namespace Integration.ClinicToStreetsCausalProvenanceMaxCut
 open Integration.ClinicToStreetsCausalProvenance
 
 inductive Node
-  | structuralCondition
-  | familySite
-  | psychicState
-  | collectiveAction
-  | individualAction
+  | structuralCondition | familySite | psychicState | collectiveAction | individualAction
   deriving DecidableEq, Repr
 
 inductive Edge
-  | structuralToFamily
-  | familyToPsychic
-  | structuralToPsychic
-  | psychicToCollective
-  | psychicToIndividual
+  | structuralToFamily | familyToPsychic | structuralToPsychic
+  | psychicToCollective | psychicToIndividual
   deriving DecidableEq, Repr
 
 def edgeSource : Edge → Node
@@ -49,10 +42,7 @@ def edgeWeight : Edge → Nat
   | .psychicToCollective => 3
   | .psychicToIndividual => 1
 
-inductive InterpretationView
-  | full
-  | atomised
-  | reskilled
+inductive InterpretationView | full | atomised | reskilled
   deriving DecidableEq, Repr
 
 def edgeVisible : InterpretationView → Edge → Bool
@@ -64,16 +54,14 @@ def edgeVisible : InterpretationView → Edge → Bool
 
 theorem structural_family_deleted_by_atomisation :
     edgeVisible .full .structuralToFamily = true ∧
-    edgeVisible .atomised .structuralToFamily = false := by
-  constructor <;> rfl
+    edgeVisible .atomised .structuralToFamily = false := ⟨rfl, rfl⟩
 
 theorem structural_psychic_deleted_by_atomisation :
     edgeVisible .full .structuralToPsychic = true ∧
-    edgeVisible .atomised .structuralToPsychic = false := by
-  constructor <;> rfl
+    edgeVisible .atomised .structuralToPsychic = false := ⟨rfl, rfl⟩
 
 theorem family_psychic_retained_by_atomisation :
-    edgeVisible .atomised .familyToPsychic = true := by rfl
+    edgeVisible .atomised .familyToPsychic = true := rfl
 
 def psychicUpstreamSalience : InterpretationView → Nat
   | .full => 9
@@ -81,12 +69,10 @@ def psychicUpstreamSalience : InterpretationView → Nat
   | .reskilled => 9
 
 theorem atomisation_deletes_represented_upstream_salience :
-    psychicUpstreamSalience .full = 9 ∧
-    psychicUpstreamSalience .atomised = 3 := by
-  constructor <;> rfl
+    psychicUpstreamSalience .full = 9 ∧ psychicUpstreamSalience .atomised = 3 := ⟨rfl, rfl⟩
 
 theorem reskilling_restores_represented_upstream_salience :
-    psychicUpstreamSalience .reskilled = psychicUpstreamSalience .full := by rfl
+    psychicUpstreamSalience .reskilled = psychicUpstreamSalience .full := rfl
 
 structure ResponsibilityProfile where
   structuralShare : Nat
@@ -102,17 +88,13 @@ theorem atomisation_reassigns_structural_share_to_individual :
     fullResponsibility.structuralShare = 6 ∧
     atomisedResponsibility.structuralShare = 0 ∧
     fullResponsibility.individualShare = 1 ∧
-    atomisedResponsibility.individualShare = 7 := by
-  repeat' apply And.intro
-  all_goals rfl
+    atomisedResponsibility.individualShare = 7 := ⟨rfl, rfl, rfl, rfl⟩
 
 theorem reskilling_restores_responsibility_profile :
-    reskilledResponsibility = fullResponsibility := by rfl
+    reskilledResponsibility = fullResponsibility := rfl
 
 inductive ActionOption
-  | individualAdaptation
-  | collectiveCoordination
-  | structuralIntervention
+  | individualAdaptation | collectiveCoordination | structuralIntervention
   deriving DecidableEq, Repr
 
 def actionAvailable : InterpretationView → ActionOption → Bool
@@ -128,26 +110,22 @@ def actionConeCardinality : InterpretationView → Nat
   | .reskilled => 3
 
 theorem atomisation_contracts_represented_action_cone :
-    actionConeCardinality .full = 3 ∧ actionConeCardinality .atomised = 1 := by
-  constructor <;> rfl
+    actionConeCardinality .full = 3 ∧ actionConeCardinality .atomised = 1 := ⟨rfl, rfl⟩
 
 theorem reskilling_reopens_represented_action_cone :
-    actionConeCardinality .reskilled = actionConeCardinality .full := by rfl
+    actionConeCardinality .reskilled = actionConeCardinality .full := rfl
 
 inductive ModelWeightImpliesEmpiricalMagnitude : Prop
 inductive ResponsibilityCoordinateImpliesMoralFault : Prop
 inductive ActionConeContractionImpliesIntent : Prop
 
-theorem model_weight_does_not_establish_empirical_magnitude :
-    ¬ ModelWeightImpliesEmpiricalMagnitude := by
+theorem model_weight_does_not_establish_empirical_magnitude : ¬ ModelWeightImpliesEmpiricalMagnitude := by
   intro h; cases h
 
-theorem responsibility_coordinate_does_not_establish_moral_fault :
-    ¬ ResponsibilityCoordinateImpliesMoralFault := by
+theorem responsibility_coordinate_does_not_establish_moral_fault : ¬ ResponsibilityCoordinateImpliesMoralFault := by
   intro h; cases h
 
-theorem action_cone_contraction_does_not_establish_intent :
-    ¬ ActionConeContractionImpliesIntent := by
+theorem action_cone_contraction_does_not_establish_intent : ¬ ActionConeContractionImpliesIntent := by
   intro h; cases h
 
 structure MaxCutBoundary where

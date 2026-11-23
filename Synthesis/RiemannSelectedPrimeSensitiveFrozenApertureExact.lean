@@ -249,6 +249,37 @@ quantitative E2 norms (including sixth/eighth absolute shells) a MAJOR
 independent obligation; it cannot be called a ready-to-use RH test.
 -/
 
+/-- Scalar symbol of the real even fourth-order annihilator for
+exp(±u/2)*cos(omega*u). This expression is even in D. -/
+def primeAperturePoleModeSymbol (omega D : ℝ) : ℝ :=
+  (D^2 + omega^2 + (1/4 : ℝ))^2 - D^2
+
+theorem primeAperturePoleModeSymbol_eq_shifted
+    (omega D : ℝ) :
+    primeAperturePoleModeSymbol omega D
+      = ((D-(1/2 : ℝ))^2+omega^2)
+          * ((D+(1/2 : ℝ))^2+omega^2) := by
+  unfold primeAperturePoleModeSymbol
+  ring
+
+/-- The complete source annihilator symbol is monic of formal order 52:
+two quadratic factors to power nine, then four fourth-order pole factors. -/
+def primeApertureAnnihilatorSymbol (t r D : ℝ) : ℝ :=
+  (D^2+r^2)^9 * (D^2+(2*r)^2)^9
+    * primeAperturePoleModeSymbol (t-r) D
+    * primeAperturePoleModeSymbol (t+r) D
+    * primeAperturePoleModeSymbol (t-2*r) D
+    * primeAperturePoleModeSymbol (t+2*r) D
+
+/-- Source-level algebraic parity. The analytic differential-operator lift,
+compact support, 52-fold integration-by-parts and port-jet realization remain
+mathematical proofs only, NOT kernel-checked in this file. -/
+theorem primeApertureAnnihilatorSymbol_even
+    (t r D : ℝ) :
+    primeApertureAnnihilatorSymbol t r (-D)
+      = primeApertureAnnihilatorSymbol t r D := by
+  simp [primeApertureAnnihilatorSymbol, primeAperturePoleModeSymbol]
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

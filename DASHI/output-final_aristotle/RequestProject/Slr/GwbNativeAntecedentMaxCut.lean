@@ -88,7 +88,8 @@ theorem workflow_does_not_supply_semantic_evidence
     (h : ¬ ∃ _ : SemanticResolutionEvidence focus candidate, True) :
     ¬ ∃ _ : SemanticResolutionEvidence focus candidate, w.statusAccepted = true := by
   intro witness
-  exact h ⟨witness.1, trivial⟩
+  rcases witness with ⟨evidence, _⟩
+  exact h ⟨evidence, trivial⟩
 
 /-- Existing source Level-1 is retained; Level-3 is an optional *separate*
     projection, not a destructive rewrite of original source coordinates. -/
@@ -222,7 +223,7 @@ def checkBoundedFrontier (j : Json) : Bool :=
     "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30" &&
   stringField j "focus_surface" == "he" &&
   focus == 4534 && finish == 4536 &&
-  start == 4310 && stop == 4314 && stop ≤ focus &&
+  start == 4310 && stop == 4314 && decide (stop ≤ focus) &&
   !(stringField j "source_revision_ref").isEmpty &&
   !(stringField j "review_item_ref").isEmpty &&
   !(stringField j "parser_run_ref").isEmpty &&

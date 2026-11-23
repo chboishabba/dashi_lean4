@@ -105,6 +105,40 @@ def fixture() -> tuple[dict,dict]:
     return inspect,frontier
 
 
+def typed_weld_fixture(inspection,frontier):
+    return {
+        "schema":"gwb-original-sensiblaw-typed-binding-to-slr-v1",
+        "authority":"SOURCE_EQUIVALENCE_AND_CANDIDATE_SET_ONLY",
+        "book_document_ref":inspection["document_ref"],
+        "book_source_revision_ref":inspection["source_revision_ref"],
+        "canonical_content_sha256":BOOK_SHA,
+        "slr_parser_run_ref":frontier["parser_run_ref"],
+        "s29_review_item_ref":inspection["review_item_ref"],
+        "original_binder_compaction_mode":"direct_observation_graph_index",
+        "source_focus_factors":[{
+            "factor_ref":"factor:he","start_char":4534,
+            "end_char":4536,"surface":"he"
+        }],
+        "typed_candidate_sets":[{
+            "reference_factor_ref":"factor:he",
+            "original_typed_binding_authority":"candidate_only",
+            "members":[{
+                "factor_ref":"factor:Bush",
+                "original_source_anchor":{
+                    "document_ref":inspection["document_ref"],
+                    "start_char":4310,"end_char":4314,"surface":"Bush"
+                },
+                "independent_identity_admission_paid":False
+            }]
+        }],
+        "candidate_scope_exhaustive":False,
+        "resolved_unique":False,
+        "semantic_review_paid":False,
+        "external_qid_paid":False,
+        "claimed_same_work_or_qid_equivalence":False
+    }
+
+
 class OriginalSemanticMaxCutTests(unittest.TestCase):
     def gate(self,mutator=None,**kwargs):
         inspect,frontier=fixture()
@@ -139,6 +173,32 @@ class OriginalSemanticMaxCutTests(unittest.TestCase):
     def test_missing_jmd_kernel_marker_not_assumed(self):
         with self.assertRaises(EvidenceRejected):
             self.gate(q207_log="GWB_Q207_MINIMAL_ACCEPTED")
+    def test_original_typed_binding_source_weld_is_not_identity(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        m,_=make_ledger(i,f,typed_binding_weld=t)
+        self.assertTrue(m["book_lane"]["exact_original_typed_binding_source_crosswalk"])
+        self.assertFalse(m["book_lane"]["source_relative_identity_paid"])
+    def test_typed_binding_foreign_doc_rejected(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        t["typed_candidate_sets"][0]["members"][0][
+            "original_source_anchor"]["document_ref"]="document:foreign"
+        with self.assertRaises(EvidenceRejected):
+            make_ledger(i,f,typed_binding_weld=t)
+    def test_typed_binding_single_member_is_not_unique_review(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        t["resolved_unique"]=True
+        with self.assertRaises(EvidenceRejected):
+            make_ledger(i,f,typed_binding_weld=t)
+    def test_typed_binding_future_referent_rejected(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        t["typed_candidate_sets"][0]["members"][0][
+            "original_source_anchor"]["end_char"]=4539
+        with self.assertRaises(EvidenceRejected):
+            make_ledger(i,f,typed_binding_weld=t)
     def test_book_wikipedia_source_hashes_stay_distinct(self):
         self.assertNotEqual(BOOK_SHA,WIKI_SHA)
         self.rejected(lambda i,f:f.update(canonical_content_sha256=WIKI_SHA))

@@ -70,7 +70,6 @@ def factor_anchor_spans(artifacts: dict[str, Any], compiled: dict[str, Any],
         anchors[ref] = {
             "factor_ref":ref,
             "factor_revision_ref":a["factor_revision_ref"],
-            "source_revision_ref":"SOURCE_AS_ORIGINAL_CONTENT_MATCH",
             "document_ref":document,
             "start_char":st,"end_char":en,
             "surface":text[st:en],

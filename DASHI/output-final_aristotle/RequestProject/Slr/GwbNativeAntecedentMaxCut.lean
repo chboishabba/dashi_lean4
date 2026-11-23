@@ -185,3 +185,94 @@ example :
 end GwbNativeAntecedentMaxCut
 end Slr
 end Wikidata
+
+
+open Lean
+
+namespace Wikidata.Slr.GwbNativeAntecedentMaxCut
+
+private def stringField (j : Json) (key : String) : String :=
+  (j.getObjValAs? String key).toOption.getD ""
+
+private def natField (j : Json) (key : String) : Nat :=
+  (j.getObjValAs? Nat key).toOption.getD 0
+
+private def trueField (j : Json) (key : String) : Bool :=
+  (j.getObjValAs? Bool key).toOption.getD false
+
+private def falseField (j : Json) (key : String) : Bool :=
+  (j.getObjValAs? Bool key).toOption == some false
+
+/-- Audit the *structural* bounded parser frontier emitted by the original
+    SLR Rust/PG command. It cannot elevate a token, a surname or S29 status
+    into a reviewed actor. Identity and external KB obligations remain open. -/
+def checkBoundedFrontier (j : Json) : Bool :=
+  let nominations := (j.getObjValAs? (Array Json) "nominations").toOption.getD #[]
+  let focus := natField j "focus_start_char"
+  let finish := natField j "focus_end_char"
+  let start := natField j "nominated_source_anchor_start_char"
+  let stop := natField j "nominated_source_anchor_end_char"
+  let hasExactBush := nominations.any (fun n =>
+    stringField n "surface" == "Bush" &&
+    natField n "original_start_char" == 4310 &&
+    natField n "original_end_char" == 4314 &&
+    falseField n "semantic_admission_paid")
+  stringField j "schema" == "slr-native-antecedent-bounded-frontier-v1" &&
+  stringField j "canonical_content_sha256" ==
+    "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30" &&
+  stringField j "focus_surface" == "he" &&
+  focus == 4534 && finish == 4536 &&
+  start == 4310 && stop == 4314 && stop ≤ focus &&
+  !(stringField j "source_revision_ref").isEmpty &&
+  !(stringField j "review_item_ref").isEmpty &&
+  !(stringField j "parser_run_ref").isEmpty &&
+  !(stringField j "candidate_set_ref").isEmpty &&
+  natField j "parser_nomination_count" == nominations.size &&
+  natField j "original_regions_covered" == 5 &&
+  trueField j "structural_region_coverage_complete" &&
+  falseField j "semantic_candidate_exhaustiveness_paid" &&
+  falseField j "local_antecedent_admission_paid" &&
+  falseField j "external_qid_paid" &&
+  falseField j "claim_truth_paid" &&
+  stringField j "source_relative_answer" == "UNRESOLVED_REVIEW_REQUIRED" &&
+  hasExactBush
+
+structure CheckedBoundedFrontier (j : Json) where
+  evidence : checkBoundedFrontier j = true
+
+theorem checked_bounded_frontier_not_identity (j : Json)
+    (checked : CheckedBoundedFrontier j) :
+    checkBoundedFrontier j = true := checked.evidence
+
+end Wikidata.Slr.GwbNativeAntecedentMaxCut
+
+/-- The only acceptance marker is source/structural and consumer-boundary
+    validation. It does not certify coreference, S29 reviewer action, QID,
+    article alignment, event occurrence, claim truth or historical fact. -/
+def main (args : List String) : IO UInt32 := do
+  match args with
+  | [frontierPath] =>
+    let source ← IO.FS.readFile frontierPath
+    match Lean.Json.parse source with
+    | .error err =>
+      IO.eprintln s!"GWB_NATIVE_FRONTIER_REJECTED: invalid JSON {err}"
+      return 1
+    | .ok json =>
+      if h : Wikidata.Slr.GwbNativeAntecedentMaxCut.checkBoundedFrontier json = true then
+        let checked : Wikidata.Slr.GwbNativeAntecedentMaxCut.CheckedBoundedFrontier json := ⟨h⟩
+        let _ := Wikidata.Slr.GwbNativeAntecedentMaxCut.checked_bounded_frontier_not_identity json checked
+        IO.println "GWB_NATIVE_FRONTIER_BOUNDARY_KERNEL_OK"
+        IO.println "Book source/parser nominated frontier is bounded, nonpromoting, same-revision and unresolved"
+        IO.println "Still open: typed accessibility, S29 judgment, local identity, Q23505, consumer-live coverage, JMD property"
+        return 0
+      else
+        IO.eprintln "GWB_NATIVE_FRONTIER_REJECTED: source/digest/spans/nomination/nonpromotion mismatch"
+        return 1
+  | _ =>
+    IO.eprintln "usage: lake env lean --run DASHI/output-final_aristotle/RequestProject/Slr/GwbNativeAntecedentMaxCut.lean FRONTIER.json"
+    return 2
+
+#print axioms Wikidata.Slr.GwbNativeAntecedentMaxCut.licensed_source_answer
+#print axioms Wikidata.Slr.GwbNativeAntecedentMaxCut.counterexample_blocks_licence
+#print axioms Wikidata.Slr.GwbNativeAntecedentMaxCut.retraction_restores_original
+#print axioms Wikidata.Slr.GwbNativeAntecedentMaxCut.no_cross_document_antecedent

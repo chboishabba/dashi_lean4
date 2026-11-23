@@ -99,6 +99,6 @@ class NativeContextTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"neighbor source/region promoted"):self.reopened(statements=bad)
     def test_bounds_rejected(self):
         with self.assertRaisesRegex(ValueError,"context bounds"):
-            self.reopened(native=NATIVE, statements=STATEMENTS) if False else reopen(NATIVE,DB(),before=21)
+            reopen(NATIVE,DB(),before=21)
 
 if __name__=="__main__":unittest.main()

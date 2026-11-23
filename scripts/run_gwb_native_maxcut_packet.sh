@@ -44,6 +44,8 @@ echo "No identity or QID promotion is performed."
   cd "$ROOT"
   python3 -m unittest discover -s tests \
     -p test_gwb_native_maxcut_ledger.py -v
+  python3 -m unittest discover -s tests \
+    -p test_gwb_original_binding_interop.py -v
 )
 (
   cd "$ROOT"

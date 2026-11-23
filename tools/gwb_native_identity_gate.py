@@ -81,6 +81,22 @@ def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
         off = 0 if crosswalk["coordinate_frame"] == "source_absolute" else source["region_start_char"]
         a, b = focus["source_start_char"]-off, focus["source_end_char"]-off
         require(left <= a < b <= right, "owner numeric region excludes focus")
+        # Migration 077's original semantic_pnf_parser_object_anchor is a
+        # *unique* parser-token→PNF-object bridge. Region co-membership alone
+        # cannot license the native he→owner object correspondence.
+        tokref, tokindex, toka, tokb, orth, pos = one(cur, """
+            SELECT t.token_ref,t.local_token_ordinal,t.start_char,t.end_char,
+                   orth.symbol_text,pos.symbol_text
+              FROM execution.semantic_pnf_parser_object_anchor anchor
+              JOIN execution.semantic_parser_token t ON t.token_id=anchor.token_id
+              JOIN execution.semantic_symbol orth ON orth.symbol_id=t.orth_symbol_id
+              JOIN execution.semantic_symbol pos ON pos.symbol_id=t.pos_symbol_id
+             WHERE anchor.object_id=%s AND t.run_ref=%s AND t.document_ref=%s
+               AND t.start_char=%s AND t.end_char=%s
+        """, (obj, run, doc, a, b), "original unique parser-token/object anchor")
+        require(tokindex == index[0] and toka == a and tokb == b
+                and orth == focus["surface"] and pos == "PRON",
+                "original parser-token/object anchor disagrees with native he")
         linked, = one(cur, """
             SELECT count(*) FROM execution.semantic_pnf_hyperedge
              WHERE factor_id=%s AND object_id=%s

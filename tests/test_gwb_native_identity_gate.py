@@ -79,6 +79,8 @@ class IdentityGateTests(unittest.TestCase):
         result = self.run_gate()
         self.assertEqual(result["identity_admission"],"ORIGINAL_DB_ADMITTED_RESOLVED_UNIQUE")
         self.assertEqual(result["external_qid"],"NOT_TESTED")
+        self.assertEqual(result["production_slr_identity_admission"],"NOT_TESTED")
+        self.assertEqual(result["authority_scope"],"sensiblaw_numeric_prototype_only")
         self.assertEqual(result["derivation_ids"],[777])
     def test_archived_native_digest_changed(self):
         x=copy.deepcopy(NATIVE);x["source"]["region_literal_sha256"]="0"*64

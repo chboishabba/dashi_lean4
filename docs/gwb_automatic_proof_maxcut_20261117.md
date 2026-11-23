@@ -1035,3 +1035,63 @@ owner actually executes and exports a checked receipt. Keep no-TAR,
 project-directory-only, local verification, pinned Lean and no remote CI
 rules. This update is roadmap-only; no adapter, DB write, semantic
 admission, new kernel run or proof closure claimed.
+
+
+## 2026-11-23 — C4.09a source-bound carrier implementation (exact-head source audit)
+
+Implementation on PR #112:
+- `tools/gwb_native_binding_adapter.py`: read-only repeatable-read
+  capture of **one named native mention** through exact parser run,
+  source revision, original source statement, parser job, M12 batch and
+  candidate product; reopens all original region parser tokens (POS,
+  morphology, dependency head/label, absolute offsets), parser NER,
+  PNF product factors and L2 entity factors.
+- Exact checks: original region literal matches start/end coordinates,
+  mention and token surfaces/positions match that literal, monotonic
+  complete non-whitespace token coverage, local PNF factor offsets
+  return to original absolute region, unique candidate-ref rebuild,
+  dependency heads exist, all entities in source bounds, no entity
+  identity/semantic authority promotion.
+- Optional `--owner-artifacts` and `--sensiblaw-root` invoke **the
+  original** SensibLaw
+  `src.pnf.reference_binding.build_set_valued_binding_artifacts`
+  only after verifying an **externally owner-produced** graph:
+  exact same region text, same document reference, exact one-to-one
+  parser span coordinates, and owner semantic factor types. The
+  adapter does NOT manufacture semantic factor labels, pronoun
+  alternatives, identity decisions, QIDs or truth. It refuses to bind
+  if native parser_product_key is NULL (SLR #78 strict gate).
+- `tests/test_gwb_native_binding_adapter.py`: ten source-written
+  synthetic controls covering positive region/owner alignment,
+  foreign run, dependency head, entity surface, token gap, promoted
+  mention, missing strict parser product identity, wrong document,
+  shifted owner parser coordinate and unauthorised factor typing.
+  This connector environment has **not** run Python tests or live DB.
+- Use explicit `--mention-ref` from the verified native audit:
+  ```sh
+  DATABASE_URL="$DATABASE_URL" python3 tools/gwb_native_binding_adapter.py \
+    --run-ref 'parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63' \
+    --revision-ref 'source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00' \
+    --mention-ref 'ACTUAL_NATIVE_MENTION_REF' \
+    --output .dashi/gwb-relation/native-selected-binding-carrier-v1.json
+  python3 -m unittest tests.test_gwb_native_binding_adapter -v
+  ```
+  Optionally add `--owner-artifacts /path/to/existing-owner-artifacts.json
+  --sensiblaw-root /path/to/SensibLaw` only after acquiring a genuinely
+  compatible original owner artifact. These are *not* synthesized by
+  this adapter.
+- **Paid at source level:** one-region read-only native carrier,
+  exact coordinate validation, optional invocation wiring and
+  fail-closed contract controls.
+- **Unpaid:** local Python tests, live DB one-mention capture, original
+  owner-produced semantic-factor correspondence, positive
+  `build_set_valued_binding_artifacts` candidate output on the same
+  original source, `resolved_unique` witness/admission, external QID
+  and JMD Lean proof. The presence of an optional call does not
+  establish these outcomes. No legacy identity benchmark/second parser
+  is used. No TAR/CI/schema mutation was requested or made.
+- Next maximum cut: local synthetic checks -> native one-mention read
+  -> real same-region SensibLaw semantic artifacts and binder call ->
+  original admitted document identity -> independently sourced QID ->
+  JMD property proof. On NULL parser_product_key, preserve explicit
+  unresolved legacy record rather than fabricate a product key.

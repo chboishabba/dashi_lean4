@@ -30,6 +30,7 @@ compile_jmd Engine
 compile_jmd Merge
 compile_jmd Properties
 compile_jmd PropertyEngine
+compile_jmd Cli/EntityIdentityCore
 compile_jmd Cli/Import
 compile_jmd Cli/Format
 compile_jmd Cli/Fetch

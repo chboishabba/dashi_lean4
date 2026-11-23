@@ -5,10 +5,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 : "${SLR_ROOT:?Set SLR_ROOT to the original SLR Rust checkout}"
 : "${DATABASE_URL:?Set DATABASE_URL for native SLR PostgreSQL}"
+SLR_ROOT="$(cd "$SLR_ROOT" && pwd)"
 REVIEW_ITEM="${GWB_NATIVE_REVIEW_ITEM_REF:-review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1}"
-OUT="${GWB_NATIVE_MAXCUT_OUTPUT_DIR:-$ROOT/.dashi/gwb-relation/m1-m3-maxcut}"
+OUT_ROOT="${GWB_NATIVE_MAXCUT_OUTPUT_DIR:-$ROOT/.dashi/gwb-relation/m1-m3-maxcut}"
 PARSER_RUN="${GWB_NATIVE_PARSER_RUN_REF:-}"
-mkdir -p "$OUT"
+mkdir -p "$OUT_ROOT"
+OUT="$(mktemp -d "$OUT_ROOT/run-XXXXXXXX")"
+test -f "$SLR_ROOT/crates/sl-pg-source-store/src/native_antecedent_frontier.rs" || {
+  echo "Required native SLR M1 frontier missing; checkout SLR PR #78" >&2
+  exit 2
+}
 
 echo "M1-M3 bounded source-native joint acceptance"
 echo "SLR_ROOT=$SLR_ROOT"

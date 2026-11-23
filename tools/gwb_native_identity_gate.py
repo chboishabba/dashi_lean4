@@ -11,7 +11,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-from tools.gwb_native_binding_adapter import require, verify_owner_carrier
+from tools.gwb_native_binding_adapter import require, verify_owner_carrier, validate_region, sha
 
 
 def one(cur, sql, args, label):
@@ -23,8 +23,14 @@ def one(cur, sql, args, label):
 
 def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
     """Evidence gate, not a candidate-set resolver or QID projection."""
-    alignment = verify_owner_carrier(native, owner)
     source, focus = native["source"], native["focus_mention"]
+    require(sha(source["document_literal"]) == source["region_literal_sha256"],
+            "archived native literal digest mismatch")
+    item = {**source, **focus, "exact_span_ref": source["region_ref"],
+            "literal_text": source["document_literal"]}
+    validate_region(item, native["parser_tokens"], native["parser_entities"],
+                    native["pnf_product_factors"], native["l2_entity_factors"])
+    alignment = verify_owner_carrier(native, owner)
     require(native["authority"] == "candidate_only", "promoted native source")
     require(not native["semantic_authority_promoted"], "promoted native authority")
     for k in ("source_revision_ref", "parser_run_ref", "region_ref"):
@@ -63,7 +69,7 @@ def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
     require(anchored, "owner semantic factor lacks exact focus-token anchor")
     require(crosswalk.get("owner_graph_ref") == owner["pnf_graph"].get("graph_ref"),
             "numeric crosswalk does not name original owner graph")
-    for field in ("source_object_id", "premise_factor_id", "demand_id"):
+    for field in ("source_object_id", "premise_factor_id", "demand_id", "resolution_interface_id"):
         require(type(crosswalk.get(field)) is int and crosswalk[field] > 0,
                 "missing exact numeric " + field)
     obj, premise, demand = (crosswalk[k] for k in
@@ -107,8 +113,8 @@ def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
                    r.outcome_state,r.candidate_count
               FROM execution.semantic_pnf_frontier_resolution r
               JOIN execution.semantic_pnf_demand d ON d.demand_id=r.demand_id
-             WHERE r.demand_id=%s AND d.source_object_id=%s
-        """, (demand, obj), "original resolved demand")
+             WHERE r.demand_id=%s AND d.source_object_id=%s AND r.interface_id=%s
+        """, (demand, obj, crosswalk["resolution_interface_id"]), "original resolved demand")
         require((outcome, candidate_count, target_kind) == (2, 1, 1),
                 "demand not resolved_unique with one object target")
         entity, anchor, authority, witness_ids = one(cur, """
@@ -122,15 +128,17 @@ def audit(native: dict, owner: dict, crosswalk: dict, conn) -> dict:
                 "projection target/authority does not match resolved object")
         witness = one(cur, """
             SELECT w.witness_id,w.witness_kind,w.candidate_count,w.authority_class,
-                   a.admission_state
+                   a.admission_state,w.resolution_interface_id
               FROM execution.semantic_pnf_identity_witness w
               JOIN execution.semantic_pnf_identity_witness_admission a
                 ON a.witness_id=w.witness_id
              WHERE w.source_object_id=%s AND w.target_entity_id=%s AND w.demand_id=%s
         """, (obj, entity, demand), "original anaphor witness")
-        wid, kind, count, wauth, admission = witness
+        wid, kind, count, wauth, admission, resolution_interface = witness
         require((kind, count, wauth, admission) == (5, 1, 2, 2),
                 "missing admitted anaphor_demand_resolution witness")
+        require(resolution_interface == crosswalk["resolution_interface_id"],
+                "witness belongs to another resolution interface")
         require(wid in witness_ids, "accepted witness absent from current projection")
         cur.execute("""
             SELECT d.derivation_id,a.identity_entity_id,a.identity_witness_ids

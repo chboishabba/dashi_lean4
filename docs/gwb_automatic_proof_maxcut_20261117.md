@@ -5,6 +5,57 @@ Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
 
 ## Controlling executive roadmap — 23 November 2026 (supersedes historical gate plans)
 
+### 2026-11-23 accepted real M1–M3 bounded run — subsequent analysis
+
+The operator published the exact real run in commit `1a639892849db7df37fecb24a697f03a263d0472`;
+`.dashi/gwb-relation/m1-m3-maxcut/run-PELWk2Yh/`.
+Detailed assistant analysis (actual seven source sentences plus all 27
+parser nominations): `docs/gwb_m1_m3_real_run_analysis_20261123.md`.
+
+One original complete parser run matched 5/5 before/focus regions.
+**27 parser observations / 25 exact source spans**: 13 NOUN,
+6 PROPN, 4 PRON, 4 NER (2 PERSON, 1 ORG, 1 ORDINAL);
+the two `Bush` spans at 4061–4065 and 4310–4314 each occur
+in both token and PERSON-entity channels. Seven original sentences
+19–25 were inspected, but only five (19–23) were part of the
+pre-focus parser frontier. Lean emitted
+`GWB_NATIVE_FRONTIER_BOUNDARY_KERNEL_OK` and the four audited
+theorems reported no axioms.
+
+Discourse supports **Bush@19 → this amiable fellow@21 →
+Bush@22 → he@23 → him@23** as the strong candidate chain.
+The post-focus `him` is at 4630–4633, `Ronald Reagan`
+at 4637–4650, and `1980` at 4654–4658.
+Ronald Reagan is a separate source-text actor named *after*
+the focus, not a preceding antecedent candidate. Neither the
+source discussion nor book title creates a GHWB/Q23505 admission.
+
+**Unpaid in actual ledger**:
+`exact_original_typed_binding_source_crosswalk=false`,
+S29 `Pending` with zero review commands,
+`answer_kind=EXPLICIT_UNRESOLVED` and `answer_value=null`,
+source-local identity false, Q23505 false,
+Wikipedia Q207 property alignment false, full semantic reading
+coverage false. `minimum_source_field_kernel_checked_in_this_packet=false`
+means the previously accepted independent Q207 minimal check was
+not rerun in this packet, not that it failed.
+M1 source evidence accepted; M1 typed binding/review OPEN,
+M2 positive consumer OPEN, M3 property alignment OPEN.
+Do not advertise "M1–M3 completed" as end-to-end theorem closure.
+
+**Controlling P0:** run the *original typed binding* accessibility/
+morphology/reference-kind candidate construction on an exact
+full-book factor/annotation graph; use actual source role and
+discourse evidence to assemble one governed S29 review dossier
+with the Bush/fellow/he/him chain, rival exclusions and quote scope;
+then pay independently reviewed identity, reversible Level-3
+transport and a licensed consumer reading *only if* the evidence
+supports them. Otherwise retain the correctly checked unresolved
+answer. This is one substantive semantic packet, not another
+C4.xx read-only wrapper.
+
+
+
 ### Implementation packet now source-written — M1/M2 consumer boundary + optional original M3
 
 **Source-written on PR #112, not yet operator-run:** the integrated

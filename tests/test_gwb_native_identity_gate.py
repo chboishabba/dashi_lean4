@@ -36,6 +36,7 @@ CROSS = {**{key:SOURCE[key] for key in ("source_revision_ref","parser_run_ref","
          "source_object_id":6,"premise_factor_id":11,"demand_id":22}
 BASE = {"object": [("owner-run:A","doc:A",0,13)],
         "hyperedge": [(1,)],
+        "anchor": [("token:he",0,10,12,"he","PRON")],
         "frontier": [(1,99,2,1)],
         "projection": [(88,99,2,[444])],
         "witness": [(444,5,1,2,2)],
@@ -46,7 +47,8 @@ class Cursor:
     def __enter__(self): return self
     def __exit__(self,*args): return False
     def execute(self, sql, args):
-        for clue, name in (("semantic_pnf_hyperedge", "hyperedge"),
+        for clue, name in (("semantic_pnf_parser_object_anchor", "anchor"),
+                            ("semantic_pnf_hyperedge", "hyperedge"),
                             ("semantic_pnf_frontier_resolution", "frontier"),
                             ("semantic_pnf_identity_projection", "projection"),
                             ("semantic_pnf_identity_witness_admission", "witness"),
@@ -107,6 +109,18 @@ class IdentityGateTests(unittest.TestCase):
     def test_nonpronoun_factor(self):
         x=copy.deepcopy(OWNER);x["pnf_graph"]["factors"][0]["metadata"]["parser_pos"]="PROPN"
         with self.assertRaisesRegex(ValueError,"owner focus factor"):self.run_gate(owner=x)
+    def test_unanchored_numeric_object(self):
+        x=copy.deepcopy(BASE);x["anchor"]=[]
+        with self.assertRaisesRegex(ValueError,"original unique parser-token/object anchor"):
+            self.run_gate(data=x)
+    def test_ambiguous_numeric_anchor(self):
+        x=copy.deepcopy(BASE);x["anchor"]*=2
+        with self.assertRaisesRegex(ValueError,"expected exactly one persisted row"):
+            self.run_gate(data=x)
+    def test_mismatched_native_anchor_surface(self):
+        x=copy.deepcopy(BASE);x["anchor"]=[("token:he",0,10,12,"she","PRON")]
+        with self.assertRaisesRegex(ValueError,"anchor disagrees with native"):
+            self.run_gate(data=x)
     def test_missing_source_premise(self):
         x=copy.deepcopy(BASE);x["hyperedge"]=[(0,)]
         with self.assertRaisesRegex(ValueError,"missing original Level-1"):self.run_gate(data=x)

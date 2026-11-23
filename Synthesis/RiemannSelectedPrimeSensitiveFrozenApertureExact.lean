@@ -167,6 +167,44 @@ theorem primeAperture_primeProjective_eq
       primeAperture_primeChannel_eq heven hfar t r]
   ring
 
+/-- The original four-window *atomic* Fourier-response determinant.
+This is used only as a source-local small-R nondegeneracy seed; the
+small-R transfer for the smooth selected witness is a separate theorem. -/
+def quarticFourPrimeApertureAtomicResponseDet
+    (muHalf muTwo : ℝ) : ℝ :=
+  ((1/2 : ℝ) - muHalf) * ((5/6 : ℝ) + muTwo)
+    - ((1 : ℝ) + muHalf) * ((1/2 : ℝ) - muTwo)
+
+theorem quarticFourPrimeApertureAtomicResponseDet_eq
+    (muHalf muTwo : ℝ) :
+    quarticFourPrimeApertureAtomicResponseDet muHalf muTwo
+      = -(1/12 : ℝ) - (4/3 : ℝ)*muHalf + (3/2 : ℝ)*muTwo := by
+  unfold quarticFourPrimeApertureAtomicResponseDet
+  ring
+
+/-- Exact source corridor: the two atomic endpoint on-line vectors are
+nonproportional throughout the FULL original mu corridors. -/
+theorem quarticFourPrimeApertureAtomicResponseDet_neg
+    {muHalf muTwo : ℝ}
+    (hHalf :
+      |muHalf - quarticFourAtomicMu (1/2)| <=
+        quarticFourAtomicMuRadius)
+    (hTwo :
+      |muTwo - quarticFourAtomicMu (2/3)| <=
+        quarticFourAtomicMuRadius) :
+    quarticFourPrimeApertureAtomicResponseDet muHalf muTwo < 0 := by
+  have hmuHalf : quarticFourAtomicMu (1/2) = -(1/78 : ℝ) := by
+    norm_num [quarticFourAtomicMu]
+  have hmuTwo : quarticFourAtomicMu (2/3) = (1/162 : ℝ) := by
+    norm_num [quarticFourAtomicMu]
+  rw [hmuHalf] at hHalf
+  rw [hmuTwo] at hTwo
+  unfold quarticFourAtomicMuRadius at hHalf hTwo
+  obtain ⟨hHL, hHU⟩ := abs_le.mp hHalf
+  obtain ⟨hTL, hTU⟩ := abs_le.mp hTwo
+  rw [quarticFourPrimeApertureAtomicResponseDet_eq]
+  linarith
+
 /-- The actual physical projective moment, not a stand-in atomic moment. -/
 def primeAperturePhysicalMoment
     (g : ℝ → ℝ) (r : ℝ) (k : ℕ) : ℝ :=

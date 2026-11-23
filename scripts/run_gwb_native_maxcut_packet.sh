@@ -52,6 +52,16 @@ echo "No identity or QID promotion is performed."
     "$OUT/native-frontier.json"
 ) | tee "$OUT/lean-frontier-kernel.log"
 
+# Optional independent Wikipedia Q207/JMD P5-P10 theorem lane.
+# It is not used to pay the book's local antecedent identity.
+if [[ "${GWB_RUN_WIKI_P10:-0}" == "1" ]]; then
+  (
+    cd "$ROOT"
+    GWB_WORLD_JMD_REPORT="$OUT/jmd-world-proof-report.json" \
+      bash scripts/run_gwb_maxcut_acceptance.sh --proof-only
+  ) | tee "$OUT/wiki-p10-conditional-kernel.log"
+fi
+
 LEDGER_OPTS=(
   --inspection "$OUT/native-inspection.json"
   --frontier "$OUT/native-frontier.json"

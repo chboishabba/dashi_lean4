@@ -1411,9 +1411,9 @@ context and an explicitly selected prior source span, and checks:
   SHA256 over the original source-context JSON payload.
 
 Run from repository root with original local data:
-  python3 -m tools.gwb_native_antecedent_span_gate
-    --context .dashi/gwb-relation/native-he-original-context-v1.json
-    --candidate /path/to/reviewer-selected-source-span.json
+  python3 -m tools.gwb_native_antecedent_span_gate \
+    --context .dashi/gwb-relation/native-he-original-context-v1.json \
+    --candidate /path/to/reviewer-selected-source-span.json \
     --output .dashi/gwb-relation/native-he-antecedent-span-candidate-v1.json
 
 Candidate input is **only** the human-selected exact original

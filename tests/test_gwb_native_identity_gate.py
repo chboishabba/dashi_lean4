@@ -1,5 +1,6 @@
 """Fail-closed C4.09b numeric DB proof gate (isolated fake read-only rows)."""
 import copy
+import hashlib
 import sys
 import types
 import unittest
@@ -11,18 +12,23 @@ def require(condition, reason):
     if not condition:
         raise ValueError(reason)
 shim.require = require
+shim.sha = lambda text: hashlib.sha256(text.encode("utf-8")).hexdigest()
+shim.validate_region = lambda *args: None
 shim.verify_owner_carrier = lambda native, owner: {"source_alignment": "EXACT"}
 sys.modules["tools.gwb_native_binding_adapter"] = shim
 from tools.gwb_native_identity_gate import audit
 
 SOURCE = {"source_revision_ref":"rev:A", "parser_run_ref":"run:A",
           "region_ref":"region:A", "document_ref":"doc:A",
-          "region_start_char":100, "region_end_char":113}
+          "region_start_char":100, "region_end_char":113,
+          "document_literal":"Bush said he.",
+          "region_literal_sha256":hashlib.sha256(b"Bush said he.").hexdigest()}
 FOCUS = {"mention_ref":"mention:he", "source_start_char":110,
          "source_end_char":112, "surface":"he", "candidate_ref":"candidate:A"}
 NATIVE = {"authority":"candidate_only", "semantic_authority_promoted":False,
           "source":SOURCE, "focus_mention":FOCUS,
-          "parser_tokens":[{"start_char":110,"end_char":112,"pos":"PRON"}]}
+          "parser_tokens":[{"start_char":110,"end_char":112,"pos":"PRON"}],
+          "parser_entities":[], "pnf_product_factors":[], "l2_entity_factors":[]}
 OWNER = {"pnf_graph":{"graph_ref":"graph:A", "factors":[{"factor_ref":"factor:he",
           "metadata":{"parser_pos":"PRON", "atom_span_ref":"span:he"}}]},
          "semantic_annotation_layer":{"span_annotations":[
@@ -33,13 +39,14 @@ CROSS = {**{key:SOURCE[key] for key in ("source_revision_ref","parser_run_ref","
          "owner_document_ref":"doc:A", "owner_run_ref":"owner-run:A",
          "coordinate_frame":"region_local", "factor_ref":"factor:he",
          "owner_graph_ref":"graph:A",
-         "source_object_id":6,"premise_factor_id":11,"demand_id":22}
+         "source_object_id":6,"premise_factor_id":11,"demand_id":22,
+         "resolution_interface_id":44}
 BASE = {"object": [("owner-run:A","doc:A",0,13)],
         "hyperedge": [(1,)],
         "anchor": [("token:he",0,10,12,"he","PRON")],
         "frontier": [(1,99,2,1)],
         "projection": [(88,99,2,[444])],
-        "witness": [(444,5,1,2,2)],
+        "witness": [(444,5,1,2,2,44)],
         "derivation": [(777,88,[444])]}
 
 class Cursor:
@@ -73,6 +80,14 @@ class IdentityGateTests(unittest.TestCase):
         self.assertEqual(result["identity_admission"],"ORIGINAL_DB_ADMITTED_RESOLVED_UNIQUE")
         self.assertEqual(result["external_qid"],"NOT_TESTED")
         self.assertEqual(result["derivation_ids"],[777])
+    def test_archived_native_digest_changed(self):
+        x=copy.deepcopy(NATIVE);x["source"]["region_literal_sha256"]="0"*64
+        with self.assertRaisesRegex(ValueError,"archived native literal digest mismatch"):
+            self.run_gate(native=x)
+    def test_witness_attached_to_wrong_resolution_interface(self):
+        x=copy.deepcopy(BASE);x["witness"]=[(444,5,1,2,2,45)]
+        with self.assertRaisesRegex(ValueError,"another resolution interface"):
+            self.run_gate(data=x)
     def test_wrong_revision(self):
         x=copy.deepcopy(CROSS);x["source_revision_ref"]="rev:B"
         with self.assertRaisesRegex(ValueError,"wrong source_revision_ref"):self.run_gate(cross=x)
@@ -86,10 +101,10 @@ class IdentityGateTests(unittest.TestCase):
         x=copy.deepcopy(BASE);x["frontier"]=[(1,None,3,2)]
         with self.assertRaisesRegex(ValueError,"not resolved_unique"):self.run_gate(data=x)
     def test_unadmitted_witness(self):
-        x=copy.deepcopy(BASE);x["witness"]=[(444,5,1,2,3)]
+        x=copy.deepcopy(BASE);x["witness"]=[(444,5,1,2,3,44)]
         with self.assertRaisesRegex(ValueError,"missing admitted anaphor"):self.run_gate(data=x)
     def test_wrong_witness_kind(self):
-        x=copy.deepcopy(BASE);x["witness"]=[(444,3,1,2,2)]
+        x=copy.deepcopy(BASE);x["witness"]=[(444,3,1,2,2,44)]
         with self.assertRaisesRegex(ValueError,"missing admitted anaphor"):self.run_gate(data=x)
     def test_missing_substitution(self):
         x=copy.deepcopy(BASE);x["derivation"]=[]

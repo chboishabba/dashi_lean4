@@ -3,7 +3,7 @@
 import copy
 import unittest
 from types import SimpleNamespace
-from tools.gwb_native_binding_adapter import capture, verify_owner_carrier
+from tools.gwb_native_binding_adapter import capture, verify_owner_carrier, attach_native_annotations
 
 RUN="parser-run:test"
 REV="source-revision:test"
@@ -98,6 +98,26 @@ class NativeBindingContract(unittest.TestCase):
         self.assertEqual(native["source"]["document_ref"],DOC)
         self.assertEqual(verify_owner_carrier(native,owner(native))
                          ["matched_parser_tokens"],4)
+    def test_native_syntax_annotations_are_forwarded_without_factor_rewriting(self):
+        native=source()
+        original=owner(native)
+        enriched=attach_native_annotations(native,original)
+        annotations={(x["token_index"],x["annotation_type"]):x["value"]
+                     for x in enriched["semantic_annotation_layer"]["token_annotations"]}
+        self.assertEqual(annotations[(2,"parser.pos")],"PRON")
+        self.assertEqual(annotations[(2,"parser.dependency")],"dobj")
+        self.assertEqual(annotations[(2,"parser.morphology")],{"Number":"Sing"})
+        self.assertEqual(annotations[(2,"parser.head_ordinal")],1)
+        self.assertEqual(enriched["pnf_graph"],original["pnf_graph"])
+        self.assertNotIn("token_annotations",original["semantic_annotation_layer"])
+    def test_existing_owner_syntax_conflict_rejected(self):
+        native=source()
+        evidence=owner(native)
+        evidence["semantic_annotation_layer"]["token_annotations"]=[
+            {"token_index":2,"annotation_type":"parser.pos","value":"NOUN"}
+        ]
+        with self.assertRaisesRegex(ValueError,"annotation conflict"):
+            attach_native_annotations(native,evidence)
     def test_wrong_parser_run_is_rejected(self):
         altered=copy.deepcopy(DATA)
         altered[0][0]["parser_run_ref"]="parser-run:foreign"

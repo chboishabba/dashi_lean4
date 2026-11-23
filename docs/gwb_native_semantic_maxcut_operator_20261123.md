@@ -90,6 +90,44 @@ regions, the correct result is a fail-closed integration residual:
 the \`original-parser-runs.json\` explains which original producer
 needs its native region/ancestry weld.
 
+## Optional actual typed-binding weld (original owner; not a duplicate)
+
+If the original full-book semantic annotation/PNF graph is available,
+the **same** runner can invoke the original SensibLaw
+\`src.pnf.binding_candidate_sets.compact_binding_artifacts\`.
+Set:
+
+\`\`\`sh
+SENSIBLAW_ROOT=/path/to/SensibLaw \
+GWB_ORIGINAL_BINDING_ARTIFACTS=/path/to/original-full-book-pnf-and-annotation-artifacts.json \
+SLR_ROOT=/path/to/slr \
+DATABASE_URL="$DATABASE_URL" \
+  bash scripts/run_gwb_native_maxcut_packet.sh
+\`\`\`
+
+The bridge (tools/gwb_original_binding_interop.py) requires the
+original full canonical text **exactly** hash to the native book
+\`7ff2ec8...\`; the original graph document ref must match the SLR
+document; the original parser token index must reconstruct the exact
+\`he\` factor span; all candidate factor spans must precede the
+reference in the original book; and the binder must actually use
+\`direct_observation_graph_index\`, not the legacy pairwise fallback.
+It preserves original binder references, accessibility paths,
+morphological compatibility state and exclusion summaries, without
+claiming any one member was uniquely reviewed. It creates
+\`original-typed-binding-crosswalk.json\` and lets the main ledger pay
+**only** exact source crosswalk, never identity.
+
+If the original book graph is absent or has a different source
+manifestation, **leave this optional lane off**. Do not fabricate
+one from the earlier 643-sentence Q207 article, the world-level
+timeline or the numeric SensibLaw legacy GWB corpus.
+
+All source-written files were pushed but **not executed** from this
+connector environment. The first real Cargo/PostgreSQL/Lean receipt
+belongs to the operator run. Source-check and bound-check failures
+are meaningful constraints; do not fill in fake data to make them pass.
+
 ## Authority and next source-owner implementation cut
 
 The selected \`Bush\` at [4310,4314) in original book sentence 22

@@ -3,10 +3,7 @@ import Integration.TeleodynamicsSemanticActionBridge
 namespace Integration.ScopedVerifierArtifact
 
 inductive VerificationStatus where
-  | verified
-  | refuted
-  | unresolved
-  | outOfDomain
+  | verified | refuted | unresolved | outOfDomain
   deriving DecidableEq, Repr
 
 structure ScopedValidator (X : Type) where
@@ -27,8 +24,7 @@ def receiptFromVerified {X : Type} (V : ScopedValidator X) (x : X)
     (app : V.Applicable x) (h : V.status x = .verified) : ValidationReceipt V x :=
   ⟨app, h, V.accepts x h, V.sound x app h⟩
 
-structure PairValidationReceipt {X : Type}
-    (V₁ V₂ : ScopedValidator X) (x : X) : Prop where
+structure PairValidationReceipt {X : Type} (V₁ V₂ : ScopedValidator X) (x : X) : Prop where
   left : ValidationReceipt V₁ x
   right : ValidationReceipt V₂ x
 
@@ -36,30 +32,17 @@ theorem pairClaimsPaid {X : Type} {V₁ V₂ : ScopedValidator X} {x : X}
     (r : PairValidationReceipt V₁ V₂ x) : V₁.Claim x ∧ V₂.Claim x :=
   ⟨r.left.claimPaid, r.right.claimPaid⟩
 
-inductive UniversalTruthOracleFromScopedValidator : Prop
-inductive OutOfDomainCreatesVerification : Prop
-inductive UnresolvedCreatesVerification : Prop
-
-theorem noUniversalTruthOracleFromScopedValidator :
-    ¬ UniversalTruthOracleFromScopedValidator := by
-  intro h
-  exact nomatch h
-
-theorem outOfDomainDoesNotCreateVerification : ¬ OutOfDomainCreatesVerification := by
-  intro h
-  exact nomatch h
-
-theorem unresolvedDoesNotCreateVerification : ¬ UnresolvedCreatesVerification := by
-  intro h
-  exact nomatch h
+structure ConcreteValidatorInstance (X : Type) where
+  validator : ScopedValidator X
+  witness : X
+  receipt : ValidationReceipt validator witness
 
 structure ArtifactState (Identity Body Residual : Type) where
   identity : Identity
   body : Body
   residual : Residual
 
-structure DeclaredEdit
-    {Identity Body Residual : Type}
+structure DeclaredEdit {Identity Body Residual : Type}
     (before after : ArtifactState Identity Body Residual) where
   Delta : Type
   delta : Delta
@@ -67,15 +50,13 @@ structure DeclaredEdit
   EditSemantics : Body → Delta → Body → Prop
   editSemanticsPaid : EditSemantics before.body delta after.body
 
-structure ResidualReopening
-    {Identity Body Residual : Type}
+structure ResidualReopening {Identity Body Residual : Type}
     (before after : ArtifactState Identity Body Residual) where
   FutureConsumer : Type
   distinguishesFuture : FutureConsumer → Residual → Prop
   retainedOrReopened : ∀ q, distinguishesFuture q after.residual
 
-structure VerifiedArtifactTransition
-    {Identity Body Residual : Type}
+structure VerifiedArtifactTransition {Identity Body Residual : Type}
     (V : ScopedValidator (ArtifactState Identity Body Residual))
     (before after : ArtifactState Identity Body Residual) : Prop where
   edit : DeclaredEdit before after
@@ -83,40 +64,45 @@ structure VerifiedArtifactTransition
   beforeReceipt : ValidationReceipt V before
   afterReceipt : ValidationReceipt V after
 
-theorem sameArtifactIdentity
-    {Identity Body Residual : Type}
+theorem sameArtifactIdentity {Identity Body Residual : Type}
     {V : ScopedValidator (ArtifactState Identity Body Residual)}
     {before after : ArtifactState Identity Body Residual}
-    (t : VerifiedArtifactTransition V before after) :
-    before.identity = after.identity :=
+    (t : VerifiedArtifactTransition V before after) : before.identity = after.identity :=
   t.edit.identityPreserved
 
-theorem postEditClaimPaid
-    {Identity Body Residual : Type}
+theorem postEditClaimPaid {Identity Body Residual : Type}
     {V : ScopedValidator (ArtifactState Identity Body Residual)}
     {before after : ArtifactState Identity Body Residual}
-    (t : VerifiedArtifactTransition V before after) :
-    V.Claim after :=
+    (t : VerifiedArtifactTransition V before after) : V.Claim after :=
   t.afterReceipt.claimPaid
 
+structure ArtifactFutureModel (Body Residual : Type) where
+  Consumer : Type
+  Observation : Type
+  observe : Consumer → Body → Observation
+  reconstruct : Body → Residual → Body
+
+structure ResidualFutureSufficiency {Identity Body Residual : Type}
+    (M : ArtifactFutureModel Body Residual)
+    (state : ArtifactState Identity Body Residual) : Prop where
+  reconstructExact : M.reconstruct state.body state.residual = state.body
+
+theorem futureObservationPreserved {Identity Body Residual : Type}
+    {M : ArtifactFutureModel Body Residual}
+    {state : ArtifactState Identity Body Residual}
+    (h : ResidualFutureSufficiency M state) (q : M.Consumer) :
+    M.observe q (M.reconstruct state.body state.residual) = M.observe q state.body :=
+  congrArg (M.observe q) h.reconstructExact
+
+inductive UniversalTruthOracleFromScopedValidator : Prop
 inductive DeterministicReplayCreatesArtifactIdentity : Prop
 inductive IdentityPreservationCreatesValidatorPass : Prop
 inductive ValidatorPassCreatesFutureSufficiency : Prop
 
-theorem noArtifactIdentityFromDeterministicReplay :
-    ¬ DeterministicReplayCreatesArtifactIdentity := by
-  intro h
-  exact nomatch h
-
-theorem identityDoesNotCreateValidatorPass :
-    ¬ IdentityPreservationCreatesValidatorPass := by
-  intro h
-  exact nomatch h
-
-theorem validatorPassDoesNotCreateFutureSufficiency :
-    ¬ ValidatorPassCreatesFutureSufficiency := by
-  intro h
-  exact nomatch h
+theorem noUniversalTruthOracleFromScopedValidator : ¬ UniversalTruthOracleFromScopedValidator := by intro h; exact nomatch h
+theorem noArtifactIdentityFromDeterministicReplay : ¬ DeterministicReplayCreatesArtifactIdentity := by intro h; exact nomatch h
+theorem identityDoesNotCreateValidatorPass : ¬ IdentityPreservationCreatesValidatorPass := by intro h; exact nomatch h
+theorem validatorPassDoesNotCreateFutureSufficiency : ¬ ValidatorPassCreatesFutureSufficiency := by intro h; exact nomatch h
 
 structure ScopedVerifierArchitectureBoundary where
   probabilisticProposalAllowed : Bool
@@ -132,18 +118,5 @@ structure ScopedVerifierArchitectureBoundary where
 
 def canonicalScopedVerifierArchitectureBoundary : ScopedVerifierArchitectureBoundary :=
   ⟨true, true, true, true, true, true, false, false, false⟩
-
-structure VerifiedArtifactBoundary where
-  explicitArtifactStateRequired : Bool
-  explicitDeclaredDeltaRequired : Bool
-  identityReceiptRequired : Bool
-  residualReopeningRequired : Bool
-  postEditRevalidationRequired : Bool
-  regenerationEquivalentToEdit : Bool
-  deterministicReplaySufficient : Bool
-  deriving DecidableEq, Repr
-
-def canonicalVerifiedArtifactBoundary : VerifiedArtifactBoundary :=
-  ⟨true, true, true, true, true, false, false⟩
 
 end Integration.ScopedVerifierArtifact

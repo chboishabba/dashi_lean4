@@ -1,0 +1,137 @@
+import Integration.Griess1990Moufang81ElementaryLift
+import Integration.Griess1990OriginalHomogeneousFormula
+import Integration.Griess1990Punctured27SourceReynolds
+import Mathlib
+
+/-!
+# Original selected source shear CHARACTER obstruction beyond the C13 weld
+
+Mathematical source ROOT:
+Robert L. Griess Jr. (1990), J. Algebra 131:281–293,
+DOI 10.1016/0021-8693(90)90176-O: original 27D graded Albert product,
+phase g, and its SL3(3) grade normalizer; author owns the result.
+
+Source-specific subsequent finite implementation already on Lean #52:
+Griess1990Moufang81ElementaryLift six TRUE corrected Moufang/Jordan
+elementary shears e01/e02/e10/e12/e20/e21. Their actions on the
+original homogeneous basis are e_x ↦ omega^(h_s(x)) e_(M_s x);
+they are not the uncorrected permutation of the 27 grade labels.
+
+ORIGINAL GRIESS τ-real rational Jordan action: a fixed grade x
+contributes omega^(h_s(x)) to its complexified character. Summing
+the NINE fixed homogeneous grades of each shear, the exact
+CYCLOTOMIC trace is either 9 or 0:
+  e01/e10/e12/e21: 9 fixed grades, phase counts (3,3,3),
+                    trace on Albert27 = 0, trace J0= -1.
+  e02/e20:         9 fixed grades, phase counts (9,0,0),
+                    trace on Albert27 = 9, trace J0= 8.
+All SIX shears induce ordinary permutations on the ORIGINAL 26
+nonzero grades with eight fixed sites, trace 8.
+
+Hence the already positive 26x26 Q[C13] intertwiner BX=XP CANNOT
+also intertwine the selected e01/e10/e12/e21 automorphisms: conjugate
+matrices must have equal trace. This is a specific SOURCE-LIFT no-go,
+NOT a universal impossibility for other central-character adjustments,
+other SL3 sections, or physical/Monster operators.
+
+Independent literal local exact Python: reconstructed tau-real e01
+and e02 rational 27x27 matrices; checked ALL 729 original Griess
+Jordan basis products for each, exact order3, fixed unit and traces
+0 and 9. The six cyclotomic source-grade fixed point histograms
+are exact from F3^3. Lean source below is NOT kernel-checked.
+-/
+
+namespace Integration.Griess1990SourceShearCharacterNoFull26
+
+open Integration.Griess1990Moufang81Determinant
+open Integration.Griess1990Moufang81ElementaryLift
+open Integration.Griess1990OriginalHomogeneousFormula
+
+/-- Original complexified homogeneous 27-dimensional Jordan character,
+recorded in Q(omega) as pair coefficients. -/
+def correctedShearSourceTrace (s : Shear) : Cyclo :=
+  ∑ x : Grade,
+    if gradeShear s x = x then
+      phasePower (phaseCorrection s x).val
+    else zeroC
+
+/-- All selected τ-real source operators have rational character. -/
+theorem all_corrected_shear_traces_are_rational :
+    ∀ s : Shear, (correctedShearSourceTrace s).2 = 0 := by
+  native_decide
+
+/-- Fixed original native Albert identity has trace 1; remove it
+to obtain the real 26D traceless-Jordan-module character. -/
+def correctedShearTracelessTrace (s : Shear) : ℚ :=
+  (correctedShearSourceTrace s).1 - 1
+
+/-- The OLD 26-point grade label permutation, without the actual
+Jordan phase, fixes exactly 8 of the nonzero source F3^3 labels. -/
+def nonzeroGradePermutationTrace (s : Shear) : Nat :=
+  (Finset.univ.filter fun x : Grade =>
+    x ≠ 0 ∧ gradeShear s x = x).card
+
+theorem all_grade_permutation_traces_are_eight :
+    ∀ s : Shear, nonzeroGradePermutationTrace s = 8 := by
+  native_decide
+
+theorem four_selected_shears_have_actual_J0_character_minus_one :
+    correctedShearTracelessTrace .e01 = -1 ∧
+    correctedShearTracelessTrace .e10 = -1 ∧
+    correctedShearTracelessTrace .e12 = -1 ∧
+    correctedShearTracelessTrace .e21 = -1 := by
+  native_decide
+
+theorem two_zero_phase_shears_match_grade_character :
+    correctedShearTracelessTrace .e02 = 8 ∧
+    correctedShearTracelessTrace .e20 = 8 := by native_decide
+
+/-- E01 is already an exact character counterexample: no rational
+linear isomorphism can conjugate the selected actual Q-Albert J0
+operator to the e01 grade-label permutation operator. -/
+theorem selected_e01_trace_mismatch :
+    correctedShearTracelessTrace .e01 ≠
+      (nonzeroGradePermutationTrace .e01 : ℚ) := by native_decide
+
+/-- The actual selected generator character equality needed by
+an e01 same-operator intertwiner is formally false.
+A generic theorem promoting equality of traces from an invertible
+matrix intertwiner requires a separately kernel-verified Mathlib
+cyclicity lemma. We DO NOT insert holes or claim that payment here. -/
+theorem selected_e01_character_equality_impossible :
+    ¬ (correctedShearTracelessTrace .e01 =
+       (nonzeroGradePermutationTrace .e01 : ℚ)) :=
+  selected_e01_trace_mismatch
+
+
+
+/-! The specific selected six lifts are NOT themselves a coherent
+SL3(3) section: e01 and e20 are conjugate GRADE transvections under
+the positive 3-cycle of coordinates, but the corresponding selected
+rational Albert/J0 character traces differ (-1 versus 8).
+A group representation MUST give equal traces on conjugates.
+This says nothing against the EXISTENCE of an alternative section.
+Sah (1974) / Griess (1976) establish abstract splitting under the
+original natural-module extension hypothesis. -/
+
+/-- The actual determinant+1 three-coordinate cycle on ORIGINAL
+F3³ grade labels, not a spatial P3³ graph symmetry. -/
+def cyclicGrade (x : Grade) : Grade := ![x 1, x 2, x 0]
+
+def inverseCyclicGrade (x : Grade) : Grade := ![x 2, x 0, x 1]
+
+theorem grade_coordinate_cycle_inverse :
+    ∀ x : Grade, cyclicGrade (inverseCyclicGrade x) = x ∧
+      inverseCyclicGrade (cyclicGrade x) = x := by native_decide
+
+theorem e01_and_e20_grade_conjugate_by_3cycle :
+    ∀ x : Grade,
+      cyclicGrade (gradeShear .e01 (inverseCyclicGrade x)) =
+        gradeShear .e20 x := by native_decide
+
+theorem selected_lift_e01_e20_characters_disagree :
+    correctedShearTracelessTrace .e01 ≠
+      correctedShearTracelessTrace .e20 := by native_decide
+
+
+end Integration.Griess1990SourceShearCharacterNoFull26

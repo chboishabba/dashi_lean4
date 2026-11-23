@@ -1,0 +1,88 @@
+name: Albert Jordan F4 max-cut
+
+on:
+  pull_request:
+    paths:
+      - '.gitmodules'
+      - 'vendor/JordanAlgebra'
+      - 'vendor/JordanAlgebra.VENDOR'
+      - 'scripts/audit_albert_external.py'
+      - 'ExternalAlbert/**'
+      - 'Integration/Albert*.lean'
+      - 'Integration/GeometricReasoningEverything.lean'
+      - '.github/workflows/albert-jordan-f4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  albert:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout DASHI and exact Albert donor
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Verify immutable donor pin and source surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C vendor/JordanAlgebra rev-parse HEAD)" = \
+            a4b0d58554732ced63b4217200baa56be5a2c3d5
+          test "$(cat vendor/JordanAlgebra/lean-toolchain)" = \
+            'leanprover/lean4:v4.31.0'
+          python3 scripts/audit_albert_external.py
+
+      - name: Install DASHI Lean environment
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          test: false
+
+      - name: Build external donor with its own Lean 4.31 package graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          elan toolchain install leanprover/lean4:v4.31.0
+          cd vendor/JordanAlgebra
+          elan run leanprover/lean4:v4.31.0 lake update
+          elan run leanprover/lean4:v4.31.0 lake build Jordan
+
+      - name: Probe donor source and standard-real adapter under the DASHI kernel
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake update
+          lake env bash -c '
+            set -euo pipefail
+            export LEAN_PATH="$PWD/vendor/JordanAlgebra:$LEAN_PATH"
+            lean ExternalAlbert/CompatibilityProbe.lean
+            lean ExternalAlbert/RealAlbertAdapterProbe.lean
+          ' 2>&1 | tee albert-same-kernel-probe.log
+
+      - name: Check native DASHI Albert max-cut
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean Integration/AlbertScalarTraceless.lean
+          lake env lean Integration/AlbertScalarTracelessRegression.lean
+          lake env lean Integration/AlbertJordanAutomorphism.lean
+          lake env lean Integration/AlbertJordanAutomorphismRegression.lean
+          lake env lean Integration/AlbertMinusculeWeightLines.lean
+          lake env lean Integration/AlbertMinusculeWeightLinesRegression.lean
+          lake env lean Integration/AlbertF4ExceptionalCapstone.lean
+          lake env lean Integration/AlbertF4ExceptionalCapstoneRegression.lean
+          lake env lean Integration/GeometricReasoningEverything.lean
+
+      - name: Upload compatibility probe
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: albert-jordan-compatibility-probe
+          path: albert-same-kernel-probe.log
+          if-no-files-found: warn

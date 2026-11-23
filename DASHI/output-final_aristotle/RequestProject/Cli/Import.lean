@@ -1,5 +1,6 @@
 /- Attribution: JMD (github.com/meta-introspector) -/
 import RequestProject.Engine
+import RequestProject.Cli.EntityIdentityCore
 import Lean.Data.Json
 
 /-!
@@ -211,16 +212,6 @@ def statementValueId? (st : Json) : Option String :=
 /-- The rank of a statement (`"normal"` when absent). -/
 def statementRank (st : Json) : String :=
   (st.getObjValAs? String "rank").toOption.getD "normal"
-
-/-- The label of an entity in one language of the JSON, if present. -/
-def entityLabelIn (j : Json) (lang : String) : Option String :=
-  ((j.getObjVal? "labels").bind (·.getObjVal? lang) |>.bind
-    (·.getObjValAs? String "value")).toOption
-
-/-- The title of the English Wikipedia article of an entity, if any. -/
-def entityEnwikiTitle (j : Json) : Option String :=
-  ((j.getObjVal? "sitelinks").bind (·.getObjVal? "enwiki") |>.bind
-    (·.getObjValAs? String "title")).toOption
 
 /-- The English label of an entity, if any.  Wikidata increasingly stores names
 that are the same in every language under the language code `mul`, and some items

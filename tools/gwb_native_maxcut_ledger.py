@@ -18,6 +18,7 @@ original-owner-governed antecedent resolution. This script cannot assert it.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -330,6 +331,46 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
     return ledger, worksheet
 
 
+def run_live_adversarial_checks(
+    inspect: dict[str, Any], frontier: dict[str, Any],
+) -> int:
+    """Mutate REAL source input; every false authority/coordinate claim must fail."""
+    operations = (
+        lambda i,f: i.update(canonical_content_sha256=WIKI_SHA),
+        lambda i,f: f.update(canonical_content_sha256=WIKI_SHA),
+        lambda i,f: f.update(source_revision_ref="source-revision:forged"),
+        lambda i,f: i["focus"].update(surface="it"),
+        lambda i,f: i["candidate_antecedent"].update(start_char=4311),
+        lambda i,f: f.update(semantic_candidate_exhaustiveness_paid=True),
+        lambda i,f: f.update(local_antecedent_admission_paid=True),
+        lambda i,f: f.update(external_qid_paid=True),
+        lambda i,f: f.update(claim_truth_paid=True),
+        lambda i,f: f["nominations"][0].update(original_region_ref="foreign:region"),
+        lambda i,f: f["nominations"][0].update(surface="FOREIGN_ENTITY"),
+        lambda i,f: f.update(parser_run_ref=""),
+        lambda i,f: f["nominations"].append(copy.deepcopy(f["nominations"][0])),
+    )
+    checked = 0
+    for mutation in operations:
+        i, f = copy.deepcopy(inspect), copy.deepcopy(frontier)
+        mutation(i, f)
+        try:
+            make_ledger(i, f)
+        except EvidenceRejected:
+            checked += 1
+        else:
+            raise EvidenceRejected(
+                f"negative control #{checked + 1} was spuriously accepted"
+            )
+    # A real S29 Accepted status remains workflow-only even if authentic.
+    i, f = copy.deepcopy(inspect), copy.deepcopy(frontier)
+    i["s29_review_status"] = f["s29_review_status"] = "Accepted"
+    m, _ = make_ledger(i, f)
+    require(m["book_lane"]["source_relative_identity_paid"] is False,
+            "S29 accepted incorrectly manufactured identity authority")
+    return checked + 1
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -346,6 +387,7 @@ def main() -> int:
     p.add_argument("--q207-log", type=Path)
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--worksheet", type=Path, required=True)
+    p.add_argument("--adversarial", action="store_true")
     args = p.parse_args()
     inspection = json.loads(args.inspection.read_text(encoding="utf-8"))
     frontier = json.loads(args.frontier.read_text(encoding="utf-8"))
@@ -354,6 +396,9 @@ def main() -> int:
     ledger, worksheet = make_ledger(
         inspection, frontier, lean_log=log, q207_log=q207log
     )
+    if args.adversarial:
+        negative_count = run_live_adversarial_checks(inspection, frontier)
+        print(f"GWB_NATIVE_MAXCUT_LIVE_ADVERSARIAL_PASS {negative_count}/{negative_count}")
     write_json(args.ledger, ledger)
     write_json(args.worksheet, worksheet)
     print(

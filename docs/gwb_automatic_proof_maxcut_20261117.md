@@ -1100,3 +1100,70 @@ Implementation on PR #112:
   original admitted document identity -> independently sourced QID ->
   JMD property proof. On NULL parser_product_key, preserve explicit
   unresolved legacy record rather than fabricate a product key.
+
+
+## 2026-11-23 — C4.09a native capture accepted; dual-gate outcome
+
+**Operator acceptance at `774a52c5b95fe2b6c1364260e8dffd3e60c175cc`.**
+The twelve `tests/test_gwb_native_binding_adapter.py` contract tests
+passed locally (12/12). A genuine, read-only native
+`tools/gwb_native_binding_adapter.py` capture passed exact
+source/parser/factor checks, committed as
+`.dashi/gwb-relation/native-he-binding-carrier-v1.json`.
+The source is the **native** document
+`document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30`,
+revision A `8dd2afe2…`, region sentence 23,
+absolute 4526–4693, focus `he` 4534–4536,
+31 parser tokens, two NER rows, and a non-null parser product key.
+Observed sentence begins "Perhaps he was not really all that
+outstandingly successful" and mentions Ronald Reagan and the vice
+presidency. **It is not an admitted antecedent or Q207 witness.**
+The carrier retains `binding_admission=NOT_TESTED`,
+`external_qid=NOT_TESTED` and no authority promotion.
+
+The operator independently checked Q207 EntityData ID, label
+`George W. Bush`, enwiki sitelink `George W. Bush`,
+and pinned article digest
+`a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`.
+This is a **separate article-source and external-identity check**,
+not evidence that the native `he` is Q207 or even refers to the
+same article/revision. Q207 is George W. Bush; distinguish
+Q23505 George H. W. Bush. Exact cross-source identity needs
+reviewed original semantic evidence.
+
+### C4.09 gate table, controlling
+
+| Gate | Status on 2026-11-23 | Next source-required payment |
+|---|---|---|
+| C4.09a.1 adapter contract | **12/12 operator PASS** | Preserve negative controls and source provenance |
+| C4.09a.2 native carrier | **Original live capture PASS** | Preserve exact run, revision, parser product and absolute source offsets |
+| C4.09a.3 original-owner binder | **BLOCKED (owner graph absent)** | Reuse native SLR semantic reductions; materialize matching SensibLaw owner-produced factors, graph and annotation layer, then call `build_set_valued_binding_artifacts` |
+| C4.09b / P5 admitted identity | **NOT TESTED** | Original `resolved_unique` demand, admitted witness and reversible Level-3 substitution; do not infer from a lone nearby person |
+| C4.09c article/QID source check | **Independent Q207 checks PASS (operator)** | Preserve exact Q207 revision/hash and original article source; reject root-topic-to-mention inference |
+| C4.09c cross-source mention → QID | **OPEN** | Evidence linking admitted local referent to independently pinned QID with right-person and ambiguity controls |
+| P6–P9 | **OPEN** | Same-object M12/S28 review, semantic event/time/property alignment |
+| P10 Lean | **NO KERNEL MARKER** | Reuse cached JMD prerequisites, compile smallest independently checked QID/sitelink/property target, then composition; do not evaluate full article projection first |
+
+The attempted Lean Q207 runner was stopped after eight minutes
+while evaluating a broad full-source projection, with **no Lean kernel
+success marker**. Neither a successful Lean check nor a theorem failure
+may be inferred. Separate fast QID/sitelink JSON validation from
+kernel compilation. Use existing targeted prerequisite script
+`scripts/build_gwb_jmd_prerequisites.sh` to maintain reusable
+`.olean` dependencies; only run it if caches are missing/stale,
+without `lake build wikidata` or remote CI. Verify a minimal existing
+JMD QID lemma with a distinct exact-head Lean marker before coupling
+the full GWB article reader or the native identity bridge.
+Timeout/cancellation preserves open status. Record elapsed effort,
+module/cached dependency identity, and exit code in an inspection
+receipt before claiming payment.
+
+**Prior art remains active:** SensibLaw migrations 075–080 and
+`src/pnf/reference_binding.py` are the identity owners; SLR #78
+owns native parser reopening, #24 reviewed world identity and
+#27 QID ontology closure; JMD `Cli.Import` and `PropertyEngine`
+own the downstream proof. Do not create a new resolver, reparse the
+corpus, write identity rows from lexical candidates, or run the legacy
+numeric identity benchmark against the unrelated native source.
+No new schema, semantic admission or proof outcome was established
+by this checkpoint.

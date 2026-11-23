@@ -373,7 +373,7 @@ j=1..26 of the degree-26 z-polynomial (although both are 26-sets).
 theorem primeApertureGeometricInverseRadius
     {t : ℝ} (ht : t ≠ 0) :
     (256 : ℝ) / t^2 = 1 / (t/16)^2 := by
-  field_simp
+  field_simp [ht]
   ring
 
 /-- Both on-line and four pole frequencies are exact integer multiples of r. -/

@@ -336,6 +336,71 @@ theorem primeApertureNormalizedAnnihilatorSymbol_even
   unfold primeApertureNormalizedAnnihilatorSymbol
   rw [primeApertureAnnihilatorSymbol_even]
 
+/-!
+## P0 geometric normalization and existing punctured-27 source correspondence
+
+The old general \`256/t²\` estimate is exactly \`1/r²\`, r=t/16.
+There are 26 effective *bounding quadratic slots* grouped:
+
+  9 on-line (frequency r, weight 1),
+  8 central (four pole quartics, each majorized by two quadratic
+     slots with respective weights 1/196,1/225,1/289,1/324),
+  9 on-line (frequency 2r, weight 1/4).
+
+This matches the ORIGINAL \`27=1+(9+8+9)\` punctured balanced-trit
+INDEX CHART of DASHI, not an Albert product / F4 action.
+
+With z=(D/r)² and delta=1/(4r²), each pole quartic at k*r,
+k in {14,15,17,18}, becomes
+
+  1+2(k²-delta)/(k²+delta)²*z + 1/(k²+delta)²*z²
+
+and is coefficientwise <= (1+z/k²)². Hence
+Q_t(D) coefficientwise <= geometric shell envelope below.
+The upper envelope is SHARP coefficientwise as t->infinity.
+Exact rational polynomial verification lives in DASHI's
+\`check_rh_p0_punctured27_geometric_majorant_20261123.py\`.
+The source inequality has NOT been kernel-proved in this Lean file.
+
+The canonical original 26 non-origin points are 13 antipodal pairs,
+but on the outer two 9-sheets the weights 1 and 1/4 are DIFFERENT.
+Therefore an unoriented 13-axis quotient would discard analytic data.
+The 26 bounding factor slots are not canonically the 26 grades
+j=1..26 of the degree-26 z-polynomial (although both are 26-sets).
+-/
+
+/-- The original radius makes the 256/t² estimate a unit coefficient. -/
+theorem primeApertureGeometricInverseRadius
+    {t : ℝ} (ht : t ≠ 0) :
+    (256 : ℝ) / t^2 = 1 / (t/16)^2 := by
+  field_simp
+  ring
+
+/-- Both on-line and four pole frequencies are exact integer multiples of r. -/
+theorem primeApertureOriginalPoleFrequencies (t : ℝ) :
+    t - 2*(t/16) = 14*(t/16)
+    ∧ t - (t/16) = 15*(t/16)
+    ∧ t + (t/16) = 17*(t/16)
+    ∧ t + 2*(t/16) = 18*(t/16) := by
+  constructor
+  · ring
+  constructor
+  · ring
+  constructor
+  · ring
+  · ring
+
+/-- Exact dimensionless limiting coefficientwise E2 envelope.
+THIS is a scalar polynomial definition; no claim of new Lie action. -/
+def primeAperturePuncturedShellMajorantSymbol (z : ℝ) : ℝ :=
+  (1+z)^9 * (1+z/4)^9 *
+    (1+z/196)^2 * (1+z/225)^2 *
+    (1+z/289)^2 * (1+z/324)^2
+
+theorem primeAperturePuncturedShellMajorantSymbol_at_zero :
+    primeAperturePuncturedShellMajorantSymbol 0 = 1 := by
+  norm_num [primeAperturePuncturedShellMajorantSymbol]
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

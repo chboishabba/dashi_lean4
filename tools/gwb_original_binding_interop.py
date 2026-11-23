@@ -121,6 +121,7 @@ def weld_original_binding(
     }
     by_factor = {x["factor_ref"]:x for x in anchors.values()}
     matched_sets = []
+    omitted_by_cap = 0
     for b in compiled.get("binding_candidate_sets") or []:
         require(b.get("schema_version") == "sl.binding_candidate_set.v0_2",
                 "not the original typed binder set")
@@ -149,6 +150,12 @@ def weld_original_binding(
                     m.get("compatibility_assessment_ref"),
                 "independent_identity_admission_paid":False
             })
+        for exclusion in b.get("exclusion_summaries") or []:
+            if exclusion.get("reason_ref") == "candidate_limit_truncation":
+                count = exclusion.get("excluded_count")
+                require(type(count) is int and count >= 0,
+                        "original binder truncation count invalid")
+                omitted_by_cap += count
         matched_sets.append({
             "candidate_set_ref":b.get("candidate_set_ref"),
             "reference_factor_ref":b["reference_factor_ref"],
@@ -177,6 +184,8 @@ def weld_original_binding(
         "source_factor_anchors_provenance_checked":len(anchors),
         "source_focus_factors":focus_candidates,
         "typed_candidate_sets":matched_sets,
+        "original_binder_candidate_limit_truncation_count":omitted_by_cap,
+        "requires_omitted_candidate_audit":omitted_by_cap > 0,
         "candidate_scope_exhaustive":False,
         "resolved_unique":False,
         "semantic_review_paid":False,

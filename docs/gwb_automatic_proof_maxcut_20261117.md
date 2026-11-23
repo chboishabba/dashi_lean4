@@ -5,6 +5,34 @@ Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
 
 ## Controlling executive roadmap — 23 November 2026 (supersedes historical gate plans)
 
+
+### Current formal repair (source-written, kernel run pending)
+
+The P0 semantic proof repair is now
+`GwbCoreferenceFormalRepair.lean`, documented in
+`docs/gwb_coreference_formal_repair_20261123.md`. It explicitly proves
+a known omitted *live* binder candidate refutes coverage,
+the current S29 Pending state cannot pay governed identity,
+and complete **typed** live scope plus reviewed actor-class
+dispositions plus **separate** semantic authority imply a unique
+local referent (not a name/span equality). It also proves consumer
+invariance, rival counterexample and Level-3 retraction preserving
+Level-1 source. All theorems are conditional on actual source/review
+premises, not fabricated from JSON. The original binder's 64-member
+cap residual is now preserved in the optional same-book crosswalk
+and verified in the joint ledger with negative tests.
+
+The original M1-M3 operator script now kernel-checks this module and
+emits `GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK` on success.
+The code is **not yet locally Lean compiled/tested** in this
+connector environment and does **not** admit a referent or QID.
+P0 positive payment remains full original exact-book typed factor
+graph, source-scope coverage, reviewed competing actors, genuine
+S29 decision and owner-checked semantic receipt. Then, and only then,
+pay the source-local consumer and reversible substitution.
+
+
+
 ### 2026-11-23 accepted real M1–M3 bounded run — subsequent analysis
 
 The operator published the exact real run in commit `1a639892849db7df37fecb24a697f03a263d0472`;

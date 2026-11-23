@@ -215,6 +215,40 @@ def primeAperturePhysicalMoment
        - Zeta23Bridge.LiteralWeilParityBalance.evenResp g 0 (2*r)
          * Real.cos (r*u))) * u^k
 
+/-!
+## E0 explicit source-construction route — the even monic order-52 annihilator
+
+The external exact SymPy regression
+  check_rh_p0_exact_differential_annihilator_20261123.py
+constructs a source-native, NON-rank-based smooth solution to every E0 moment
+and pole integral condition, for each fixed original W and height t.
+
+Write D=d/du and r=t/16. Take the even monic constant-coefficient operator
+
+  (D²+r²)^9 (D²+4r²)^9
+  * Π_{c=1,2} Π_{sign=±1}
+      [((D-1/2)²+(t+sign*c*r)²)
+       ((D+1/2)²+(t+sign*c*r)²)].
+
+The two first factors annihilate u^k*cos(r*u) and
+u^k*cos(2*r*u) for k≤8; the remaining factors annihilate
+cosh(u/2)*cos(t*u)*cos(c*r*u), c=1,2. It is even in D,
+so its formal adjoint is itself. Applying it to an even C-infinity bump
+compactly supported near ±log2 or ±log3 gives an EVEN C-infinity compact
+h. Integration by parts forces the exact eight original integral
+constraints to ZERO. Choosing the starting bump's 0..51 jets to be zero
+and its 52nd derivative to be one at the designated prime yields
+h(log p)=1 because the operator is MONIC; disjoint supports give zero
+at the other prime and all n≥4.
+
+This construction is a mathematical E0 existence proof and exact SymPy
+regression, NOT a Lean proof body in this file. To instantiate the carrier,
+weld the high-order derivative operator, compact support, formal adjoint
+and prescribed-jet bump into Mathlib. The high derivative order makes
+quantitative E2 norms (including sixth/eighth absolute shells) a MAJOR
+independent obligation; it cannot be called a ready-to-use RH test.
+-/
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

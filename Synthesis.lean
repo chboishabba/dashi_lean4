@@ -453,3 +453,13 @@ the cross-domain material in this repository.
 See `DEPENDENCY_MAP.md` for the provenance map and the list of remaining proof
 obligations.
 -/
+import Synthesis.MillenniumBSDCohomologicalShaLocalizationExact
+import Synthesis.MillenniumBSDActualE2ShaSameObjectMaxCut
+import BSDCohomology.EllipticKummerDivisibilityReduction
+import Synthesis.MillenniumBSDTwoSelmerDimensionArithmeticMaxCut
+import Synthesis.MillenniumBSDCMSupportedSquareClassFiniteCandidatesExact
+import Synthesis.MillenniumBSDCMRealAffineLocusExact
+import Synthesis.MillenniumBSDCMRealSieveTorsionCosetsExact
+import Synthesis.MillenniumBSDCMTwoAdicValuationArithmeticExact
+import Synthesis.MillenniumBSDCMQ2ActualCurveValuationExact
+import Synthesis.MillenniumBSDCMQ2SquareClassValuationParityExact

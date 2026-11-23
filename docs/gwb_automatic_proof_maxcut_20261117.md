@@ -1206,7 +1206,7 @@ sentence refers to the 1980 Reagan vice-presidency context, so retain
 Q23505 (George H. W. Bush) as a competing hypothesis rather than automatically
 attaching Q207 (George W. Bush).
 
-Local execution: 18/18 isolated Python tests PASS for the numeric proof
+Local execution: 20/20 isolated Python tests PASS for the numeric proof
 discriminator. The test suite stubs the earlier native-to-owner verifier;
 it is NOT a live SensibLaw DB or same-source owner-graph receipt.
 C4.09a 12/12 and the real 31-token/2-NER capture remain accepted separately.
@@ -1220,7 +1220,7 @@ Required crosswalk: source_revision_ref, parser_run_ref, region_ref,
 source_start_char, source_end_char, surface, candidate_ref,
 owner_document_ref, owner_run_ref, coordinate_frame (region_local or
 source_absolute), factor_ref, owner_graph_ref, source_object_id,
-premise_factor_id, demand_id. Unchecked user-supplied coordinates do
+premise_factor_id, demand_id, resolution_interface_id. Unchecked user-supplied coordinates do
 not create semantic authority; the original graph/DB proof chain must
 independently match them.
 
@@ -1244,3 +1244,14 @@ This JMD source-field lemma does NOT prove the Wikipedia article digest,
 native he identity, Q207 property support, historical truth or simultaneous
 Wikidata/Wikipedia revision. Property/ontology proofs and source-to-KB
 alignment remain distinct future obligations. No CI, TAR or reparse.
+
+C4.09b further hardening, 23 November: 0e36c5216e76 and 9db3c6ab3c1d
+reopen the *archived* native source digest and invoke the original C4.09a
+validate_region on all archived tokens/entities/PNF/L2 factors before any
+semantic graph or DB proof inspection. The unique frontier interface_id
+must match the admitted anaphor witness's resolution_interface_id; a
+same-demand witness from a different interface fails closed. These two
+negative controls raise the isolated read-only proof discrimination
+suite to 20/20 local PASS. The suite stubs native original validation
+because its original 12/12 acceptance belongs to C4.09a; do not promote
+the local DB simulation into original PostgreSQL evidence.

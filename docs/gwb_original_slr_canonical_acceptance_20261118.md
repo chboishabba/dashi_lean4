@@ -114,3 +114,16 @@ full run has **not** been executed in the author's environment against
 the original ignored fixtures or the pinned Lean compiler. Prior green
 P4/P5–P10 results remain receipts of the historical restricted probe
 and are not relabeled as canonical semantic acceptance.
+
+
+## 2026-11-20 — current native identity integration boundary
+
+The native reconciliation at 5ebc5f5b3 establishes candidate evidence but no
+persisted document-local identity or QID binding; zero review receipts and
+no matching legacy parser source. Native occurrence replay at cc9eadbf6
+passed 29,043/29,043 with zero missing. See the controlling [C4.09 automatic
+proof roadmap](gwb_automatic_proof_maxcut_20261117.md). Reuse existing
+SensibLaw typed binding logic through an explicit source-coordinate adapter
+while retaining SLR Rust as production parser/PNF owner. No legacy
+benchmark on unrelated data, second parser, identity promotion or new
+kernel acceptance is implied. Original article proof scope remains separate.

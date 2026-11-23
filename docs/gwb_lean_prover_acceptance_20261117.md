@@ -143,3 +143,16 @@ Do not rerun spaCy or the SensibLaw/Python mention producer.
 No alternative language parser or fabricated semantic coordinate.
 No `/tmp` source copies or new PRs. Original input fixtures are
 local, receipts live under one Git-tracked results directory.
+
+
+## 2026-11-20 — current native identity integration boundary
+
+The native reconciliation at 5ebc5f5b3 establishes candidate evidence but no
+persisted document-local identity or QID binding; zero review receipts and
+no matching legacy parser source. Native occurrence replay at cc9eadbf6
+passed 29,043/29,043 with zero missing. See the controlling [C4.09 automatic
+proof roadmap](gwb_automatic_proof_maxcut_20261117.md). Reuse existing
+SensibLaw typed binding logic through an explicit source-coordinate adapter
+while retaining SLR Rust as production parser/PNF owner. No legacy
+benchmark on unrelated data, second parser, identity promotion or new
+kernel acceptance is implied. Original article proof scope remains separate.

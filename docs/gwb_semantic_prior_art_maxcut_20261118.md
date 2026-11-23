@@ -342,13 +342,54 @@ PNF and L2 factors; report pronoun/role census, repeated lexical fibres,
 same-statement preceding NER candidates, and revision-specific review
 semantic-reference overlap. The latter is not run-level review parity.
 The compact result is bound to the input artifact SHA-256.
-No database or parser is invoked. Actual full receipt execution remains
-pending; binary retrieval through the connector returned empty content.
-Python/Rust Unicode lowercase parity is subject to the observed replay.
+No database or parser is invoked. Operator execution at cc9eadbf6 passed
+29,043/29,043 fingerprint and occurrence checks, zero missing; compact
+receipt independently inspected. Unicode parity is accepted on this corpus.
 
-C4.04c.8a–d/g: implementation present, native acceptance pending.
+C4.04c.8a–d/g: native acceptance PASS on the committed compact receipt.
 C4.04c.8e: bounded candidate search only; exact original statement
 literal and discourse accessibility are unpaid. C4.04c.8f and empirical
 same-fingerprint/different-referent witness remain open. Reuse the
 SensibLaw binder and reviewed identity acceptance owners above; do not
 promote same-statement NER proximity into identity. C4.05/C5/C6 remain open.
+
+
+## C4.09 — controlling integration correction
+
+
+**Current controlling status (supersedes earlier pending/discovery entries).**
+Original goal: given a QID/title, derive source-grounded semantic relations
+and independently checked JMD Lean KB answers, not more lexical diagnostics.
+The occurrence replay was an integrity prerequisite, not a research endpoint.
+
+### Accepted evidence and exact scope
+
+- bedad7427: native observation v2 gzip, original full candidate carrier.
+- cc9eadbf6: native-entity-audit-v1.json, 29,043/29,043 fingerprint and
+  occurrence replay, zero missing; 4,280 lexical keys, 3,078 lexical
+  pronoun-like candidates. No further standalone lexical quotient work.
+- 5ebc5f5b3: .dashi/gwb-relation/native-identity-reconciliation-v1.json,
+  read-only installed-schema census, independently inspected.
+  29,043 general mentions, 16,500 named mentions, 6,678 batches,
+  155,968 reported persisted factor occurrences, 4,597 event and
+  4,652 proposition candidates, 17,202 review items, **zero review
+  receipts** and zero promoting entity mentions. The v2 audit separately
+  counts 154,292 distinct product-factor rows and 29,000 entity-factor
+  rows; do not equate product-deduplicated rows with occurrence totals.
+- Native canonical SHA 7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30
+  is not the pinned 643-sentence Wikipedia SHA a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233
+  (enwiki-revid:1385850169). Keep both scopes and the historical
+  10-document/41,044-sentence certification separate.
+- Same-content parser parity operator PASS: 6,678/6,678 region digests,
+  155,968 tokens per run, compilation keys retained for provenance
+  but excluded from content equality. Run B is a locality control;
+  downstream materialization is not equivalent.
+- Installed native schema has candidate entity fingerprints, no
+  document-local identity binding/QID attachment in the inspected
+  relations. Legacy execution schema has 14 numeric runs but zero
+  matching pinned GWB parser source rows. A legacy identity-yield
+  report cannot establish native identity yield. This is an actual
+  integration gap, not absence of upstream coreference algorithms.
+
+
+See [canonical automatic proof roadmap, C4.09](gwb_automatic_proof_maxcut_20261117.md) for the ordered native adapter → existing typed binder → admitted document identity → external QID → JMD proof acceptance gates. No further standalone lexical diagnostics are prerequisites. Earlier same-fingerprint/different-referent witness is a useful regression at most, not a blocking research objective.

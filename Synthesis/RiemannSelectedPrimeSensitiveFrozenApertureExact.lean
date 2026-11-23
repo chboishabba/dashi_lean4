@@ -474,6 +474,88 @@ theorem primeApertureTargetFloorRationalAt1215 :
             * (1 + (25 / (4 * 1215^2) : ℚ))
       > 1 / 100 := by norm_num
 
+/-!
+## P0 E2 4·256 / 4E_j / 26 — genuine scalar geometry and kernel boundary
+
+Source audit: the ORIGINAL DASHI RH dyadic q^-6 tail owner has
+q=16 at k=1024 of 32768 cells. Independently, the OLD analytic
+flat-top's first box halfwidth 1/256, with TWO symmetric prime centres
+and TWO interval jump boundaries each, has second-derivative total
+variation upper bound 4·256=1024. Same exact integer, distinct
+measure/action sources; the equality is not a zeta/Monster intertwiner.
+
+The new C-infinity source patch uses first 52=2·26 equal box kernels
+at halfwidth 7/(52·1024), and an INFINITE residual sequence of box
+halfwidths 2^(-n)/1024, n>=1. Its smoothing radius is
+  52*(7/(52*1024)) + 1/1024 = 1/128.
+This is a CHOSEN dyadic normalization, not an invariant identification.
+Its even flat-top b_p has ||b_p||1=3/32 and
+  ||b_p^(m)||1 <= 4*lambda^(m-1), 1<=m<=53,
+  lambda=(2*26)*(4*256)/7=53248/7.
+For m up to 60 needed by k<=8 on the full order52 port, the
+remaining derivative bounds consume explicit dyadic tail boxes.
+
+If E(x) is the original punctured-27 oriented 26-factor MAJORANT
+symbol, the entire 4E_j 26-term mass bound collapses to
+  H_dyadic(r) = 3/32 + (4/lambda)*(E((lambda/r)^2)-1).
+Four jump boundaries ≠ the separate four (prime,endpoint) source ports.
+Exactly proven in external mathematical ledger / Fraction regression:
+ all-four unattenuated amplitudes admitted for r>=5534 (t>=88544),
+ l1-single-port budget r>=5130 (t>=82080),
+ H_dyadic<=1/4 at r>=9621 (t>=153936).
+Actual kernel proof of these inequalities, all-source FarExact and
+independent signed E3 are NOT claimed here. Old fixed bump can be
+slightly better at very high r; never declare uniform source dominance.
+-/
+
+/-- Reuse ORIGINAL integer dyadic crossing scale as a scalar constant,
+not a borrowed action. This equals the old 4-jump x 256 bound. -/
+theorem primeApertureOldJumpMagnitude_eq_dyadicCrossing :
+    (4 : ℝ) * 256 = 1024 := by
+  norm_num
+
+/-- CHOSEN geometric E2 reciprocal box width: 52 primary boxes,
+7/1024 of the smoothing radius; remaining 1/1024 is infinite C∞
+dyadic residual. -/
+def primeApertureRebalancedInverseBoxWidth : ℝ :=
+  (52 * 1024 : ℝ) / 7
+
+theorem primeApertureRebalancedInverseBoxWidth_eq :
+    primeApertureRebalancedInverseBoxWidth
+      = ((2 * 26 : ℝ) * (4 * 256)) / 7 := by
+  norm_num [primeApertureRebalancedInverseBoxWidth]
+
+theorem primeApertureRebalancedInverseBoxWidth_pos :
+    0 < primeApertureRebalancedInverseBoxWidth := by
+  norm_num [primeApertureRebalancedInverseBoxWidth]
+
+/-- Exact chosen E2 smoothing radius, not a new RH/Gamma identity. -/
+theorem primeApertureRebalancedBoxRadius :
+    (52 : ℝ) * (7 / (52*1024)) +
+      (1 / 1024) = 1 / 128 := by
+  norm_num
+
+/-- The entire 26-grade punctured-shell polynomial is evaluated once,
+rather than allocating a separate 1/208 to 26 derivative terms.
+Mathematical L1 MAJORANT, not yet proved as an analytic theorem here. -/
+def primeApertureRebalancedGeometricBound (r : ℝ) : ℝ :=
+  (3 : ℝ) / 32 +
+    (4 / primeApertureRebalancedInverseBoxWidth) *
+      (primeAperturePuncturedShellMajorantSymbol
+          ((primeApertureRebalancedInverseBoxWidth/r)^2) - 1)
+
+/-- This definition records the scalar constant term exactly. -/
+theorem primeApertureRebalancedGeometricBound_at_unit_radius :
+    primeApertureRebalancedGeometricBound
+      primeApertureRebalancedInverseBoxWidth
+    =
+      (3 : ℝ) / 32 +
+        (4 / primeApertureRebalancedInverseBoxWidth) *
+          (primeAperturePuncturedShellMajorantSymbol 1 - 1) := by
+  unfold primeApertureRebalancedGeometricBound
+  rw [div_self (primeApertureRebalancedInverseBoxWidth_pos).ne']
+  norm_num
+
 /-- P0 E0 carrier: exactly which source facts the finite-codimension
 projection must produce. Inhabitation is NOT claimed here. -/
 structure QuarticFourFrozenPrimeAperture (t : ℝ) where

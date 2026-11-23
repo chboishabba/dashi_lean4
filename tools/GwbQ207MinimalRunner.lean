@@ -1,3 +1,5 @@
+import RequestProject.Cli.Import
+
 /-!
 P10 minimal independent Q207 EntityData check.
 Imports JMD's original Cli.Import only; does not evaluate or import the
@@ -5,7 +7,6 @@ Imports JMD's original Cli.Import only; does not evaluate or import the
 Source identity is snapshot-relative, not a cross-document mention witness.
 Original importer attribution: meta-introspector JMD.
 -/
-import RequestProject.Cli.Import
 
 open Lean
 

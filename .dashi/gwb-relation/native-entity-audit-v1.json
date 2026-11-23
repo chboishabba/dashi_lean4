@@ -1,0 +1,3511 @@
+{
+  "schema": "gwb-native-entity-audit-v1",
+  "candidate_only": true,
+  "creates_identity": false,
+  "creates_semantic_authority": false,
+  "source_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "selected_run": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+  "counts": {
+    "general_mentions": 29043,
+    "batch_bindings": 6678,
+    "product_factors": 154292,
+    "entity_factors": 29000,
+    "review_delta_fibres": 17202,
+    "matching_global_pressure_candidates": 9121
+  },
+  "replay": {
+    "fingerprint_match": 29043,
+    "unique_occurrence_match": 29043
+  },
+  "expected_distinct_occurrences": 29043,
+  "expected_not_exported": 0,
+  "mismatch_examples": [],
+  "pronoun_count": 3078,
+  "pronoun_histogram": [
+    {
+      "surface": "He",
+      "lemma": "he",
+      "role": "actor",
+      "count": 180
+    },
+    {
+      "surface": "Him",
+      "lemma": "he",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "His",
+      "lemma": "his",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "I",
+      "lemma": "I",
+      "role": "actor",
+      "count": 238
+    },
+    {
+      "surface": "I",
+      "lemma": "I",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "It",
+      "lemma": "it",
+      "role": "actor",
+      "count": 132
+    },
+    {
+      "surface": "Itself",
+      "lemma": "itself",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "Me",
+      "lemma": "I",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "She",
+      "lemma": "she",
+      "role": "actor",
+      "count": 12
+    },
+    {
+      "surface": "They",
+      "lemma": "they",
+      "role": "actor",
+      "count": 45
+    },
+    {
+      "surface": "US",
+      "lemma": "US",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "We",
+      "lemma": "we",
+      "role": "actor",
+      "count": 54
+    },
+    {
+      "surface": "Who",
+      "lemma": "who",
+      "role": "actor",
+      "count": 6
+    },
+    {
+      "surface": "You",
+      "lemma": "you",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "he",
+      "lemma": "he",
+      "role": "actor",
+      "count": 706
+    },
+    {
+      "surface": "he",
+      "lemma": "he",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "her",
+      "lemma": "she",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "her",
+      "lemma": "she",
+      "role": "patient",
+      "count": 4
+    },
+    {
+      "surface": "him",
+      "lemma": "he",
+      "role": "actor",
+      "count": 17
+    },
+    {
+      "surface": "him",
+      "lemma": "he",
+      "role": "patient",
+      "count": 170
+    },
+    {
+      "surface": "himself",
+      "lemma": "himself",
+      "role": "actor",
+      "count": 8
+    },
+    {
+      "surface": "himself",
+      "lemma": "himself",
+      "role": "patient",
+      "count": 37
+    },
+    {
+      "surface": "his",
+      "lemma": "his",
+      "role": "patient",
+      "count": 3
+    },
+    {
+      "surface": "i",
+      "lemma": "I",
+      "role": "actor",
+      "count": 4
+    },
+    {
+      "surface": "i",
+      "lemma": "I",
+      "role": "patient",
+      "count": 3
+    },
+    {
+      "surface": "it",
+      "lemma": "it",
+      "role": "actor",
+      "count": 299
+    },
+    {
+      "surface": "it",
+      "lemma": "it",
+      "role": "patient",
+      "count": 167
+    },
+    {
+      "surface": "itself",
+      "lemma": "itself",
+      "role": "actor",
+      "count": 2
+    },
+    {
+      "surface": "itself",
+      "lemma": "itself",
+      "role": "patient",
+      "count": 10
+    },
+    {
+      "surface": "me",
+      "lemma": "I",
+      "role": "actor",
+      "count": 5
+    },
+    {
+      "surface": "me",
+      "lemma": "I",
+      "role": "patient",
+      "count": 26
+    },
+    {
+      "surface": "our",
+      "lemma": "our",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "ourselves",
+      "lemma": "ourselves",
+      "role": "patient",
+      "count": 2
+    },
+    {
+      "surface": "she",
+      "lemma": "she",
+      "role": "actor",
+      "count": 25
+    },
+    {
+      "surface": "theirs",
+      "lemma": "theirs",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "them",
+      "lemma": "they",
+      "role": "actor",
+      "count": 9
+    },
+    {
+      "surface": "them",
+      "lemma": "they",
+      "role": "patient",
+      "count": 72
+    },
+    {
+      "surface": "themselves",
+      "lemma": "themselves",
+      "role": "actor",
+      "count": 3
+    },
+    {
+      "surface": "themselves",
+      "lemma": "themselves",
+      "role": "patient",
+      "count": 11
+    },
+    {
+      "surface": "they",
+      "lemma": "they",
+      "role": "actor",
+      "count": 197
+    },
+    {
+      "surface": "us",
+      "lemma": "we",
+      "role": "actor",
+      "count": 6
+    },
+    {
+      "surface": "us",
+      "lemma": "we",
+      "role": "patient",
+      "count": 30
+    },
+    {
+      "surface": "we",
+      "lemma": "we",
+      "role": "actor",
+      "count": 138
+    },
+    {
+      "surface": "we",
+      "lemma": "we",
+      "role": "patient",
+      "count": 1
+    },
+    {
+      "surface": "who",
+      "lemma": "who",
+      "role": "actor",
+      "count": 315
+    },
+    {
+      "surface": "who",
+      "lemma": "who",
+      "role": "patient",
+      "count": 3
+    },
+    {
+      "surface": "whom",
+      "lemma": "whom",
+      "role": "actor",
+      "count": 1
+    },
+    {
+      "surface": "whom",
+      "lemma": "whom",
+      "role": "patient",
+      "count": 25
+    },
+    {
+      "surface": "you",
+      "lemma": "you",
+      "role": "actor",
+      "count": 87
+    },
+    {
+      "surface": "you",
+      "lemma": "you",
+      "role": "patient",
+      "count": 13
+    },
+    {
+      "surface": "yourself",
+      "lemma": "yourself",
+      "role": "patient",
+      "count": 1
+    }
+  ],
+  "lexical_fibre_count": 4280,
+  "repeated_fibres": [
+    {
+      "fingerprint": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+      "count": 1075,
+      "statement_count": 888,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+          "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:1:4534:4536",
+          "role_ref": "actor",
+          "surface": "he",
+          "lemma": "he",
+          "source_start_char": 4534,
+          "source_end_char": 4536,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:b3d3f2832d1c144549fa47432306583149f51cdbfd1a5ead9de2e404114e7ad4",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+          "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:18:4630:4633",
+          "role_ref": "patient",
+          "surface": "him",
+          "lemma": "he",
+          "source_start_char": 4630,
+          "source_end_char": 4633,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:e82f1f4f98fcf7822554e72f32e2ce605d549783d28746ba82ceee0d00584fc3",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+          "statement_ref": "statement:sha256:c209c0345b147cfc07a987e39f3498a353e70e2d258b407cbe2bf6c269c6d702",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:27:5076-5292:29:5220:5222",
+          "role_ref": "actor",
+          "surface": "he",
+          "lemma": "he",
+          "source_start_char": 5220,
+          "source_end_char": 5222,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:beb1a874c2e26d22c92096cd58e52bb7b1918eb210472bcf3f6147509be12f9a",
+      "count": 925,
+      "statement_count": 902,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:6dab5924c46270cd23a1e0d7d96696e30dd8d934fc1863ce6a0a40c9e4154431",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:beb1a874c2e26d22c92096cd58e52bb7b1918eb210472bcf3f6147509be12f9a",
+          "statement_ref": "statement:sha256:bafd1840f7e0fe468e1f14427111d1060c381f8003d8319e6686b6aef7a9b45b",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:3:54-101:0:54:58",
+          "role_ref": "actor",
+          "surface": "Bush",
+          "lemma": "Bush",
+          "source_start_char": 54,
+          "source_end_char": 58,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:bf603f8fe8198968bfd6378e18b6e96c97b595ef3f303c0a593d8f2b3a0ead9b",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:beb1a874c2e26d22c92096cd58e52bb7b1918eb210472bcf3f6147509be12f9a",
+          "statement_ref": "statement:sha256:1a226d5d05b399e9c8df49696e317fad81ee19f5e7e58873fb68a75cbd67a0f6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:17:3818-4027:0:3818:3822",
+          "role_ref": "actor",
+          "surface": "Bush",
+          "lemma": "Bush",
+          "source_start_char": 3818,
+          "source_end_char": 3822,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:537aba1a5d0b372a5e703be77c91196920a57c93aa3780d77c213d57ceb8a7bf",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:beb1a874c2e26d22c92096cd58e52bb7b1918eb210472bcf3f6147509be12f9a",
+          "statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141:2:4061:4065",
+          "role_ref": "actor",
+          "surface": "Bush",
+          "lemma": "Bush",
+          "source_start_char": 4061,
+          "source_end_char": 4065,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+      "count": 598,
+      "statement_count": 551,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:bac645be6bc4f63f5fc07f1e46d0661fbbaff19041eb49dba19335c2c99a0e0e",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+          "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523:0:4287:4289",
+          "role_ref": "actor",
+          "surface": "It",
+          "lemma": "it",
+          "source_start_char": 4287,
+          "source_end_char": 4289,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:af893034517ad51604e63a2c0544c30493ba61baa575e5109ad44288ec033ec7",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913:39:7910:7912",
+          "role_ref": "patient",
+          "surface": "it",
+          "lemma": "it",
+          "source_start_char": 7910,
+          "source_end_char": 7912,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:07bfa6b62b151cefbeb1ae2128aa6530e4d884a43901133c1141e23817cfac0d",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+          "statement_ref": "statement:sha256:0faa77219739294b8b56b284295bb36220e05a50dcc5c2cbb85ba12e7e82fc3d",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:77:11137-11305:3:11151:11153",
+          "role_ref": "actor",
+          "surface": "it",
+          "lemma": "it",
+          "source_start_char": 11151,
+          "source_end_char": 11153,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:a565bb816dd6c47a7e0934663bc576c61b8c317d2da27e0902113af520a81a5e",
+      "count": 579,
+      "statement_count": 538,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:29faff8e8cbaa8358686253d7b6fd68d9fb276da4836e966075f741fc83d476b",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:a565bb816dd6c47a7e0934663bc576c61b8c317d2da27e0902113af520a81a5e",
+          "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:16:4613:4617",
+          "role_ref": "actor",
+          "surface": "that",
+          "lemma": "that",
+          "source_start_char": 4613,
+          "source_end_char": 4617,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:00ab6330e80d45c5bb42dba9650bac7248f386fa020ff39f48468a59e38f2892",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:a565bb816dd6c47a7e0934663bc576c61b8c317d2da27e0902113af520a81a5e",
+          "statement_ref": "statement:sha256:be752aba03284d46afef603bda5b486c47ebb32327f4a7fa330aab64784e1e0f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:25:4737-4900:22:4855:4859",
+          "role_ref": "actor",
+          "surface": "that",
+          "lemma": "that",
+          "source_start_char": 4855,
+          "source_end_char": 4859,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:77edb4eb42b5b794d904c0747349706c5658f7441d414b610dd2a13c3a8054a4",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:a565bb816dd6c47a7e0934663bc576c61b8c317d2da27e0902113af520a81a5e",
+          "statement_ref": "statement:sha256:ab86fc2e0704282ebf29c7fee0ca3fbe4c4413ebbf30c92eb72125e40d681811",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:34:5848-5993:14:5902:5906",
+          "role_ref": "actor",
+          "surface": "that",
+          "lemma": "that",
+          "source_start_char": 5902,
+          "source_end_char": 5906,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:88846ac43cc9eb4d3fcf4f1b9217dbc40707b8c14d895d829290be744d22b315",
+      "count": 438,
+      "statement_count": 418,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:143ff9b99ac55c18b45e00dd386141da8a8605b5271faaa9792e81f696a9698d",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:88846ac43cc9eb4d3fcf4f1b9217dbc40707b8c14d895d829290be744d22b315",
+          "statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141:10:4100:4109",
+          "role_ref": "patient",
+          "surface": "president",
+          "lemma": "president",
+          "source_start_char": 4100,
+          "source_end_char": 4109,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:6bfaaf6a1a98f331d9c99b1bd3d5ab258e862f013f13af68d8d19c002fc2d8e2",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:88846ac43cc9eb4d3fcf4f1b9217dbc40707b8c14d895d829290be744d22b315",
+          "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:29:4683:4692",
+          "role_ref": "patient",
+          "surface": "president",
+          "lemma": "president",
+          "source_start_char": 4683,
+          "source_end_char": 4692,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:69b1df84add0e53f4044d09b57558fad73b2692eda0aacc2083ea63140882421",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:88846ac43cc9eb4d3fcf4f1b9217dbc40707b8c14d895d829290be744d22b315",
+          "statement_ref": "statement:sha256:55dbe6be82f7e954b8b9b677649c4ba1bf67fa8717e70e7bb10696cfb36f3816",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:36:6095-6206:15:6167:6176",
+          "role_ref": "actor",
+          "surface": "president",
+          "lemma": "president",
+          "source_start_char": 6167,
+          "source_end_char": 6176,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+      "count": 324,
+      "statement_count": 300,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:0a53bd5bf7a9209e9acacd3b62d1dbf68e3f9c1f7b85b49ea7d98516edb9df80",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073:8:4937:4940",
+          "role_ref": "actor",
+          "surface": "who",
+          "lemma": "who",
+          "source_start_char": 4937,
+          "source_end_char": 4940,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:43e800211c65ee2b86fd18616a753ff15cda5c7cf329493a2e53014ce6b51477",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+          "statement_ref": "statement:sha256:6d3b98775fc04fe52852a2dd3f76149b4880beebc3f3cd87e809b5a40db5f2b8",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:33:5732-5847:7:5762:5765",
+          "role_ref": "actor",
+          "surface": "who",
+          "lemma": "who",
+          "source_start_char": 5762,
+          "source_end_char": 5765,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:2380ac6bcfce8b0b01a8fd556b03e69c03ab6483ec2b8e8fb87eb68d3a5f7a27",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913:13:7768:7771",
+          "role_ref": "patient",
+          "surface": "who",
+          "lemma": "who",
+          "source_start_char": 7768,
+          "source_end_char": 7771,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+      "count": 323,
+      "statement_count": 282,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:55ca38da36c1a816a6c6e8dead725225c2cccf917335a160c69f027cfecda6be",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+          "statement_ref": "statement:sha256:be752aba03284d46afef603bda5b486c47ebb32327f4a7fa330aab64784e1e0f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:25:4737-4900:24:4864:4868",
+          "role_ref": "patient",
+          "surface": "them",
+          "lemma": "they",
+          "source_start_char": 4864,
+          "source_end_char": 4868,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:fe2ef888263d12979c9ecc9aca2358b5a664a74591e06a452072fe5da39f58bd",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073:0:4901:4905",
+          "role_ref": "actor",
+          "surface": "They",
+          "lemma": "they",
+          "source_start_char": 4901,
+          "source_end_char": 4905,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:5a676cc2958287a4f5e398fb1fec33ab82563530fb9f43cc9cb4a11123c8614d",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755:18:9720:9724",
+          "role_ref": "actor",
+          "surface": "they",
+          "lemma": "they",
+          "source_start_char": 9720,
+          "source_end_char": 9724,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:927e112185cf03a78e6716ae48cf175d09d1c3548c8a06684e58d2f8cd413449",
+      "count": 322,
+      "statement_count": 305,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:d2b1279314ad0480bac981a8e19645fdf3e50d12afb447e9a226b3eb4aa5abab",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:927e112185cf03a78e6716ae48cf175d09d1c3548c8a06684e58d2f8cd413449",
+          "statement_ref": "statement:sha256:bafd1840f7e0fe468e1f14427111d1060c381f8003d8319e6686b6aef7a9b45b",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:3:54-101:3:68:70",
+          "role_ref": "actor",
+          "surface": "by",
+          "lemma": "by",
+          "source_start_char": 68,
+          "source_end_char": 70,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:45d0004272dba08c9002f189b6c903bdcba0c0e69df50446ebcb7b4696514a14",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:927e112185cf03a78e6716ae48cf175d09d1c3548c8a06684e58d2f8cd413449",
+          "statement_ref": "statement:sha256:1a226d5d05b399e9c8df49696e317fad81ee19f5e7e58873fb68a75cbd67a0f6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:17:3818-4027:7:3859:3861",
+          "role_ref": "actor",
+          "surface": "by",
+          "lemma": "by",
+          "source_start_char": 3859,
+          "source_end_char": 3861,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:958ed2008405c442fd124dd7d552cc0e113033491cdd2c423a34117eb99827d0",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:927e112185cf03a78e6716ae48cf175d09d1c3548c8a06684e58d2f8cd413449",
+          "statement_ref": "statement:sha256:1a226d5d05b399e9c8df49696e317fad81ee19f5e7e58873fb68a75cbd67a0f6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:17:3818-4027:13:3891:3893",
+          "role_ref": "actor",
+          "surface": "by",
+          "lemma": "by",
+          "source_start_char": 3891,
+          "source_end_char": 3893,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:b30497e6a71c86ac902aa12a27d0fe74a80fd00320b5010d6298488254de222e",
+      "count": 278,
+      "statement_count": 215,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:fe5a0301c67a9dd6801da01762fe1d11a29ccebe04ccc6182c6b99c1591b4621",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b30497e6a71c86ac902aa12a27d0fe74a80fd00320b5010d6298488254de222e",
+          "statement_ref": "statement:sha256:36eb311844b54003accba5b84dd7b300d04afe067bd21fb458633a2aaa96f099",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:31:5495-5563:0:5495:5496",
+          "role_ref": "actor",
+          "surface": "I",
+          "lemma": "I",
+          "source_start_char": 5495,
+          "source_end_char": 5496,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:5c9a7bc9f27bc3d805bcbd151ba7ff20bedfa1f03dc03f05416daeeee02022d8",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b30497e6a71c86ac902aa12a27d0fe74a80fd00320b5010d6298488254de222e",
+          "statement_ref": "statement:sha256:7c9b6f3ecc9a8f36f78e3812fcea2125be18d0aee3c619221fc836b536c08276",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:32:5565-5731:1:5567:5568",
+          "role_ref": "patient",
+          "surface": "i",
+          "lemma": "I",
+          "source_start_char": 5567,
+          "source_end_char": 5568,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:1c729b5d9e6b262d7f65ba8f22ec550277170b678c180aabbb0c555979421f3f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b30497e6a71c86ac902aa12a27d0fe74a80fd00320b5010d6298488254de222e",
+          "statement_ref": "statement:sha256:7c9b6f3ecc9a8f36f78e3812fcea2125be18d0aee3c619221fc836b536c08276",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:32:5565-5731:2:5569:5570",
+          "role_ref": "actor",
+          "surface": "i",
+          "lemma": "I",
+          "source_start_char": 5569,
+          "source_end_char": 5570,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+      "count": 229,
+      "statement_count": 186,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:0433faadf19b2fac01768c017a804040e804196160dc3b093844cb68377be71d",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+          "statement_ref": "statement:sha256:ca338435533c2af28cf552fbc365ac522350aac1c5115f14fac1c871acb5b4c4",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:20:4144-4192:3:4160:4162",
+          "role_ref": "patient",
+          "surface": "us",
+          "lemma": "we",
+          "source_start_char": 4160,
+          "source_end_char": 4162,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:e7a9ccfb8ca899a278b6827f0d86655398b877fe5312eb5925d5ea1bf754b6c7",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+          "statement_ref": "statement:sha256:2b6b5dab28bce7b5636a39200230b5d4a9c018b33d0a7eef0d571aede685903f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:35:5996-6094:4:6007:6009",
+          "role_ref": "actor",
+          "surface": "we",
+          "lemma": "we",
+          "source_start_char": 6007,
+          "source_end_char": 6009,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:97c0bdf3a28c404c57322c976cbf69e5bcab8f71a9cb576c7bb5438619cf2951",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+          "statement_ref": "statement:sha256:55dbe6be82f7e954b8b9b677649c4ba1bf67fa8717e70e7bb10696cfb36f3816",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:36:6095-6206:2:6108:6110",
+          "role_ref": "actor",
+          "surface": "we",
+          "lemma": "we",
+          "source_start_char": 6108,
+          "source_end_char": 6110,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:fb684510490855417b8e4b4f1d629385fd3ca75f0fd236ad7015f76f5db8c3c2",
+      "count": 202,
+      "statement_count": 196,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:09d144fdfa28767fa76d401401d2727525287e218f9c508d7ba844da19039bd0",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:fb684510490855417b8e4b4f1d629385fd3ca75f0fd236ad7015f76f5db8c3c2",
+          "statement_ref": "statement:sha256:1a226d5d05b399e9c8df49696e317fad81ee19f5e7e58873fb68a75cbd67a0f6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:17:3818-4027:2:3824:3829",
+          "role_ref": "actor",
+          "surface": "which",
+          "lemma": "which",
+          "source_start_char": 3824,
+          "source_end_char": 3829,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:940676741ebcea5f40fe1169afe4f5c56f26002094ab251e7594e123e340f2e3",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:fb684510490855417b8e4b4f1d629385fd3ca75f0fd236ad7015f76f5db8c3c2",
+          "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523:18:4375:4380",
+          "role_ref": "actor",
+          "surface": "which",
+          "lemma": "which",
+          "source_start_char": 4375,
+          "source_end_char": 4380,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:5617c2c6fdf31cceadd24931a47c51a209de73beae00626fbfc032d0b4216d31",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:fb684510490855417b8e4b4f1d629385fd3ca75f0fd236ad7015f76f5db8c3c2",
+          "statement_ref": "statement:sha256:80dbb48fca6b0f71b648b3df2feeddd1fc8e6268feb6a475f4b114913b47622e",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:51:8375-8488:5:8399:8404",
+          "role_ref": "patient",
+          "surface": "which",
+          "lemma": "which",
+          "source_start_char": 8399,
+          "source_end_char": 8404,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:32e1863750b93784e8dc7cdd24c9a7c2ceadac247ffee53db84090223c666b5f",
+      "count": 175,
+      "statement_count": 174,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:4dccca176db15228d651743c7348adb43380871117f1853bd637d22c0f663f4a",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:32e1863750b93784e8dc7cdd24c9a7c2ceadac247ffee53db84090223c666b5f",
+          "statement_ref": "statement:sha256:678703a37403e9f0915472a508ebc64498d0f1b0978e41255f7180cf0adc1a63",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:1:10-50:4:26:36",
+          "role_ref": "patient",
+          "surface": "Presidency",
+          "lemma": "Presidency",
+          "source_start_char": 26,
+          "source_end_char": 36,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:061a28de39c9360d346b7db70683d441bdf96f3f322fd0a8e28648a73cfbc1e4",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:32e1863750b93784e8dc7cdd24c9a7c2ceadac247ffee53db84090223c666b5f",
+          "statement_ref": "statement:sha256:0faa77219739294b8b56b284295bb36220e05a50dcc5c2cbb85ba12e7e82fc3d",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:77:11137-11305:24:11261:11271",
+          "role_ref": "patient",
+          "surface": "presidency",
+          "lemma": "presidency",
+          "source_start_char": 11261,
+          "source_end_char": 11271,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:55efb054a8cc1270947dd3a2b35f404f108de5b15c13675aa2910e450ff51331",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:32e1863750b93784e8dc7cdd24c9a7c2ceadac247ffee53db84090223c666b5f",
+          "statement_ref": "statement:sha256:88712accd5c04d91369d9995edd6c59d689a453124535d804aa52ca5c1f072b6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:79:11582-11758:12:11640:11650",
+          "role_ref": "patient",
+          "surface": "presidency",
+          "lemma": "presidency",
+          "source_start_char": 11640,
+          "source_end_char": 11650,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:b7cd4abb30f7556f343932674393746a617b5dab5f9a466261d21fed1fe125cf",
+      "count": 174,
+      "statement_count": 167,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:3102e318f05153347b86d232b1ec202c1fb5f636d53380c50333af34db6f5628",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b7cd4abb30f7556f343932674393746a617b5dab5f9a466261d21fed1fe125cf",
+          "statement_ref": "statement:sha256:122446fba3ff5462a204579cd99f09dee5478c0439d9fc40327a6ec3e0ed15d0",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:47:7465-7696:7:7495:7499",
+          "role_ref": "patient",
+          "surface": "what",
+          "lemma": "what",
+          "source_start_char": 7495,
+          "source_end_char": 7499,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:a0a4921cd20d27188976bcf201bff9babc9a862623611374fc51947c32f928de",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b7cd4abb30f7556f343932674393746a617b5dab5f9a466261d21fed1fe125cf",
+          "statement_ref": "statement:sha256:631e22f8b5054bf58ce175c04a6de09f6114e8d3ab0194a3ec4344d8dcb95bf7",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:56:8915-8944:2:8925:8929",
+          "role_ref": "patient",
+          "surface": "what",
+          "lemma": "what",
+          "source_start_char": 8925,
+          "source_end_char": 8929,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:45c2dd318c1b7170071873a51fd58d670815e85583826374a944c9b6fe09b9bc",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:b7cd4abb30f7556f343932674393746a617b5dab5f9a466261d21fed1fe125cf",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755:17:9715:9719",
+          "role_ref": "patient",
+          "surface": "what",
+          "lemma": "what",
+          "source_start_char": 9715,
+          "source_end_char": 9719,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:2334e124462052a821e04940dd098062d83617d35ace470fc52d17a4b813e328",
+      "count": 168,
+      "statement_count": 150,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:1ed5ac85f7d93e37b51cd24ac0abb83eedb29d2f87db361eeb531aab4ba8f50d",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2334e124462052a821e04940dd098062d83617d35ace470fc52d17a4b813e328",
+          "statement_ref": "statement:sha256:4a346e8ce6dbd925cb3a043189a3410477614c09f0d8f68b3a51399107b64248",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:39:6474-6574:12:6534:6537",
+          "role_ref": "patient",
+          "surface": "War",
+          "lemma": "War",
+          "source_start_char": 6534,
+          "source_end_char": 6537,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:c6df699884332c390f01e1672af002bf58e3515bf35c19420286071ef5a504bf",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2334e124462052a821e04940dd098062d83617d35ace470fc52d17a4b813e328",
+          "statement_ref": "statement:sha256:d12c81b250f59f4b47a4e43fbb08305974e8c9a0d18384c9e3fe3d983697fd61",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:43:6994-7107:17:7103:7106",
+          "role_ref": "patient",
+          "surface": "war",
+          "lemma": "war",
+          "source_start_char": 7103,
+          "source_end_char": 7106,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:257674e8f8f0a20cbc26caf9bb1c9f61fbc55a2a637dc5a1926fc443238a793e",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2334e124462052a821e04940dd098062d83617d35ace470fc52d17a4b813e328",
+          "statement_ref": "statement:sha256:e1850702a5a1b43b6ccd59029c37cd6b6ff1052aea380ce6d43c892439961792",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:49:7914-8194:19:7991:7994",
+          "role_ref": "patient",
+          "surface": "War",
+          "lemma": "War",
+          "source_start_char": 7991,
+          "source_end_char": 7994,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:120c960c4e79f43af97ad7dd6bbfe50929036c4075be1c1e399397296fec8f4b",
+      "count": 167,
+      "statement_count": 164,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:57e0b88969f33884fd4121266a1cf19ef0395ca3452300a1787382da34c22fc6",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:120c960c4e79f43af97ad7dd6bbfe50929036c4075be1c1e399397296fec8f4b",
+          "statement_ref": "statement:sha256:d4281ebafa7e3cee82dd83a25c00b241f7b5ee006efb07b293941971c65b981d",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:5:2215-2388:41:2365:2370",
+          "role_ref": "patient",
+          "surface": "House",
+          "lemma": "House",
+          "source_start_char": 2365,
+          "source_end_char": 2370,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:5da5a3fd73db864329fd821ed53e9c0ff0f89c939c0923080b51fcef165ac2c3",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:120c960c4e79f43af97ad7dd6bbfe50929036c4075be1c1e399397296fec8f4b",
+          "statement_ref": "statement:sha256:8355b47ac780ed5b93172dd06bf0ee9dfb78386a4cb131d728dffa3dfcc56264",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:163:22623-22875:6:22648:22653",
+          "role_ref": "patient",
+          "surface": "House",
+          "lemma": "House",
+          "source_start_char": 22648,
+          "source_end_char": 22653,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:05b98ca8f1e1b5fd384b444712cd67cecbdfe6d24c03d7afe778111b82ce0074",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:120c960c4e79f43af97ad7dd6bbfe50929036c4075be1c1e399397296fec8f4b",
+          "statement_ref": "statement:sha256:dd94e1d00b4a25f5d0588362f4d8c8309ff1bf84d1d2792884ec57a3320722d8",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:205:27594-27788:6:27619:27624",
+          "role_ref": "patient",
+          "surface": "HOUSE",
+          "lemma": "HOUSE",
+          "source_start_char": 27619,
+          "source_end_char": 27624,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:d442b17c6fd8b22e27832b3bb0138fc56fd5b1795819c56e1ec6bfced615d4e9",
+      "count": 165,
+      "statement_count": 160,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:8c7feed1e6d0788153344a23fccf8bedb5e36cf9c9a38e2f29b09ff6a57a140f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d442b17c6fd8b22e27832b3bb0138fc56fd5b1795819c56e1ec6bfced615d4e9",
+          "statement_ref": "statement:sha256:ba0207a63659f2acea25998e12c165f52800b102e2c0d1d0c73e6f5cf74bc398",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:40:6575-6763:30:6718:6732",
+          "role_ref": "patient",
+          "surface": "administration",
+          "lemma": "administration",
+          "source_start_char": 6718,
+          "source_end_char": 6732,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:5212e340fc3d353ba8f16fb21340f1ef332954b0ec3da2f031bf9851ba73b1b0",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d442b17c6fd8b22e27832b3bb0138fc56fd5b1795819c56e1ec6bfced615d4e9",
+          "statement_ref": "statement:sha256:b8f6f38947dee40905b00d0271b4f27608c96dfca5cd294dc072120d34c628a5",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:67:9758-10036:53:10021:10035",
+          "role_ref": "patient",
+          "surface": "administration",
+          "lemma": "administration",
+          "source_start_char": 10021,
+          "source_end_char": 10035,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:1952f94dd35ee96ae343c6031214c65bb4f1120a80f6009d8bd7851de67ccb9c",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:d442b17c6fd8b22e27832b3bb0138fc56fd5b1795819c56e1ec6bfced615d4e9",
+          "statement_ref": "statement:sha256:fe1e4b2c1b37d40f24e0e342a27a0473c870ecfcdca19beb1455f9f343a8f9c8",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:69:10085-10336:37:10280:10294",
+          "role_ref": "patient",
+          "surface": "administration",
+          "lemma": "administration",
+          "source_start_char": 10280,
+          "source_end_char": 10294,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:4b38ab23cd25d093f4728a25623d76753ac31158b66b77fe0ab22122def2db05",
+      "count": 161,
+      "statement_count": 157,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:921a767333c533940d91756f8519b6e1364c28371799886fe8343c81ceb15a1e",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4b38ab23cd25d093f4728a25623d76753ac31158b66b77fe0ab22122def2db05",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073:19:4983:4987",
+          "role_ref": "patient",
+          "surface": "time",
+          "lemma": "time",
+          "source_start_char": 4983,
+          "source_end_char": 4987,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:a4441ad764c4dea796f5b929ae3376af1dc08991416e093a03059993dbae72a1",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4b38ab23cd25d093f4728a25623d76753ac31158b66b77fe0ab22122def2db05",
+          "statement_ref": "statement:sha256:55dbe6be82f7e954b8b9b677649c4ba1bf67fa8717e70e7bb10696cfb36f3816",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:36:6095-6206:20:6200:6205",
+          "role_ref": "patient",
+          "surface": "times",
+          "lemma": "time",
+          "source_start_char": 6200,
+          "source_end_char": 6205,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:0a7dbd0ca9895eab0da9c1a4831a9de58d261ed2e54571ebc210e1d23900954f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4b38ab23cd25d093f4728a25623d76753ac31158b66b77fe0ab22122def2db05",
+          "statement_ref": "statement:sha256:122446fba3ff5462a204579cd99f09dee5478c0439d9fc40327a6ec3e0ed15d0",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:47:7465-7696:34:7657:7661",
+          "role_ref": "patient",
+          "surface": "time",
+          "lemma": "time",
+          "source_start_char": 7657,
+          "source_end_char": 7661,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:4432030922c6c6fca7cfdb196b113ca8eca7c7ecc87c9b6d51773e57b54f139f",
+      "count": 159,
+      "statement_count": 157,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:3e2f06fea368a2dbd4693ed300916183ff1c9ab5f79088b08989af2c5e242a01",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4432030922c6c6fca7cfdb196b113ca8eca7c7ecc87c9b6d51773e57b54f139f",
+          "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:21:4644:4650",
+          "role_ref": "patient",
+          "surface": "Reagan",
+          "lemma": "Reagan",
+          "source_start_char": 4644,
+          "source_end_char": 4650,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:0800f70735f485f827f7f10de200fc62a32b211fd3a509c2bd5bc26590d4d11e",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4432030922c6c6fca7cfdb196b113ca8eca7c7ecc87c9b6d51773e57b54f139f",
+          "statement_ref": "statement:sha256:10ce34316bd3b2d589e4a1ab33ef2ee1ed189210ecf93c86f3fc352a2328eba7",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:94:13599-13728:16:13698:13704",
+          "role_ref": "patient",
+          "surface": "Reagan",
+          "lemma": "Reagan",
+          "source_start_char": 13698,
+          "source_end_char": 13704,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:b61bb059f59e0baf6a5cc3b9c6f701b62fcefee3d8f788a79c2a5fd5387fcc0a",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:4432030922c6c6fca7cfdb196b113ca8eca7c7ecc87c9b6d51773e57b54f139f",
+          "statement_ref": "statement:sha256:29dfe060dd899b8e11dc8e95630876e3102e658ac1df27754c8d9e5b3a6f6838",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:175:23805-23957:15:23896:23902",
+          "role_ref": "patient",
+          "surface": "Reagan",
+          "lemma": "Reagan",
+          "source_start_char": 23896,
+          "source_end_char": 23902,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:1fc22aa098772c6f4ee6e97a66fdf187df9c86f7d9679183ca30a06b6c540a26",
+      "count": 157,
+      "statement_count": 151,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:7fde110b0e6e5312ca00fb9a55cf7651e2f20bc59861c5636688aeb56f4fb120",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1fc22aa098772c6f4ee6e97a66fdf187df9c86f7d9679183ca30a06b6c540a26",
+          "statement_ref": "statement:sha256:d5b7fcc193c325bfdcd14f61bbdfb16ea18499e46031123d5ffdff34ec13e58d",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:127:18272-18553:48:18521:18529",
+          "role_ref": "patient",
+          "surface": "Congress",
+          "lemma": "Congress",
+          "source_start_char": 18521,
+          "source_end_char": 18529,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:408322257bd7ba0d297c7890667ecf13830675dbaf0c6fe1652e75e9a9c05c2b",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1fc22aa098772c6f4ee6e97a66fdf187df9c86f7d9679183ca30a06b6c540a26",
+          "statement_ref": "statement:sha256:b36014054914a15c1e0e6c64424c66dee941af7a47acdf0a5961a76b1f5f4ca7",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:509:62650-62816:24:62768:62776",
+          "role_ref": "patient",
+          "surface": "Congress",
+          "lemma": "Congress",
+          "source_start_char": 62768,
+          "source_end_char": 62776,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:fd54f2593271a97f40453f3106990e3bc8d3d9797a26133bb78a8d9e94e208ef",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:1fc22aa098772c6f4ee6e97a66fdf187df9c86f7d9679183ca30a06b6c540a26",
+          "statement_ref": "statement:sha256:a5bb22ec03b78c842a9c91431e53877cdaecd0d606d4507fcb1f821f49aea6f3",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:513:63195-63543:19:63290:63298",
+          "role_ref": "patient",
+          "surface": "Congress",
+          "lemma": "Congress",
+          "source_start_char": 63290,
+          "source_end_char": 63298,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:573bb645ed6f7315da05f1d1494f2f10768ae70c8476081f57a88164d982ff77",
+      "count": 137,
+      "statement_count": 128,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:7524784a244ee8a9e205d800b87c4863dcc3532a1144c5f9f894e96b825f86bb",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:573bb645ed6f7315da05f1d1494f2f10768ae70c8476081f57a88164d982ff77",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073:26:5016:5021",
+          "role_ref": "patient",
+          "surface": "party",
+          "lemma": "party",
+          "source_start_char": 5016,
+          "source_end_char": 5021,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:8247af69e7d27f32191bd8992a87cc79fd389f23d216460973ba8cd51f10d8c8",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:573bb645ed6f7315da05f1d1494f2f10768ae70c8476081f57a88164d982ff77",
+          "statement_ref": "statement:sha256:59aa2f71a45ecef916d492bfdc104888dc05770a38df71b4e89512e50575e9d0",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:189:25495-25616:23:25610:25615",
+          "role_ref": "patient",
+          "surface": "Party",
+          "lemma": "Party",
+          "source_start_char": 25610,
+          "source_end_char": 25615,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:c30ccaaa52f0ebddee14bafcdc2066fcedfbda9a098fedf0a94a53cd7ec3ab43",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:573bb645ed6f7315da05f1d1494f2f10768ae70c8476081f57a88164d982ff77",
+          "statement_ref": "statement:sha256:7b95242cd085ed42c9c51dee76d9052b0e22ae0b92089bfc917df8e0b3531503",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:307:41327-41632:32:41471:41476",
+          "role_ref": "patient",
+          "surface": "Party",
+          "lemma": "Party",
+          "source_start_char": 41471,
+          "source_end_char": 41476,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:e31816c2805b7d3c81a0bb67212a6f3452f0675836706a6085aa34b245bd7d4a",
+      "count": 131,
+      "statement_count": 127,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:eea55c1d459a5c5e6d22fb33f54124f984844e4e0d03a7de4d2d79d45ba950a7",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e31816c2805b7d3c81a0bb67212a6f3452f0675836706a6085aa34b245bd7d4a",
+          "statement_ref": "statement:sha256:fe1e4b2c1b37d40f24e0e342a27a0473c870ecfcdca19beb1455f9f343a8f9c8",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:69:10085-10336:41:10306:10311",
+          "role_ref": "actor",
+          "surface": "issue",
+          "lemma": "issue",
+          "source_start_char": 10306,
+          "source_end_char": 10311,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:3908f13cfc9f8526274c31b67b83d91239b0489d2ef47a70b8f8c37907279d1a",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e31816c2805b7d3c81a0bb67212a6f3452f0675836706a6085aa34b245bd7d4a",
+          "statement_ref": "statement:sha256:46f88fb43f2148c93e0eb2eb4d01c4afdde690b984da2043b5babd34cce33d81",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:70:10337-10556:7:10382:10387",
+          "role_ref": "patient",
+          "surface": "issue",
+          "lemma": "issue",
+          "source_start_char": 10382,
+          "source_end_char": 10387,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:921f470d3880dceb2925c6ef6d2c1aeb70b7e9c73f09a5e31fe5b5eb54615c11",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e31816c2805b7d3c81a0bb67212a6f3452f0675836706a6085aa34b245bd7d4a",
+          "statement_ref": "statement:sha256:9c459a13a73a95632c55827059110083411f1b67d38e3f175a65537b508e6f56",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:441:56015-56080:3:56042:56047",
+          "role_ref": "actor",
+          "surface": "issue",
+          "lemma": "issue",
+          "source_start_char": 56042,
+          "source_end_char": 56047,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:6155699d8707b1cfc3839febb9685f555fbafc098ba01cb214bdfe51ffa31d87",
+      "count": 122,
+      "statement_count": 120,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:b7c3c7b726073702250c57a7a5f1b30f6f6b3d857c823be6aa27696bdb54f0c6",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:6155699d8707b1cfc3839febb9685f555fbafc098ba01cb214bdfe51ffa31d87",
+          "statement_ref": "statement:sha256:44a4663b9fdb0cfe1fc30b8c4363606a71355dd526586b2a6e3390ae7eb431d2",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:62:9302-9368:1:9310:9313",
+          "role_ref": "actor",
+          "surface": "one",
+          "lemma": "one",
+          "source_start_char": 9310,
+          "source_end_char": 9313,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:69fb706a04227196b7517ff6f1701a45ef764aab3a2c0926127008bfcb612785",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:6155699d8707b1cfc3839febb9685f555fbafc098ba01cb214bdfe51ffa31d87",
+          "statement_ref": "statement:sha256:88712accd5c04d91369d9995edd6c59d689a453124535d804aa52ca5c1f072b6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:79:11582-11758:16:11661:11664",
+          "role_ref": "actor",
+          "surface": "one",
+          "lemma": "one",
+          "source_start_char": 11661,
+          "source_end_char": 11664,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:e4b1c15f72a6d8d2b0f08f2b7c4067f47329641d76363afb9bb293a1a44f4312",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:6155699d8707b1cfc3839febb9685f555fbafc098ba01cb214bdfe51ffa31d87",
+          "statement_ref": "statement:sha256:4349a4f176606b81681c15fc922f6a3ddb56737c30d42d69b9f094fe97767987",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:83:12251-12397:0:12251:12254",
+          "role_ref": "actor",
+          "surface": "One",
+          "lemma": "one",
+          "source_start_char": 12251,
+          "source_end_char": 12254,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:31878a73e6cac5b93e57b0e78b5dcbaad09f0eb4db8fd50eb4266bbae1d00ea3",
+      "count": 119,
+      "statement_count": 106,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:bd9581467b204be2a5cf9d7c9486d6a6ce0dfb29535fcc3e527059134960878f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:31878a73e6cac5b93e57b0e78b5dcbaad09f0eb4db8fd50eb4266bbae1d00ea3",
+          "statement_ref": "statement:sha256:1c21079b98516fc14b7e72c1a017f228571d3002721801795a719fb4572d2fcf",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:50:8197-8374:22:8320:8325",
+          "role_ref": "patient",
+          "surface": "votes",
+          "lemma": "vote",
+          "source_start_char": 8320,
+          "source_end_char": 8325,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:b209024a386007f4209d274d27af8d6078ace2ffabcfca4b08e3c3d7a2c80a1f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:31878a73e6cac5b93e57b0e78b5dcbaad09f0eb4db8fd50eb4266bbae1d00ea3",
+          "statement_ref": "statement:sha256:1c21079b98516fc14b7e72c1a017f228571d3002721801795a719fb4572d2fcf",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:50:8197-8374:29:8347:8351",
+          "role_ref": "actor",
+          "surface": "vote",
+          "lemma": "vote",
+          "source_start_char": 8347,
+          "source_end_char": 8351,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:28eaa2a00c92c50dfca021aa1bd8bb3c74b7f142083b403da3228b5a509ae0f4",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:31878a73e6cac5b93e57b0e78b5dcbaad09f0eb4db8fd50eb4266bbae1d00ea3",
+          "statement_ref": "statement:sha256:6334e27615eaf1b8b48a5fe6523920eab7e48c7b33b379e988e64c964434f565",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:193:26125-26276:18:26219:26224",
+          "role_ref": "patient",
+          "surface": "votes",
+          "lemma": "vote",
+          "source_start_char": 26219,
+          "source_end_char": 26224,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:46b7f46874e87c93a9f8a0457515c706a4f05c788650ff0ed6bc45ce9e262d78",
+      "count": 119,
+      "statement_count": 115,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:d7f1283f0999663363bab08814bb8b80953fb065c242857929ee40cb1112d9dc",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:46b7f46874e87c93a9f8a0457515c706a4f05c788650ff0ed6bc45ce9e262d78",
+          "statement_ref": "statement:sha256:4427924a4df953e396d47bce60ce7c0fd1b3c0e6d3af5da0bdfaa85037473460",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:246:32743-32968:17:32840:32845",
+          "role_ref": "patient",
+          "surface": "years",
+          "lemma": "year",
+          "source_start_char": 32840,
+          "source_end_char": 32845,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:85281f5ca2f5233691ce653f7250d6b90579dcdab3c5ba204f623c2671528b18",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:46b7f46874e87c93a9f8a0457515c706a4f05c788650ff0ed6bc45ce9e262d78",
+          "statement_ref": "statement:sha256:51791ab2df9eafa0c210b0ba066522f9a5de1b15ce43eacd59205be91b6367b6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:316:42377-42651:48:42607:42612",
+          "role_ref": "patient",
+          "surface": "years",
+          "lemma": "year",
+          "source_start_char": 42607,
+          "source_end_char": 42612,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:d17a74127be1c6cce24532ff9ef968d51fded04d0a5244855e0102b52ea2bc95",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:46b7f46874e87c93a9f8a0457515c706a4f05c788650ff0ed6bc45ce9e262d78",
+          "statement_ref": "statement:sha256:ed9c1653a4713cbeaeb0d0d33cd1169df4a60d99570009adba336f36ef944fa0",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:379:49380-49536:19:49472:49477",
+          "role_ref": "patient",
+          "surface": "years",
+          "lemma": "year",
+          "source_start_char": 49472,
+          "source_end_char": 49477,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:e0b7280991e2def79e342514bdca67f9475d8e4bc1fde2dae9a456a348c1fcca",
+      "count": 119,
+      "statement_count": 113,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:ff4e9976e5c6a34879d45176dc9249ade70bea79508e3c517f9758bc8a8047f5",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e0b7280991e2def79e342514bdca67f9475d8e4bc1fde2dae9a456a348c1fcca",
+          "statement_ref": "statement:sha256:e5e67789d9b4fa0f6d9f56811df9367779cba29ae528447b7e1849fa45776a05",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:91:13289-13348:10:13341:13347",
+          "role_ref": "patient",
+          "surface": "office",
+          "lemma": "office",
+          "source_start_char": 13341,
+          "source_end_char": 13347,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:c0f24e98f789c15de9c6f80a278e1dc1da7aa9c7ff35b3e82ddca4434110f242",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e0b7280991e2def79e342514bdca67f9475d8e4bc1fde2dae9a456a348c1fcca",
+          "statement_ref": "statement:sha256:8355b47ac780ed5b93172dd06bf0ee9dfb78386a4cb131d728dffa3dfcc56264",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:163:22623-22875:45:22832:22838",
+          "role_ref": "patient",
+          "surface": "office",
+          "lemma": "office",
+          "source_start_char": 22832,
+          "source_end_char": 22838,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:6d68051c526e4e1d7f92cb0548d5dc8bc649a4d6a2a22e7a68295cb76f13ba7f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:e0b7280991e2def79e342514bdca67f9475d8e4bc1fde2dae9a456a348c1fcca",
+          "statement_ref": "statement:sha256:2c65229b404b551bda8557048e8f0973aac08b2099db758f1a65787a2c94bc3e",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:214:28510-28589:12:28582:28588",
+          "role_ref": "patient",
+          "surface": "office",
+          "lemma": "office",
+          "source_start_char": 28582,
+          "source_end_char": 28588,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:da2407e5995de92c824b41006ab65909c8864d44b61c4ec57dfdae55fe241987",
+      "count": 111,
+      "statement_count": 109,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:3708941002b37183f4e5b13d833e19cadfe423329934cc9e71254200f3868081",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:da2407e5995de92c824b41006ab65909c8864d44b61c4ec57dfdae55fe241987",
+          "statement_ref": "statement:sha256:29dfe060dd899b8e11dc8e95630876e3102e658ac1df27754c8d9e5b3a6f6838",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:175:23805-23957:4:23832:23842",
+          "role_ref": "patient",
+          "surface": "nomination",
+          "lemma": "nomination",
+          "source_start_char": 23832,
+          "source_end_char": 23842,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:380665ff04d820ce93b4d147381618052d71cdab38fe271b5764cbb884882344",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:da2407e5995de92c824b41006ab65909c8864d44b61c4ec57dfdae55fe241987",
+          "statement_ref": "statement:sha256:a00f74db5ca084b914b37636a758d5ec79ba7fa26554ffbd7804a3bf6dcecdb4",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:184:24697-24965:21:24807:24817",
+          "role_ref": "patient",
+          "surface": "nomination",
+          "lemma": "nomination",
+          "source_start_char": 24807,
+          "source_end_char": 24817,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:3f67d51c4413c937e4f006d03881967d13a0368b245241f1d9fbc40fbcd43dba",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:da2407e5995de92c824b41006ab65909c8864d44b61c4ec57dfdae55fe241987",
+          "statement_ref": "statement:sha256:3e01fa81599aa325fb0d590d929d4c7d5df5fe84b98483709b8596216b346586",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:190:25617-25721:15:25710:25720",
+          "role_ref": "patient",
+          "surface": "nomination",
+          "lemma": "nomination",
+          "source_start_char": 25710,
+          "source_end_char": 25720,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:69d1d685a50dedd25ab4c74bff4bd6c536fde1b6d41e889ab93894980a3ae04e",
+      "count": 110,
+      "statement_count": 107,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:4b407d96acf29ef11084c29b2d20d19696888bcf6ccc03c7ed7a378f3711feea",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:69d1d685a50dedd25ab4c74bff4bd6c536fde1b6d41e889ab93894980a3ae04e",
+          "statement_ref": "statement:sha256:2330454eb61aeaccc4a1aca4b6f3ae785a917f579408eb8eecbeafbe9af4d396",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:170:23192-23335:15:23267:23273",
+          "role_ref": "patient",
+          "surface": "policy",
+          "lemma": "policy",
+          "source_start_char": 23267,
+          "source_end_char": 23273,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:041c8caff841c529ae8fa973d619369d74754df13004fc530e4210de6fa57f2a",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:69d1d685a50dedd25ab4c74bff4bd6c536fde1b6d41e889ab93894980a3ae04e",
+          "statement_ref": "statement:sha256:bd27b19d5290d5a5540459e259b8b79c0534fdd154a08cb44edd87be7b7f7565",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:191:25722-25928:37:25919:25927",
+          "role_ref": "patient",
+          "surface": "policies",
+          "lemma": "policy",
+          "source_start_char": 25919,
+          "source_end_char": 25927,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:d0e430e2dd6d992eb870b64fefdcab4bbe2a06498855646a359b042369261a29",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:69d1d685a50dedd25ab4c74bff4bd6c536fde1b6d41e889ab93894980a3ae04e",
+          "statement_ref": "statement:sha256:6ca64837ffa89d6df7dddc4bfc578c30d9c91c5eb15b097502b31a38f986971e",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:417:52425-52646:27:52589:52595",
+          "role_ref": "patient",
+          "surface": "policy",
+          "lemma": "policy",
+          "source_start_char": 52589,
+          "source_end_char": 52595,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:2ada84d7927344f27b16f3e4665183fc2df32bea7fdbc8c02ddeb07ae700e4d4",
+      "count": 106,
+      "statement_count": 102,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:f6d3f8b3d3a39766dd945ac04aa182ce12c781894fc915df5d1d12f0529ffe62",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2ada84d7927344f27b16f3e4665183fc2df32bea7fdbc8c02ddeb07ae700e4d4",
+          "statement_ref": "statement:sha256:c9d5580b2d927d724923d8672539b570238fd48a7f772348cf976680ff52cc5e",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:505:62290-62377:3:62311:62320",
+          "role_ref": "actor",
+          "surface": "Democrats",
+          "lemma": "Democrats",
+          "source_start_char": 62311,
+          "source_end_char": 62320,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:3cf8814cbb6e435ea145880a6b097d220bd6c98a9e9e5152668dba65b0992662",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2ada84d7927344f27b16f3e4665183fc2df32bea7fdbc8c02ddeb07ae700e4d4",
+          "statement_ref": "statement:sha256:a5bb22ec03b78c842a9c91431e53877cdaecd0d606d4507fcb1f821f49aea6f3",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:513:63195-63543:28:63348:63357",
+          "role_ref": "actor",
+          "surface": "Democrats",
+          "lemma": "Democrats",
+          "source_start_char": 63348,
+          "source_end_char": 63357,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:0f9deacf4bec47e5e38943d1745671c5cc56004bfb91a08425d13bb54c507444",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:2ada84d7927344f27b16f3e4665183fc2df32bea7fdbc8c02ddeb07ae700e4d4",
+          "statement_ref": "statement:sha256:74f459f3fe526e537c40422c7854c74f288bb0b7457e01404e1dd7b936a2b844",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:537:66927-67003:9:66971:66980",
+          "role_ref": "actor",
+          "surface": "Democrats",
+          "lemma": "Democrats",
+          "source_start_char": 66971,
+          "source_end_char": 66980,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:476bc724826eb269f6f5ffab0add1ed340b16416888d0cb477af57e5411ca460",
+      "count": 104,
+      "statement_count": 101,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:6a868b467396db791e595e3d18075b2bc7a6f5eaafc704440b0396d97d69780a",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:476bc724826eb269f6f5ffab0add1ed340b16416888d0cb477af57e5411ca460",
+          "statement_ref": "statement:sha256:388d2348d6ab6a117539626267d7aff21a3f39fb39d8871e73323e4455714ff5",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:192:25929-26124:24:26051:26059",
+          "role_ref": "patient",
+          "surface": "campaign",
+          "lemma": "campaign",
+          "source_start_char": 26051,
+          "source_end_char": 26059,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:97f95524f978cd6403b9e66814c6cd6147e2ddd15c2c3ac0cc0bb9513733685b",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:476bc724826eb269f6f5ffab0add1ed340b16416888d0cb477af57e5411ca460",
+          "statement_ref": "statement:sha256:511f109691b3214d22189f3d75984d80c91e38d86f9d0f509cef1e2799d85320",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:201:27425-27562:20:27537:27545",
+          "role_ref": "actor",
+          "surface": "campaign",
+          "lemma": "campaign",
+          "source_start_char": 27537,
+          "source_end_char": 27545,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:97ff3e3bc3962de448c41a74d8129bd2719f6c331a5d091afd46e74b0756ec33",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:476bc724826eb269f6f5ffab0add1ed340b16416888d0cb477af57e5411ca460",
+          "statement_ref": "statement:sha256:fa634c02a9e40f8e577182d8bd24b9da0e7e61f1fa327e561b78a037817a9ef6",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:251:33121-33193:11:33165:33173",
+          "role_ref": "patient",
+          "surface": "campaign",
+          "lemma": "campaign",
+          "source_start_char": 33165,
+          "source_end_char": 33173,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    },
+    {
+      "fingerprint": "entity-fingerprint:sha256:c767ae958846574c261e7163c11cc4dee2b84654957158a2d894c2477bfe710f",
+      "count": 104,
+      "statement_count": 100,
+      "examples": [
+        {
+          "mention_ref": "entity-mention:sha256:f8d2a1f706a8725a5b836a20fe96cf1b41de1a1e4525dd197f914173c44330af",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c767ae958846574c261e7163c11cc4dee2b84654957158a2d894c2477bfe710f",
+          "statement_ref": "statement:sha256:59c2aa278486223fdba85ffd812bbe4ee47ffc44bfff707867c6b9c09f266fd0",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:988:128142-128305:4:128164:128168",
+          "role_ref": "actor",
+          "surface": "ower",
+          "lemma": "ower",
+          "source_start_char": 128164,
+          "source_end_char": 128168,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:ca05700263e973ec2cd9debc63bf0c5f7838d6933c89830987f93aa0d9e9e43f",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c767ae958846574c261e7163c11cc4dee2b84654957158a2d894c2477bfe710f",
+          "statement_ref": "statement:sha256:46c9834f549c4cf6e89633ed471d1f2569621ba2949af31007fea8fe76d930ef",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:1087:143976-144101:10:144040:144044",
+          "role_ref": "patient",
+          "surface": "ower",
+          "lemma": "ower",
+          "source_start_char": 144040,
+          "source_end_char": 144044,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "entity-mention:sha256:537d546945b0e9446c9ef4a9fdfae448fd1dc8736f29639e520bbce3b70bd255",
+          "entity_fingerprint_ref": "entity-fingerprint:sha256:c767ae958846574c261e7163c11cc4dee2b84654957158a2d894c2477bfe710f",
+          "statement_ref": "statement:sha256:6c76bf4b002f512080edeae69c7b59eec89b70811f02fd316452f3b1ea36d81b",
+          "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:1120:148969-149337:61:149256:149260",
+          "role_ref": "actor",
+          "surface": "ower",
+          "lemma": "ower",
+          "source_start_char": 149256,
+          "source_end_char": 149260,
+          "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ]
+    }
+  ],
+  "antecedent_search_examples": [
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:55ca38da36c1a816a6c6e8dead725225c2cccf917335a160c69f027cfecda6be",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:be752aba03284d46afef603bda5b486c47ebb32327f4a7fa330aab64784e1e0f",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:25:4737-4900:24:4864:4868",
+        "role_ref": "patient",
+        "surface": "them",
+        "lemma": "they",
+        "source_start_char": 4864,
+        "source_end_char": 4868,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:f7b9affa3e8593e966c67aba9e6546f6c470d4bf140f6ae1b3259e77bf9ee2fe",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:3092eb96000729a9914eeeae3ea438fdf98b1501ea4d6865eb4027c1eac65abe",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:be752aba03284d46afef603bda5b486c47ebb32327f4a7fa330aab64784e1e0f",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:25:4737-4900",
+          "start_char": 4769,
+          "end_char": 4811,
+          "surface": "the University of Virginia’s Miller Center",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:0a53bd5bf7a9209e9acacd3b62d1dbf68e3f9c1f7b85b49ea7d98516edb9df80",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073:8:4937:4940",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 4937,
+        "source_end_char": 4940,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:6b8b400bbf3f07e316d65f2f5800e0eed4ade1185926bdde9d6b986b4dea39bd",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9eb3eac60ea8c5da419123c51a096faec370a31eca86821c0d08efb4221fbc64",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073",
+          "start_char": 4932,
+          "end_char": 4936,
+          "surface": "cian",
+          "label_ref": "NORP",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:7eee634f1dd09cd6ea04893d5d79968d31a9eedb0659a2cd21ee9c36b4654763",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:b71ba5b5f3626aed2abbe827ee3ddf77eb41279c5c714dc7e9e975657f1f29ca",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:26:4901-5073",
+          "start_char": 4914,
+          "end_char": 4918,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:e82f1f4f98fcf7822554e72f32e2ce605d549783d28746ba82ceee0d00584fc3",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:c209c0345b147cfc07a987e39f3498a353e70e2d258b407cbe2bf6c269c6d702",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:27:5076-5292:29:5220:5222",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 5220,
+        "source_end_char": 5222,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:82599ec68a68f353f4eb6ba20f61ee8fcc417df41741f076f1b27b967eae4563",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:c209c0345b147cfc07a987e39f3498a353e70e2d258b407cbe2bf6c269c6d702",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:27:5076-5292",
+          "start_char": 5093,
+          "end_char": 5097,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:f33fa9c00dafc5445a0c3d932b15a96536fd0e744c239ba224881465b9377889",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:019da2d12402b259fc9ab061cae2a159e623f480d3a9579f61e72248acd28afd",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:c209c0345b147cfc07a987e39f3498a353e70e2d258b407cbe2bf6c269c6d702",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:27:5076-5292",
+          "start_char": 5076,
+          "end_char": 5082,
+          "surface": "Second",
+          "label_ref": "ORDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:e7a9ccfb8ca899a278b6827f0d86655398b877fe5312eb5925d5ea1bf754b6c7",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+        "statement_ref": "statement:sha256:2b6b5dab28bce7b5636a39200230b5d4a9c018b33d0a7eef0d571aede685903f",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:35:5996-6094:4:6007:6009",
+        "role_ref": "actor",
+        "surface": "we",
+        "lemma": "we",
+        "source_start_char": 6007,
+        "source_end_char": 6009,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:01e8ec9991bfef9a487aedf7cf9720c384b269f27191b87cb669dc87d227087e",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:72ff09cb7eb5d3d308f16aaa1445d5e8583c74ed402e6eabc6c45be08b0a4cb6",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:2b6b5dab28bce7b5636a39200230b5d4a9c018b33d0a7eef0d571aede685903f",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:35:5996-6094",
+          "start_char": 6000,
+          "end_char": 6005,
+          "surface": "third",
+          "label_ref": "ORDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:2380ac6bcfce8b0b01a8fd556b03e69c03ab6483ec2b8e8fb87eb68d3a5f7a27",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913:13:7768:7771",
+        "role_ref": "patient",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 7768,
+        "source_end_char": 7771,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:8c6cf03b1d340172dbdf4f9b561bab7f8b8fa9940f202c30e00bec05d1abee14",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:df5874b1aafa4c85d5e1f59a1d8d952064dfe6f4940e61e08c244a48245d9367",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7760,
+          "end_char": 7766,
+          "surface": "Kuwait",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:f4d686e3774bc56545c639559d786edf4ebc2fd67aa5694a9ec56b1dc699e366",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:937fb79c77a90ca38e0a7fd822d921393b7ab43fdf1a2e5d7f746e4447b33a45",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7736,
+          "end_char": 7747,
+          "surface": "August 1990",
+          "label_ref": "DATE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:909e960ef4586697f483112542c9c9b727fbb501a99e2ffcdaad7945754289b3",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:b65ee5142d7e658028fd1be933768d885818bc243f36f9132907f0c8c44bb9a3",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7729,
+          "end_char": 7733,
+          "surface": "Iraq",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:a6044ef2ba40bdeec199809ef0f8dcf0a6566f72dbfb556c3b790a221fe1676b",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913:34:7881:7884",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 7881,
+        "source_end_char": 7884,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:2a50d13c81a9496b3e36c468d3f1163b76fe2ccf0abee82d113036ec006ce11b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:bb72d6c7ba1644012a6965518680d3a065d9bdc1df96021c827f4847ac5d0865",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7868,
+          "end_char": 7880,
+          "surface": "Saudi Arabia",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:114795e17b07c85da65f8f3dfbc1f9e91d8525e0918e2381c1d38f6f7448bff0",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:7d3d290a2ff2ad25ff06892fde4912e32fc83e4ad4fae555484d0fd430002818",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7833,
+          "end_char": 7841,
+          "surface": "American",
+          "label_ref": "NORP",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:22e840459a3902c38cf53ea7697ca5c66a612e37fa2cc9eb45b80a77ebd5f050",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9a4e50dff5049624493f345ef631d0f4b75cddf152f1cc7e8093cc07bcc50874",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7825,
+          "end_char": 7832,
+          "surface": "500,000",
+          "label_ref": "CARDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:6f391fd3550225371dbc4c5838c73e457a6330db53aca9779aa6a1ea9c841213",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:ffbe89e4c41fc699568b785b7b13f998f3f4bdae8c7e619347a23ada28f5bbd5",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7776,
+          "end_char": 7783,
+          "surface": "America",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:8c6cf03b1d340172dbdf4f9b561bab7f8b8fa9940f202c30e00bec05d1abee14",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:df5874b1aafa4c85d5e1f59a1d8d952064dfe6f4940e61e08c244a48245d9367",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7760,
+          "end_char": 7766,
+          "surface": "Kuwait",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:af893034517ad51604e63a2c0544c30493ba61baa575e5109ad44288ec033ec7",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+        "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913:39:7910:7912",
+        "role_ref": "patient",
+        "surface": "it",
+        "lemma": "it",
+        "source_start_char": 7910,
+        "source_end_char": 7912,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:2a50d13c81a9496b3e36c468d3f1163b76fe2ccf0abee82d113036ec006ce11b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:bb72d6c7ba1644012a6965518680d3a065d9bdc1df96021c827f4847ac5d0865",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7868,
+          "end_char": 7880,
+          "surface": "Saudi Arabia",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:114795e17b07c85da65f8f3dfbc1f9e91d8525e0918e2381c1d38f6f7448bff0",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:7d3d290a2ff2ad25ff06892fde4912e32fc83e4ad4fae555484d0fd430002818",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7833,
+          "end_char": 7841,
+          "surface": "American",
+          "label_ref": "NORP",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:22e840459a3902c38cf53ea7697ca5c66a612e37fa2cc9eb45b80a77ebd5f050",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9a4e50dff5049624493f345ef631d0f4b75cddf152f1cc7e8093cc07bcc50874",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7825,
+          "end_char": 7832,
+          "surface": "500,000",
+          "label_ref": "CARDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:6f391fd3550225371dbc4c5838c73e457a6330db53aca9779aa6a1ea9c841213",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:ffbe89e4c41fc699568b785b7b13f998f3f4bdae8c7e619347a23ada28f5bbd5",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7776,
+          "end_char": 7783,
+          "surface": "America",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:8c6cf03b1d340172dbdf4f9b561bab7f8b8fa9940f202c30e00bec05d1abee14",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:df5874b1aafa4c85d5e1f59a1d8d952064dfe6f4940e61e08c244a48245d9367",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:a776f4d78e318eb293c996a9e23bd47c8aaac15e65f84ce9fce5cb7f26f9e554",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:48:7699-7913",
+          "start_char": 7760,
+          "end_char": 7766,
+          "surface": "Kuwait",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:47059ecba84b05269e2263d71e42aeb875bf732bb920d1cc1fd64fff8a584dc0",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:631e22f8b5054bf58ce175c04a6de09f6114e8d3ab0194a3ec4344d8dcb95bf7",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:56:8915-8944:3:8930:8932",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 8930,
+        "source_end_char": 8932,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:81f12ce0e0d8437719455e93ba7ac4101768074903f96a09e3e6f0c51aa976a1",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:631e22f8b5054bf58ce175c04a6de09f6114e8d3ab0194a3ec4344d8dcb95bf7",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:56:8915-8944",
+          "start_char": 8915,
+          "end_char": 8919,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:30171dee2a1e2f9db4c25bfa5529dc2ab3f953b120903fb6257e34730756481d",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:7f1e7e730f271d1396b40ed421ce4f040fc21456b2b78d736c907f9183f52387",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:58:9041-9162:23:9155:9157",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 9155,
+        "source_end_char": 9157,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:b4a066e0bf392f39bee88c2e58b87ced1ff9e88033c6c774766936a87e3f0623",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7f1e7e730f271d1396b40ed421ce4f040fc21456b2b78d736c907f9183f52387",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:58:9041-9162",
+          "start_char": 9102,
+          "end_char": 9106,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:846bfb99c2535d80d9027da197db9719ef483b0715075f1e2dbbd9e4d79eb837",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:4569f3beeaec776619bc22846c5a8321d1b0d754df2b62a127beab2e39c13b39",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7f1e7e730f271d1396b40ed421ce4f040fc21456b2b78d736c907f9183f52387",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:58:9041-9162",
+          "start_char": 9068,
+          "end_char": 9074,
+          "surface": "Powell",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:6651de3ad8cca12498dab55f64dae9b1004b9bf43a0c0bc559621f267b961f0a",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:35ec8e9634552f0dc3661196be861dd0ae9f847781644ada806267c34e7f6fd9",
+        "statement_ref": "statement:sha256:3b60f3725e95fbb6894abc4118483f7b715c0f40b21a73a5cb1ba78a19a50af2",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:61:9238-9299:8:9266:9273",
+        "role_ref": "patient",
+        "surface": "himself",
+        "lemma": "himself",
+        "source_start_char": 9266,
+        "source_end_char": 9273,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:fd312452c0a941928ef25af579847f2a73b45860713f33525d0db1ec4c8c6d1c",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:3b60f3725e95fbb6894abc4118483f7b715c0f40b21a73a5cb1ba78a19a50af2",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:61:9238-9299",
+          "start_char": 9238,
+          "end_char": 9242,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:cd2bf245b0778bc547450d079962e7658b8019f2080c9e6075aa29b71b9a983e",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:187fb4d869ac88ede6d30bbddff2e5396c8eac6afd1a0ecefb1404b9aeb122eb",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:64:9501-9628:18:9602:9605",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 9602,
+        "source_end_char": 9605,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:cecd723bc98df4bf485f1ca828fd18f3474b1cdfe98b1da4f07e64d7b35ddced",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:7d3d290a2ff2ad25ff06892fde4912e32fc83e4ad4fae555484d0fd430002818",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:187fb4d869ac88ede6d30bbddff2e5396c8eac6afd1a0ecefb1404b9aeb122eb",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:64:9501-9628",
+          "start_char": 9571,
+          "end_char": 9579,
+          "surface": "American",
+          "label_ref": "NORP",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:2bdf985f64d283cb1aa41517925e15b044999b0d6202356de28ba7fbb031d4c7",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755:12:9700:9703",
+        "role_ref": "patient",
+        "surface": "him",
+        "lemma": "he",
+        "source_start_char": 9700,
+        "source_end_char": 9703,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:35bc10f2b28d43723c4d0f29a64e208785a5263b68dfde8c4129beb5fe6ff7f5",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:59ddb53c97c2e6113f37dfacc9771cf5edceee39efa8d0ca857e21dcb88256be",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9640,
+          "end_char": 9661,
+          "surface": "the twentieth century",
+          "label_ref": "DATE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:062bfcc96bc95f719c0846958870abb8c34e5108f267c84a7b33a5b766ba52f9",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9632,
+          "end_char": 9636,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:5a676cc2958287a4f5e398fb1fec33ab82563530fb9f43cc9cb4a11123c8614d",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755:18:9720:9724",
+        "role_ref": "actor",
+        "surface": "they",
+        "lemma": "they",
+        "source_start_char": 9720,
+        "source_end_char": 9724,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:35bc10f2b28d43723c4d0f29a64e208785a5263b68dfde8c4129beb5fe6ff7f5",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:59ddb53c97c2e6113f37dfacc9771cf5edceee39efa8d0ca857e21dcb88256be",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9640,
+          "end_char": 9661,
+          "surface": "the twentieth century",
+          "label_ref": "DATE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:062bfcc96bc95f719c0846958870abb8c34e5108f267c84a7b33a5b766ba52f9",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9632,
+          "end_char": 9636,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:8f6a2d40683983a90ecc36fe4ef2a744a68ca20516b9403deca63c961aae62c9",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755:20:9733:9737",
+        "role_ref": "actor",
+        "surface": "they",
+        "lemma": "they",
+        "source_start_char": 9733,
+        "source_end_char": 9737,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:35bc10f2b28d43723c4d0f29a64e208785a5263b68dfde8c4129beb5fe6ff7f5",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:59ddb53c97c2e6113f37dfacc9771cf5edceee39efa8d0ca857e21dcb88256be",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9640,
+          "end_char": 9661,
+          "surface": "the twentieth century",
+          "label_ref": "DATE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:062bfcc96bc95f719c0846958870abb8c34e5108f267c84a7b33a5b766ba52f9",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:880d4b6ffa4203db79ddcc6baad12064cc770cf8720d569b2e04494590e02e87",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:66:9632-9755",
+          "start_char": 9632,
+          "end_char": 9636,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:2347049c1a0c00fac262acdbc90c1534ee98c4ba79cee71951c548fa53b95477",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:89264ca7a68010e26d4395cff76495680fcb804a8ab569a142654a3d86cbcf02",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:78:11306-11581:46:11566:11570",
+        "role_ref": "actor",
+        "surface": "they",
+        "lemma": "they",
+        "source_start_char": 11566,
+        "source_end_char": 11570,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:0ddc59709fea322eee9d57d0bd678349ed4ce127d1942bfeeca50b7695d64098",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:c3adde1901617c7bb25c6e951a22d24f727ba238441f354a178925acc74421d2",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:89264ca7a68010e26d4395cff76495680fcb804a8ab569a142654a3d86cbcf02",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:78:11306-11581",
+          "start_char": 11418,
+          "end_char": 11467,
+          "surface": "the National Archives and Records \nAdministration",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:8742ee11dc9c12f675042fff669be7947773a00cb82da17faf13ceb03c115725",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746:11:12612:12614",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 12612,
+        "source_end_char": 12614,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:e12d5f0d759c58a359933664a52090b4d151ee97f0b8086750d06eaed0a9f979",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9c460dd236533af55fda949c799b4eee34e4bb4382dfa8272616b3e790553689",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746",
+          "start_char": 12572,
+          "end_char": 12575,
+          "surface": "Jim",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:447561b389cbb4e54f2e4faa9f2319d878e1a61450d7e98c81d3aeec6cb81a6d",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5265ab08ad22f9cbbb7037ee77dba43b6a0e31d83668d704c7a576c3532a4ff7",
+        "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746:24:12675:12679",
+        "role_ref": "patient",
+        "surface": "whom",
+        "lemma": "whom",
+        "source_start_char": 12675,
+        "source_end_char": 12679,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:8544174be1b03c543237582377745e3b860311a7dc950ef1fea52f12b46762ee",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:947cd9c9d57d694a977ae45fc2e5a180aa6aa0c328e20477ebbf3aa1bb949e09",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746",
+          "start_char": 12660,
+          "end_char": 12673,
+          "surface": "Russell Riley",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:e12d5f0d759c58a359933664a52090b4d151ee97f0b8086750d06eaed0a9f979",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9c460dd236533af55fda949c799b4eee34e4bb4382dfa8272616b3e790553689",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746",
+          "start_char": 12572,
+          "end_char": 12575,
+          "surface": "Jim",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:116ca22867c0ec1d26ab4b0c79d4200c4366042676aee70e7fdc5219ac7cd040",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:c10704388e2f26ee4cbb8607057832d6f6470d09b8cb14de5509f1c8bac823c1",
+        "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746:25:12680:12682",
+        "role_ref": "actor",
+        "surface": "we",
+        "lemma": "we",
+        "source_start_char": 12680,
+        "source_end_char": 12682,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:8544174be1b03c543237582377745e3b860311a7dc950ef1fea52f12b46762ee",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:947cd9c9d57d694a977ae45fc2e5a180aa6aa0c328e20477ebbf3aa1bb949e09",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746",
+          "start_char": 12660,
+          "end_char": 12673,
+          "surface": "Russell Riley",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:e12d5f0d759c58a359933664a52090b4d151ee97f0b8086750d06eaed0a9f979",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:9c460dd236533af55fda949c799b4eee34e4bb4382dfa8272616b3e790553689",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:df9d76990bb250016e71bfdea3d34d7302dc5d1acc2fabf6602ea0add3bd9cbe",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:85:12572-12746",
+          "start_char": 12572,
+          "end_char": 12575,
+          "surface": "Jim",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:a965df08aba240dd462ad99bf4e5273b76ac0226661c55951f6a6cd36093ed3c",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+        "statement_ref": "statement:sha256:285851736314dabd627a6d64fbf023f2094abac47bc97d8770f1cde7400099f9",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:101:14454-14523:9:14499:14501",
+        "role_ref": "patient",
+        "surface": "it",
+        "lemma": "it",
+        "source_start_char": 14499,
+        "source_end_char": 14501,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:25f23ffd16c7ce4a3bef20cc6bfd50ef06a1ebf73ebdf5dcf6e6fa37e429c882",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:019da2d12402b259fc9ab061cae2a159e623f480d3a9579f61e72248acd28afd",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:285851736314dabd627a6d64fbf023f2094abac47bc97d8770f1cde7400099f9",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:101:14454-14523",
+          "start_char": 14477,
+          "end_char": 14483,
+          "surface": "second",
+          "label_ref": "ORDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:b50c50eb9ef194a660ca155c7e2b0bd4951c94fa2f4a3b56948c4abf77281281",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:f0fb101c7b21e2952ecb845f453e248a36880f2a8b0ecf5a35382dd24157878e",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:104:14683-14794:11:14730:14732",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 14730,
+        "source_end_char": 14732,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:d7c778a3b1ab04a40029795b3d2759c03719bbaa1180b250326fe6aa2e5896bb",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:f0fb101c7b21e2952ecb845f453e248a36880f2a8b0ecf5a35382dd24157878e",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:104:14683-14794",
+          "start_char": 14704,
+          "end_char": 14708,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:43db5cac2b52068b37088654c6dacec4237f3dbb602d72adf9b46c39fccd528b",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:f0fb101c7b21e2952ecb845f453e248a36880f2a8b0ecf5a35382dd24157878e",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:104:14683-14794:19:14766:14769",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 14766,
+        "source_end_char": 14769,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:d7c778a3b1ab04a40029795b3d2759c03719bbaa1180b250326fe6aa2e5896bb",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:f0fb101c7b21e2952ecb845f453e248a36880f2a8b0ecf5a35382dd24157878e",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:104:14683-14794",
+          "start_char": 14704,
+          "end_char": 14708,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:ba79a2bbbe9b46bd91f48fd929f73097d505cf41423863c8e3425a2efe6381c5",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:c2a908e2cb1d3237fa0a5c37f14ff9ccf2ada172606201430a1726dd0b944710",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:109:15338-15587:31:15519:15523",
+        "role_ref": "patient",
+        "surface": "them",
+        "lemma": "they",
+        "source_start_char": 15519,
+        "source_end_char": 15523,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:74c74a1b88c950a128fdd91da3f74943bd52f426480a9c0fb49f471e7e95bc9b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:60c2387a055407f1455ba7783996707074b9ff0707d7c3d7e704f5d19d6a9f28",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:c2a908e2cb1d3237fa0a5c37f14ff9ccf2ada172606201430a1726dd0b944710",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:109:15338-15587",
+          "start_char": 15489,
+          "end_char": 15493,
+          "surface": "2011",
+          "label_ref": "DATE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:d3dea5c0d44917e29dc194fb16b86466ea40a06dfdb5e18327c58ec8ea2a6611",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096:15:16991:16993",
+        "role_ref": "actor",
+        "surface": "he",
+        "lemma": "he",
+        "source_start_char": 16991,
+        "source_end_char": 16993,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:914e873b7adc44eed67a7b7307ebfaceace6521488acff1511d337438055589b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096",
+          "start_char": 16958,
+          "end_char": 16962,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:e274825f7d0e2d46259328abf12b3ef6d5306f424e95d67835eade43b73dc099",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:53a48e818b16f72862b3fad295804edba81f3c83f74b9ccedee2f7b3738aec18",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096",
+          "start_char": 16913,
+          "end_char": 16918,
+          "surface": "Riley",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:123311ea0ebeb1d423c9e30cb9722cca264466fda1606c617c612193dae8da14",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:1597755e98599a95768ad5fc08e855241cf48387e474bba894038ac7ee39a146",
+        "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096:23:17026:17028",
+        "role_ref": "actor",
+        "surface": "it",
+        "lemma": "it",
+        "source_start_char": 17026,
+        "source_end_char": 17028,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:914e873b7adc44eed67a7b7307ebfaceace6521488acff1511d337438055589b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096",
+          "start_char": 16958,
+          "end_char": 16962,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:e274825f7d0e2d46259328abf12b3ef6d5306f424e95d67835eade43b73dc099",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:53a48e818b16f72862b3fad295804edba81f3c83f74b9ccedee2f7b3738aec18",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:7454c6de7b0ece155e03cfa6515b6c12bb291073e7c552de76b0a07f80243d1c",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:119:16913-17096",
+          "start_char": 16913,
+          "end_char": 16918,
+          "surface": "Riley",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:52138e259f05d924e846b805c7394b84a04482dd3d219cfc3258260257fa3bd0",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:bfb55f7cec4466ef3c5b6ab0b71e6832de17e7f14ccfed6884dafab306848e62",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:124:17690-17896:14:17763:17766",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 17763,
+        "source_end_char": 17766,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:7c72d7d8c1c93cf81c44374e2f08f05108f73e546a9d2396a392218013243a68",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:09834c4fb7d5ec6bf9b7a507390e3a7fa99f9544092f6484b76bc5fd465b623f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:bfb55f7cec4466ef3c5b6ab0b71e6832de17e7f14ccfed6884dafab306848e62",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:124:17690-17896",
+          "start_char": 17710,
+          "end_char": 17714,
+          "surface": "Bush",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:7e92e283274fe407d1a1d6d646afd7e8ad582b571e59102fff5695b75e71bc71",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:d5b7fcc193c325bfdcd14f61bbdfb16ea18499e46031123d5ffdff34ec13e58d",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:127:18272-18553:16:18359:18362",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 18359,
+        "source_end_char": 18362,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:985ba7217eae3ad7a2c2a06bfdc4ac5cee5de1dd7c1e8f1d04d98f7beac6760f",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:3e55537578a1ef73b774d9ca713b2715608d96cbf024495ab8da00ba9ee5213a",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:d5b7fcc193c325bfdcd14f61bbdfb16ea18499e46031123d5ffdff34ec13e58d",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:127:18272-18553",
+          "start_char": 18344,
+          "end_char": 18357,
+          "surface": "Robert Strong",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:43ba3cd6c4a9a545765c2c0abbedcfb97c65631edcb7d032f28683265ccb9575",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:606a9735e8c8641e59f78633744ac986aab81473ca5dd8cfeb3733d242c94cc7",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:d5b7fcc193c325bfdcd14f61bbdfb16ea18499e46031123d5ffdff34ec13e58d",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:127:18272-18553",
+          "start_char": 18325,
+          "end_char": 18338,
+          "surface": "Jeffrey Engel",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:ab5b1286f79eaf0738e3ae6b5050d4fa86cb0d38fb27ffac85032b3f6ebd2e17",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:c8e8134f10e2e61fd20f01ac4ec6ee62ae04f9c16e386785619b1b54fe3e3c16",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:d5b7fcc193c325bfdcd14f61bbdfb16ea18499e46031123d5ffdff34ec13e58d",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:127:18272-18553",
+          "start_char": 18293,
+          "end_char": 18323,
+          "surface": "Professors Bartholomew Sparrow",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:da8c0186eed0dc1ea6918c0cbc5701c94f210361d2c3c746b5514a97ab1fd982",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:6fa3311475ef51aaae75aff80b5a6eae39d54a8a402cc0c82b5437f03a574daa",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:137:19568-19623:7:19605:19608",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 19605,
+        "source_end_char": 19608,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:059bdcf880caacc6d1041d9add1fd66bc2467785aaaea4739262f7634ad45f1b",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:59a5380ca0b521c5bf3eaf1543342ccc1333ded1d8aca5881bbaa9ad7d8aef5c",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:6fa3311475ef51aaae75aff80b5a6eae39d54a8a402cc0c82b5437f03a574daa",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:137:19568-19623",
+          "start_char": 19577,
+          "end_char": 19578,
+          "surface": "2",
+          "label_ref": "CARDINAL",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:fe50c95c8f7626d7d9556b27f0527e5832aeca0d42f9074ff1ec0be55882a82e",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:f45c06143daa7deb652b8f9ca8330f979df91fa4196b9d8088d04892b8f9bbd2",
+        "statement_ref": "statement:sha256:51ca6c008d205ce0e87cd1bef82779dbd3e0129e3b1b7326f672a7ac1c17c762",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:138:19624-19782:20:19737:19741",
+        "role_ref": "patient",
+        "surface": "them",
+        "lemma": "they",
+        "source_start_char": 19737,
+        "source_end_char": 19741,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:f7f406a3a27ca3e54a5168f339e115314662f58baaa634860588c0e5f864ebc4",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:c4f3c6769b6b4f5f68aca24e61f7aef0580b7053732b26a46dedd9ef03fd429a",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:51ca6c008d205ce0e87cd1bef82779dbd3e0129e3b1b7326f672a7ac1c17c762",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:138:19624-19782",
+          "start_char": 19624,
+          "end_char": 19643,
+          "surface": "The Bush Foundation",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:b11d5152bb64a683b3f1335b53e3cb3af41b7565b5eb7bdf088194e42877cc34",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:5fd580bf85745c98a9db55e4ff3d656d4401f44948e2fe0c19ecd4233a6e1fd3",
+        "statement_ref": "statement:sha256:8664bbd8239693e75922e9f4f64430235f4dfd9f33d6b3336069563e77fd234b",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:149:21165-21243:12:21239:21242",
+        "role_ref": "patient",
+        "surface": "him",
+        "lemma": "he",
+        "source_start_char": 21239,
+        "source_end_char": 21242,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:9384d39ed75e4a7cedd8bbd67da78b1e839582f74437368a3d05c4d223980ae6",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:79af5757c5e189c4395f6a762074a89695b974e72e28352ad086c578c89d588d",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:8664bbd8239693e75922e9f4f64430235f4dfd9f33d6b3336069563e77fd234b",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:149:21165-21243",
+          "start_char": 21209,
+          "end_char": 21224,
+          "surface": "Darby Morrisroe",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:9cb758dca981b312d5ac6e9867f7f1c1fc7750b5d32991da122606e1b05b40d1",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:de7811484710af50d7d86c02c6e406bff93a7d9c4cb7afef8a461e9b4b3c8f43",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:8664bbd8239693e75922e9f4f64430235f4dfd9f33d6b3336069563e77fd234b",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:149:21165-21243",
+          "start_char": 21191,
+          "end_char": 21203,
+          "surface": "Tarek Masoud",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:50f86a3c89c0c3085ee0d4d1f86a3a30dae996e08ed266feb33348f5aa030749",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:6a8b8ad81e0357346f9152529a0d59889169213d40a91afbe516c0420448c48e",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:8664bbd8239693e75922e9f4f64430235f4dfd9f33d6b3336069563e77fd234b",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:149:21165-21243",
+          "start_char": 21176,
+          "end_char": 21189,
+          "surface": "Stephen Knott",
+          "label_ref": "PERSON",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    },
+    {
+      "mention": {
+        "mention_ref": "entity-mention:sha256:1ff2e379e3a4b09de32c656b2f2a3daa1180814cdc22bf1f85727d1fc61fa99d",
+        "entity_fingerprint_ref": "entity-fingerprint:sha256:d45ead7d573b27a1e6a4390579f30cebc84a25f5cebdd7191c12efc7d3fb95b0",
+        "statement_ref": "statement:sha256:95d2c4b710b8c1c337a0cd3f7d7f4fcde02dea0c50815e985aa3396615f8f5df",
+        "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:150:21246-21465:23:21381:21384",
+        "role_ref": "actor",
+        "surface": "who",
+        "lemma": "who",
+        "source_start_char": 21381,
+        "source_end_char": 21384,
+        "detector_ref": "scale1:persistent-pnf-fingerprint:v1",
+        "candidate_only": true,
+        "creates_entity_identity": false,
+        "creates_semantic_authority": false,
+        "claim_truth_promoted": false
+      },
+      "preceding_named_candidates": [
+        {
+          "mention_ref": "named-entity-mention:sha256:7ccf517f127b22cf6e75dd157f1933cfc232380fcad55c4f8914d4c6da705ff1",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:026020d29cb466a3e3b86a51f55b04a086eccd9f2095671572d8531b5f85863f",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:95d2c4b710b8c1c337a0cd3f7d7f4fcde02dea0c50815e985aa3396615f8f5df",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:150:21246-21465",
+          "start_char": 21367,
+          "end_char": 21379,
+          "surface": "Katrina Kuhn",
+          "label_ref": "GPE",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        },
+        {
+          "mention_ref": "named-entity-mention:sha256:0781e855a94ffa9e6089a0c178111964d2ee3da75fbf4d94a2c935c6890bcce5",
+          "entity_fingerprint_ref": "named-entity-fingerprint:sha256:aed849ddfe334c824acea73155635a57d3af2af1c96728584b9ae31dbd4ffc74",
+          "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+          "statement_ref": "statement:sha256:95d2c4b710b8c1c337a0cd3f7d7f4fcde02dea0c50815e985aa3396615f8f5df",
+          "exact_span_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:150:21246-21465",
+          "start_char": 21307,
+          "end_char": 21361,
+          "surface": "the Miller \nCenter’s Presidential Oral History Program",
+          "label_ref": "ORG",
+          "detector_ref": "scale1:parser-ner:v1",
+          "candidate_only": true,
+          "creates_entity_identity": false,
+          "creates_semantic_authority": false,
+          "claim_truth_promoted": false
+        }
+      ],
+      "identity_status": "unresolved"
+    }
+  ],
+  "antecedent_resolution": "NOT_TESTED",
+  "source_excerpts": "NOT_EXPORTED_IN_BINDINGS",
+  "review_unique_semantic_refs_by_revision": {
+    "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00": 9121,
+    "source-revision:sha256:bc5c811a8e10281f3d6ebd3a6284e84711b4bd350906097f95a44569784259a8": 8081
+  },
+  "review_shared_semantic_refs": 8081,
+  "review_only_by_revision": {
+    "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00": 1040,
+    "source-revision:sha256:bc5c811a8e10281f3d6ebd3a6284e84711b4bd350906097f95a44569784259a8": 0
+  },
+  "identity_controls": "NOT_TESTED",
+  "empirical_nonfactorisation": "OPEN",
+  "input_artifact_sha256": "8557176956a7ff11ed51f62821165d37021f9eb8e7879709a26773c483b72af2"
+}

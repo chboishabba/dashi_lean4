@@ -1,3 +1,5 @@
+import Lean
+
 /-!
 Source-backed Wikipedia article candidate proof checker for JMD.
 
@@ -16,7 +18,6 @@ Original Wikidata getter, ontology checker and proof-owner attribution:
 meta-introspector/JMD. Existing SLR generic producer: chboishabba/dashi_agda.
 The checker does NOT reparse prose or invent an independent NLP ontology.
 -/
-import Lean
 
 namespace Wikidata
 namespace Slr
@@ -102,6 +103,54 @@ private def roleSupported
   allowed.contains ((str? actor "dep").getD "") &&
   nat? actor "head_i" == nat? predicate "i"
 
+/-- Complete syntax-role enumeration. An arbitrary subset of the original
+    children is NOT sufficient evidence for an 'all actors/patients' query.
+    It still certifies grammar only, not resolved semantic participants. -/
+private def exactDirectRoleProjection
+    (text : String) (rows : Array Json) (predicate : Json)
+    (chosen : Array Json) (allowed : List String) : Bool :=
+  let expected := rows.filter (fun raw =>
+    allowed.contains ((str? raw "dep").getD "") &&
+    nat? raw "head_i" == nat? predicate "i")
+  expected.size == chosen.size &&
+    expected.toList.all (fun raw =>
+      chosen.toList.any (fun projected => rawMatchesProjection text raw projected)) &&
+    chosen.toList.all (fun projected =>
+      roleSupported text rows predicate projected allowed)
+
+/-- The original predicate-selection rule remains an explicit source-facing
+    acceptance requirement, not a generated semantic ontology. -/
+private def selectedOriginalPredicate (raw : Json) : Bool :=
+  str? raw "pos" == some "VERB" &&
+  List.contains ["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"]
+    ((str? raw "dep").getD "")
+
+private def expectedOriginalPredicateCount (original : Array Json) : Nat :=
+  original.foldl (fun acc sentence =>
+    acc + (((arr? sentence "dependency_rows").getD #[]).filter
+      selectedOriginalPredicate).size) 0
+
+private def projectedPredicateKey (event : Json) : Option (String × Nat) := do
+  let candidate ← str? event "slr_claim_candidate_id"
+  let predicate ← (event.getObjVal? "predicate").toOption
+  let i ← nat? predicate "i"
+  pure (candidate, i)
+
+private def originalProperNounCount (original : Array Json) : Nat :=
+  original.foldl (fun acc sentence =>
+    acc + (((arr? sentence "dependency_rows").getD #[]).filter
+      (fun raw => str? raw "pos" == some "PROPN")).size) 0
+
+private def projectedTokenKey (token : Json) : Option (Nat × Nat) := do
+  let sentence ← nat? token "sentence_index"
+  let i ← nat? token "i"
+  pure (sentence, i)
+
+private def yearSpanKey (row : Json) : Option (Nat × Nat) := do
+  let start ← nat? row "start_char"
+  let stop ← nat? row "end_char"
+  pure (start, stop)
+
 private def validateEvent
     (text : String) (original : Array Json) (event : Json) : Bool :=
   match str? event "slr_claim_candidate_id",
@@ -123,12 +172,10 @@ private def validateEvent
             str? predicate "pos" == some "VERB" &&
             (["ROOT", "conj", "ccomp", "xcomp", "advcl",
                "acl", "relcl"].contains ((str? predicate "dep").getD "")) &&
-            actors.toList.all (fun x =>
-              roleSupported text rows predicate x
-                ["nsubj", "csubj", "nsubjpass", "csubjpass", "agent"]) &&
-            patients.toList.all (fun x =>
-              roleSupported text rows predicate x
-                ["dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"])
+            exactDirectRoleProjection text rows predicate actors
+              ["nsubj", "csubj", "nsubjpass", "csubjpass", "agent"] &&
+            exactDirectRoleProjection text rows predicate patients
+              ["dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"]
       found &&
       decide (a < b ∧ b ≤ text.toList.length) &&
       bool? event "candidate_only" == some true &&
@@ -216,7 +263,7 @@ private def validateLexicalYear
             str? raw "text" == some tokenSurface &&
             tokenStop == tokenStart + tokenSurface.toList.length)
         | none => false)
-  | _, _, _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _ => false
 
 /-- Lexical year index with bounded candidate co-occurrences, not a
     world-level before/after relation or licensed event timestamp. -/
@@ -241,14 +288,14 @@ def articleSectionCoverageExact (text : String) (sections : Array Json) : Bool :
     let sourceLength := text.toList.length
     let mut expectedStart := 0
     let mut currentHeading := "Lead"
-    for section in sections do
-      let some start := nat? section "start_char"
+    for block in sections.toList do
+      let some start := nat? block "start_char"
         | return false
-      let some stop := nat? section "end_char"
+      let some stop := nat? block "end_char"
         | return false
-      let some kind := str? section "kind"
+      let some kind := str? block "kind"
         | return false
-      let some heading := str? section "heading"
+      let some heading := str? block "heading"
         | return false
       if start != expectedStart || start >= stop || stop > sourceLength then
         return false
@@ -302,14 +349,24 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       bool? projection "text_order_is_event_chronology" == some false &&
       bool? projection "cross_sentence_identity_paid" == some false &&
       articleSectionCoverageExact text sections &&
+      events.size == expectedOriginalPredicateCount original &&
+      decide ((events.toList.map projectedPredicateKey).Nodup) &&
       events.toList.all (validateEvent text original) &&
       people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
       dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
+      proper.size == originalProperNounCount original &&
+      decide ((proper.toList.map projectedTokenKey).Nodup) &&
       proper.toList.all (validateProperNounToken text original) &&
+      decide ((years.toList.map yearSpanKey).Nodup) &&
       years.toList.all (validateLexicalYear text original) &&
+      timeline.size == years.size &&
+      decide ((timeline.toList.map yearSpanKey).Nodup) &&
+      years.toList.all (fun year => timeline.toList.any (fun row =>
+        yearSpanKey year == yearSpanKey row &&
+        nat? year "year_candidate" == nat? row "year_candidate")) &&
       timeline.toList.all (validateTimeline text original events) &&
       order.toList.all (validateTextOrder events)
-  | _, _, _, _, _, _, _, _ => false
+  | _, _, _, _, _, _, _, _, _ => false
 
 /-- This exact-source certificate is obtained only after checking the
     literal article, SLR original parser rows and projected evidence. -/

@@ -1,0 +1,148 @@
+warning: unused import: `oalc_corpus_row_matches`
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:13:5
+   |
+13 |     oalc_corpus_row_matches, OalcCaseFollowError, OalcCorpusRow, PinnedOalcStreamRequest,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Path`
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:20:17
+   |
+20 | use std::path::{Path, PathBuf};
+   |                 ^^^^
+
+warning: unused import: `std::time::Duration`
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:21:5
+   |
+21 | use std::time::Duration;
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: constant `OALC_DATASET_ID` is never used
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:28:7
+   |
+28 | const OALC_DATASET_ID: &str = "isaacus/open-australian-legal-corpus";
+   |       ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `SENSIBLAW_UA` is never used
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:29:7
+   |
+29 | const SENSIBLAW_UA: &str = "SensibLaw/0.1 governed-legal-provider";
+   |       ^^^^^^^^^^^^
+
+warning: constant `RANGE_REQUEST_TIMEOUT_SECONDS` is never used
+  --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:30:7
+   |
+30 | const RANGE_REQUEST_TIMEOUT_SECONDS: u64 = 120;
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `default_index_root` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:183:4
+    |
+183 | fn default_index_root() -> PathBuf {
+    |    ^^^^^^^^^^^^^^^^^^
+
+warning: function `revision_dir` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:199:4
+    |
+199 | fn revision_dir(revision: &str) -> PathBuf {
+    |    ^^^^^^^^^^^^
+
+warning: function `index_path` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:203:4
+    |
+203 | fn index_path(revision: &str) -> PathBuf {
+    |    ^^^^^^^^^^
+
+warning: function `checkpoint_path` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:207:4
+    |
+207 | fn checkpoint_path(revision: &str) -> PathBuf {
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `load_checkpoint` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:211:4
+    |
+211 | fn load_checkpoint(revision: &str) -> Result<OalcRangeIndexCheckpoint, OalcCaseFollowError> {
+    |    ^^^^^^^^^^^^^^^
+
+warning: function `write_checkpoint` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:245:4
+    |
+245 | fn write_checkpoint(
+    |    ^^^^^^^^^^^^^^^^
+
+warning: function `append_entries` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:266:4
+    |
+266 | fn append_entries(
+    |    ^^^^^^^^^^^^^^
+
+warning: function `lookup_entry` is never used
+   --> /home/c/Documents/code/slr/crates/sl-governed-legal-provider/src/oalc_range_index.rs:318:4
+    |
+318 | fn lookup_entry(
+    |    ^^^^^^^^^^^^
+
+warning: unused import: `std::collections::BTreeSet`
+  --> /home/c/Documents/code/slr/crates/sl-legal-runtime/src/yindjibarndi_finite_cut.rs:16:5
+   |
+16 | use std::collections::BTreeSet;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `AdversarialSearchRole` and `CandidateRouteStatus`
+ --> /home/c/Documents/code/slr/crates/sl-legal-runtime/src/pabai_golden_regression.rs:9:39
+  |
+9 |     compile_reviewed_treatment_rerun, AdversarialSearchRole, CandidateRouteStatus,
+  |                                       ^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `NOT_READY_COORDINATE` and `PRIVATE_HYPOTHESIS_COORDINATE`
+  --> /home/c/Documents/code/slr/crates/sl-legal-runtime/src/personal_professional_comparison.rs:12:58
+   |
+12 |     ADVOCATE_CONSUMER, DOCTOR_CONSUMER, LAWYER_CONSUMER, NOT_READY_COORDINATE,
+   |                                                          ^^^^^^^^^^^^^^^^^^^^
+13 |     PERSONAL_CONSUMER, PRIVATE_HYPOTHESIS_COORDINATE, REGULATOR_CONSUMER,
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `ChangeLocus`
+  --> /home/c/Documents/code/slr/crates/sl-legal-runtime/src/typed_comparative_receipt.rs:11:18
+   |
+11 |     ChangeLayer, ChangeLocus, ComparativeReceipt, TypedAnswerChangingExplanation,
+   |                  ^^^^^^^^^^^
+
+warning: unused `Result` that must be used
+   --> /home/c/Documents/code/dashi_lean4/tools/gwb_slr_fibre_probe.rs:390:5
+    |
+390 | /     require(parity_sentences == number(&record["parser_receipt"], "sentence_count")? as usize,
+391 | |             "sentence count mismatch");
+    | |______________________________________^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+    = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
+help: use `let _ = ...` to ignore the resulting value
+    |
+390 |     let _ = require(parity_sentences == number(&record["parser_receipt"], "sentence_count")? as usize,
+    |     +++++++
+
+warning: unused `Result` that must be used
+   --> /home/c/Documents/code/dashi_lean4/tools/gwb_slr_fibre_probe.rs:392:5
+    |
+392 | /     require(actual_tokens == number(&record["parser_receipt"], "token_count")? as usize,
+393 | |             "token count mismatch");
+    | |___________________________________^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+help: use `let _ = ...` to ignore the resulting value
+    |
+392 |     let _ = require(actual_tokens == number(&record["parser_receipt"], "token_count")? as usize,
+    |     +++++++
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

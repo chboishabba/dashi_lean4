@@ -1,3 +1,7 @@
+import RequestProject.Slr.Producer
+import RequestProject.Cli.Derive
+import RequestProject.PropertyEngine
+
 /-!
 SLR-produced observation -> reviewed Wikidata query -> existing JMD Lean proof.
 
@@ -9,9 +13,6 @@ inputs owned by the SLR/ITIR world-repair review path.
 JMD original theorem credit: meta-introspector/RequestProject.Cli.Derive.
 DASHI source-attached integration: chboishabba.
 -/
-import RequestProject.Slr.Producer
-import RequestProject.Cli.Derive
-import RequestProject.PropertyEngine
 
 namespace Wikidata
 namespace Slr

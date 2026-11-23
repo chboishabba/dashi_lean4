@@ -1,0 +1,475 @@
+{
+  "ambiguous_year_examples": [
+    {
+      "candidate_predicates": [
+        "born",
+        "served"
+      ],
+      "sentence": 0,
+      "source_text": "George Walker Bush (born July 6, 1946) is an American retired politician and businessman who served as the 43rd president of the United States from 2001 to 2009.",
+      "year": "1946"
+    },
+    {
+      "candidate_predicates": [
+        "conducted",
+        "showed",
+        "contributed"
+      ],
+      "sentence": 561,
+      "source_text": "Polls conducted in 2006 showed an average approval rating of 37 percent for Bush, the lowest for any second-term president at that point in his term since Harry S. Truman in March 1951 (when Truman's approval rating was 28 percent), which contributed to what Bush called the \"thumping\" of the Republican Party in the 2006 elections.",
+      "year": "1951"
+    },
+    {
+      "candidate_predicates": [
+        "attended",
+        "graduating"
+      ],
+      "sentence": 42,
+      "source_text": "He attended Yale University from 1964 to 1968, graduating with a Bachelor of Arts degree in history.",
+      "year": "1964"
+    },
+    {
+      "candidate_predicates": [
+        "engaged",
+        "last"
+      ],
+      "sentence": 621,
+      "source_text": "Personal life\n\nFamily\n\nBush was engaged to Cathryn Lee Wolfman in 1967, but the engagement did not last.",
+      "year": "1967"
+    },
+    {
+      "candidate_predicates": [
+        "Born",
+        "graduated"
+      ],
+      "sentence": 3,
+      "source_text": "Born in New Haven, Connecticut , Bush graduated from Yale University in 1968 with a bachelor's degree in history.",
+      "year": "1968"
+    },
+    {
+      "candidate_predicates": [
+        "attended",
+        "graduating"
+      ],
+      "sentence": 42,
+      "source_text": "He attended Yale University from 1964 to 1968, graduating with a Bachelor of Arts degree in history.",
+      "year": "1968"
+    },
+    {
+      "candidate_predicates": [
+        "joined",
+        "commissioned"
+      ],
+      "sentence": 51,
+      "source_text": "Career\n\nMilitary career\n\nIn May 1968, Bush joined the United States Air Force and was commissioned into the Texas Air National Guard .",
+      "year": "1968"
+    },
+    {
+      "candidate_predicates": [
+        "suspended",
+        "take"
+      ],
+      "sentence": 57,
+      "source_text": "In 1972, Bush was suspended from flying for failure to take a scheduled physical exam.",
+      "year": "1972"
+    },
+    {
+      "candidate_predicates": [
+        "graduated",
+        "founding"
+      ],
+      "sentence": 4,
+      "source_text": "After service in the Texas Air National Guard , he graduated from Harvard Business School in 1975, before going back to Texas and founding his own oil company .",
+      "year": "1975"
+    },
+    {
+      "candidate_predicates": [
+        "established",
+        "began"
+      ],
+      "sentence": 60,
+      "source_text": "Business career\n\nIn 1977, Bush established Arbusto Energy , a small oil exploration company, which began operations in 1978.",
+      "year": "1977"
+    }
+  ],
+  "embedded_conjunction_flat_assertion_labels": 57,
+  "embedded_examples": [
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "He also ordered the 2003 invasion of Iraq to overthrow Saddam Hussein 's regime, citing claims that it possessed weapons of mass destruction and had ties with al-Qaeda .",
+      "parent": "possessed",
+      "parent_dep": "acl",
+      "predicate": "had",
+      "predicate_start": 2299,
+      "sentence_index": 18
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "As his presidency came to a close, the country experienced a financial crisis , resulting in the Great Recession , prompting his administration and Congress to push through emergency economic measures aimed at stabilizing the financial system, including the Troubled Asset Relief Program .\n\n",
+      "parent": "resulting",
+      "parent_dep": "advcl",
+      "predicate": "prompting",
+      "predicate_start": 3166,
+      "sentence_index": 25
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "In April 1989, Bush arranged for a group of investors to purchase a controlling interest in Major League Baseball's Texas Rangers for $89 million and invested $500,000 himself to start.",
+      "parent": "purchase",
+      "parent_dep": "advcl",
+      "predicate": "invested",
+      "predicate_start": 7843,
+      "sentence_index": 65
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "He extended government funding for organizations providing education on the dangers of alcohol and drug use and abuse , and helping to reduce domestic violence .",
+      "parent": "providing",
+      "parent_dep": "acl",
+      "predicate": "helping",
+      "predicate_start": 10592,
+      "sentence_index": 87
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "Supporters pointed to his efforts to raise the salaries of teachers and improve educational test scores.\n\n",
+      "parent": "raise",
+      "parent_dep": "acl",
+      "predicate": "improve",
+      "predicate_start": 11113,
+      "sentence_index": 91
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "He campaigned on a platform which included bringing integrity and honor back to the White House, increasing the size of the military, cutting taxes, improving education, and aiding minorities.",
+      "parent": "increasing",
+      "parent_dep": "advcl",
+      "predicate": "cutting",
+      "predicate_start": 12409,
+      "sentence_index": 100
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "Bush and the Republican platform emphasized a strong commitment to the wars in Iraq and Afghanistan, support for the USA PATRIOT Act , a renewed shift in policy for constitutional amendments banning abortion and same-sex marriage , reforming Social Security to create private investment accounts, creation of an ownership society , and opposing mandatory carbon emissions controls.",
+      "parent": "banning",
+      "parent_dep": "acl",
+      "predicate": "reforming",
+      "predicate_start": 15205,
+      "sentence_index": 119
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "The Bush campaign portrayed Kerry as a staunch liberal who would raise taxes and increase the size of government.",
+      "parent": "raise",
+      "parent_dep": "relcl",
+      "predicate": "increase",
+      "predicate_start": 15831,
+      "sentence_index": 123
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "Federal Reserve chairman Alan Greenspan warned of a recession and Bush stated that a tax cut would stimulate the economy and create jobs.",
+      "parent": "stimulate",
+      "parent_dep": "ccomp",
+      "predicate": "create",
+      "predicate_start": 18769,
+      "sentence_index": 148
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "Treasury Secretary Paul H. O'Neill opposed some of the tax cuts on the basis they would contribute to budget deficits and undermine Social Security .",
+      "parent": "contribute",
+      "parent_dep": "relcl",
+      "predicate": "undermine",
+      "predicate_start": 18904,
+      "sentence_index": 149
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "One of the administration's early major initiatives was the No Child Left Behind Act , which aimed to measure and close the gap between rich and poor student performance, provide options to parents with students in low-performing schools, and target more federal funding to low-income schools.",
+      "parent": "measure",
+      "parent_dep": "xcomp",
+      "predicate": "close",
+      "predicate_start": 23296,
+      "sentence_index": 180
+    },
+    {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "One of the administration's early major initiatives was the No Child Left Behind Act , which aimed to measure and close the gap between rich and poor student performance, provide options to parents with students in low-performing schools, and target more federal funding to low-income schools.",
+      "parent": "provide",
+      "parent_dep": "ccomp",
+      "predicate": "target",
+      "predicate_start": 23425,
+      "sentence_index": 180
+    }
+  ],
+  "embedded_parent_conjunctions": 57,
+  "p0b_candidate_fibre_examples": [
+    {
+      "candidate_types": [
+        "document_local",
+        "instance"
+      ],
+      "mentions": 2,
+      "semantic_identity_paid": false,
+      "surface": "George Walker Bush"
+    },
+    {
+      "candidate_types": [
+        "document_local",
+        "instance"
+      ],
+      "mentions": 2,
+      "semantic_identity_paid": false,
+      "surface": "Laura Welch"
+    },
+    {
+      "candidate_types": [
+        "document_local",
+        "instance"
+      ],
+      "mentions": 384,
+      "semantic_identity_paid": false,
+      "surface": "Bush"
+    },
+    {
+      "candidate_types": [
+        "class",
+        "document_local",
+        "event_type",
+        "instance",
+        "property",
+        "role"
+      ],
+      "mentions": 59,
+      "semantic_identity_paid": false,
+      "surface": "He"
+    },
+    {
+      "candidate_types": [
+        "class",
+        "document_local",
+        "event_type",
+        "instance",
+        "property",
+        "role"
+      ],
+      "mentions": 83,
+      "semantic_identity_paid": false,
+      "surface": "he"
+    },
+    {
+      "candidate_types": [
+        "event_type",
+        "literal"
+      ],
+      "mentions": 3,
+      "semantic_identity_paid": false,
+      "surface": "1977"
+    },
+    {
+      "candidate_types": [
+        "event_type",
+        "property"
+      ],
+      "mentions": 1,
+      "semantic_identity_paid": false,
+      "surface": "possessed"
+    }
+  ],
+  "role_examples": [
+    {
+      "dep": "attr",
+      "predicate": "becoming",
+      "role": "patients",
+      "sentence_index": 7,
+      "span": [
+        805,
+        806
+      ],
+      "surface": "-"
+    },
+    {
+      "dep": "agent",
+      "predicate": "hurt",
+      "role": "actors",
+      "sentence_index": 63,
+      "span": [
+        7323,
+        7325
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "agent",
+      "predicate": "named",
+      "role": "actors",
+      "sentence_index": 75,
+      "span": [
+        8974,
+        8976
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "dative",
+      "predicate": "give",
+      "role": "patients",
+      "sentence_index": 89,
+      "span": [
+        10913,
+        10915
+      ],
+      "surface": "to"
+    },
+    {
+      "dep": "dobj",
+      "predicate": "won",
+      "role": "patients",
+      "sentence_index": 92,
+      "span": [
+        11391,
+        11392
+      ],
+      "surface": "-"
+    },
+    {
+      "dep": "agent",
+      "predicate": "nominated",
+      "role": "actors",
+      "sentence_index": 107,
+      "span": [
+        13308,
+        13310
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "agent",
+      "predicate": "criticized",
+      "role": "actors",
+      "sentence_index": 120,
+      "span": [
+        15458,
+        15460
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "agent",
+      "predicate": "caused",
+      "role": "actors",
+      "sentence_index": 166,
+      "span": [
+        20701,
+        20703
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "agent",
+      "predicate": "created",
+      "role": "actors",
+      "sentence_index": 172,
+      "span": [
+        21680,
+        21682
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "agent",
+      "predicate": "followed",
+      "role": "actors",
+      "sentence_index": 173,
+      "span": [
+        21898,
+        21900
+      ],
+      "surface": "by"
+    },
+    {
+      "dep": "dative",
+      "predicate": "provide",
+      "role": "patients",
+      "sentence_index": 180,
+      "span": [
+        23369,
+        23371
+      ],
+      "surface": "to"
+    },
+    {
+      "dep": "agent",
+      "predicate": "signed",
+      "role": "actors",
+      "sentence_index": 182,
+      "span": [
+        23635,
+        23637
+      ],
+      "surface": "by"
+    }
+  ],
+  "role_missing_surfaces": {
+    "actors:-": 1,
+    "actors:by": 59,
+    "patients:%": 1,
+    "patients:-": 3,
+    "patients:to": 9
+  },
+  "schema": "gwb-consumer-observer-evidence-audit-v1",
+  "scope_label_observer_collision": {
+    "consumer_query": "is_conj_parent_embedded",
+    "different_consumer_answers": true,
+    "embedded_witness": {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "He also ordered the 2003 invasion of Iraq to overthrow Saddam Hussein 's regime, citing claims that it possessed weapons of mass destruction and had ties with al-Qaeda .",
+      "parent": "possessed",
+      "parent_dep": "acl",
+      "predicate": "had",
+      "predicate_start": 2299,
+      "sentence_index": 18
+    },
+    "observer": "flat_scope_label_only",
+    "root_witness": {
+      "flat_scope": "unresolved-source-assertion",
+      "original_sentence": "As governor , Bush sponsored tort reform legislation, increased funding for education, set higher standards for schools, and reformed the criminal justice system.",
+      "parent": "sponsored",
+      "parent_dep": "ROOT",
+      "predicate": "set",
+      "predicate_start": 966,
+      "sentence_index": 9
+    },
+    "same_observation": true
+  },
+  "source_counts": {
+    "events": 1468,
+    "p0b_licenses": 16034,
+    "p0b_mentions": 11975,
+    "sentences": 643,
+    "years": 311
+  },
+  "source_revision": "enwiki-revid:1385850169",
+  "source_utf8_sha256": "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233",
+  "status": {
+    "p0b_candidates": "CANDIDATE_ONLY",
+    "query_relative_closure": "NOT_IN_ARCHIVE",
+    "reviewed_slr_fibres": "NOT_IN_ARCHIVE",
+    "s28_join": "NOT_IN_ARCHIVE",
+    "source_observation": "CHECKED",
+    "world_occurrence": "NOT_LICENSED"
+  },
+  "unmaterialized_grammatical_role_tokens": 73,
+  "year_sentence_event_count_histogram": {
+    "0": 6,
+    "1": 79,
+    "2": 115,
+    "3": 59,
+    "4": 32,
+    "5": 9,
+    "6": 7,
+    "7": 3,
+    "8": 1
+  }
+}

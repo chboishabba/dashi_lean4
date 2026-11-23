@@ -1,0 +1,57 @@
+{
+  "schema": "gwb-original-evidence-inventory-v1",
+  "source_article": {
+    "revision": "enwiki-revid:1385850169",
+    "sentences": 643,
+    "tokens": 17547,
+    "proof_log": "artifacts/gwb-semantic-proof/native-fibre-source-proof.log",
+    "actor_role_candidates": 1146,
+    "unresolved_reference_attachment_residuals": 62
+  },
+  "reviewed_wikimedia_overlay": {
+    "origin": "chboishabba/dashi_agda/fixtures/slr/gwb-reviewed-wikimedia-identities-v1.jsonl",
+    "rows": 10,
+    "source_role": "document-level acquisition identity coordinates; NOT sentence-level reviewed actor identity",
+    "candidate_only_rows": 10,
+    "semantic_promotions": 0,
+    "topic_anchor_rows": 8,
+    "exact_source_work_rows": 1,
+    "unresolved_qid_titles": [
+      "Family of Secrets"
+    ],
+    "qid_multiplicity": {
+      "Q207": 6,
+      "Q2743830": 1,
+      "Q23505": 1,
+      "Q942966": 1
+    },
+    "scope": "P5 acquisition context only; does not instantiate ReviewedIdentity"
+  },
+  "db_m12": {
+    "original_producer": "SLR pnf-db-checked",
+    "checked_data_present_in_committed_acceptance": false,
+    "gate": "P6 open"
+  },
+  "db_s28": {
+    "original_producer": "SLR timeline-candidates",
+    "checked_data_present_in_committed_acceptance": false,
+    "gate": "P6/P7 open"
+  },
+  "jmd": {
+    "role": "imported Wikidata KB structural consistency, ontology closure, local PKB relation soundness",
+    "source_import": "RequestProject.Cli.Import and RequestProject.PropertyEngine",
+    "q207_sitelink": "conditional checker exists; execution not recorded in P5-P10 committed manifest",
+    "world_51_qid_statement_proof": "no complete independent imported snapshot receipt in committed P5-P10 manifest",
+    "article_internal_meaning_authority": false
+  },
+  "gates": {
+    "P5": "OPEN reviewed sentence mention identity",
+    "P6": "OPEN original DB M12/S28 and semantic event equivalence",
+    "P7": "OPEN reviewed event-scoped temporal semantics",
+    "P8": "OPEN all-live production semantic fibre and factorisation",
+    "P9": "OPEN proposition to Wikidata semantic alignment",
+    "P10": "OPEN complete independently imported JMD KB edge proof"
+  },
+  "source_commit": "f429e5573d098ba92ed666483ded319d84d9bc01",
+  "interpretation": "evidence inventory, not proof of semantic gates"
+}

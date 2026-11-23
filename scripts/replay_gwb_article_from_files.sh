@@ -25,6 +25,7 @@ fi
 cd "$here"
 "$py" tools/gwb_article_proof.py --self-check
 "$py" tools/gwb_article_proof.py \
+  --agda-root "${DASHI_AGDA_ROOT:-$here/../dashi_agda}" \
   --output-dir "$output" \
   --source-text "$input/article.txt" \
   --source-revision "$revision" \

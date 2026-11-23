@@ -1,3 +1,5 @@
+import RequestProject.Slr.Producer
+
 /-!
 # Generic source-relative document-query soundness
 
@@ -16,7 +18,6 @@ source-binding and interpretation-soundness obligations by independent,
 checked evidence. An abstract proof under these premises is NOT a proof
 that a particular article has been successfully interpreted.
 -/
-import RequestProject.Slr.Producer
 
 namespace Wikidata
 namespace Slr
@@ -135,8 +136,9 @@ theorem incompatibleLiveReadingsBlockQueryLicence
     (leftLive : m.live (m.observe source) left)
     (rightLive : m.live (m.observe source) right)
     (disagree : m.readingAnswer left query ≠ m.readingAnswer right query) :
-    ¬ SourceQueryLicence m source query := by
-  intro licence
+    ¬ Nonempty (SourceQueryLicence m source query) := by
+  intro h
+  rcases h with ⟨licence⟩
   have hl : m.live licence.observation left := by
     simpa [licence.sameProducedObservation] using leftLive
   have hr : m.live licence.observation right := by
@@ -158,8 +160,9 @@ theorem sourceObservationCollisionBlocksQueryLicence
     (sameObservation : m.observe left = m.observe right)
     (differentAnswers :
       m.documentAnswer left query ≠ m.documentAnswer right query) :
-    ¬ SourceQueryLicence m left query := by
-  intro licence
+    ¬ Nonempty (SourceQueryLicence m left query) := by
+  intro h
+  rcases h with ⟨licence⟩
   have hleft : m.observe left = licence.observation :=
     licence.sameProducedObservation.symm
   have hright : m.observe right = licence.observation :=

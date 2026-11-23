@@ -1379,3 +1379,59 @@ NEXT DECISIVE GATES (not conditional test suites):
 4. Run the new lightweight P10 kernel target against original Q207
    EntityData; then separately compile full JMD KB/property or article
    alignment. No CI, no TAR, no whole-wikidata build, no false pass.
+
+## 2026-11-23 — C4.09 execution receipt verified, C4.10 exact antecedent geometry
+
+Operator-confirmed on branch head f1a3ac57560f3a7bd5fb8f3247766667b6a2702c:
+- Native SLR read-only source reopening passed: four preceding and two
+  following **original persisted source statements**.
+- Lightweight JMD Q207 source-field Lean runner passed with the exact
+  GWB_Q207_MINIMAL_ACCEPTED marker.
+- Prior 40/40 Python fixture regressions passed.
+- NO pronoun/actor identity, Wikidata QID, temporal proposition,
+  historical-truth or source-manifestation equivalence was admitted.
+- Locally generated output:
+  .dashi/gwb-relation/native-he-original-context-v1.json
+  remains untracked; it is **not** available in GitHub contents for
+  remote inspection. Do not pretend to have inspected its six statement
+  literals. Existing untracked outputs were preserved.
+
+C4.10 committed tools/gwb_native_antecedent_span_gate.py and
+tests/test_gwb_native_antecedent_span_gate.py as the next executable
+geometry boundary. It accepts the *actual* C4.09 canonical native
+context and an explicitly selected prior source span, and checks:
+- same original document/revision, content digest shape, focus
+  and antecedent statement IDs/regions;
+- exact Unicode character offsets, original substring/surface,
+  ordered non-overlapping source statement intervals and
+  source-unpromoted status;
+- candidate occurs before the source pronoun (including legal
+  zero-index start coordinates), rejects future/self mentions;
+- retains selected statement source coordinates and a deterministic
+  SHA256 over the original source-context JSON payload.
+
+Run from repository root with original local data:
+  python3 -m tools.gwb_native_antecedent_span_gate
+    --context .dashi/gwb-relation/native-he-original-context-v1.json
+    --candidate /path/to/reviewer-selected-source-span.json
+    --output .dashi/gwb-relation/native-he-antecedent-span-candidate-v1.json
+
+Candidate input is **only** the human-selected exact original
+{statement_ref, region_ref, start_char, end_char, surface}
+and must be selected from the full SLR context JSON. A success means
+same_source_span_geometry_checked=true, candidate_only=true,
+antecedent_resolution=REVIEW_REQUIRED, identity_admission=NOT_PAID,
+external_qid=NOT_TESTED. It does NOT generate SLR-reviewed identity
+receipts or promote any candidate and must not be treated as a
+governed antecedent or Wikidata entity. The checker has 14/14 local
+Python controls PASS including malformed/foreign/overlapping/future
+coordinates and zero-mode Unicode. This raises the *separate*
+local fixture suite total to 54/54, not to 54 original live proofs.
+
+Remaining P0: inspect the six actual original local context statements
+and submit one or more source-anchored antecedent candidates to SLR's
+existing governed antecedent review owner. Require a positive review
+with explicit candidate accessibility, rival exclusions, original
+statement/mention coordinate references and correct authority. Only
+then join to pinned external QID evidence. JMD Q207 field check is
+already paid independently, but not relevant to he's original referent.

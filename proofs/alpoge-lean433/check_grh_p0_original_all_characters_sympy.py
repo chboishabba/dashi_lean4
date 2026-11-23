@@ -1,0 +1,275 @@
+#!/usr/bin/env python3
+"""Local GRH P0 exact audit: source fingerprints and finite Dirichlet arithmetic.
+
+No CI, Lean, Agda, author-proof replay or infinite-analytic claim. This
+checks every finite complex Dirichlet character modulo 1..64 by cyclotomic
+polynomial arithmetic, plus the five ORIGINAL published source/admission
+mappings when --source-root and --adapter are supplied.
+"""
+import argparse
+import hashlib
+import itertools
+import math
+import re
+from pathlib import Path
+import sympy as S
+
+BLOBS = {"Main.lean": "dbd5db70bc11b35f18fa5751216ab335321e7bfc",
+         "Statements.lean": "1cd1bce93344065936b2b392b23306254e0785ef",
+         "RHAdmission.lean": "43a3f106e09a013fada4d1868f3bf9b0ba7dbf87"}
+OWNERS = (
+    ("original_mathlib_rh", "riemannHypothesis", "RiemannHypothesis", "rhOfAll"),
+    ("original_riemann_zero_location", "riemannZeta_eq_zero_re", "RiemannZetaZerosOnLine", "rhOfAll"),
+    ("original_dirichlet_nonvanishing", "LFunction_ne_zero_of_half_lt_re", "DirichletLNonvanishingRightOfHalf", "allChi"),
+    ("original_dirichlet_zeros", "LFunction_eq_zero_re", "DirichletLZerosOnLine", "claimAll.2.1"),
+    ("original_primitive_dirichlet_zeros", "LFunction_eq_zero_re_of_isPrimitive", "PrimitiveDirichletLZerosOnLine", "critAll"),
+)
+
+def git_blob(data):
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
+def source_audit(main, statements, adapter):
+    assert git_blob(main) == BLOBS["Main.lean"], "original Main blob mismatch"
+    assert git_blob(statements) == BLOBS["Statements.lean"], "original Statements blob mismatch"
+    assert git_blob(adapter) == BLOBS["RHAdmission.lean"], "original admission adapter blob mismatch"
+    main, statements, adapter = [x.decode("utf-8") for x in (main, statements, adapter)]
+    assert "import Statements" in main and "import Main" in adapter
+    assert statements.count("DirichletCharacter ℂ N") == 3
+    assert statements.count("χ.IsPrimitive") == 1
+    assert "χ ≠ 1 ∨ s ≠ 1" in statements
+    for local, source, target, witness in OWNERS:
+        assert re.search(r"\btheorem\s+" + re.escape(source) + r"\s*:\s*" +
+                         re.escape(target) + r"\s*:=\s*" + re.escape(witness) +
+                         r"(?=\s|$)", main), source
+        if target != "RiemannHypothesis":
+            assert re.search(r"\bdef\s+" + re.escape(target) +
+                             r"\s*:\s*Prop\s*:=", statements), target
+        assert re.search(r"\btheorem\s+" + re.escape(local) + r"\s*:\s*" +
+                         re.escape(target) + r"\s*:=\s*_root_\." +
+                         re.escape(source) + r"(?=\s|$)", adapter), local
+        assert re.search(r"#print\s+axioms\s+" + re.escape(local) +
+                         r"(?=\s|$)", adapter), local
+
+def negative_sources(main, statements, adapter):
+    cases = (
+        (main, statements.replace("χ.IsPrimitive".encode(), b"True"), adapter),
+        (main.replace(b"claimAll.2.1", b"claimAll.2.2"), statements, adapter),
+        (main, statements, adapter.replace(b"_root_.LFunction_ne_zero_of_half_lt_re",
+                                           b"_root_.LFunction_eq_zero_re")),
+    )
+    for mutated in cases:
+        assert mutated != (main, statements, adapter), "ineffective mutation"
+        try:
+            source_audit(*mutated)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("altered theorem/qualifier/adapter accepted")
+
+# Original author source, not a new proof or a synthetic analytic model.
+# Each file is pinned to the exact external original used by RHAdmission.
+# This graph distinguishes the correct all-character -> zeta/RH direction.
+DERIVATION_PINS = {
+    "src/Supplements/Kernels/MainTheorems.lean": "6a542d7ce969a791fd12ce575f587e6bc29044bf",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/EveryCharacter.lean":
+        "6ac769568b67f85f33565ba3e1eef7b91f53c55f",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/MainConclusion.lean":
+        "ee340012ab19713a8acfecf8adc6a331cbc2f1a4",
+    "src/Formalism/GammaFactorNonvanishing/CritLine.lean":
+        "95fa4da5c50119db164aa93944d106f22fdb576d",
+    "src/Development/AutomorphicArithmetic/CharacterBoxes/ClaimStrip.lean":
+        "60b3e96d81c2cb7d821d14c978b38bd9fd0d97f8",
+}
+
+def original_zeta_descent_audit(source_root):
+    """Exact-text provenance check, not a substitute for Lean elaboration."""
+    owner = {}
+    for path, sha in DERIVATION_PINS.items():
+        original = (source_root / path).read_bytes()
+        assert git_blob(original) == sha, "wrong source version: " + path
+        owner[path.rsplit("/", 1)[-1]] = original.decode("utf-8")
+    m = owner["MainTheorems.lean"]
+    c = owner["MainConclusion.lean"]
+    e = owner["EveryCharacter.lean"]
+    h = owner["CritLine.lean"]
+    s = owner["ClaimStrip.lean"]
+
+    def check_graph(m, c, e, h, s):
+        assert "theorem allChi : UpperTheory.EveryCharacter := UpperTheory.FinalTheorems.everyCharacter" in m
+        assert "theorem rhOfAll : RiemannHypothesis := Formalism.VW.rh_of_every allChi" in m
+        assert "⟨allChi, Claim.strip allChi, Claim.zeta allChi⟩" in m
+        assert "theorem UpperTheory.FinalTheorems.everyCharacter : UpperTheory.EveryCharacter :=" in c
+        assert "everyCharacter_of_row UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter" in c
+        assert "def UpperTheory.EveryCharacter : Prop :=" in e
+        assert "DirichletCharacter.LFunction χ s ≠ 0" in e
+        assert "h 1 (1 : DirichletCharacter ℂ 1)" in h
+        assert "LFunction_modOne_eq" in h
+        assert "completedLFunction_one_sub" in h
+        assert "theorem factor_ne_zero" in s and "theorem prim_zero" in s
+    check_graph(m, c, e, h, s)
+    negatives = (
+        (m.replace("rh_of_every allChi", "rh_of_every rhOfAll"), c, e, h, s),
+        (m, c, e, h.replace("h 1 (1 : DirichletCharacter ℂ 1)",
+                            "h 2 (1 : DirichletCharacter ℂ 1)"), s),
+        (m, c, e, h.replace("LFunction_modOne_eq", "LFunction_changeLevel"), s),
+    )
+    for mutated in negatives:
+        try:
+            check_graph(*mutated)
+        except AssertionError:
+            continue
+        raise AssertionError("changed source descent accepted")
+    print("PASS original allChi -> RH via modulus-1 zeta: 5 original additional source pins, 11 semantic guards")
+    print("PASS 3/3 changed-source dependency controls rejected")
+    print("SCOPE: source graph only; no Lean kernel or external archive proof replay")
+
+def local_characters(p, exponent):
+    q = p ** exponent
+    if p != 2 or exponent == 2:
+        order = int(S.totient(q))
+        generator = int(S.primitive_root(q))
+        logs = {pow(generator, i, q): i for i in range(order)}
+        return q, order, [{x: (k*j) % order for x, j in logs.items()}
+                          for k in range(order)]
+    if exponent == 1:
+        return 2, 1, [{1: 0}]
+    # (Z/2^e)^* = <-1> x <5> = C2 x C_(2^(e-2)) for e>=3.
+    order = 2 ** (exponent-2)
+    logs = {pow(5, j, q): j for j in range(order)}
+    chars = []
+    for ksign in range(2):
+        for kfive in range(order):
+            table = {}
+            for x in range(1, q, 2):
+                sign = int(x % 4 == 3)
+                b = logs[(-x) % q if sign else x]
+                table[x] = (ksign*sign*(order//2) + kfive*b) % order
+            chars.append(table)
+    return q, order, chars
+
+def audit_modulus(N, cutoff):
+    parts = [local_characters(int(p), int(e)) for p, e in S.factorint(N).items()]
+    order = math.lcm(*(part[1] for part in parts)) if parts else 1
+    units = [a % N for a in range(1, N+1) if math.gcd(a, N) == 1]
+    z = S.Symbol("z")
+    cyclotomic = S.Poly(S.cyclotomic_poly(order, z), z, domain=S.QQ)
+    totals = [0, 0, 0, 0, 0]  # chars, coefficients, factors, group products, primitive
+    for choices in itertools.product(*(part[2] for part in parts)):
+        chars = {a: sum((order//part[1])*choice[a % part[0]]
+                        for part, choice in zip(parts, choices)) % order
+                 for a in units}
+        for a in units:
+            for b in units:
+                assert chars[(a*b) % N] == (chars[a] + chars[b]) % order
+                totals[3] += 1
+        valid = []
+        for d0 in S.divisors(N):
+            d = int(d0)
+            fibres = {}
+            for a in units:
+                if a % d in fibres and fibres[a % d] != chars[a]:
+                    break
+                fibres[a % d] = chars[a]
+            else:
+                valid.append((d, fibres))
+        d, primitive = min(valid, key=lambda pair: pair[0])
+        if d == N:
+            totals[4] += 1
+        # Exact formal Dirichlet convolution, NOT a q-series substitution.
+        base = [0] + [z**primitive[n % d] if math.gcd(n, d) == 1 else 0
+                      for n in range(1, cutoff+1)]
+        product = base
+        for p0 in S.factorint(N):
+            p = int(p0)
+            if d % p == 0:
+                continue
+            cp = z**primitive[p % d]
+            product = [0] + [product[n] - (cp*product[n//p] if n % p == 0 else 0)
+                             for n in range(1, cutoff+1)]
+            totals[2] += 1
+        for n in range(1, cutoff+1):
+            actual = z**chars[n % N] if math.gcd(n, N) == 1 else 0
+            discrepancy = S.expand(product[n] - actual)
+            if discrepancy:
+                assert S.rem(S.Poly(discrepancy, z), cyclotomic).is_zero, (N, d, n)
+            totals[1] += 1
+        totals[0] += 1
+    assert totals[0] == int(S.totient(N)), (N, totals[0])
+    return totals
+
+
+def audit_open_strip_euler_factor_weld():
+    """Universal algebraic proof obligation for primitive -> imprimitive L.
+
+    For each omitted prime p, a primitive-character value z lies on the
+    unit circle. With sigma=Re(s)>0, r=p**(-sigma) is in (0,1).
+    The identity |1-r*z|^2=(1-r)^2+2*r*(1-Re(z)) proves strictly
+    positive squared norm. Boundary sigma=0 can genuinely give zero.
+    This does NOT construct L-functions or prove their continuation.
+    """
+    r, x, y = S.symbols("r x y", real=True)
+    sqnorm = (1-r*x)**2 + (r*y)**2
+    lower = (1-r)**2
+    # Exact polynomial identity mod the unit-circle equation x^2+y^2=1.
+    identity = S.expand(sqnorm - lower - 2*r*(1-x) - r*r*(x*x+y*y-1))
+    assert identity == 0
+    # Under 0<r<1, x<=1, the RHS is >=(1-r)^2>0, universally.
+    center = S.expand((1-1/S.sqrt(2))**2)
+    assert S.simplify(center-(S.Rational(3,2)-S.sqrt(2))) == 0
+    assert center.is_positive is True
+    # Exact positive controls plus critical boundary and non-unit negatives.
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:1,y:0})-S.Rational(1,4)) == 0
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:-1,y:0})-S.Rational(9,4)) == 0
+    assert S.simplify(sqnorm.subs({r:1,x:1,y:0})) == 0
+    assert S.simplify(sqnorm.subs({r:S.Rational(1,2),x:2,y:0})) == 0
+    # Selected actual primitive quadratic chi_5, induced chi_10. The
+    # omitted Euler factor at p=2 is 1+2^(-s); compare formal coefficients.
+    from sympy import kronecker_symbol
+    def primitive(n):
+        return 0 if math.gcd(n,5)>1 else int(kronecker_symbol(5,n))
+    def induced(n):
+        return 0 if math.gcd(n,10)>1 else primitive(n)
+    assert primitive(2) == -1
+    for n in range(1,1001):
+        formal = primitive(n) + (primitive(n//2) if n%2 == 0 else 0)
+        assert formal == induced(n), (n,formal,induced(n))
+    print("PASS all-modulus open-strip Euler-factor nonvanishing symbolic certificate")
+    print("PASS exact critical-line lower bound 3/2-sqrt(2)>0, 4 guard controls")
+    print("PASS chi5->chi10 original coefficient weld: 1000/1000")
+    print("BOUNDARY counterexample: Re(s)=0 may have zero omitted Euler factor")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--max-modulus", type=int, default=64)
+    ap.add_argument("--cutoff", type=int, default=180)
+    ap.add_argument("--source-root", type=Path)
+    ap.add_argument("--adapter", type=Path)
+    args = ap.parse_args()
+    assert 1 <= args.max_modulus <= 256 and args.cutoff >= 2
+    if args.source_root is not None or args.adapter is not None:
+        assert args.source_root is not None and args.adapter is not None
+        mainfile = (args.source_root / "src/Main.lean").read_bytes()
+        statements = (args.source_root / "src/Statements.lean").read_bytes()
+        adapter = args.adapter.read_bytes()
+        source_audit(mainfile, statements, adapter)
+        negative_sources(mainfile, statements, adapter)
+        original_zeta_descent_audit(args.source_root)
+        print("PASS pinned source and corrected adapter Git blobs 3/3, direct mappings 5/5, negative controls 3/3")
+    else:
+        print("Original source fingerprint: SKIPPED (supply --source-root AND --adapter)")
+    audit_open_strip_euler_factor_weld()
+    totals = [0] * 5
+    for N in range(1, args.max_modulus+1):
+        for i, value in enumerate(audit_modulus(N, args.cutoff)):
+            totals[i] += value
+    print("PASS all moduli 1..%d: %d/%d characters" %
+          (args.max_modulus, totals[0], totals[0]))
+    print("PASS exact cyclotomic Dirichlet coefficient comparisons:", totals[1])
+    print("PASS omitted Euler factor instances:", totals[2])
+    print("PASS exact character multiplication instances:", totals[3])
+    print("PASS independently recovered primitive characters:", totals[4])
+    print("OPEN: unbounded moduli, infinite analytic L, critical-line zeros, Lean/Agda kernel, GRH")
+
+if __name__ == "__main__":
+    main()

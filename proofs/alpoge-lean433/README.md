@@ -1,0 +1,519 @@
+## 22 Nov 2026 — actual author allChi → ζ RH descent pinned and checked
+
+**Original dependency, NOT RH→GRH:** at author/fork commit
+`7cbf7a0c32fc`, `MainTheorems.lean` sets
+`allChi : UpperTheory.EveryCharacter := UpperTheory.FinalTheorems.everyCharacter`
+and `rhOfAll : RiemannHypothesis := Formalism.VW.rh_of_every allChi`.
+Original `CritLine.lean` proves
+`rh_of_every` by specialization `h 1
+(1 : DirichletCharacter ℂ 1)` and the ORIGINAL
+`LFunction_modOne_eq` lemma, then invokes the
+original reflection/zero-free-to-RH proof. Thus
+**all-character nonvanishing → zeta RH via N=1**
+is already in the author source. `Claim.strip allChi`
+uses primitive/reflection and omitted Euler factors
+to derive all-character zero location on the
+same stronger source. No second zeta or GRH
+proof is needed in DASHI.
+
+**Current source audit:** six exact pinned author source blobs
+(including `src/Main.lean`) were independently
+read on 22 Nov: 10/10 original source graph
+edges/statement references PASS, 3/3
+changed-source countercontrols rejected. The
+existing local script
+`check_grh_p0_original_all_characters_sympy.py`
+was **extended in place** (commit `30f0b1b2`)
+to pin the five additional author-source modules
+and fail closed if the original N=1, mod-one,
+allChi derivation changes. It is *not*
+an additional theorem adapter. Locally reconstructed
+script's `git hash-object` matched committed
+blob `7ff7fb44eff87dabef83e3973f3535793f7b7daf`;
+Python syntax and local SymPy 1.14.0 run on
+moduli 1–4 (6 characters, 120 coefficients,
+18 products, 3 primitive) PASS, together
+with the exact χ5→χ10 1000-coefficient weld
+and critical-line nonzero Euler factor controls.
+The **new source-graph Python mode requires a
+pinned source checkout and was not executed
+end-to-end in this runtime**; its graph guards
+were independently run on the actual GitHub
+pinned source via source readback.
+
+**Shortest trusted endpoint:** existing
+`RHAdmission.original_mathlib_rh` consumes
+original `Main.riemannHypothesis` as a term;
+the root `MillenniumExternal.clayRiemannHypothesis_of_mathlib`
+already compiles a Mathlib RH term into the
+literal pinned Clay statement. What remains
+for **DASHI's native RH Clay claim** is a
+trusted compatible-version proof import /
+kernel acceptance, not a new all-character
+Agda carrier. If *also* claiming native
+Agda all-character Dirichlet GRH, genuine
+all-N/all-χ actual `LFunction` zero
+semantics must be transported separately,
+and is not paid by zeta RH alone.
+
+**Independent earlier DASHI RH manuscript found:**
+`Riemann_Pole_Quotient_Reduction_2026.tex`
+and matching PDF (21 Sep 2026) in the user's
+ChatGPT file Library; its separate literal
+pole–quotient high-ordinate inequality remains
+unproved and is not retrospectively paid by
+the original external all-character theorem.
+Paper discovery/source attribution is
+synchronized in Agda #1533 controlling
+GRH roadmap and its existing publication router.
+
+No new Lean/Agda kernel or GRH/RH mathematical
+theorem has been claimed by this local audit.
+
+---
+
+## 21 Nov 2026 — final local P0 source audit, fresh 32-modulus regression
+
+Fresh local SymPy 1.14 regression on the expanded existing
+`check_grh_p0_original_all_characters_sympy.py`
+(`--max-modulus 32 --cutoff 180`) PASS:
+**324/324** Dirichlet characters, **58,320/58,320** exact
+cyclotomic coefficient identities, **100,074** multiplicativity
+instances, **205** primitive characters. Also PASS:
+all-modulus symbolic open-strip Euler nonzero certificate,
+exact critical-line bound, boundary negative controls and
+**1,000/1,000** χ₅→χ₁₀ coefficient weld. These source tests
+are not proof of analytic GRH.
+
+Root original theorem attribution was corrected in existing
+`MillenniumExternal/AlpogeRHBoundaryExact.lean`: the
+published theorem is `_root_.riemannHypothesis` IN THE
+module `Main`, not a namespaced constant `Main.riemannHypothesis`.
+Source comment correction commit `65ca8922`.
+The prior block-comment syntax repair `4b45d7ef` remains.
+The root consumer STILL requires a supplied proof
+`(admitted : _root_.RiemannHypothesis)`; no accepted
+original proof has yet crossed from v4.33.1 to the root.
+Independently reported original kernel validation cannot be
+relabelled as local DASHI admission.
+
+Single controlling GRH plan: Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`,
+updated concurrently. GRH P0 stays OPEN for version-compatible
+proof admission and source-identical Agda per-character zero
+transport; no CI or Agda/Lean kernel invoked.
+
+---
+
+## 21 Nov 2026 — actual P0 source and primitive/imprimitive semantic weld
+
+- Root exact target: fixed the malformed block-comment `-/-` to
+  `-/` in the **existing** `MillenniumExternal/AlpogeRHBoundaryExact.lean`
+  (commit `4b45d7ef`), keeping the original Mathlib→Clay target
+  untouched. This is syntax repair, **not** imported proof acceptance.
+- Extended, rather than duplicated, the existing
+  `check_grh_p0_original_all_characters_sympy.py` (commit
+  `2e6ecdc1`) with the universal exact unit-circle certificate
+  `|1-rz|²=(1-r)²+2r(1-Re z)` under `|z|=1`, `r=p^{-Re(s)}∈(0,1)`.
+  Therefore the missing Euler factors of an induced character have
+  no zeros in the open positive real half-plane; they **can**
+  vanish on `Re(s)=0`. This is an algebraic + elementary inequality
+  proof, not a claim that SymPy constructs complex L-functions.
+- Selected primitive χ₅ → imprimitive χ₁₀ exact coefficient
+  acceptance **1000/1000**; critical-line bound
+  `3/2−√2>0` PASS; four exact boundary/guard controls PASS.
+  Re-ran the existing all-character SymPy on moduli 1..16:
+  80/80 characters, 8000/8000 coefficients, 4682 group
+  multiplication instances, and 45 primitive characters PASS.
+  The previous full moduli 1..64 run remains historical.
+- Source identity and all-zero predicate transport still require
+  the ORIGINAL infinite analytic Dirichlet functions and their
+  real completions. The genuine original external `Main` already
+  proves all-character GRH at the pinned author-version theorem
+  level; we must ACCEPT that same theorem in a compatible toolchain
+  before the root or Agda statements can be discharged.
+
+**Single controlling P0 plan** (updated alongside this work):
+Agda #1533 `Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+No CI, Lean, Agda or exact all-64 extended-script run in this step.
+Do not promote finite acceptance into GRH.
+
+---
+
+## 21 Nov 2026 — SymPy P0 source repair and exact Git-byte acceptance (LATEST)
+
+The original `RHAdmission.lean` had a real one-character source bug:
+the documentation block ended `-/-` instead of the Lean
+comment terminator `-/`. Repaired in THIS existing adapter
+(Lean #113 commit `69dedf37`); no new admission wrapper.
+The corrected file blob is
+`43a3f106e09a013fada4d1868f3bf9b0ba7dbf87`.
+
+The local GRH SymPy regression now also **pins the corrected actual
+adapter Git blob**, rather than merely scanning a possibly different
+adapter text, alongside the two original author source blobs.
+The locally executed byte-exact script and current committed script
+share blob `b9ecb9afcf0c41e0e77d8f2b2dbff86dc2b8f1fb`:
+`proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py`.
+Python AST parsing PASS; original three blobs 3/3; original source
+five terminal mappings 5/5; deliberate source/qualifier/adapter
+negative controls 3/3. SymPy 1.14 local full 64-modulus acceptance:
+1,260/1,260 characters, 1,415,034/1,415,034 unit products,
+226,800/226,800 cyclotomic Dirichlet coefficient equalities,
+496 omitted Euler factors and 757 primitive original characters.
+
+**Scope:** this is a checked finite source/number-theory weld,
+not compilation of the corrected Lean declaration or universal
+analytic GRH. The previous theorem statements remain unchanged.
+Kernel/CI were NOT run. The original external author's verification
+is a distinct source authority.
+
+---
+
+## 21 November 2026 — CURRENT P0 local SymPy acceptance (no CI / no Lean or Agda compiler)
+
+The **existing** author's theorem and five-terminal `RHAdmission.lean`
+remain source owners. Local execution now uses SymPy 1.14 to check the
+original Dirichlet character conductor/induction seam without running
+Lean/Agda, GitHub CI, or any source reimplementation of analytic GRH.
+
+**Committed executable:** `proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py`.
+GitHub blob SHA `3317d544f6e8d6ab50e92a652b6c304edd7af0a6`, identical
+to the byte-for-byte locally executed script. Portable default:
+
+```sh
+python3 proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py
+```
+
+For *source-pinned* audit, when the original fork is already present locally:
+
+```sh
+python3 proofs/alpoge-lean433/check_grh_p0_original_all_characters_sympy.py \
+  --source-root .local/alpoge-rh-v4331 \
+  --adapter proofs/alpoge-lean433/RHAdmission.lean
+```
+
+If the paths are omitted, the executable prints
+`Original source fingerprint: SKIPPED` rather than pretending it
+validated source. No network or checkout required for the math cut.
+
+**Actual same-file local SymPy PASS:**
+- every character of every modulus `1 <= N <= 64`: **1,260/1,260**
+  complete finite character enumerations (`φ(N)` per modulus);
+- **1,415,034** exact unit group homomorphism/multiplication instances;
+- **757** characters recognized primitive at their actual N,
+  with every induced character's minimal conductor reconstructed from
+  source unit-character values (not CM order conductor/level);
+- **496** missing Euler factor instances for imprimitive chars,
+  with **226,800/226,800** exact Dirichlet coefficient identities
+  (through n=180) in genuine `Q[z]/Φ_m(z)` cyclotomic rings,
+  including complex-valued composite-modulus characters;
+- the source-audit mode, tested using exact original pinned Main and
+  Statements Git blob bytes and existing adapter bytes:
+  **2/2** source SHA, **5/5** original Main→RHAdmission declarations,
+  all-character/primitive/pole quantifiers retained, and **3/3**
+  deliberate mismatched source/adapter negative controls rejected.
+
+Mathematical source identity being tested:
+```text
+L(s, χ_N) = L(s, χ_d) × product_{p|N, p∤d}(1 - χ_d(p) p^(-s)),
+```
+for χ_N induced from a primitive χ_d of conductor d|N.
+For `Re(s)>0`, each missing finite factor is nonzero because
+`|χ_d(p)p^(-s)|<=p^(-Re(s))<1`. Therefore proving primitive
+critical-strip zeros can transfer to induced characters **once the
+genuine global analytic L-series equality has been established**.
+This is an exact classical analytic deduction conditional on the
+actual identity, NOT a consequence proved in Agda by the finite test.
+
+**OPEN:** the exact all-character analytic L-function/zero semantics
+in Agda, faithful root Lean version transport, unbounded moduli,
+infinite analytic continuation/functional equations, and universal
+GRH. This tool **cannot replace a proof assistant kernel** even
+though it is the user-authorized local regression in place of CI.
+
+The older `check_original_p0_admission.sh` remains available as
+an **optional future actual Lean kernel** check; it was NOT run
+here and is not the default SymPy check. No CI was invoked.
+
+The ONE controlling GRH roadmap is Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+This commit's exact math receipt must be kept synchronized with
+that roadmap and both active PR bodies.
+
+---
+
+## 21 November 2026 — local acceptance-harness test receipt
+
+The committed `check_original_p0_admission.sh` Git blob
+`e08464dcf4c51978d9d6799289d6f4e0f9fe2c0c` was
+**materialized byte-for-byte locally and hash-matched**.
+Actual tests (not a kernel run):
+- `bash -n`: **PASS**;
+- missing Lean/Lake: **exit 12**, BLOCKED before any source clone;
+- extracted actual Python `#print axioms` parser: all five
+  standard-axiom receipts **PASS**;
+- one missing expected theorem: correctly **BLOCKED**;
+- one injected unexpected `sorryAx`: correctly **BLOCKED**.
+
+**Do not promote** this source/checker receipt to typechecked
+`RHAdmission`, Lean 4.33.1 proof admission, 4.35 root import,
+Agda analytic per-character transport or new proof of GRH.
+The external author's original independent kernel checks are a
+different already-reported authority. The single controlling
+GRH P0 roadmap is maintained in Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+New work must update that existing plan and the relevant PR as
+part of the same source iteration, not create another roadmap.
+
+---
+
+## 21 November 2026 — P0 next: actually check the ALREADY-EXISTING Main admission
+
+Do **not** duplicate the existing direct original `RHAdmission.lean`.
+It already imports the author's pinned `Main` and consumes precisely
+the five published `Main.lean` theorem declarations. It is a
+better proof-admission P0 root than the later selective RowSrc
+experiment, whose import closure is a separate optional diagnostic.
+
+**New committed fail-closed local acceptance harness:**
+
+```sh
+bash proofs/alpoge-lean433/check_original_p0_admission.sh
+```
+
+This reuses `checkout_fork_source.sh` (same original fork, immutable
+commit and Main/Statements blob hashes, pinned Lean/Mathlib; no copied
+author source), requires the local `lake`, runs `lake build Main`,
+checks `RHAdmission.lean` in that original v4.33.1 environment,
+and inspects all five actual `#print axioms` outputs, allowing
+only `propext`, `Classical.choice`, `Quot.sound`.
+Wrong checkout, unavailable toolchain, failed build, absent axiom
+printout or unexpected axiom is a hard failure.
+
+For the separate source-selective historical RowSrc donor, opt in
+with `GRH_P0_CHECK_DIRECTIONAL=1`. This is **not required** for the
+direct original `Main` acceptance.
+
+**Current authority:** harness committed but **not run here**:
+this execution environment has no Lean/Lake. Successful outside
+independent kernel/source checks for the original author's theorem
+do not certify this new local adapter or prove root/Agda transport.
+After a true local receipt, the next cut is 4.33.1→root compatible
+trusted Lean theorem handoff and precise ALL-character original
+analytic L(s,χ)/zero-predicate Agda mapping.
+
+**Single controlling GRH roadmap:** Agda #1533
+`Docs/roadmaps/AlpogeGRHGeometricTransport20261121.md`.
+`GRHP0OriginalEveryCharacterMellinForwardWeld20261121.md`
+is an original-source/evidence annex, **not** another plan.
+Both existing Mellin families are already implemented.
+Keep updates to the controlling roadmap committed alongside
+the concrete source/checker changes, without resetting GRH to P1.
+
+---
+
+## 21 November 2026 — P0 weld-forward: single ORIGINAL EveryCharacter source, all five terminals
+
+The newest direct source lemma in `RHGRHP0DirectionalSourceCut.lean` is
+`all_original_grh_and_rh_endpoints_from_galois_row`.
+It combines the **existing original** Galois RowSrc `every_character_of_original_galois_row`
+with the actual `DirichletLNonvanishingRightOfHalf`,
+`DirichletLZerosOnLine`, `PrimitiveDirichletLZerosOnLine`,
+Mathlib `RiemannHypothesis` and original `Claim.Zeta` consumers
+in ONE proof term. None of its inputs are a new fake character, toy L-series,
+Mellin carrier, or extra axiom. The Lean v4.33.1 external-adapter source
+is **uncompiled locally**, while the independent full ORIGINAL author's
+`Main.lean` formal proof has been checked separately.
+
+External verification as of MIT 20 Nov 2026 22:05 UTC:
+https://math.mit.edu/~drew/grh/ reports all 175,187 original modules
+compile, full leanchecker module replay, five theorem axiom audit using only
+`propext`, `Classical.choice` and `Quot.sound`, independent nanoda,
+con-leche and lean4lean acceptance, and con-leche comparison of the
+five challenge statements. The full lake comparator run and a few
+export-replay checks remained running at that snapshot.
+https://github.com/aapolipponen/rh-lean-check-lumi independently
+reports sandboxed original compilation and identical `Main.olean` hash,
+but its own audit was marked ongoing when last checked.
+
+**Already-owned Mellin**: Agda `MellinSplitFunctionalEquationExact` and
+`RiemannG2GammaMellinProofRelevantActionCompilerExact`; original
+BSD E32 `EllipticCMLevel32FrickeMellinExact`. Do not rebuild these.
+Their original analytic realization differs from the external
+all-Dirichlet `UpperTheory.EveryCharacter` theorem: the exact
+per-character Dirichlet L(s,chi) and zero-predicate identification
+is not supplied by importing an existing Mellin split.
+
+**Current P0 real gate** is permission-compatible local checkout/pin of the
+existing original fork, v4.33.1 adapter kernel/axiom receipt, the root
+Mathlib version-compatible proof handoff, and an Agda all-character
+same-analytic-object bridge. The Agda #1533
+`AlpogeRHOriginalClayEndpointBidiExact.originalClayWitnessToAnalyticRH`
+is a valid source-written projection back from the *actual* Clay RH
+record, but is not a reverse ordinary-RH-to-GRH theorem.
+No universal automorphic/Hecke GRH, BSD or YM proof follows.
+New original source file and this README change are not local
+Lean kernel acceptance. Preserve Levent Alpöge/Claude authorship,
+Sutherland/Lipponen independent verification, and original DASHI
+reuse attribution.
+
+---
+
+
+## 21 November 2026 — P0 GRH-first directional BIDI (CURRENT)
+
+**Primary objective: pinned external original all-character GRH → five exact target statements; do not route P0 through Monster VOA or the 369 finite geometry.** New authored `RHGRHP0DirectionalSourceCut.lean` (in this original-version sidecar) imports the same actual 4.33.1 upstream `Statements`, original `ClaimStrip`, `EveryCharacter`, `CritLine`, `EveryCharacterOfLiteratureOfVWin`, `VwinOfRow`, `RecTExists` and `RowSrc` as the existing selective producer. It adds:
+- `halfplane_iff_original_all_character : Claim.HalfPlane ↔ UpperTheory.EveryCharacter := Iff.rfl`, original all-Dirichlet-character right half-plane predicate;
+- `original_zeta_zeros_iff_mathlib_rh : RiemannZetaZerosOnLine ↔ RiemannHypothesis := Iff.rfl`, directly verified at the **type-definition** level against pinned `src/Statements.lean`;
+- `original_zeta_iff_rh := Claim.zeta_iff`, exact original claim;
+- directional `zeta_of_every_character`, `rh_of_original_zeta`, `original_zeta_of_rh`, carefully without an unsupported RH→EveryCharacter theorem;
+- `every_character_of_original_galois_row` from the **unchanged original** `galoisLocalGlobalStrong_recParameter` and original `vwin_of_row`; original consumers yielding Mathlib RH and three stronger Dirichlet right-half/critical-strip propositions.
+
+This is a **source-written reassembly of original theorem applications**, not an independent mathematical proof of GRH or a kernel-accepted source transfer. No Lean executable on this task runtime. The direction is intentionally asymmetric: original `EveryCharacter` proves RH and the Dirichlet claims, while `RiemannHypothesis` alone does NOT supply a source proof of every-character nonvanishing. This is **not a mathematical assertion that RH→GRH is impossible**, only a precise missing implication/receipt.
+
+**P0 terminal BIDI:** still use root `MillenniumExternal.AlpogeRHBoundaryExact` / `ExactTargetSurface.clayRiemannHypothesis_iff_mathlib` after independently admitting the *same Mathlib* `RiemannHypothesis` theorem on compatible root Lean/Mathlib, with a transparent 4.33.1→root theorem/proof handoff. Never copy unlicensed 175,187-module source, invent a new RH proposition, or claim an olean from 4.33.1 works under 4.35.0-rc3. Actual source-header/hash readback is not a local trusted kernel replay.
+
+**P0 acceptance order:** (1) pin/refetch original theorem blobs and v4.33.1 mathlib; (2) local version-correct `lake env lean proofs/alpoge-lean433/RHGRHP0DirectionalSourceCut.lean`, inspect `#print axioms`; (3) check original all-character and all five published terminal statements under the pinned source; (4) transfer the *RH* statement into root `ExactTargetSurface` with a trusted compatible proof rather than an assumption; (5) transfer Dirichlet GRH targets separately with original character/formula equivalences; (6) Agda semantic identity/zero/critical-line mapping and proof transport remains independently open. Deep P1 C3/Monster/Hecke only if it repairs a specific P0 original source obligation.
+
+## 21 November — P1: actual selected TLiftK Hecke/IsLift fibre (latest)
+
+New `RHSelectedThetaLiftConsumer.lean` consumes the **real original** `UpperTheory.TP.K.tLiftK` from the pinned fork. The source-readback `UpperTheory.TP.TLiftK` is a universal CM-field/Hecke/theta statement. Our consumer fixes an original (E,B,n,X) and retains literally the resulting (∃ d₀,∀ d≥d₀) telescope, the source `IsHecke`, `ResEtaPow`, `HasExp`, automorphic weights and an actual lifted submodule `U'` with `IsLift`. Its proof is simply application of the original author theorem, not independent reconstruction. Original typecheck/axiom receipt **OPEN**.
+
+In Agda #1533, `RHGRHIndexedZeroZetaResidualFluxExact.agda` now admits source-accounted (r→r+δ) along a (k→k+1) commuting phase-reflection transition and retains mode, sign and observed-zero. Locally executed stdlib Python **1,728/1,728 PASS** on these finite laws. This is strictly **different from** a source `IsLift` theorem: the genuine next source weld requires identification of an actual order-3 restriction of one of the original `χX,χW` Hecke characters (if present) and a proved source theta/Galois consumer action retaining phase/sign/residual. The C3 finite model does not by itself imply a CM automorphic lift.
+
+Do not reimport all 175187 modules just for P0: our minimal RH top-cut remains separate. No CI, no local Lean kernel proof check or Agda check.
+
+# Alpöge/Claude RH source-admission sidecar (21 November 2026)
+
+**Status:** P0 fork-pinned source dependency and Lean admission adapters committed, **not executed**; no CI. The original full proof is available through the user's existing fork and is consumed by immutable Git reference, not recopied into DASHI. This directory contains only DASHI-authored integration code, lock data and a local checkout script.
+
+## Provenance and exactly what is paid
+
+Original announcement: https://alpo.ge/remark.pdf (20 Nov 2026).
+**User-selected source fork:** https://github.com/chboishabba/riemann-hypothesis-lean at pinned commit `7cbf7a0c32fca1badf05931879a37c3f8a2b03b4` (exact `src/Main.lean` Git blob `dbd5db70bc11b35f18fa5751216ab335321e7bfc`, verified against Deicyde's checking mirror). Independent verification comparator mirror: https://github.com/Deicyde/riemann-hypothesis .
+Independent verification: https://math.mit.edu/~drew/grh/ (20 Nov 22:05 UTC).
+
+Source archive: 14-part `lean.tar.gz`, **239275554 bytes**, sha256 `9631b4f020199e580ba86178cb56c6e9b09f690c2369a80dc4334aa93f49c7fc`.
+Lean/Mathlib: **v4.33.1**; original mirror `Main.lean` blob `dbd5db70bc11b35f18fa5751216ab335321e7bfc`; independent challenge blob `9677ace64b3a5e8b1a571d82d52ee13c53b08026`.
+Exported challenge sha256 `bd484ac9886a96f26b1d9a7a59ebd45b7a70d102c015d4f31f9302bbdd6ab2b9`.
+Exported solution sha256 `5ea74b912147c5c93cc2b6d70cc727cf908df2f62ac6a20480a3fa02f6be244e` (**uncompressed**).
+Independent MIT audit reports 175187 modules compile and kernel replay; con-leche, nanoda and lean4lean accept, and independent challenge statement comparison accepts all five. Additional checks were underway at that audit timestamp; **not a DASHI-local acceptance**.
+
+## Git dependency: fork is the intended vendor source
+
+User has already forked the 175,187-file original source into `chboishabba/riemann-hypothesis-lean`. **Do not request a second archive or rewrite theorems.** `fork_pin.json` stores the immutable Git commit, two selected blob hashes, exact mathlib SHA and Lean v4.33.1. `checkout_fork_source.sh` clones/checks out the user's fork at that commit into `dashi_lean4/.local/alpoge-rh-v4331`, checks source identity and stops before any checker. This is an external Git dependency, not copied code or a same-version proof import.
+
+Local opt-in:
+```sh
+bash proofs/alpoge-lean433/checkout_fork_source.sh
+# In the pinned source checkout (separate from root):
+cd .local/alpoge-rh-v4331
+lake exe cache get
+lake build Main
+lake env lean ../../proofs/alpoge-lean433/RHAdmission.lean
+```
+
+The proof source reportedly has no explicit redistribution license. The user's fork already exists; **reference it, preserving attribution and source identity, without copying its 1.03 GB contents into another public repo**. A fork does not create a license grant, so any further publication or redistribution decisions must respect the author's rights. This does not block source reading and local use where authorized.
+
+## 21 November latest — our strongest RH BIDI gap pays a minimal consumer, not G2 cancellation
+
+The smallest mathematical bridge worth importing for DASHI G2 is elementary. Original Mathlib `RiemannHypothesis`, on a **source-identified nontrivial zeta zero**, forces `Re(s)-1/2=0`, hence `cosh((Re(s)-1/2)u)=1`. The new [`RHZeroHorizontalBridge.lean`](RHZeroHorizontalBridge.lean) uses only Mathlib and proves precisely those two consequences, preserving nontrivial-zero and pole-exclusion hypotheses. **It has not been compiled** at the selected toolchain.
+
+This is an explicit, small, cross-version re-elaboratable **consumer theorem**, not a backdoor proof transfer. To consume the *proof* of RH, the original source fork theorem must still be checked/imported in the compatible environment. Compile source `RHTopCut` separately; then apply this bridge to the actual source theorem.
+
+On the Agda side, `DASHI.Analysis.RiemannG2AlpogeZeroLineCosineCollapseExact` consumes the existing original G2 `LiteralTargetCenteredScalarProblem` and the existing `dSigmaIsLiteralKernel` and **conditionally** proves the pure cosine integral identity. The missing actual `G2.ZeroIndex↔Mathlib nontrivialZero` and literal `G2.offRealPart = Re(s)-1/2` identification are isolated and uninhabited. This does not pay arbitrary signed cosine bounds, the balance-breaking premise, or the distinct authoritative universal pole-quotient Off/Gamma taper.
+
+Local finite SymPy regression in Agda #1533 passes the exact source kernel collapse, with positive and negative cosine-integral counterexamples. Do not claim Agda or Lean kernel typechecking. The canonical gap matrix is [RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md](https://github.com/chboishabba/dashi_agda/blob/research/alpoge-grh-geometry-bridge-20261121/Docs/roadmaps/RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md). No CI, no source-world/PostgreSQL work.
+
+## Current source-backed BIDI gap comparison (21 November)
+
+New `RHClaimBidiExact.lean` is an authored **Lean 4.33.1 source adapter** that consumes the fork's original `Claim.HalfPlane`, `UpperTheory.EveryCharacter`, `Claim.zeta_iff` and `Formalism.VW.rh_of_every`. No new RH or Dirichlet character carrier is defined:
+- `Claim.HalfPlane ↔ UpperTheory.EveryCharacter`: definitionally the same right-half-plane nonvanishing proposition.
+- `Claim.Zeta ↔ RiemannHypothesis`: the **original fork's** exact `Claim.zeta_iff`, which is proved by `Iff.rfl`.
+- `Claim.HalfPlane → RiemannHypothesis`: original `VW.rh_of_every`.
+
+**Do not mistake this for an equivalence RH ↔ EveryCharacter**: the former is only ordinary Riemann ζ and the latter covers every Dirichlet character, hence stronger GRH scope.
+
+**Our existing mathematical G2/Pole BIDI is NOT the same logical surface**. The Agda original `RiemannG2BidiCutReconciliationExact` has an uninhabited signed scalar→post-Schur estimate; `RiemannAristotleG2CurrentCutExact` records a target-centered signed sum and projective-balance no-go; the later authoritative `RiemannAristotleCurrentFrontierExact` uses a universal pole-quotient Off/Gamma budget rather than G2d's determinant taper. None of their inequalities follows merely from the external RH conclusion. **For terminal Clay, stop at Mathlib RH and reuse the already-existing Clay equivalence; for improved geometric proof, look only for source-typed theta and determinant donor statements.**
+
+The exact original-owner comparison and debt table is in Agda [RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md](https://github.com/chboishabba/dashi_agda/blob/research/alpoge-grh-geometry-bridge-20261121/Docs/roadmaps/RHGRHCurrentBidiVsAlpogeExactGapCut20261121.md).
+
+`RHClaimBidiExact.lean`, `RHTopCut.lean` and `RHSelectiveProducerCut.lean` are all **source-written and uncompiled**, and local kernel / axiom / import-closure receipts remain open. No CI.
+
+## More selective original source splice (P0 candidate, not yet checked)
+
+`RHSelectiveProducerCut.lean` goes one level further than `RHTopCut.lean`: it **avoids importing original `MainConclusion` as well as `MainTheoremsAll`**, and spells out only the few-line composition `every_character_of_literature_of_vWin (... original RowSrc ...) (vwin_of_row ...)` found literally in `MainConclusion.lean`. It then consumes existing `Formalism.VW.rh_of_every`, `Formalism.VW.critLine` and `Claim.strip` without rewriting any deep producer. All five original theorem statements are exposed. This cuts *top-level convenience-wrapper imports*, but there may still be huge source transitive closures (the direct `EveryCharacterOfLiteratureOfVWin.lean` itself has a large import list). **No runtime reduction is measured yet**.
+
+Inspect the first true geometric source chain before replacing anything:
+`RowSrc.galoisLocalGlobalStrong_recParameter = galoisRepresentations_of_thetaLift tLiftK`.
+`GaloisRepresentationsOfThetaLift.galoisRepresentations_of_thetaLift up = galoisLocalGlobalStrong_of_geometry_lift geoOne_holds up`.
+`ThetaKernels/TLiftK.tLiftK = tLift_holds_k`.
+These are the fork's actual real theta/geometric producer edges, not an inferred resemblance. A DASHI 369/Monster/Weil substitute must produce **the same** `UpperTheory.TP.TLiftK`, `UpperTheory.GalStar.Row0b recT` or a typed consumer-sufficient map to them before it can shorten the actual proof graph.
+
+Suggested strictly local experiment, **not run**:
+```sh
+# From pinned fork workspace with exact Lean 4.33.1 + its Mathlib
+lake build Supplements.Kernels.MainTheorems
+lake env lean /path/to/dashi_lean4/proofs/alpoge-lean433/RHTopCut.lean
+# Selective experiment: build its actual direct imports; no full Main target required
+lake env lean /path/to/dashi_lean4/proofs/alpoge-lean433/RHSelectiveProducerCut.lean
+```
+Record missing imported modules/axioms and actual `.olean` closure for each, and keep the smaller cut **only if kernel accepted**. The proof graph's full original dependencies remain necessary wherever the retained original lemmas depend on them; this is not a promise of a small overall proof.
+
+## Current P0 priority — minimal top-cut, not full proof-tree reconstruction
+
+A direct fork source readback at pinned commit `7cbf7a0c` found:
+`src/Main.lean` imports `Statements` and `Supplements.Kernels.MainTheoremsAll`;
+`src/Supplements/Kernels/MainTheoremsAll.lean` imports `MainTheoremsCritical` and `...SmallClassNumbers.CorGKOf`; the core five theorem names are already defined in `src/Supplements/Kernels/MainTheorems.lean`.
+
+**New `RHTopCut.lean` imports ONLY `Statements` and `Supplements.Kernels.MainTheorems`**, and constructs all five original theorem statements directly from `rhOfAll`, `allChi`, `claimAll`, and `critAll`. This is the **shallowest confirmed top-level source cut**; it prunes the explicit `MainTheoremsAll` / `MainTheoremsCritical` / `CorGKOf` wrapper imports. It does **not** prove that the transitive Lean dependency closure of `MainTheorems` is small. Count/measure only if running the opt-in local build.
+
+The **next local check** (not executed here) is `lake build Supplements.Kernels.MainTheorems` on the fork's pinned Lean 4.33.1, followed by `lake env lean <DASHI-root>/proofs/alpoge-lean433/RHTopCut.lean`. The `Main` target may include unrelated downstream modules; do not insist on it when the goal is only importing these five theorems. Compare the source-pinned original `Main.lean` challenge names and the authored `RHTopCut` declarations with a checked type and axiom receipt before promoting.
+
+The terminal **BIDI** into Clay is already available in the independent DASHI Lean root (`MillenniumExternal.ExactTargetSurface.clayRiemannHypothesis_iff_mathlib`), but its v4.35.0-rc3 root is not binary compatible with v4.33.1. Prefer a source-coherent Clay adapter compiled *inside* the v4.33.1 fork if the original pinned Clay definitions can be made available there; otherwise build a genuine typed version translation. A path, file hash or compiled stale olean is not proof transport.
+
+**P1** starts from original theta/automorphic and G2/369 source functions only after this P0 cut. Compare exact operator/domain/action signatures before replacing proof steps; the goal is to *improve* the original proof using geometry, not reproduce the author's 175,187-file proof or synthesize a new dummy positivity target. No world/PG ingestion in the active maximum-cut.
+
+## P0 source-local handoff
+
+The original source tree provides `Main.lean` with exactly:
+- `riemannHypothesis : RiemannHypothesis`
+- `riemannZeta_eq_zero_re : RiemannZetaZerosOnLine`
+- `LFunction_ne_zero_of_half_lt_re : DirichletLNonvanishingRightOfHalf`
+- `LFunction_eq_zero_re : DirichletLZerosOnLine`
+- `LFunction_eq_zero_re_of_isPrimitive : PrimitiveDirichletLZerosOnLine`
+
+DASHI's separately authored `RHAdmission.lean` imports **actual** `Main` and exposes these five unchanged statements as typed handoffs. This adapter is NOT compiled here because the fork checkout and the pinned Lean toolchain are not available in this tool environment; current DASHI Lean root uses **Lean 4.35.0-rc3**, while the fork uses **4.33.1**. Neither source identity nor a clone alone transports a proof across those environments. Do not use `sorry`/axioms or swap a similarly named declaration.
+
+The already existing `MillenniumExternal/ExactTargetSurface.lean` in DASHI's root proves:
+`Millennium.ClayRiemannHypothesis ↔ Mathlib.RiemannHypothesis`.
+The new `MillenniumExternal/AlpogeRHBoundaryExact.lean` directly consumes that **existing BIDI**, with exact forward and reverse terms. It does not replace a theorem or construct a fake external proof.
+
+### Exact remaining version + source weld
+
+1. Use the already-forked source via `checkout_fork_source.sh`; pin Git commit, Main/Statements Git blobs, Mathlib commit and toolchain. The author archive digest is an additional provenance check if original tarball is obtained separately.
+2. Build only locally and isolate from DASHI's older-root Lean/Mathlib; **no CI**, no mixed-olean imports.
+3. Establish a trusted cross-version theorem transfer or migrate original DASHI Clay BIDI target to 4.33.1 with matched Mathlib definitions. A printed statement or SHA hash is **not** a proof-transfer mechanism.
+4. Import `DASHI.AlpogeRH.original_mathlib_rh` as an actual theorem in the **same** environment as `Millennium.ClayRiemannHypothesis.of_mathlib`.
+5. Compile exact endpoint, inspect axioms, make explicit chain receipt and transport into Agda's literal `RiemannHypothesisFor` original analytic substrate without assuming `ExternalRHGeometricTransport` is inhabited.
+6. Retain original Weil positivity/geometry mechanism as independent P1 and do not reopen 50/77 signed-moment RH producers just to reprove zero-location.
+
+## Steelman / BIDI / reverse solve ownership
+
+Forward: external original Main RH → the same Mathlib RH → pinned `clayRiemannHypothesis_of_mathlib` → Clay proposition.
+
+Reverse: existing pinned Clay proposition → `mathlibRiemannHypothesis_of_clay`. This is an **actual equivalence already existing** on DASHI root, so the only missing external endpoint work is **source admission across toolchains and coherent kernel proof**, not new RH mathematics.
+
+The original announcement says its technique includes Stepanov, Fourier analysis, theta lifts (length about `sqrt X`), multiplicity and a signature `qN = Mk + R`; these are *research direction clues*, not verified internal proof dependency edges until the source graph is inspected.
+
+No source duplication; no CI; no kernel success claimed.
+
+
+## 21 November — independent original RH + Dirichlet-GRH acceptance update (not our local kernel)
+
+[Andrew Sutherland's MIT audit](https://math.mit.edu/~drew/grh/) updated **2026-11-20 22:05 UTC**: the ORIGINAL pinned 4.33.1 author source **175,187/175,187 modules compile**, five `Main.lean` theorem statements' `#print axioms` contain only `propext,Classical.choice,Quot.sound`, `leanchecker` replay accepts all 175,187 modules, full exported proof accepted by independently implemented `nanoda` and `con-leche` kernels, `lean4lean` accepted all module oleans, and `con-leche --compare` checked and accepted all **five original challenge statements**. MIT default/paranoid export-kernel and end-to-end `lake comparator` still running at that update; [LUMI independently compiled all 175,187 modules](https://github.com/aapolipponen/rh-lean-check-lumi). This now amounts to **strong independent formal evidence**, not merely the author's unverified claim. Scope of their theorem: **ordinary Mathlib RH plus all Dirichlet-character GRH**; NOT all Hecke or motivic GRH.
+
+**Local DASHI integration status remains DEFERRED by explicit user choice**: separate v4.33.1 source-version test/axioms/compilation of our `RHGRHP0DirectionalSourceCut.lean`, root v4.35.0-rc3 Mathlib theorem/re-elaboration and Agda original complex/zero predicate transport have not been locally run. External acceptance is not a DASHI kernel receipt; no `sorry`/axiom fallback. Ordinary `Claim.Zeta ↔ Mathlib.RiemannHypothesis`; original `UpperTheory.EveryCharacter` is the strictly broader Dirichlet GRH P0 terminal, implying RH and all character strip results in the original source chain, not the converse.
+
+**Parallel CM special case is independent of the RH zero claim**: [main-derived Lean PR #114](https://github.com/chboishabba/dashi_lean4/pull/114) constructs source-owned (E:y²=x³+1) local CM Hecke Euler candidates, HNF fractional ideal `Psi`, bad p2/p3 factors, Ogg conditional conductor and a **conditional** `σ>3/2` absolute-convergence bridge. Its **all-prime local factor and global analytic-continuation sockets remain open**. This special weight-two infinity-type-one Hecke character is not a finite-order Dirichlet character and does not fall under the externally verified **Dirichlet** GRH scope. None of its Euler or finite SymPy tests proves RH/GRH or supplies a new `UpperTheory.EveryCharacter` proof. Retain weld-forward: reuse original strongest sources; no parallel dummy theorem.

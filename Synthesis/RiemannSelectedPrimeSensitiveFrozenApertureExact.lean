@@ -331,6 +331,29 @@ structure QuarticFourFrozenPrimeAperture (t : ℝ) where
     Zeta23Bridge.LiteralWeilProjectiveResidualDecomposition.poleProjectiveDefect
       (quarticFourPhysicalDetector W.R (2/3) W.muTwo t) t (t/16)
 
+/-- Exact source fourth/sixth/eighth (and second) moment preservation
+on the new same-W signed pair. It is a theorem, not a Taylor estimate. -/
+def QuarticFourFrozenPrimeAperture.signedMoment
+    {t : ℝ} (A : QuarticFourFrozenPrimeAperture t)
+    (k : ℕ) : ℝ :=
+  A.W.poleTwo * primeAperturePhysicalMoment A.half (t/16) k
+    - A.W.poleHalf * primeAperturePhysicalMoment A.two (t/16) k
+
+theorem QuarticFourFrozenPrimeAperture.signedMoment_eq_original
+    {t : ℝ} (A : QuarticFourFrozenPrimeAperture t)
+    (k : ℕ) (hk : k = 2 ∨ k = 4 ∨ k = 6 ∨ k = 8) :
+    A.signedMoment k =
+      A.W.poleTwo *
+        primeAperturePhysicalMoment
+          (quarticFourPhysicalDetector A.W.R (1/2) A.W.muHalf t)
+          (t/16) k
+      - A.W.poleHalf *
+        primeAperturePhysicalMoment
+          (quarticFourPhysicalDetector A.W.R (2/3) A.W.muTwo t)
+          (t/16) k := by
+  unfold QuarticFourFrozenPrimeAperture.signedMoment
+  rw [A.halfMoments k hk, A.twoMoments k hk]
+
 /-- Reuse the original signed-pole coefficients. The source of EVERY channel
 below is the SAME pair of extended detectors. -/
 def QuarticFourFrozenPrimeAperture.channel

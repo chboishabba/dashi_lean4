@@ -12,55 +12,54 @@ EXACT = ROOT / "MillenniumExternal" / "ExactTargetSurface.lean"
 
 
 class FrontierExportTests(unittest.TestCase):
-    def _rows(self):
+    def _data(self):
         out = subprocess.check_output(
             [sys.executable, str(SCRIPT), str(FRONTIER), str(EXACT)], text=True
         )
-        return {row["problem"]: row for row in json.loads(out)["problems"]}
+        return json.loads(out)
+
+    def _rows(self):
+        return {row["problem"]: row for row in self._data()["problems"]}
 
     def test_export_has_seven_unique_problem_rows(self):
-        out = subprocess.check_output(
-            [sys.executable, str(SCRIPT), str(FRONTIER), str(EXACT)], text=True
-        )
-        data = json.loads(out)
+        data = self._data()
+        self.assertEqual(data["schema_version"], 2)
         self.assertEqual(len(data["problems"]), 7)
         self.assertEqual(len({row["problem"] for row in data["problems"]}), 7)
 
-    def test_rh_statement_weld_is_paid_but_first_math_cut_is_selected_K(self):
-        rh = self._rows()["riemann"]
-        self.assertEqual(rh["frontier"], "ANALYTIC")
-        self.assertTrue(rh["exact_statement_weld"])
-        self.assertEqual(rh["closure_state"], "redMath")
-        self.assertIn("fourthLipschitz", rh["first_unpaid"])
-        self.assertIn("quarticSignedPoleFloorFourthLipschitzThreshold", rh["first_unpaid"])
+    def test_pnp_rh_bsd_are_resolution_only_not_red_math(self):
+        rows = self._rows()
+        for problem in ("pVersusNP", "riemann", "birchSwinnertonDyer"):
+            row = rows[problem]
+            self.assertEqual(row["frontier"], "PROOF-RESOLUTION")
+            self.assertEqual(row["closure_state"], "proofResolutionPending")
+        self.assertTrue(rows["riemann"]["exact_statement_weld"])
+        self.assertIn("SAT", rows["pVersusNP"]["first_unpaid"])
+        self.assertIn("RiemannHypothesis", rows["riemann"]["first_unpaid"])
+        bsd_unpaid = rows["birchSwinnertonDyer"]["first_unpaid"]
+        self.assertIn("analytic bridge", bsd_unpaid)
+        self.assertIn("zero Selmer defect", bsd_unpaid)
+        self.assertIn("Rank.Existence", bsd_unpaid)
 
-    def test_pnp_frontier_is_universal_concrete_sat_failure(self):
-        pnp = self._rows()["pVersusNP"]
-        self.assertEqual(pnp["frontier"], "ANALYTIC")
-        self.assertIn("UniversalPolynomialSATDecisionFailure", pnp["first_unpaid"])
-        self.assertNotIn("AnchoredPolynomialSATDecisionCollision", pnp["first_unpaid"])
-
-    def test_ns_math_and_same_object_frontier_is_paid_kernel_gate_remains(self):
+    def test_ns_source_exact_kernel_gate_is_only_remaining_acceptance_step(self):
         ns = self._rows()["navierStokes"]
         self.assertEqual(ns["frontier"], "PROVED")
-        self.assertEqual(ns["closure_state"], "redType")
+        self.assertEqual(ns["closure_state"], "sourceExactKernelPending")
         self.assertIn("dashiExactFeffermanC", ns["first_unpaid"])
         self.assertIn("dashiExactFeffermanD", ns["first_unpaid"])
         self.assertIn("kernel", ns["first_unpaid"].lower())
-
-    def test_bsd_frontier_is_actual_clay_core_rank_equality(self):
-        bsd = self._rows()["birchSwinnertonDyer"]
-        self.assertEqual(bsd["frontier"], "ANALYTIC")
-        self.assertEqual(bsd["closure_state"], "redMath")
-        self.assertIn("BSDClayCoreObligation", bsd["first_unpaid"])
-        self.assertNotIn("transport", bsd["first_unpaid"].lower())
 
     def test_incomplete_upstream_targets_fail_closed(self):
         rows = self._rows()
         self.assertEqual(rows["hodge"]["frontier"], "UPSTREAM-DEFECT")
         self.assertEqual(rows["yangMills"]["frontier"], "UPSTREAM-DEFECT")
-        self.assertFalse(rows["hodge"]["exact_statement_weld"])
-        self.assertFalse(rows["yangMills"]["exact_statement_weld"])
+        self.assertEqual(rows["hodge"]["closure_state"], "upstreamIncomplete")
+        self.assertEqual(rows["yangMills"]["closure_state"], "upstreamIncomplete")
+
+    def test_poincare_remains_solved_unformalized(self):
+        p = self._rows()["poincare"]
+        self.assertEqual(p["frontier"], "SOLVED-UNFORMALIZED")
+        self.assertEqual(p["closure_state"], "upstreamSolvedUnformalized")
 
 
 if __name__ == "__main__":

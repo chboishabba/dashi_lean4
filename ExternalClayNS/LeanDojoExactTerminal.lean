@@ -6,16 +6,6 @@ import LeanDojoSolutionTransport
 import Adapter
 import Problems.NavierStokes.Millennium
 
-/-!
-# Exact LeanDojo Fefferman C/D terminal terms
-
-All mathematical input comes from the existing OpenAI comparator theorem.  The
-work here is same-object transport only: comparator data are moved onto the
-pinned LeanDojo carriers; any putative LeanDojo solution is pulled back to the
-frozen Clay/comparator carrier and contradicts the already-proved comparator
-nonexistence theorem.
--/
-
 noncomputable section
 
 open MeasureTheory Set
@@ -23,8 +13,6 @@ open ClaySpec NavierStokes NavierStokesOnR3
 
 namespace DASHILiteralClayNS
 
-/-- An actual LeanDojo whole-space solution for the transported comparator data
-would be an actual comparator solution for the original data. -/
 theorem leanDojoR3Solution_to_comparator
     {ν : ℝ} {u₀ : R3 → R3} {f : R3 → ℝ → R3}
     (hν : 0 < ν)
@@ -65,8 +53,6 @@ theorem leanDojoR3Solution_to_comparator
   simpa [leanForceToClay, leanVelocityToClay, leanPressureToClay,
     SemanticGap.curryField] using hc
 
-/-- An actual LeanDojo periodic solution for transported comparator data would
-likewise be an actual comparator periodic solution. -/
 theorem leanDojoPeriodicSolution_to_comparator
     {ν : ℝ} {u₀ : R3 → R3} {f : R3 → ℝ → R3}
     (hν : 0 < ν)
@@ -103,8 +89,6 @@ theorem leanDojoPeriodicSolution_to_comparator
   simpa [leanForceToClay, leanVelocityToClay, leanPressureToClay,
     SemanticGap.curryField] using hc
 
-/-- Exact pinned LeanDojo Fefferman (C), obtained by same-object transport of
-the existing comparator theorem. -/
 theorem dashiExactFeffermanC : MillenniumNavierStokes.FeffermanC := by
   intro ν hν
   obtain ⟨u₀, f, hu₀, hf, hno⟩ := SemanticGapAdapter.openAIComparatorOptionC ν hν
@@ -117,8 +101,6 @@ theorem dashiExactFeffermanC : MillenniumNavierStokes.FeffermanC := by
   apply hno
   exact leanDojoR3Solution_to_comparator hν hf hdiv sol h7
 
-/-- Exact pinned LeanDojo Fefferman (D), obtained by the analogous periodic
-same-object transport. -/
 theorem dashiExactFeffermanD : MillenniumNavierStokes.FeffermanD := by
   intro ν hν
   obtain ⟨u₀, f, hu₀, hf, hno⟩ := SemanticGapAdapter.openAIComparatorOptionD ν hν

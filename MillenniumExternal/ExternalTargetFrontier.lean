@@ -4,6 +4,8 @@ namespace MillenniumExternal
 
 inductive AdapterState where
   | greenExact
+  | proofResolutionPending
+  | sourceExactKernelPending
   | redType
   | redMath
   | upstreamIncomplete
@@ -12,6 +14,7 @@ inductive AdapterState where
 
 inductive FrontierClass where
   | proved
+  | proofResolution
   | typeWeld
   | analytic
   | upstreamDefect
@@ -27,49 +30,49 @@ structure ExternalTargetReceipt where
   note : String
   deriving DecidableEq, Repr
 
-/-- Fail-closed current receipts.  `frontier = proved` means the mathematical
-and same-object dependency cone is source-written down to the literal external
-proposition; `state = greenExact` is deliberately stronger and is reserved for
-a recorded exact-kernel acceptance receipt. -/
 def externalTargetReceipts : List ExternalTargetReceipt :=
   [ { problem := .pVersusNP
       upstreamDeclaration := "Millennium.ClayPVersusNP.Formulations.NegativeBranch"
-      state := .redMath
-      note := "ExactTargetSurface now proves that one concrete finite-alphabet LeanDojo language L with L∈NP and L∉P yields the exact NegativeBranch. Thus the external adapter does not require a second class hierarchy or NP-completeness wrapper. DASHI already reduces its Clay core to an actual SAT lower-bound producer; the surviving mathematical wall is that universal polynomial SAT lower bound, followed by same-object transport of the SAT language/machine model into the LeanDojo witness." }
+      state := .proofResolutionPending
+      frontier := .proofResolution
+      firstUnpaid := "finish one literal fixed universal CodedFiniteStandardTM U (including unary-field-equality whole-run correctness and parser/rule-scan/tape-update/iteration assembly), then build the quoted-code-consuming SAT/negation body and close one final same-object program-size/runtime/Cook resource fixed point"
+      note := "Live Agda #1129 now pays the correct behavioural same object: body machine p running on the literal self-delimiting quote of the whole Kleene fixed-point program q(p). CodedFiniteStandardUniversalQuotedInputExact packages machineCode(p), the Boolean-symbol ABI and quote(q(p)) into one canonical finite tape input with exact decoder round-trip. Raw universal semantics is typed-faithful edge-for-edge, and CodedFiniteStandardRawInterpreterCostExact gives T simulated edges work <= T*(|rules|+1), with bit-linear parsing. FiniteSelfSpecializingProgramQuoteSizeExact gives exact fixed-point quote length 10 + 2*machineCodeLength(p). Literal compiler microcode has begun: constant-control unary delimiter scanning is complete; unary-field equality has a single canonical dispatch/coded-machine authority and quiescent sinks, with whole-run correctness/work still local. Timing is explicitly Pareto-accounted: exact phase expansion grows static states/rules with T; the compact XOR/ripple timer uses constant timer control, arbitrary-word exact runs and <= bitWidth+1 decrement work. XOR/IIT supplied the implementation inspiration only; the complexity branch reproves the finite Boolean facts locally and IIT phi is not hardness evidence. Full table-baked/raw syntactic self-code routes remain theorem-level no-gos, so raw code equality is not required." }
   , { problem := .riemann
       upstreamDeclaration := "Millennium.ClayRiemannHypothesis"
-      state := .redMath
-      frontier := .analytic
-      firstUnpaid := "selected A2 witness fourthLipschitz < quarticSignedPoleFloorFourthLipschitzThreshold"
-      note := "Exact LeanDojo <-> Mathlib RiemannHypothesis statement weld is source-written. RiemannProjectiveQuarticFourWindowSignedPoleA2SelectedWitnessCut reduces the leading sixth/eighth comparison for every strength-floor witness to one exact selected-witness G1 bound; the floor threshold is approximately 737.365. The old generic support/L1 K0 is far too coarse and does not constitute an A2 no-go. If the selected witness cannot meet the exact threshold, retire this positive-eighth-cap A2 branch and continue A1/Route B rather than introducing a stronger terminal certificate." }
+      state := .proofResolutionPending
+      frontier := .proofResolution
+      firstUnpaid := "locate and compose the existing global RH terminal donor into Mathlib.RiemannHypothesis"
+      note := "LeanDojo already proves its exact Clay statement equivalent to Mathlib.RiemannHypothesis. Current Lean PR #50 still exposes genuine A1/A2/Route-B analytic producers rather than an unconditional root theorem; finite C3/Eisenstein/Ogg cross-pollinations do not discharge those analytic leaves." }
   , { problem := .navierStokes
       upstreamDeclaration := "MillenniumNavierStokes.FeffermanC|D"
-      state := .redType
-      note := "Fefferman C is the shortest external route. The released comparator theorem, comparator-data -> ClaySpec weld, ClaySpec-solution -> comparator weld, literal spatial carrier, pair-spacetime packing round-trip, domain membership, generic smooth pullback, initial divergence and solution initial condition are already paid. The exact-target compiler exposes exactly five remaining transport leaves: condition-(4) derivative packaging; condition-(5) pair-spacetime -> LeanDojo time-first Fin4 derivative packaging; positive-time momentum -> closed-half-space Clay equation with smooth boundary extension; positive-time incompressibility -> closed-half-space Clay equation with smooth boundary extension; and LeanDojo coordinate-square finite energy -> ClaySpec vector L2/norm-square energy. No new fluid estimate belongs in this seam." }
+      state := .sourceExactKernelPending
+      frontier := .proved
+      firstUnpaid := "exact-head theorem/axiom acceptance of DASHILiteralClayNS.dashiExactFeffermanC and dashiExactFeffermanD"
+      note := "Force decay, momentum, divergence, energy, boundary and carrier transports are paid. LeanDojoExactTerminal contains literal exact C/D theorem terms. No mathematical or same-object theorem remains at this pinned external boundary; external scientific/credit status remains separate from DASHI's independent formal reconstruction and attribution ledger." }
   , { problem := .hodge
       upstreamDeclaration := "MillenniumHodge.ClayHodge"
       state := .upstreamIncomplete
       frontier := .upstreamDefect
-      firstUnpaid := "faithful official Clay Hodge statement; internal general algebraic-cycle theorem remains separate"
-      note := "LeanDojo marks this statement incomplete and not a valid prize target. DASHI retains the stronger rational-Hodge/algebraic-cycle programme; the general algebraic reopening remains the research wall." }
+      firstUnpaid := "a faithful external Clay Hodge target"
+      note := "Pinned LeanDojo marks this statement incomplete. DASHI's stronger faithful algebraic-cycle/Hodge programme is not weakened to fit an incomplete external interface." }
   , { problem := .birchSwinnertonDyer
       upstreamDeclaration := "MillenniumBirchSwinnertonDyer.ClayBirchSwinnertonDyer"
-      state := .redMath
-      frontier := .analytic
-      firstUnpaid := "Synthesis.Millennium.BSD.BSDClayCoreObligation bg"
-      note := "The Clay-facing source isolates the novel theorem exactly: equality of canonical analytic rank and Mordell-Weil free rank on the same rational elliptic curve after established background. The Selmer audit proves arbitrary mediators merely rename BSD. The literal two-descent donor has already reached |Sel_2(E)| = |E(Q)/2E(Q)| * |R_2(E)|; the arithmetic route now needs same-curve residual/Sha identification and 2^n or 2^infinity tower control to stable rank, while the analytic comparison remains independently necessary. LeanDojo carrier transport is downstream certification, not the first mathematical debt." }
+      state := .proofResolutionPending
+      frontier := .proofResolution
+      firstUnpaid := "locate the existing same-curve analytic bridge and universal zero Selmer defect donors, compose BSDClayCoreObligation, then transport it into LeanDojo Rank.Existence"
+      note := "Under UniversalSelmerDefectAnalyticBridge, BSDClayCoreObligation is equivalent to UniversalSelmerDefectZero. The selected-CM E[2]/Sha[2] and j=0/Eisenstein symmetry work remain useful local donors but do not supply the universal defect or analytic bridge." }
   , { problem := .yangMills
       upstreamDeclaration := "MillenniumYangMills.ClayYangMills"
       state := .upstreamIncomplete
       frontier := .upstreamDefect
-      firstUnpaid := "faithful official Jaffe-Witten target; internal continuum construction and positive mass gap remain separate"
-      note := "LeanDojo marks this interface incomplete. DASHI's OS/reflection-positivity, continuum-QFT, Hamiltonian and mass-gap physical-object programme remains authoritative until a faithful external statement exists." }
+      firstUnpaid := "a faithful external Jaffe--Witten target"
+      note := "Pinned LeanDojo marks this interface incomplete. DASHI's stronger OS/RP continuum-QFT, Hamiltonian and mass-gap physical-object programme remains authoritative; unrelated quantum/geometry benchmark closures do not create the actual YM cutoff/OS same-object inhabitants." }
   , { problem := .poincare
       upstreamDeclaration := "MillenniumPoincare.ClayPoincareConjecture"
       state := .upstreamSolvedUnformalized
       frontier := .solvedUnformalized
       firstUnpaid := "upstream does not include Perelman's proof term"
-      note := "Historically solved, but the pinned upstream repository does not contain Perelman's Lean proof. This is not a DASHI research lane or a type-adapter failure." }
+      note := "Historically solved; retained only as an external-registry regression target." }
   ]
 
 theorem externalTargetReceipts_length : externalTargetReceipts.length = 7 := by decide
@@ -77,23 +80,31 @@ theorem externalTargetReceipts_length : externalTargetReceipts.length = 7 := by 
 def hasGreenExact (p : Problem) : Bool :=
   externalTargetReceipts.any fun r => r.problem == p && r.state == .greenExact
 
-theorem riemann_frontier_is_analytic :
+theorem faithful_active_lanes_not_red_math :
+    (externalTargetReceipts.filter (fun r =>
+      r.problem == .pVersusNP || r.problem == .riemann ||
+      r.problem == .navierStokes || r.problem == .birchSwinnertonDyer)).all
+        (fun r => r.state != .redMath) = true := by decide
+
+theorem pnp_is_proof_resolution_pending :
+    (externalTargetReceipts.find? (fun r => r.problem == .pVersusNP)).map
+        (fun r => r.state) = some .proofResolutionPending := by decide
+
+theorem riemann_is_proof_resolution_pending :
     (externalTargetReceipts.find? (fun r => r.problem == .riemann)).map
-        (fun r => r.frontier) = some .analytic := by
-  decide
+        (fun r => r.state) = some .proofResolutionPending := by decide
 
 theorem navierStokes_frontier_is_proved :
     (externalTargetReceipts.find? (fun r => r.problem == .navierStokes)).map
-        (fun r => r.frontier) = some .proved := by
-  decide
+        (fun r => r.frontier) = some .proved := by decide
 
-theorem navierStokes_not_green_before_kernel_receipt :
-    hasGreenExact .navierStokes = false := by decide
+theorem navierStokes_source_exact_kernel_pending :
+    (externalTargetReceipts.find? (fun r => r.problem == .navierStokes)).map
+        (fun r => r.state) = some .sourceExactKernelPending := by decide
 
-theorem birchSwinnertonDyer_frontier_is_analytic :
+theorem birchSwinnertonDyer_is_proof_resolution_pending :
     (externalTargetReceipts.find? (fun r => r.problem == .birchSwinnertonDyer)).map
-        (fun r => r.frontier) = some .analytic := by
-  decide
+        (fun r => r.state) = some .proofResolutionPending := by decide
 
 theorem hodge_not_green_exact : hasGreenExact .hodge = false := by decide
 

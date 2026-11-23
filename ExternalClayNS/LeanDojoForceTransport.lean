@@ -1,14 +1,6 @@
 import LeanDojoCoordinateLinearEquiv
 import LeanDojoSameObject
 
-/-!
-# Force-side structural transport to LeanDojo
-
-This file pays the non-quantitative parts of Fefferman conditions (5), (8), and
-(9): closed-half-space smoothness and spatial integer periodicity.  The remaining
-force obligation is the quantitative mixed-coordinate derivative decay bound.
--/
-
 noncomputable section
 
 open ClaySpec
@@ -17,8 +9,6 @@ open NavierStokesOnR3
 
 namespace DASHILiteralClayNS
 
-/-- Comparator closed-half-space smoothness transports through the exact
-continuous-linear spacetime equivalence. -/
 theorem comparatorForceSmooth_to_leanDojo
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceCondition f) :
@@ -28,8 +18,6 @@ theorem comparatorForceSmooth_to_leanDojo
   apply contDiffOn_comparatorFieldToLean
   simpa [SemanticGap.nonnegativeTime_eq] using h.smooth
 
-/-- A spatial unit period of a curried comparator force extends to every integer
-translate after putting the force on LeanDojo's spacetime carrier. -/
 theorem comparatorForcePeriodic_to_leanDojo
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceConditionPeriodic f) :
@@ -46,7 +34,6 @@ theorem comparatorForcePeriodic_to_leanDojo
       f (space z) (time z)
   simpa using heq
 
-/-- The two already-paid structural coordinates of periodic force admissibility. -/
 theorem comparatorPeriodicForce_structure
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceConditionPeriodic f) :
@@ -55,8 +42,6 @@ theorem comparatorPeriodicForce_structure
   ⟨comparatorForceSmooth_to_leanDojo h.toForceCondition,
     comparatorForcePeriodic_to_leanDojo h⟩
 
-/-- Whole-space force smoothness is likewise already paid; only the displayed
-coordinate-word rapid-decay estimate remains to inhabit `SmoothRapidDecayForce`. -/
 theorem comparatorDecayForce_smooth
     {f : R3 → ℝ → R3}
     (h : NavierStokes.Comparator.ForceConditionDecay f) :

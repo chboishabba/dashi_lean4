@@ -2,15 +2,6 @@ import LeanDojoSameObjectCore
 import LiteralABCD
 import Mathlib.Algebra.Ring.Periodic
 
-/-!
-# Concrete same-object transport to the pinned LeanDojo Navier--Stokes target
-
-No statement-weld hypothesis is introduced here.  Each lemma transports an
-existing comparator/Clay fact onto LeanDojo's literal carrier.  The terminal C/D
-theorems are added only after every premise and every putative solution can be
-transported in the direction needed for the contradiction.
--/
-
 noncomputable section
 
 open ClaySpec
@@ -19,10 +10,6 @@ open NavierStokesOnR3
 
 namespace DASHILiteralClayNS
 
-/-! ## Initial spatial data: literally the same R3 carrier -/
-
-/-- Comparator divergence-free data is LeanDojo divergence-free data on the
-same literal Euclidean `Fin 3` carrier. -/
 theorem comparatorInitialDivergence_to_leanDojo
     {u₀ : R3 → R3}
     (h : NavierStokes.Comparator.InitialVelocityCondition u₀) :
@@ -32,8 +19,6 @@ theorem comparatorInitialDivergence_to_leanDojo
   rw [SemanticGap.initialDivergence_eq u₀ h.smooth x]
   exact h.div_free x
 
-/-- One-coordinate unit periodicity is a genuine period, hence automatically
-extends to every integer translate required by LeanDojo's torus statement. -/
 theorem comparatorOnePeriodic_to_leanDojo
     {α : Type*} {f : R3 → α}
     (h : NavierStokes.Comparator.IsOnePeriodic f) :
@@ -46,9 +31,6 @@ theorem comparatorOnePeriodic_to_leanDojo
   have hpn : Function.Periodic f (n • e) := hp.zsmul n
   simpa [e] using hpn x
 
-/-- The periodic initial-data part of Fefferman D is already paid without a
-new representation: smoothness and divergence are reused directly, and unit
-periodicity is closed under integer multiples. -/
 theorem comparatorInitialPeriodic_to_leanDojo
     {u₀ : R3 → R3}
     (h : NavierStokes.Comparator.InitialVelocityConditionPeriodic u₀) :
@@ -59,26 +41,17 @@ theorem comparatorInitialPeriodic_to_leanDojo
     comparatorOnePeriodic_to_leanDojo h.isOnePeriodic,
     comparatorInitialDivergence_to_leanDojo h.toInitialVelocityCondition⟩
 
-/-! ## Coordinate directional derivatives -/
-
-/-- A scalar coordinate partial in LeanDojo is the same directional derivative
-used by the frozen Clay specification. -/
 theorem leanDojo_partialDeriv_eq_clay_direction
     {g : R3 → ℝ} (i : Fin 3) (x : R3) :
-    partial_deriv i g x =
-      fderiv ℝ g x (ClaySpec.spatialBasis i) := by
+    partial_deriv i g x = fderiv ℝ g x (ClaySpec.spatialBasis i) := by
   rfl
 
-/-- The zeroth spatial derivative vector is the original initial field. -/
 @[simp] theorem leanDojo_spatialDerivativeVector_nil
     (u₀ : R3 → R3) (x : R3) :
     NavierStokesOnR3.spatial_derivative_vector u₀ [] x = u₀ x := by
   ext i
-  simp [NavierStokesOnR3.spatial_derivative_vector,
-    iterated_partial_deriv]
+  simp [NavierStokesOnR3.spatial_derivative_vector, iterated_partial_deriv]
 
-/-- Exact bridge between LeanDojo's coordinate-word derivative vector and the
-frozen Clay directional-word derivative vector. -/
 theorem leanDojo_spatialDerivativeVector_eq_clay
     {u₀ : R3 → R3} (hu₀ : ContDiff ℝ ∞ u₀)
     (α : List (Fin 3)) (x : R3) :
@@ -96,8 +69,7 @@ theorem leanDojo_spatialDerivativeVector_eq_clay
         ClaySpec.iteratedSpatialDirectional, iterated_partial_deriv]
       change
         partial_deriv j
-            (fun y =>
-              (NavierStokesOnR3.spatial_derivative_vector u₀ α y) i) x =
+            (fun y => (NavierStokesOnR3.spatial_derivative_vector u₀ α y) i) x =
           (fderiv ℝ
             (fun y => ClaySpec.iteratedSpatialDirectional
               (ClaySpec.initialSpatialWord α) u₀ y) x
@@ -126,12 +98,9 @@ theorem leanDojo_spatialDerivativeVector_eq_clay
           ((ContDiff.differentiable_iteratedFDeriv
             (ENat.natCast_lt_of_coe_top_le_withTop le_rfl
               (ClaySpec.initialSpatialWord α).length) hu₀) x).clm_apply
-            (differentiableAt_const
-              (ClaySpec.initialSpatialWord α).get)
+            (differentiableAt_const (ClaySpec.initialSpatialWord α).get)
       exact SemanticGap.fderiv_component_basic hd i (ClaySpec.spatialBasis j)
 
-/-- Comparator's stronger full-jet decay immediately gives LeanDojo's displayed
-coordinate-word decay, via the already-paid frozen-Clay directional bound. -/
 theorem comparatorInitialDecay_to_leanDojo
     {u₀ : R3 → R3}
     (h : NavierStokes.Comparator.InitialVelocityConditionDecay u₀) :
@@ -143,14 +112,11 @@ theorem comparatorInitialDecay_to_leanDojo
   intro x
   rw [leanDojo_spatialDerivativeVector_eq_clay h.smooth α x]
   calc
-    ‖ClaySpec.iteratedSpatialDirectional
-        (ClaySpec.initialSpatialWord α) u₀ x‖
+    ‖ClaySpec.iteratedSpatialDirectional (ClaySpec.initialSpatialWord α) u₀ x‖
         ≤ C / (1 + ‖x‖) ^ K := hC x
     _ ≤ max C 1 / (1 + ‖x‖) ^ K := by
       exact div_le_div_of_nonneg_right (le_max_left C 1) (by positivity)
 
-/-- Whole-space comparator initial data is now literally LeanDojo admissible
-initial data. -/
 theorem comparatorInitialDecayData_to_leanDojo
     {u₀ : R3 → R3}
     (h : NavierStokes.Comparator.InitialVelocityConditionDecay u₀) :
@@ -158,18 +124,5 @@ theorem comparatorInitialDecayData_to_leanDojo
       NavierStokesOnR3.DivergenceFreeInitial u₀ :=
   ⟨comparatorInitialDecay_to_leanDojo h,
     comparatorInitialDivergence_to_leanDojo h.toInitialVelocityCondition⟩
-
-/-!
-The remaining implementation in this module is deliberately theorem-level:
-
-* comparator force jet/periodicity -> LeanDojo force hypotheses under
-  `comparatorForceToLean`;
-* LeanDojo `GlobalSmoothSolution` -> comparator solution under the exact field
-  round-trips, including the `t=0` boundary extension;
-* contradiction with `literalClayC` / `literalClayD`, yielding the literal
-  `MillenniumNavierStokes.FeffermanC/D` terms.
-
-No proposition-level weld structure is used by these completed data lemmas.
--/
 
 end DASHILiteralClayNS

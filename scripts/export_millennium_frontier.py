@@ -8,6 +8,7 @@ from pathlib import Path
 
 FRONTIER_NAMES = {
     "proved": "PROVED",
+    "proofResolution": "PROOF-RESOLUTION",
     "typeWeld": "TYPE-WELD",
     "analytic": "ANALYTIC",
     "upstreamDefect": "UPSTREAM-DEFECT",
@@ -52,7 +53,7 @@ def parse_frontier(frontier_text: str, exact_text: str) -> dict[str, object]:
     if len(rows) != 7 or len({row["problem"] for row in rows}) != 7:
         raise ValueError(f"expected seven unique Millennium receipts, got {len(rows)}")
 
-    return {"schema_version": 1, "problems": rows}
+    return {"schema_version": 2, "problems": rows}
 
 
 def main() -> None:

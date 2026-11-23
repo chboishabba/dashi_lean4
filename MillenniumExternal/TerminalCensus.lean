@@ -6,16 +6,6 @@ import YangMills.ContinuumWilsonCovariance
 
 /-!
 # DASHI Millennium terminal-constructor census
-
-This module deliberately does not restate any Clay problem. It imports stable
-theorem-bearing surfaces already present in the root DASHI Lean package and
-records the strongest external-facing producer found across the Lean/Agda
-repositories.
-
-The census is same-object first. A lane may therefore name a stronger producer
-that lives in a separate Lean/Agda kernel even when the root package can only
-`#check` an earlier theorem-bearing donor. Kernel separation is not mathematical
-closure and is not promoted to a GREEN external receipt.
 -/
 
 namespace MillenniumExternal
@@ -60,7 +50,7 @@ def pVersusNPLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .agdaSource
     dashiTerminalModule :=
-      "DASHI/Mathematics/Complexity/PNotEqualsNPClayCoreExact.agda + PNotEqualsNPDirectSATLowerBoundExact.agda"
+      "Live Agda PR #1129 now owns the behavioural/universal-machine route on the literal coded standard-TM carrier. Canonical runtime input and actual-halting candidates separate semantic runtime from Cook padding. Literal table-baked/raw syntactic self-fix routes are theorem-level no-gos; PNotEqualsNPKleeneSpecializationFixedPointExact is therefore consumed behaviourally rather than as raw code equality. CodedFiniteStandardSelfDelimitingCodeExact and FiniteSelfSpecializingProgramSelfDelimitingCodeExact give prefix-decodable machine/program quotation; FiniteSelfSpecializingProgramQuoteSizeExact proves |quote(q(p))| = 10 + 2*machineCodeLength(p). CodedFiniteStandardUniversalQuotedInputExact packages machineCode(p), zero/one symbol ABI and the whole quote(q(p)) into one canonical finite input with exact round-trip. PNotEqualsNPKleeneQuotedBodyCookDescriptionExact identifies the same body p and same q(p) quote in its guarded-Cook description and canonical streamed bits. CodedFiniteStandardRawInterpreterExact + FidelityExact pay executable first-order universal semantics and exact typed-run fidelity; RawInterpreterCostExact pays semantic work <= T*(|rules|+1) plus bit-linear parsing. Literal U microcode has started: unary delimiter scanning is complete, and unary field equality has one canonical dispatch/coded-machine owner with quiescent sinks; whole mark/shuttle run correctness/work remains local. Recent XOR-grid work is consumed only through locally reproved complexity facts: a literal three-rule ripple timer has arbitrary-word exact runs, decrement work <= bitWidth+1 (tight), and PhaseCounterParetoExact keeps static phase-lift growth separate from compact runtime-counter work. IIT phi remains explicitly non-authoritative for complexity hardness. The live residual is: finish literal fixed universal U, build the D-specific quoted-code-consuming SAT/negation body on that U, then close one final same-object program-size/runtime/Cook resource fixed point before SATDecisionFailure -> SATNotInP -> PNotEqualsNP."
     directCrossVersionAdapterKernelChecked := false }
 
 def riemannLane : TerminalLane :=
@@ -69,7 +59,7 @@ def riemannLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH status/provenance mirror"
+      "Lean PR #50 Synthesis.RiemannSelectedRHMaxCutFrontier + Agda RH mirror; exact LeanDojo/Mathlib statement weld lives in MillenniumExternal, while A1 shell partition, A2 selected allowance/curvature/compensation and Route-B boundary-gap-limit analytic producers remain explicit"
     directCrossVersionAdapterKernelChecked := false }
 
 def navierStokesLane : TerminalLane :=
@@ -78,7 +68,7 @@ def navierStokesLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "ExternalClayNS/LiteralABCD.lean (literal independent C/D terminal, separate Lean kernel) + NSBControl.CombinedCurrentEndgame"
+      "PR #53 DASHILiteralClayNS.dashiExactFeffermanC/D in ExternalClayNS/LeanDojoExactTerminal.lean + NSBControl.CombinedCurrentEndgame; exact pinned external C/D terms source-written. External scientific/credit status is kept separate from DASHI reconstruction/provenance."
     directCrossVersionAdapterKernelChecked := false }
 
 def hodgeLane : TerminalLane :=
@@ -87,7 +77,7 @@ def hodgeLane : TerminalLane :=
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.MillenniumHodgeRealAlgebraicCycleMultiplicityExact + Agda HodgeAlgebraicCycleClayCoreExact"
+      "Merged Lean #40 Synthesis.MillenniumHodgeRulingCycleSwapMaxCutExact over genuine Mathlib AlgebraicCycle / actual P1_Q x P1_Q factor swap, plus Agda HodgeAlgebraicCycleClayCoreExact; cycle-class/naturality and universal primitive algebraic lift remain beyond the regression geometry"
     directCrossVersionAdapterKernelChecked := false }
 
 def bsdLane : TerminalLane :=
@@ -96,7 +86,7 @@ def bsdLane : TerminalLane :=
     upstreamStatus := .openProblem
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "Synthesis.MillenniumBSDUniversalRankWeld (literal L-series / Mordell-Weil same-curve rank weld; upstream Taylor-data packaging still separate)"
+      "Synthesis.MillenniumBSDUniversalRankWeld + MillenniumBSDSelmerDefectClayEquivalence (under same-curve analytic bridge, Clay core iff universal zero Selmer defect); merged MillenniumBSDActualE2ShaSameObjectMaxCut fixes the genuine E[2]/Sha[2] comparison boundary for the selected CM curve only. Agda #1145 j=0/Eisenstein C3 symmetry is a local selected-curve algebra donor and is not a universal analytic-rank/zero-defect inhabitant."
     directCrossVersionAdapterKernelChecked := false }
 
 def yangMillsLane : TerminalLane :=
@@ -105,7 +95,7 @@ def yangMillsLane : TerminalLane :=
     upstreamStatus := .statementIncomplete
     dashiOwner := .leanAndAgda
     dashiTerminalModule :=
-      "YangMills.ContinuumWilsonCovariance + Agda OS/QFT/mass-gap physical same-object stack"
+      "Open Lean #7 conditional Welds.YMClayAssembly.massGapOfSourceCovariance / Welds.YMClayAssembly.massGapOfEnergyForms over retained bounded-form/BIDI assembly, plus YangMills.ContinuumWilsonCovariance and Agda OS/RP/QFT physical stack; actual physical cutoff/OS same-object inhabitants remain explicit"
     directCrossVersionAdapterKernelChecked := false }
 
 def poincareLane : TerminalLane :=
@@ -122,8 +112,6 @@ def terminalLanes : List TerminalLane :=
 
 theorem terminalLanes_length : terminalLanes.length = 7 := by decide
 
-/-- Known-incomplete upstream targets can never count as a GREEN prize target
-in this integration layer. -/
 def isValidPrizeAcceptanceTarget (lane : TerminalLane) : Bool :=
   match lane.upstreamStatus with
   | .statementIncomplete => false
@@ -134,13 +122,6 @@ theorem hodge_upstream_not_prize_target :
 
 theorem yangMills_upstream_not_prize_target :
     isValidPrizeAcceptanceTarget yangMillsLane = false := by decide
-
-/-! ## Existing root-package theorem-bearing surfaces
-
-These checks intentionally name declarations available to the root DASHI Lean
-package. Stronger terminals in nested projects are named above but are not
-silently imported across their independent package graphs.
--/
 
 #check Synthesis.QuarticFourSignedPolePair.RHMaxCutRoute.signedFifth_terminalPositive
 #check Synthesis.Millennium.BSD.universalBSDRankTheorem_of_background

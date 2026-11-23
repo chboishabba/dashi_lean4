@@ -21,12 +21,9 @@ open NavierStokes
 
 namespace DASHILiteralClayNS
 
-/-- The canonical DASHI/Clay `(space,time)` point as LeanDojo's time-first
-four-coordinate spacetime point. -/
 def pairToLeanSpacetime (z : SpaceTime) : Spacetime3 :=
   spacetime_point z.2 z.1
 
-/-- Recover the exact `(space,time)` pair from LeanDojo's spacetime carrier. -/
 def leanSpacetimeToPair (z : Spacetime3) : SpaceTime :=
   (space z, time z)
 
@@ -51,17 +48,14 @@ def leanSpacetimeToPair (z : Spacetime3) : SpaceTime :=
   fin_cases i <;>
     simp [pairToLeanSpacetime, leanSpacetimeToPair, spacetime_point, space, time]
 
-/-- Functional inverse receipt used by downstream field transport. -/
 theorem pairToLeanSpacetime_leftInverse :
     Function.LeftInverse leanSpacetimeToPair pairToLeanSpacetime :=
   leanSpacetimeToPair_leftInverse_apply
 
-/-- Functional inverse receipt used by downstream field transport. -/
 theorem pairToLeanSpacetime_rightInverse :
     Function.RightInverse leanSpacetimeToPair pairToLeanSpacetime :=
   pairToLeanSpacetime_rightInverse_apply
 
-/-- Exact point equivalence, not merely equal cardinality. -/
 def pairLeanSpacetimeEquiv : SpaceTime ≃ Spacetime3 where
   toFun := pairToLeanSpacetime
   invFun := leanSpacetimeToPair
@@ -80,13 +74,9 @@ def pairLeanSpacetimeEquiv : SpaceTime ≃ Spacetime3 where
     pairToLeanSpacetime z ∈ interior_spacetime_domain 3 ↔ 0 < z.2 := by
   simp [interior_spacetime_domain, pairToLeanSpacetime]
 
-/-! ## Field transport -/
-
-/-- Put a curried comparator field on LeanDojo's exact spacetime carrier. -/
 def comparatorFieldToLean {E : Type*} (f : R3 → ℝ → E) : Spacetime3 → E :=
   fun z => f (space z) (time z)
 
-/-- Pull a LeanDojo field back to the exact comparator `(space,time)` reading. -/
 def leanFieldToComparator {E : Type*} (f : Spacetime3 → E) : R3 → ℝ → E :=
   fun x t => f (spacetime_point t x)
 
@@ -103,17 +93,14 @@ def leanFieldToComparator {E : Type*} (f : Spacetime3 → E) : R3 → ℝ → E 
   change f (pairToLeanSpacetime (leanSpacetimeToPair z)) = f z
   rw [pairToLeanSpacetime_rightInverse_apply]
 
-/-- The actual external force carrier used by the C/D transport. -/
 abbrev comparatorForceToLean
     (f : R3 → ℝ → R3) : ForceField 3 :=
   comparatorFieldToLean f
 
-/-- LeanDojo velocity pulled back to the comparator carrier. -/
 abbrev leanVelocityToComparator
     (u : VelocityField 3) : R3 → ℝ → R3 :=
   leanFieldToComparator u
 
-/-- LeanDojo pressure pulled back to the comparator carrier. -/
 abbrev leanPressureToComparator
     (p : PressureField 3) : R3 → ℝ → ℝ :=
   leanFieldToComparator p
@@ -130,12 +117,8 @@ abbrev leanPressureToComparator
     comparatorFieldToLean (leanPressureToComparator p) = p :=
   comparatorFieldToLean_leanFieldToComparator p
 
-/-! ## Initial spatial carrier is already definitionally the same object -/
-
 example : ClaySpec.R3 = NavierStokes.Space3 := rfl
 
-/-- Comparator and LeanDojo use the same literal `EuclideanSpace ℝ (Fin 3)`
-for the initial velocity carrier. -/
 theorem initialVelocityCarrier_sameObject :
     (ClaySpec.R3 → ClaySpec.R3) =
       (NavierStokes.Space3 → NavierStokes.Space3) := rfl

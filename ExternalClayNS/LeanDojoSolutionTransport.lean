@@ -2,16 +2,6 @@ import LeanDojoCoordinateLinearEquiv
 import LeanDojoBoundaryExtension
 import LeanDojoSameObject
 
-/-!
-# Solution-side structural transport
-
-This owner pulls an actual LeanDojo `GlobalSmoothSolution` back to the exact
-curried comparator fields.  Smoothness, initial data, and periodicity are paid
-here.  Momentum/divergence and whole-space energy are kept as the remaining
-analytic identities needed to turn the pullback into the full comparator
-solution record.
--/
-
 noncomputable section
 
 open ClaySpec
@@ -20,8 +10,6 @@ open NavierStokesOnR3
 
 namespace DASHILiteralClayNS
 
-/-- LeanDojo closed-half-space velocity smoothness is exactly comparator
-closed-half-space smoothness after pullback. -/
 theorem leanDojoVelocitySmooth_to_comparator
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse) :
@@ -31,7 +19,6 @@ theorem leanDojoVelocitySmooth_to_comparator
   have h := contDiffOn_leanFieldToComparator sol.velocity_smooth
   simpa [SemanticGap.nonnegativeTime_eq] using h
 
-/-- Same for pressure. -/
 theorem leanDojoPressureSmooth_to_comparator
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse) :
@@ -41,7 +28,6 @@ theorem leanDojoPressureSmooth_to_comparator
   have h := contDiffOn_leanFieldToComparator sol.pressure_smooth
   simpa [SemanticGap.nonnegativeTime_eq] using h
 
-/-- Initial condition is unchanged by the carrier identification. -/
 theorem leanDojoInitialCondition_to_comparator
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse) :
@@ -50,8 +36,6 @@ theorem leanDojoInitialCondition_to_comparator
   intro x
   exact sol.initial_condition x
 
-/-- Integer periodicity in LeanDojo implies the unit-periodic comparator
-condition simply by selecting integer translation `1`. -/
 theorem leanDojoPeriodic_to_comparatorOnePeriodic
     {α : Type*} {f : R3 → α}
     (h : NavierStokesPeriodic.IsPeriodic f) :
@@ -59,8 +43,6 @@ theorem leanDojoPeriodic_to_comparatorOnePeriodic
   intro x i
   simpa using h x i (1 : ℤ)
 
-/-- LeanDojo periodic velocity becomes comparator unit-periodic velocity at each
-nonnegative time. -/
 theorem leanDojoPeriodicVelocity_to_comparator
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse)
@@ -72,8 +54,6 @@ theorem leanDojoPeriodicVelocity_to_comparator
   intro t ht
   exact leanDojoPeriodic_to_comparatorOnePeriodic (hper.1 t ht)
 
-/-- LeanDojo spacetime pressure periodicity becomes comparator unit periodicity
-on every nonnegative time slice. -/
 theorem leanDojoPeriodicPressure_to_comparator
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse)
@@ -90,8 +70,6 @@ theorem leanDojoPeriodicPressure_to_comparator
       sol.pressure (spacetime_point t x)
   simpa [standard_basis] using h
 
-/-- All already-paid non-PDE fields of the comparator base solution are bundled
-without introducing an assumption record. -/
 theorem leanDojoSolution_structuralComparatorFields
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse) :

@@ -1,14 +1,6 @@
 import LeanDojoDifferentialTransport
 import Mathlib.Analysis.Calculus.ContDiff.FTaylorSeries
 
-/-!
-# Second spatial derivative identity
-
-This pays the viscous/Laplacian coordinate seam.  The proof passes through the
-already-constructed full closed-halfspace jet equivalence rather than manually
-commuting coordinate derivatives.
--/
-
 noncomputable section
 
 open ClaySpec
@@ -16,8 +8,6 @@ open NavierStokes
 
 namespace DASHILiteralClayNS
 
-/-- LeanDojo's recursively defined repeated coordinate partial is the evaluation
-of the ordinary second Fréchet derivative on the repeated standard basis vector. -/
 theorem leanDojo_secondPartial_eq_iteratedFDeriv
     {f : Spacetime3 → ℝ} {z : Spacetime3}
     (hf : ContDiffAt ℝ 2 f z) (i : Fin 4) :
@@ -32,8 +22,6 @@ theorem leanDojo_secondPartial_eq_iteratedFDeriv
     (differentiableAt_const (standard_basis (n := 4) i))]
   rfl
 
-/-- Frozen product-coordinate repeated spatial derivative equals LeanDojo's
-repeated `i+1` coordinate derivative at every positive-time point. -/
 theorem claySecondPartial_pullback_eq_leanDojo
     {f : Spacetime3 → ℝ}
     (hf : ContDiffOn ℝ ∞ f (global_spacetime_domain 3))

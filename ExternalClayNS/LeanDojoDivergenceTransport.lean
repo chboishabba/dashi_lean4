@@ -1,14 +1,6 @@
 import LeanDojoDifferentialTransport
 import LeanDojoBoundaryResidualContinuity
 
-/-!
-# Divergence transport and boundary closure
-
-Positive-time incompressibility is coordinate-identical after the exact
-spacetime equivalence.  Smoothness makes the Clay divergence continuous on the
-closed half-space, so the equality extends to `t = 0`.
--/
-
 noncomputable section
 
 open ClaySpec
@@ -17,7 +9,6 @@ open Set
 
 namespace DASHILiteralClayNS
 
-/-- Coordinate projections preserve closed-halfspace smoothness. -/
 theorem leanComponentSmooth
     {u : VelocityField 3}
     (hu : ContDiffOn ℝ ∞ u (global_spacetime_domain 3))
@@ -26,12 +17,9 @@ theorem leanComponentSmooth
   simpa [Function.comp_def] using
     hu.continuousLinearMap (EuclideanSpace.proj i)
 
-/-- Exact pulled-back velocity on the frozen product carrier. -/
 def leanVelocityToClay (u : VelocityField 3) : ClaySpec.Velocity :=
   Function.uncurry (leanVelocityToComparator u)
 
-/-- Positive-time Clay divergence of the pullback is LeanDojo divergence at the
-corresponding point. -/
 theorem clayDivergence_pullback_eq_leanDojo
     {u : VelocityField 3}
     (hu : ContDiffOn ℝ ∞ u (global_spacetime_domain 3))
@@ -44,7 +32,6 @@ theorem clayDivergence_pullback_eq_leanDojo
   exact clayPartialSpace_pullback_eq_leanDojo
     (leanComponentSmooth hu i) q hq i
 
-/-- Clay divergence of a smooth velocity is continuous on the closed halfspace. -/
 theorem continuousOn_clayDivergence
     {u : ClaySpec.Velocity}
     (hu : ContDiffOn ℝ ∞ u nonnegativeTime) :
@@ -54,7 +41,6 @@ theorem continuousOn_clayDivergence
   intro i _hi
   exact continuousOn_partialSpace (SemanticGap.component_smooth hu i) i
 
-/-- Positive-time divergence-free data extend to the closed halfspace. -/
 theorem equationTwo_of_positive
     {u : ClaySpec.Velocity}
     (hu : ContDiffOn ℝ ∞ u nonnegativeTime)
@@ -69,8 +55,6 @@ theorem equationTwo_of_positive
   exact eq_of_pos_eq_of_continuousOn_Ici hs continuousOn_const
     (fun t ht => hpos (q.1, t) ht) hq
 
-/-- An actual LeanDojo smooth solution therefore gives the frozen Clay
-incompressibility equation on all nonnegative times. -/
 theorem leanDojoIncompressible_to_clay
     {nse : NavierStokesEquations 3}
     (sol : GlobalSmoothSolution nse) :

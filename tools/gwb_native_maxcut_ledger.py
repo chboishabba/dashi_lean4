@@ -251,6 +251,17 @@ def validate_original_typed_binding_weld(
     sets=typed.get("typed_candidate_sets")
     require(isinstance(sets,list) and sets,
             "original typed binder produced no focus sets")
+    omitted=typed.get("original_binder_candidate_limit_truncation_count")
+    require(type(omitted) is int and omitted >= 0 and
+            typed.get("requires_omitted_candidate_audit") is (omitted > 0),
+            "original binder 64-member cap residual missing or forged")
+    observed_omitted=sum(
+        exclusion.get("excluded_count",0)
+        for s in sets for exclusion in (s.get("original_binder_exclusion_summaries") or [])
+        if exclusion.get("reason_ref") == "candidate_limit_truncation"
+    )
+    require(observed_omitted == omitted,
+            "typed binder 64-member truncation residual inconsistent")
     focus_refs={x.get("factor_ref") for x in focus}
     for s in sets:
         require(s.get("reference_factor_ref") in focus_refs and

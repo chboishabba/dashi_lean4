@@ -1,4 +1,4 @@
-import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopMachinSourceBinding
 import Integration.BishopVendoredCompletionEquivalence
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic
@@ -21,7 +21,7 @@ Bishop setoid equality, the original source series then satisfies
 exp_B(L((n+1)/(n+2))) ~ (n+2), *when the original concrete Bishop
 source convergence witness is connected*.
 
-The imported `Round11MachinSourceBinding` provides the very same
+The imported `MachinSourceBinding` provides the very same
 source exponential convergence data, not an independent exponential.
 
 IMPORTANT: This is a Lean mirror proof and cannot automatically
@@ -34,7 +34,7 @@ Murray (2022); pinned Viktor Csimma Bishop library; Mathlib and
 the original DASHI source theorem owners.
 -/
 
-namespace Integration.BishopNegativeLogNativeRound11Semantics
+namespace Integration.BishopNegativeLogNativeSemantics
 
 open Filter
 open scoped Topology BigOperators
@@ -43,7 +43,7 @@ open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
 open Integration.BishopVendoredExponentialSemantics
 open Integration.BishopVendoredCompletionEquivalence
-open Integration.BishopRound11MachinSourceBinding
+open Integration.BishopMachinSourceBinding
 
 noncomputable section
 
@@ -148,7 +148,7 @@ into the vendored Bishop SETOID (not raw sequence equality).
 The n=0 log(1)=0 case is already proved on the Agda side. -/
 theorem originalNatLog_successor_exp_inverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (L : NativeNegativeLogSourceConvergence A)
     (n : ℕ) :
     Equiv
@@ -209,7 +209,7 @@ def canonicalNativeNegativeLogSourceConvergence
 witness, on the canonical original-series Bishop representative. -/
 theorem canonicalNatSuccessorExpInverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (n : ℕ) :
     Equiv
       (B.expB (canonicalNegativeLog (rational (natLogArgument n))))
@@ -240,7 +240,7 @@ record. The source limit carries only its already-owned convergence
 proof, as in the original Agda module. -/
 theorem anyOriginalNatSuccessorExpInverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (n : ℕ)
     (sourceLimit : RegularRatReal)
     (sourceConverges :
@@ -279,7 +279,7 @@ The native Agda source owner still requires Agda-kernel acceptance.
 unit-ball input; no free logarithm axiom, no new expB definition. -/
 theorem originalNegativeLogExpInverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (L : NativeNegativeLogSourceConvergence A)
     (x : RegularRatReal)
     (hzero : 0 < eval x)
@@ -299,7 +299,7 @@ theorem originalNegativeLogExpInverse
 Bishop coefficient series constructs its canonical limit itself. -/
 theorem canonicalNegativeLogExpInverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (x : RegularRatReal)
     (hzero : 0 < eval x)
     (hone : eval x < 1) :
@@ -315,7 +315,7 @@ coefficients satisfies exp_B(-L(x)) ~ 1-x by its own source
 convergence, not by substituting the canonical limit definition. -/
 theorem anyOriginalNegativeLogExpInverse
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A)
+    (B : MachinSourceBinding A)
     (x sourceLimit : RegularRatReal)
     (hzero : 0 < eval x)
     (hone : eval x < 1)
@@ -339,4 +339,4 @@ theorem anyOriginalNegativeLogExpInverse
 
 end
 
-end Integration.BishopNegativeLogNativeRound11Semantics
+end Integration.BishopNegativeLogNativeSemantics

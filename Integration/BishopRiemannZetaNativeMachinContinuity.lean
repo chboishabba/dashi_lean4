@@ -1,5 +1,5 @@
-import Integration.BishopRound11ImaginaryProductSemanticReflection
-import Integration.BishopRound11OriginalArctanCayleyExact
+import Integration.BishopImaginaryProductSemanticReflection
+import Integration.BishopOriginalArctanCayleyExact
 import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
@@ -34,8 +34,8 @@ open scoped Topology BigOperators
 
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
-open Integration.BishopRound11MachinSourceBinding
-open Integration.BishopRound11ImaginaryProductSemanticReflection
+open Integration.BishopMachinSourceBinding
+open Integration.BishopImaginaryProductSemanticReflection
 
 noncomputable section
 
@@ -139,14 +139,14 @@ theorem completedRiemannZeta_continuousAtMachinPi :
 the same evaluated point as the actual Riemann/completed zeta target. -/
 theorem sourceMachinPi_realArgument
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     ((eval (sourceMachinPi A B) : ℝ) : ℂ) = (Real.pi : ℂ) := by
   rw [sourceMachinPiEvaluatesToClassicalPi]
 
 /-- Exact selected-source, not merely a name-aligned zeta evaluation. -/
 theorem originalDirichletAtBishopSourcePi
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     originalDirichletValue
         (((eval (sourceMachinPi A B) : ℝ) : ℂ)) =
       riemannZeta

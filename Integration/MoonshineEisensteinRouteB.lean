@@ -1,4 +1,4 @@
-import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopMachinSourceBinding
 import Integration.MoonshineEisensteinAgdaTarget
 import Integration.MoonshineDeltaFinalMinCut
 
@@ -17,7 +17,7 @@ This module composes the route-B pieces already proved:
 No additional analytic hypothesis is introduced here.
 -/
 
-namespace Integration.MoonshineEisensteinRound11RouteB
+namespace Integration.MoonshineEisensteinRouteB
 
 open Filter
 open Complex Real
@@ -26,7 +26,7 @@ open scoped Topology
 
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
-open Integration.BishopRound11MachinSourceBinding
+open Integration.BishopMachinSourceBinding
 open Integration.BishopVendoredTranscendentalExtraction
 open Integration.MoonshineEisensteinPrimitiveExtraction
 open Integration.MoonshineEisensteinAgdaTarget
@@ -36,13 +36,13 @@ noncomputable section
 
 def sourceReal
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     SourceRealTranscendental :=
   bishopSourceReal A (semanticMirror A B)
 
 def sourcePackage
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     SourceComplexPackage where
   real := sourceReal A B
   expC := SourceComplex.expCartesian
@@ -50,24 +50,24 @@ def sourcePackage
 
 def routeExtraction
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     PrimitiveRealExtraction (sourceReal A B) :=
   primitiveExtractionDirect A B
 
 abbrev RouteComplex
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :=
+    (B : MachinSourceBinding A) :=
   SourceComplex (sourceReal A B)
 
 def mapRouteComplex
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (z : RouteComplex A B) : ℂ :=
   mapComplex (P := sourcePackage A B) (routeExtraction A B) z
 
 def sourceQ
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τ : RouteComplex A B) :
     RouteComplex A B :=
   Integration.MoonshineEisensteinPrimitiveExtraction.sourceQ
@@ -75,7 +75,7 @@ def sourceQ
 
 def sourceE4
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (N : ℕ) (q : RouteComplex A B) :
     RouteComplex A B :=
   Integration.MoonshineEisensteinPrimitiveExtraction.sourceE4
@@ -83,7 +83,7 @@ def sourceE4
 
 def sourceE6
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (N : ℕ) (q : RouteComplex A B) :
     RouteComplex A B :=
   Integration.MoonshineEisensteinPrimitiveExtraction.sourceE6
@@ -91,7 +91,7 @@ def sourceE6
 
 theorem map_sourceQ_eq_qOfTarget
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
@@ -102,7 +102,7 @@ theorem map_sourceQ_eq_qOfTarget
 
 theorem map_sourceE4_eq_e4At
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ))
@@ -114,7 +114,7 @@ theorem map_sourceE4_eq_e4At
 
 theorem map_sourceE6_eq_e6At
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ))
@@ -126,7 +126,7 @@ theorem map_sourceE6_eq_e6At
 
 theorem mapped_sourceE4_tendsto_mathlib_E4
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
@@ -139,7 +139,7 @@ theorem mapped_sourceE4_tendsto_mathlib_E4
 
 theorem mapped_sourceE6_tendsto_mathlib_E6
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
@@ -152,21 +152,21 @@ theorem mapped_sourceE6_tendsto_mathlib_E6
 
 def sourceSquare
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (z : RouteComplex A B) :
     RouteComplex A B :=
   SourceComplex.mul z z
 
 def sourceCube
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (z : RouteComplex A B) :
     RouteComplex A B :=
   SourceComplex.mul (sourceSquare z) z
 
 def sourceDiscriminantNumerator
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (N : ℕ)
     (τs : RouteComplex A B) :
     RouteComplex A B :=
@@ -176,7 +176,7 @@ def sourceDiscriminantNumerator
 
 theorem map_sourceDiscriminantNumerator
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ))
@@ -196,13 +196,13 @@ theorem map_sourceDiscriminantNumerator
 /-- Exact Bishop rational coefficient used by the Agda normalized finite Delta. -/
 def sourceOneOver1728
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A} :
+    {B : MachinSourceBinding A} :
     RouteComplex A B :=
   ⟨rational (1 / 1728 : ℚ), A.zero⟩
 
 theorem map_sourceOneOver1728
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A} :
+    {B : MachinSourceBinding A} :
     mapRouteComplex (sourceOneOver1728 (A := A) (B := B)) =
       (1 / 1728 : ℂ) := by
   change
@@ -215,7 +215,7 @@ theorem map_sourceOneOver1728
 embedding used in Agda. -/
 def sourceNormalizedDelta
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (N : ℕ)
     (τs : RouteComplex A B) :
     RouteComplex A B :=
@@ -225,7 +225,7 @@ def sourceNormalizedDelta
 
 theorem map_sourceNormalizedDelta
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ))
@@ -241,7 +241,7 @@ theorem map_sourceNormalizedDelta
 
 theorem mapped_sourceNormalizedDelta_tendsto
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
@@ -254,7 +254,7 @@ theorem mapped_sourceNormalizedDelta_tendsto
 
 theorem mapped_sourceDiscriminantNumerator_tendsto
     {A : VendoredArithmeticMirror}
-    {B : Round11MachinSourceBinding A}
+    {B : MachinSourceBinding A}
     (τs : RouteComplex A B)
     (τ : ℍ)
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
@@ -283,7 +283,7 @@ theorem normalizedDelta_target_ne_zero
   Integration.MoonshineDeltaFinalMinCut
     .normalizedDelta_ne_zero_canonical τ
 
-structure Round11RouteBBoundary where
+structure RouteBBoundary where
   oneSourceBindingBuildsPrimitiveExtraction : Bool
   sourceQTransportOwned : Bool
   sourceE4TransportOwned : Bool
@@ -299,7 +299,7 @@ structure Round11RouteBBoundary where
   generatedAgdaRound11MachinReplayObserved : Bool
   eta24SameObjectWithNormalizedE4E6Delta : Bool
 
-def round11RouteBBoundary : Round11RouteBBoundary where
+def routeBBoundary : RouteBBoundary where
   oneSourceBindingBuildsPrimitiveExtraction := true
   sourceQTransportOwned := true
   sourceE4TransportOwned := true
@@ -317,4 +317,4 @@ def round11RouteBBoundary : Round11RouteBBoundary where
 
 end
 
-end Integration.MoonshineEisensteinRound11RouteB
+end Integration.MoonshineEisensteinRouteB

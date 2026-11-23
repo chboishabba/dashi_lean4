@@ -1,7 +1,7 @@
-import Integration.BishopRound11MachinBindingManifest
-import Integration.BishopRound11MachinCanonicalBinding
-import Integration.BishopRound11MachinRecognition
-import Integration.MoonshineEisensteinRound11CanonicalRouteB
+import Integration.BishopMachinBindingManifest
+import Integration.BishopMachinCanonicalBinding
+import Integration.BishopMachinRecognition
+import Integration.MoonshineEisensteinCanonicalRouteB
 import Integration.MoonshineDeltaFinalMinCut
 
 /-!
@@ -21,12 +21,12 @@ by itself, evidence that the named Agda source declarations were generated into
 Lean; that provenance evidence is supplied separately by the manifest verifier.
 -/
 
-namespace Integration.BishopRound11MachinReplayProbe
+namespace Integration.BishopMachinReplayProbe
 
-open Integration.BishopRound11MachinBindingManifest
-open Integration.BishopRound11MachinCanonicalBinding
-open Integration.BishopRound11MachinRecognition
-open Integration.MoonshineEisensteinRound11CanonicalRouteB
+open Integration.BishopMachinBindingManifest
+open Integration.BishopMachinCanonicalBinding
+open Integration.BishopMachinRecognition
+open Integration.MoonshineEisensteinCanonicalRouteB
 open Integration.MoonshineDeltaFinalMinCut
 
 /-- The currently pinned Agda source blob IDs are definitionally the ones the
@@ -68,7 +68,7 @@ theorem verification_artifacts_literal_receipt :
 shape is no longer conditional. -/
 theorem canonical_binding_inhabited :
     Nonempty
-      (Integration.BishopRound11MachinSourceBinding.Round11MachinSourceBinding
+      (Integration.BishopMachinSourceBinding.MachinSourceBinding
         Arithmetic) :=
   ⟨canonicalBinding⟩
 
@@ -118,4 +118,4 @@ def replayProbeBoundary : ReplayProbeBoundary where
   sixfoldPhaseKernelVisible := true
   generatedAgdaProvenanceReplayObserved := false
 
-end Integration.BishopRound11MachinReplayProbe
+end Integration.BishopMachinReplayProbe

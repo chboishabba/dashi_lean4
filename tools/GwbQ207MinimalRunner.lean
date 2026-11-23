@@ -1,9 +1,9 @@
-import RequestProject.Cli.Import
+import RequestProject.Cli.EntityIdentityCore
 
 /-!
 P10 minimal independent Q207 EntityData check.
-Imports JMD's original Cli.Import only; does not evaluate or import the
-643-sentence GWB article, native \`he\` binding or world-property graph.
+Imports JMD's identical extracted EntityIdentityCore only; does not import the full engine or
+643-sentence GWB article, native `he` binding or world-property graph.
 Source identity is snapshot-relative, not a cross-document mention witness.
 Original importer attribution: meta-introspector JMD.
 -/

@@ -1435,3 +1435,44 @@ with explicit candidate accessibility, rival exclusions, original
 statement/mention coordinate references and correct authority. Only
 then join to pinned external QID evidence. JMD Q207 field check is
 already paid independently, but not relevant to he's original referent.
+
+## 2026-11-23 — C4.10 operator receipt and C4.11 SLR-native review queue source
+
+Operator-reported and source-corresponding C4.10 result: antecedent
+`Bush` sentence 22 absolute Unicode source [4310,4314), native focus
+`he` sentence 23 [4534,4536), same-source geometry checked.
+The C4.10 receipt remains `candidate_only=true`,
+`antecedent_resolution=REVIEW_REQUIRED`,
+`identity_admission=NOT_PAID`, `external_qid=NOT_TESTED`.
+Target test suite 14/14 PASS. Local input and receipt remain untracked
+in .dashi/gwb-relation; no user-local bytes were moved or overwritten.
+
+New C4.11 source-written on SLR
+`feat/source-bound-parser-evidence-reopen` / PR #78:
+`crates/sl-pg-source-store/src/native_antecedent_review.rs`
+plus CLI `crates/sl-cli/src/native_antecedent_review.rs`,
+and `docs/roadmap/gwb_native_antecedent_s29_review_20261123.md`.
+This adapter reopens the original immutable source revision, original
+two persisted sentence regions and UTF-8 full-corpus SHA-256; it
+inserts a candidate-only immutable sidecar and asks original S29
+ReviewItemKind::Observation to own the review queue/status. Nothing
+is parsed again. S29 Accept can pay review *workflow status* only,
+NOT antecedent coreference or external Wikidata identity.
+
+Local SLR execution prerequisite (NOT yet paid):
+
+```sh
+cd /path/to/slr
+cargo test -p sensiblaw-pg-source-store native_antecedent_review
+cargo test -p sensiblaw-cli native_antecedent_review
+cargo run -p sensiblaw-cli -- native-antecedent-review prepare \
+ /path/to/dashi_lean4/.dashi/gwb-relation/native-he-antecedent-span-candidate-v1.json
+```
+
+C4.11 is source-written, not locally Cargo-compiled or PostgreSQL
+accepted here. Review queue preparation is not a human review action.
+P0 semantic admission still requires a distinct governed
+AntecedentResolutionReceipt/identity witness with candidate
+accessibility, reviewed competing exclusions, source coordinates,
+and S29 review authority. Q207 independent Lean source fields are
+already checked, but remain separate from this mention.

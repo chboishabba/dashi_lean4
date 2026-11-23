@@ -34,10 +34,10 @@ def pVersusNPSameObjectCut : SameObjectCut :=
     existingProducer :=
       "Agda PNotEqualsNPClayCoreExact / PNotEqualsNPDirectSATLowerBoundExact"
     existingWeld :=
-      "SATNotInP -> PNotEqualsNP Clay-core compiler; machine-model transport retained separately"
+      "ExactTargetSurface.clayPNotEqualsNP_of_language_outside_p closes LeanDojo NegativeBranch from one finite-alphabet NP language outside P"
     remaining := .mathematics
     note :=
-      "The external adapter must reuse the existing SAT/P machine-model chain. The only mathematical producer still represented as an input is the universal SAT lower-bound/failure theorem; no second P-vs-NP formalism is permitted." }
+      "The external target no longer needs the whole Agda P/NP hierarchy ported. Its exact acceptance boundary is one LeanDojo finite-alphabet language L with L∈NP and L∉P. DASHI already reduces its Clay core to an actual SAT lower-bound producer, so the live mathematical wall remains that universal SAT lower bound; after it is proved, the only external work is same-object/machine-model transport of that SAT witness." }
 
 def riemannSameObjectCut : SameObjectCut :=
   { problem := .riemann
@@ -52,12 +52,12 @@ def riemannSameObjectCut : SameObjectCut :=
 def navierStokesSameObjectCut : SameObjectCut :=
   { problem := .navierStokes
     existingProducer :=
-      "ExternalClayNS literalClayC / literalClayD"
+      "released comparator C -> ClaySpec literalClayC -> direct LeanDojo C compiler"
     existingWeld :=
-      "released comparator -> independent ClaySpec C/D physical-semantic adapter"
+      "Gap.lean comparator-data -> ClaySpec and ClaySpec-solution -> comparator; LeanDojoCarrierGeometry pays spatial carrier, pair/ambient round-trip, domain membership, smooth pullback and initial divergence"
     remaining := .transportOnly
     note :=
-      "No new fluid estimate is admissible here. The remaining cut is exact proposition/carrier identification ClaySpec.ClayOptionC/D <-> LeanDojo FeffermanC/D in one compatible kernel." }
+      "No new fluid estimate is admissible here. Fefferman C is reduced to exactly five transport leaves: condition-(4) derivative packaging; condition-(5) pair-spacetime -> time-first Fin4 derivative packaging; positive-time momentum -> closed-half-space Clay equation (including smooth boundary extension); positive-time incompressibility -> closed-half-space Clay equation; and LeanDojo coordinate-square finite energy -> ClaySpec vector L2/norm-square energy. Solution smoothness and initial condition are already paid." }
 
 def hodgeSameObjectCut : SameObjectCut :=
   { problem := .hodge

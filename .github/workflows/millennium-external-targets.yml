@@ -4,14 +4,16 @@ on:
   push:
     branches:
       - agent/millennium-external-target-adapters-20261006
+      - agent/millennium-submission-maxcut-20261007
     paths:
       - 'MillenniumExternal/**'
-      - 'ExternalClayNS/**'
+      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
+      - 'ExternalClayNS/LeanDojoCarrierGeometry.lean'
+      - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
-      - 'scripts/export_millennium_frontier.py'
-      - 'scripts/test_export_millennium_frontier.py'
+      - 'scripts/test_millennium_submission_surface.py'
       - 'scripts/check_millennium_external_source.py'
       - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
@@ -21,12 +23,13 @@ on:
   pull_request:
     paths:
       - 'MillenniumExternal/**'
-      - 'ExternalClayNS/**'
+      - 'ExternalClayNS/LeanDojoTargetBridge.lean'
+      - 'ExternalClayNS/LeanDojoCarrierGeometry.lean'
+      - 'ExternalClayNS/LeanDojoCComparatorBridge.lean'
       - 'scripts/vendor_millennium_targets.sh'
       - 'scripts/audit_millennium_external_targets.py'
       - 'scripts/test_audit_millennium_external_targets.py'
-      - 'scripts/export_millennium_frontier.py'
-      - 'scripts/test_export_millennium_frontier.py'
+      - 'scripts/test_millennium_submission_surface.py'
       - 'scripts/check_millennium_external_source.py'
       - 'scripts/check_millennium_external_trust.sh'
       - 'vendor/LeanMillenniumPrizeProblems.VENDOR'
@@ -65,8 +68,7 @@ jobs:
       - name: Test and audit external registry/frontier
         run: |
           python3 scripts/test_audit_millennium_external_targets.py
-          python3 scripts/test_export_millennium_frontier.py
-          python3 scripts/export_millennium_frontier.py > millennium-external-frontier.json
+          python3 scripts/test_millennium_submission_surface.py
           python3 scripts/check_millennium_external_source.py
           python3 scripts/audit_millennium_external_targets.py
           bash scripts/check_millennium_external_trust.sh
@@ -124,7 +126,8 @@ jobs:
               lean LeanDojoEnergyTransport.lean
               lean LeanDojoExactTerminal.lean
               lean LeanDojoTargetBridge.lean
-              lean LeanDojoSameObjectRegression.lean
+              lean LeanDojoCarrierGeometry.lean
+              lean LeanDojoCComparatorBridge.lean
             '
           ) 2>&1 | tee millennium-external-ns-leandojo.log
 

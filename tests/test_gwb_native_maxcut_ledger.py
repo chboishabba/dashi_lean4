@@ -119,9 +119,12 @@ def typed_weld_fixture(inspection,frontier):
             "factor_ref":"factor:he","start_char":4534,
             "end_char":4536,"surface":"he"
         }],
+        "original_binder_candidate_limit_truncation_count":0,
+        "requires_omitted_candidate_audit":False,
         "typed_candidate_sets":[{
             "reference_factor_ref":"factor:he",
             "original_typed_binding_authority":"candidate_only",
+            "original_binder_exclusion_summaries":[],
             "members":[{
                 "factor_ref":"factor:Bush",
                 "original_source_anchor":{
@@ -190,6 +193,23 @@ class OriginalSemanticMaxCutTests(unittest.TestCase):
         i,f=fixture()
         t=typed_weld_fixture(i,f)
         t["resolved_unique"]=True
+        with self.assertRaises(EvidenceRejected):
+            make_ledger(i,f,typed_binding_weld=t)
+    def test_typed_binder_cap_residual_reported_not_lost(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        t["original_binder_candidate_limit_truncation_count"]=3
+        t["requires_omitted_candidate_audit"]=True
+        t["typed_candidate_sets"][0]["original_binder_exclusion_summaries"]=[
+            {"reason_ref":"candidate_limit_truncation","excluded_count":3}]
+        m,_=make_ledger(i,f,typed_binding_weld=t)
+        self.assertFalse(m["book_lane"]["source_relative_identity_paid"])
+        self.assertFalse(m["consumer_scope_global_completeness_paid"])
+    def test_forged_omitted_candidate_count_rejected(self):
+        i,f=fixture()
+        t=typed_weld_fixture(i,f)
+        t["original_binder_candidate_limit_truncation_count"]=3
+        t["requires_omitted_candidate_audit"]=True
         with self.assertRaises(EvidenceRejected):
             make_ledger(i,f,typed_binding_weld=t)
     def test_typed_binding_future_referent_rejected(self):

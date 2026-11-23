@@ -220,11 +220,62 @@ def validate_frontier(
     return nominations
 
 
+def validate_original_typed_binding_weld(
+    inspection: dict[str, Any], frontier: dict[str, Any],
+    typed: dict[str, Any],
+) -> None:
+    """No source-work/mere-QID match is ever a factor-coordinate bridge."""
+    require(typed.get("schema") == "gwb-original-sensiblaw-typed-binding-to-slr-v1",
+            "not original source-bound binding compiler crosswalk")
+    require(typed.get("book_document_ref") == inspection["document_ref"] and
+            typed.get("book_source_revision_ref") == inspection["source_revision_ref"] and
+            typed.get("canonical_content_sha256") == BOOK_SHA and
+            typed.get("slr_parser_run_ref") == frontier["parser_run_ref"] and
+            typed.get("s29_review_item_ref") == inspection["review_item_ref"],
+            "original typed binder and SLR source/revision mismatch")
+    require(typed.get("original_binder_compaction_mode") ==
+            "direct_observation_graph_index" and
+            typed.get("authority") == "SOURCE_EQUIVALENCE_AND_CANDIDATE_SET_ONLY",
+            "non-original or promoting binding compiler route")
+    require(typed.get("candidate_scope_exhaustive") is False and
+            typed.get("resolved_unique") is False and
+            typed.get("semantic_review_paid") is False and
+            typed.get("external_qid_paid") is False and
+            typed.get("claimed_same_work_or_qid_equivalence") is False,
+            "typed binding compiler pretends to be identity/QID admission")
+    focus=typed.get("source_focus_factors")
+    require(isinstance(focus,list) and focus and
+            all(x.get("start_char") == 4534 and
+                x.get("end_char") == 4536 and x.get("surface") == "he"
+                for x in focus), "typed binder did not anchor original he")
+    sets=typed.get("typed_candidate_sets")
+    require(isinstance(sets,list) and sets,
+            "original typed binder produced no focus sets")
+    focus_refs={x.get("factor_ref") for x in focus}
+    for s in sets:
+        require(s.get("reference_factor_ref") in focus_refs and
+                s.get("original_typed_binding_authority") == "candidate_only" and
+                isinstance(s.get("members"),list),
+                "typed candidate set not bound to original he factor")
+        for m in s["members"]:
+            a=m.get("original_source_anchor")
+            require(isinstance(a,dict) and
+                    a.get("document_ref") == inspection["document_ref"] and
+                    type(a.get("start_char")) is int and
+                    type(a.get("end_char")) is int and
+                    0 <= a["start_char"] < a["end_char"] <= 4534 and
+                    m.get("independent_identity_admission_paid") is False,
+                    "foreign, future or promoted original factor anchor")
+
+
 def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
                 *, lean_log: str = "",
-                q207_log: str = "") -> tuple[dict[str, Any], dict[str, Any]]:
+                q207_log: str = "",
+                typed_binding_weld: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     entries = validate_inspection(inspection)
     nominations = validate_frontier(inspection, frontier, entries)
+    if typed_binding_weld is not None:
+        validate_original_typed_binding_weld(inspection, frontier, typed_binding_weld)
     if lean_log:
         require(LEAN_MARKER in lean_log,
                 "Lean kernel did not emit bounded frontier marker")
@@ -303,6 +354,7 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         "claim_truth_paid": False,
         "original_s29_receipt_count": len(inspection["s29_receipt_commands"]),
         "lean_bounded_frontier_boundary_checked": bool(lean_log),
+        "exact_original_typed_binding_source_crosswalk": typed_binding_weld is not None,
     }
     wiki = {
         "source_kind": "pinned_wikipedia_george_w_bush_article",
@@ -320,6 +372,8 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         "authority": "EVIDENCE_INVENTORY_WITH_EXPLICIT_UNPAID_GATES",
         "input_inspection_sha256": hash_json(inspection),
         "input_frontier_sha256": hash_json(frontier),
+        "input_original_typed_binding_weld_sha256":
+            hash_json(typed_binding_weld) if typed_binding_weld is not None else None,
         "source_revision_scopes_distinct": BOOK_SHA != WIKI_SHA,
         "book_lane": book,
         "wikipedia_lane": wiki,
@@ -385,6 +439,7 @@ def main() -> int:
     p.add_argument("--frontier", type=Path, required=True)
     p.add_argument("--lean-log", type=Path)
     p.add_argument("--q207-log", type=Path)
+    p.add_argument("--typed-binding-weld", type=Path)
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--worksheet", type=Path, required=True)
     p.add_argument("--adversarial", action="store_true")
@@ -393,8 +448,11 @@ def main() -> int:
     frontier = json.loads(args.frontier.read_text(encoding="utf-8"))
     log = args.lean_log.read_text(encoding="utf-8") if args.lean_log else ""
     q207log = args.q207_log.read_text(encoding="utf-8") if args.q207_log else ""
+    typed = json.loads(args.typed_binding_weld.read_text(encoding="utf-8")) \
+        if args.typed_binding_weld else None
     ledger, worksheet = make_ledger(
-        inspection, frontier, lean_log=log, q207_log=q207log
+        inspection, frontier, lean_log=log, q207_log=q207log,
+        typed_binding_weld=typed,
     )
     if args.adversarial:
         negative_count = run_live_adversarial_checks(inspection, frontier)

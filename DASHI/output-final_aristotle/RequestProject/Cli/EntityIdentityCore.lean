@@ -1,3 +1,5 @@
+import Lean.Data.Json
+
 /-!
 # Lightweight JMD EntityData source identity fields
 
@@ -7,7 +9,6 @@ This module depends on Lean JSON only; Cli.Import imports this exact
 implementation so the small source-field check and full JMD importer
 cannot diverge. This is NOT a semantic actor/referent or KB proof.
 -/
-import Lean.Data.Json
 
 namespace Wikidata
 namespace Cli

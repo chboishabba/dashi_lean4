@@ -36,11 +36,14 @@ def capture(conn, *, run: str, revision: str, mention: str) -> dict:
         cur.execute("SET LOCAL statement_timeout = '120s'")
         scope = rows(cur, """
           SELECT m.*, s.exact_span_ref,s.literal_text,s.source_revision_ref,
+                 g.document_ref,
                  j.compilation_key,j.parser_run_ref,j.region_start_char,j.region_end_char,
                  j.parser_product_key,j.status AS job_status,
                  b.batch_ref,b.candidate_product_ref
           FROM semantic.entity_mention_candidate m
           JOIN corpus.source_statement s ON s.statement_ref=m.statement_ref
+          JOIN ingest.generic_source_revision g
+            ON g.source_revision_ref=s.source_revision_ref
           JOIN ingest.parser_job j
             ON j.source_revision_ref=s.source_revision_ref
            AND j.region_ref=s.exact_span_ref
@@ -86,6 +89,7 @@ def capture(conn, *, run: str, revision: str, mention: str) -> dict:
         "authority":"candidate_only",
         "source":{
             "source_revision_ref":revision,"parser_run_ref":run,
+            "document_ref":item["document_ref"],
             "statement_ref":item["statement_ref"],
             "region_ref":item["exact_span_ref"],
             "region_start_char":start,"region_end_char":end,
@@ -118,11 +122,14 @@ def validate_region(item, tokens, entities, factors, l2) -> None:
         seen.add(ordinal)
         a, b = token["start_char"], token["end_char"]
         require(start <= a < b <= end and a >= previous, "token out of order/scope")
+        require(not literal[previous-start:a-start].strip(),
+                "uncovered non-whitespace between tokens")
         require(literal[a-start:b-start] == token["surface"], "parser token literal mismatch")
         previous = b
         if token["morph_json"] is not None:
             require(isinstance(json.loads(token["morph_json"]), (dict, list)),
                     "unexpected morphology JSON")
+    require(not literal[previous-start:].strip(), "uncovered trailing text")
     require(all(t["head_ordinal"] is None or t["head_ordinal"] in seen for t in tokens),
             "foreign dependency head")
     for entity in entities:
@@ -156,7 +163,7 @@ def verify_owner_carrier(native: dict, owner: dict) -> dict:
     require(owner.get("canonical_text") == source["document_literal"],
             "owner canonical region text mismatch")
     graph = owner.get("pnf_graph") or {}
-    require(graph.get("document_ref") == source["source_revision_ref"],
+    require(graph.get("document_ref") == source["document_ref"],
             "owner graph revision mismatch")
     layer = owner.get("semantic_annotation_layer") or {}
     spans = [s for s in layer.get("span_annotations", [])

@@ -1476,3 +1476,43 @@ AntecedentResolutionReceipt/identity witness with candidate
 accessibility, reviewed competing exclusions, source coordinates,
 and S29 review authority. Q207 independent Lean source fields are
 already checked, but remain separate from this mention.
+
+
+## 2026-11-23 — C4.11 operator PASS, C4.12 governed reviewer inspection
+
+C4.11 is no longer merely source-written. Operator ran targeted native
+Rust tests (4/4 SLR source-store lib, 1/1 CLI) and successfully
+persisted original-source antecedent review candidate to PostgreSQL
+on SLR #78 head `263766a` (including two committed compilation fixes).
+Original S29 review item:
+`review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1`
+Status `Pending`. Original C4.10 candidate pair remains
+`Bush` sentence 22 [4310,4314) →
+`he` sentence 23 [4534,4536).
+`identity_admission=false`, `external_qid=false`.
+This is a real workflow queue/payment, not an admitted referent.
+
+C4.12 SLR source-written extension adds
+`sensiblaw native-antecedent-review inspect REVIEW_ITEM_REF`
+to reopen that immutable original PostgreSQL candidate, actual 4+2
+sentence context, exact canonical text/statement spans, S29 status,
+stable review command references and replay invariants *directly from
+original SLR*. It has not yet been compiled or executed locally.
+This source-native read-only inspector replaces manual dependence on
+untracked dashi_lean4 context JSON for the review process.
+
+Operator must run this command from SLR:
+
+```sh
+cargo test -p sensiblaw-pg-source-store --lib native_antecedent_review
+cargo test -p sensiblaw-cli native_antecedent_review
+cargo run -p sensiblaw-cli -- native-antecedent-review inspect \
+ review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1
+```
+
+Critical authority boundary: S29 `Accept` would be a workflow
+status only. A separate **human-governed antecedent resolution**
+must review competing candidate accessibility, quoted/discourse
+context, unique resolution and provenance before source-relative
+identity `he → Bush` can be admitted. No human review decision was
+made in this work; Q23505 and Q207 remain unjoined.

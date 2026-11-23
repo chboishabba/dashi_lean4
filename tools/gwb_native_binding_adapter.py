@@ -201,6 +201,44 @@ def verify_owner_carrier(native: dict, owner: dict) -> dict:
             "semantic_authority_promoted":False}
 
 
+
+def attach_native_annotations(native: dict, owner: dict) -> dict:
+    """Add verified native parser annotations without rewriting semantic factors.
+
+    Existing owner observations must agree. The original semantic PNF and
+    reductions remain byte-for-byte original-owner objects.
+    """
+    import copy
+    verify_owner_carrier(native, owner)
+    result = copy.deepcopy(owner)
+    layer = result["semantic_annotation_layer"]
+    indexed = {(int(x["token_index"]), str(x["annotation_type"])): x
+               for x in layer.get("token_annotations") or ()}
+    require(len(indexed) == len(layer.get("token_annotations") or ()),
+            "duplicate owner parser annotation")
+    for index, native_token in enumerate(native["parser_tokens"]):
+        morph = json.loads(native_token["morph_json"] or "{}")
+        require(isinstance(morph, dict), "parser morphology is not a dictionary")
+        values = {
+            "parser.pos": native_token["pos"],
+            "parser.dependency": native_token["dependency_ref"],
+            "parser.lemma": native_token["lemma"],
+            "parser.morphology": morph,
+            "parser.head_ordinal": native_token["head_ordinal"],
+        }
+        for annotation_type, value in values.items():
+            key = (index, annotation_type)
+            existing = indexed.get(key)
+            if existing is not None:
+                require(existing.get("value") == value,
+                        "native/owner parser annotation conflict: " + annotation_type)
+            else:
+                indexed[key] = {"token_index": index,
+                                "annotation_type": annotation_type,
+                                "value": value}
+    layer["token_annotations"] = [indexed[key] for key in sorted(indexed)]
+    return result
+
 def invoke_existing_binder(native: dict, owner: dict, sensiblaw_root: Path) -> dict:
     import sys
     sys.path.insert(0, str(sensiblaw_root.resolve()))
@@ -209,7 +247,8 @@ def invoke_existing_binder(native: dict, owner: dict, sensiblaw_root: Path) -> d
     finally:
         sys.path.pop(0)
     check = verify_owner_carrier(native, owner)
-    bound = build_set_valued_binding_artifacts(owner)
+    owner_with_native_parser = attach_native_annotations(native, owner)
+    bound = build_set_valued_binding_artifacts(owner_with_native_parser)
     return {"check":check,
             "binding_candidate_sets":bound["binding_candidate_sets"],
             "resolution_demands":bound["resolution_demands"],

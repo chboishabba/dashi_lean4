@@ -78,14 +78,19 @@ echo "GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK"
 # New independent positive named-topic source/local policy check:
 # evidence-based interpretation of the original Bush/he discourse;
 # not a human S29 admission, QID or historical truth theorem.
-(
-  cd "$ROOT"
-  lake env lean --run \
-    DASHI/output-final_aristotle/RequestProject/Slr/GwbNamedTopicPolicy.lean \
-    "$OUT/native-inspection.json" \
-    "$OUT/native-frontier.json" \
-    "$OUT/native-named-topic-inference.json"
-) | tee "$OUT/lean-named-topic-policy.log"
+if python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1],encoding="utf-8")).get("source_local_inference_derived") is True else 1)' \
+    "$OUT/native-named-topic-inference.json"; then
+  (
+    cd "$ROOT"
+    lake env lean --run \
+      DASHI/output-final_aristotle/RequestProject/Slr/GwbNamedTopicPolicy.lean \
+      "$OUT/native-inspection.json" \
+      "$OUT/native-frontier.json" \
+      "$OUT/native-named-topic-inference.json"
+  ) | tee "$OUT/lean-named-topic-policy.log"
+else
+  echo "GWB_NAMED_TOPIC_SCOPE_UNRESOLVED: original native policy did not produce a positive antecedent"
+fi
 
 # Optional original SensibLaw typed-binding graph: this runs the ORIGINAL
 # producer on a full-book exact-content PNF/annotation graph, not a new binder.
@@ -118,13 +123,15 @@ LEDGER_OPTS=(
   --frontier "$OUT/native-frontier.json"
   --lean-log "$OUT/lean-frontier-kernel.log"
   --named-topic-inference "$OUT/native-named-topic-inference.json"
-  --named-topic-lean-log "$OUT/lean-named-topic-policy.log"
   --ledger "$OUT/joint-evidence-ledger.json"
   --worksheet "$OUT/original-antecedent-review-worksheet.json"
   --adversarial
 )
 if [[ -f "$OUT/original-typed-binding-crosswalk.json" ]]; then
   LEDGER_OPTS+=( --typed-binding-weld "$OUT/original-typed-binding-crosswalk.json" )
+fi
+if [[ -f "$OUT/lean-named-topic-policy.log" ]]; then
+  LEDGER_OPTS+=( --named-topic-lean-log "$OUT/lean-named-topic-policy.log" )
 fi
 if [[ -n "${GWB_Q207_KERNEL_LOG:-}" ]]; then
   LEDGER_OPTS+=( --q207-log "$GWB_Q207_KERNEL_LOG" )

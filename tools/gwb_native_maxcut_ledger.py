@@ -411,12 +411,95 @@ def validate_named_topic_inference(
     return can_infer
 
 
+def validate_native_source_consumer(
+    inspection: dict[str, Any],
+    frontier: dict[str, Any],
+    inference: dict[str, Any],
+    consumer: dict[str, Any],
+    replay: dict[str, Any] | None,
+) -> bool:
+    """Check a real original SLR consumer; never infer governed Level-3 identity.
+
+    The consumer is a *bounded interpretation*.  It is meaningful if its
+    original source revision, focused mention, selected source span, parser,
+    evidence, replay and policy all agree with the native inputs.
+    """
+    require(consumer.get("schema") == "slr-native-source-local-consumer-v1"
+            and consumer.get("consumer_scope_ref") ==
+            "source-local-antecedent-query:declared-named-topic-policy-v1",
+            "wrong consumer or interpretative authority scope")
+    exact = {
+        "source_document_ref": inspection["document_ref"],
+        "source_revision_ref": inspection["source_revision_ref"],
+        "source_content_sha256": inspection["canonical_content_sha256"],
+        "original_focus_mention_ref": inspection["focus"]["mention_ref"],
+        "original_focus_statement_ref": inspection["focus"]["statement_ref"],
+        "original_focus_region_ref": inspection["focus"]["region_ref"],
+        "original_focus_surface": inspection["focus"]["surface"],
+        "original_selected_antecedent_statement_ref":
+            inspection["candidate_antecedent"]["statement_ref"],
+        "original_selected_antecedent_region_ref":
+            inspection["candidate_antecedent"]["region_ref"],
+        "original_selected_antecedent_surface":
+            inspection["candidate_antecedent"]["surface"],
+        "original_parser_run_ref": frontier["parser_run_ref"],
+        "original_candidate_set_ref": frontier["candidate_set_ref"],
+        "original_review_item_ref": inspection["review_item_ref"],
+        "original_s29_status": inspection["s29_review_status"],
+        "original_policy_ref": inference["policy_ref"],
+        "original_derivation_ref": inference["derivation_ref"],
+        "original_person_support": inference["supporting_person_mentions"],
+    }
+    for key, val in exact.items():
+        require(consumer.get(key) == val,
+                f"original source consumer mismatch or forged {key}")
+    require(consumer.get("original_focus_span") == [4534,4536]
+            and consumer.get("original_selected_antecedent_span") == [4310,4314]
+            and isinstance(consumer.get("answer_receipt_ref"),str)
+            and consumer["answer_receipt_ref"].startswith(
+                "source-relative-answer:sha256:"),
+            "source consumer did not carry exact original focus/span/receipt")
+    positive=inference["source_local_inference_derived"]
+    require(consumer.get("answer_value") ==
+            (inference["source_local_answer"] if positive else None)
+            and consumer.get("answer_kind") ==
+            ("DERIVED_UNDER_NAMED_TOPIC_POLICY" if positive
+             else "EXPLICIT_UNRESOLVED")
+            and consumer.get("source_local_policy_inference_paid") is positive,
+            "native consumer answer was not derived by exact named-topic policy")
+    for flag in (
+        "typed_unique_identity_witness_paid",
+        "governed_semantic_identity_paid",
+        "level_three_substitution_paid",
+        "external_qid_paid",
+        "historical_truth_paid",
+    ):
+        require(consumer.get(flag) is False,
+                f"consumer silently promoted unpaid authority: {flag}")
+    if replay is not None:
+        require(replay.get("schema") ==
+                "slr-native-source-local-answer-replay-v1"
+                and replay.get("result") == "CURRENT"
+                and replay.get("current") == consumer
+                and replay.get("prior_receipt_ref") ==
+                consumer["answer_receipt_ref"]
+                and replay.get("original_level_one_source_preserved") is True
+                and replay.get("previous_interpretation_usable") is True
+                and replay.get("original_level_three_retracted_here") is False
+                and replay.get("external_identity_inferred") is False,
+                "native original source consumer replay is stale, forged or promoting")
+    return positive
+
+
 def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
                 *, lean_log: str = "",
                 q207_log: str = "",
                 typed_binding_weld: dict[str, Any] | None = None,
                 named_topic_inference: dict[str, Any] | None = None,
-                named_topic_lean_log: str = "") -> tuple[dict[str, Any], dict[str, Any]]:
+                named_topic_lean_log: str = "",
+                source_consumer: dict[str, Any] | None = None,
+                source_consumer_replay: dict[str, Any] | None = None
+                ) -> tuple[dict[str, Any], dict[str, Any]]:
     entries = validate_inspection(inspection)
     nominations = validate_frontier(inspection, frontier, entries)
     if typed_binding_weld is not None:
@@ -430,6 +513,17 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         require(named_topic_inference is not None and
                 "GWB_NAMED_TOPIC_LINGUISTIC_POLICY_KERNEL_OK" in named_topic_lean_log,
                 "Lean named-topic policy check did not run on source evidence")
+    if source_consumer_replay is not None:
+        require(source_consumer is not None,
+                "replay supplied without original consumer receipt")
+    consumer_checked=False
+    if source_consumer is not None:
+        require(named_topic_inference is not None,
+                "consumer cannot be paid without independently checked native policy")
+        consumer_checked=validate_native_source_consumer(
+            inspection,frontier,named_topic_inference,source_consumer,
+            source_consumer_replay,
+        )
     if lean_log:
         require(LEAN_MARKER in lean_log,
                 "Lean kernel did not emit bounded frontier marker")
@@ -511,6 +605,13 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         ),
         "named_topic_source_inference_derived": native_source_answer,
         "source_local_interpretation_paid_under_declared_policy": native_source_answer,
+        "original_source_consumer_certificate_checked":
+            bool(source_consumer is not None and consumer_checked),
+        "original_source_consumer_replay_current":
+            bool(source_consumer_replay is not None and consumer_checked),
+        "original_source_consumer_receipt_ref":
+            source_consumer.get("answer_receipt_ref")
+            if source_consumer is not None else None,
         "source_local_policy_scope": "original five pre-focus/focus regions; repeated single named PERSON topic",
         "named_topic_policy_ref": (
             named_topic_inference["policy_ref"]
@@ -546,6 +647,11 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
             hash_json(named_topic_inference)
             if named_topic_inference is not None else None
         ),
+        "input_original_source_consumer_sha256":
+            hash_json(source_consumer) if source_consumer is not None else None,
+        "input_original_source_consumer_replay_sha256":
+            hash_json(source_consumer_replay)
+            if source_consumer_replay is not None else None,
         "input_original_typed_binding_weld_sha256":
             hash_json(typed_binding_weld) if typed_binding_weld is not None else None,
         "source_revision_scopes_distinct": BOOK_SHA != WIKI_SHA,
@@ -663,6 +769,8 @@ def main() -> int:
     p.add_argument("--typed-binding-weld", type=Path)
     p.add_argument("--named-topic-inference", type=Path)
     p.add_argument("--named-topic-lean-log", type=Path)
+    p.add_argument("--source-consumer", type=Path)
+    p.add_argument("--source-consumer-replay", type=Path)
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--worksheet", type=Path, required=True)
     p.add_argument("--adversarial", action="store_true")
@@ -683,6 +791,11 @@ def main() -> int:
         typed_binding_weld=typed,
         named_topic_inference=named_topic,
         named_topic_lean_log=named_topic_log,
+        source_consumer=json.loads(args.source_consumer.read_text(encoding="utf-8"))
+            if args.source_consumer else None,
+        source_consumer_replay=json.loads(
+            args.source_consumer_replay.read_text(encoding="utf-8")
+        ) if args.source_consumer_replay else None,
     )
     if args.adversarial:
         negative_count = run_live_adversarial_checks(inspection, frontier)

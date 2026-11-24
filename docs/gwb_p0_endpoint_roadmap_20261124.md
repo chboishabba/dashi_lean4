@@ -108,14 +108,81 @@ a **real P0-C source producer gap**, not another reason to keep
 against the original SensibLaw owner, not create additional C4
 source inspectors or overwrite the verified local P0-B patch.
 
+## P0 native numeric PNF decision — formal proof BEFORE Rust port
+
+Owner request: after the stopped two-hour Python projection,
+**formalize strict numeric-PNF semantics and bounded execution
+before any Rust port**. New controlling design:
+[Numeric PNF Native Rust Formal Port](numeric_pnf_native_rust_formal_port_20261124.md).
+New standalone Lean contract:
+DASHI/output-final_aristotle/RequestProject/Slr/
+NumericPnfRustPortContract.lean, with isolated local acceptance:
+
+    bash scripts/check_numeric_pnf_rust_formal_contract.sh
+
+Formal port code is **written but not Lean-accepted locally**.
+No native numeric-PNF compiler is claimed and no full job was restarted.
+
+**Important root-cause split**: the stopped job invoked the historical
+SensibLaw run_complete_tranche.py CLI, whose documented default
+is local-compatibility-replay. The original production wrapper
+run_complete_tranche_production.py explicitly forces --strict-exact.
+The historical compatibility typing/persistence path is known to
+have hour-scale costs and is not the correct Rust reference to port.
+Inspect the actual execution_strategy_ref receipt before assigning
+the full two-hour cost to strict numeric PNF.
+
+**Manifestation blocker remains**: P0-B's original canonical book
+source is the pinned 7ff2ec8f… digest (previous audit 6,678 bytes).
+The stopped tranche's much larger GWB source/representation must NOT
+be called equivalent on title or nearby text. A new Rust output
+cannot discharge WELD-01 until exact bytes, Unicode coordinate
+contract, source revision and numeric run identity are checked.
+An exact manifest and independent record parity is first.
+
+**Mandatory formal Rust-port obligations**:
+
+- N0 exact manifestation/source/revision and UTF-8/codepoint mapping;
+- N1 no false missing-head fallback and exact sentence/fibre ownership;
+- N2 byte/semantic equivalence of canonical proposal grouping,
+  first-compatible role grouping and factor/residual/receipt IDs;
+- N3 global dependency validity plus reverse dirty-owner closure,
+  no associative same-owner append optimization without a proof;
+- N4 represented/open-world candidate semantics, execution prune
+  distinct from refutation, 64-cap residual, signed evidence;
+- N5 accepted numeric typed identity and source-backed H9 occurrence
+  cannot be replaced by an SLR Bush label or candidate ranking;
+- N6 native persisted Level-3 must use original witness/constraint
+  authority, reversible transactional retraction;
+- N7 consumer, provenance, residual, open-world and replay equality
+  against the **strict numeric production** oracle.
+
+**Work-cost contract** is initially O(new input + affected
+dependency edges + sum of canonical dirty-owner reduction costs +
+emitted output). The stronger delta-linear reduction cost is NOT
+licensed without the original first-compatible same-owner
+homomorphism/factorization proof. Count actual physical traversals
+and bytes, not merely wall time or returned factor count; cap work
+in resumable 90-second checkpoints. Preserve original Agda
+consumer-sufficiency, owner-factorization and dependency-indexed
+proof donors rather than duplicating them.
+
+**First acceptance**: compile targeted Lean module with no axioms/
+sorry, frozen strict-numeric parity on bounded original passage,
+then on exact 7ff2ec8f… book, then adversarial reordering/
+missing-dependency/open-world/replay, then real performance.
+Only after those gates integrate native producers with the original
+numeric PostgreSQL schema, typed H9 demand, accepted witness and
+transactional Level-3/retraction. No source→Q23505 shortcut.
+
 ## 2. Five substantial endpoint phases (not C4.13, C4.14, ...)
 
 | Phase | Mathematical/operational deliverable | Current gate | Canonical producer -> consumer |
 | --- | --- | --- | --- |
 | **P0-A** | Exact original source, native parser, named-topic answer | **ACCEPTED under declared bounded policy**, latest run operator-reported | SLR original source/C4.12/M12 native parser → SLR `derive` → DASHI `GwbNamedTopicPolicy.lean` |
 | **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **ACCEPTED LOCALLY** in run-TnDZB8qZ (operator-reported; local CLI/Lean fixes unpushed) | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
-| **P0-C** | One real **typed-demand resolution** plus governed document-derived identity witness | **OPEN, first mathematical/semantic hard gate** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
-| **P0-D** | Witnessed Level-3 substitution, consumer query, selective retraction and replay | **OPEN; reuse existing SQL owner** | Original `semantic_pnf_identity_projection` → `semantic_pnf_factor_derivation` → query consumer; `execution.retract_numeric_pnf_identity_witness` → dependent reopen |
+| **P0-C** | Formal Rust numeric producer and exact source→typed demand→unique witness | **FORMAL MODEL WRITTEN; kernel/parity and original producer OPEN** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
+| **P0-D** | Witnessed Level-3 substitution, consumer query, selective retraction and replay | **OPEN; original SQL authority and native parity required** | Original `semantic_pnf_identity_projection` → `semantic_pnf_factor_derivation` → query consumer; `execution.retract_numeric_pnf_identity_witness` → dependent reopen |
 | **P1-E** | Independently checked GHWB/Q23505 external alignment + one JMD property; separately Q207 article | **OPEN, independent source lane** | Pinned JMD EntityData/KB property → reviewed original source/KB alignment → DASHI Lean kernel/obligation payment |
 
 **No new generic parser, S29 impersonation or direct source-to-QID

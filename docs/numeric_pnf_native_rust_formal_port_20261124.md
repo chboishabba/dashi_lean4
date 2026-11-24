@@ -25,6 +25,44 @@ A larger GWB article or tranche must not be silently called that exact
 manifestation. Require cryptographic bytes, Unicode coordinate encoding
 and revision match *before* any compiled numeric object can support WELD-01.
 
+## Current implementation status and operator boundary
+
+The first **non-admitting native reduction kernel** is now committed in
+SLR PR #78 at
+`crates/sl-pg-source-store/src/numeric_pnf_native.rs`
+and exported by the source-store crate. It implements:
+
+- ITIR typed-canonical v1 hashes for the JSON-representable proposal
+  identity subset, with independently computed golden SHA-256 cases;
+- exact manifest SHA/UTF-8 bytes/Unicode codepoint validation;
+- canonical proposal-identity checking and stable four-axis
+  signature grouping, with first-compatible greedy role allocation;
+- strict missing-observation/dependency residuals, plus an explicit
+  historical empty-known-set compatibility mode (not the default);
+- candidate represented/active/deferred/refuted/open-world separation;
+  budget-pruning is nonsemantic, and numeric identity admission has
+  **no API on this kernel**;
+- accounting of actual proposal and dependency visits, group
+  comparisons and emitted outputs; unit negative-control tests.
+
+**This is not yet a complete native numeric-PNF compiler.**
+The implementation currently lacks original H9 numeric object/typed
+demand production, original SQL sink integration, fully replayable
+source/owner checkpoints, accepted identity/Level-3/retraction,
+reference parity on original golden proposals and verified Lean-to-
+Rust correspondence. The Lean file is also still uncompiled here
+because no Lean/Cargo toolchain is available in this environment.
+No speedup or universal numerical equivalence has been certified.
+
+**Operator instruction: do not hand off intermediate commands.**
+The requested threshold is BOTH completed formalization and
+an integrated Rust implementation, with self-checked source/
+semantic parity and bounded workload receipts, *before*
+requesting any workstation run. No new full Python tranche,
+no early Lean script request, no incremental cargo trial request.
+Historical run scripts in this roadmap remain internal
+acceptance procedures rather than an operator task.
+
 ## 1. Existing donors and why the port is not a rewrite
 
 | Owner | Existing source contract | Rust port must preserve |
@@ -249,6 +287,8 @@ witnessed Level-3/retraction follow only on paid data. P0-B
 original source-local Bush inference remains accepted.
 Independent Q23505/JMD proof is WELD-07, not a compiler test.
 
-**Current action:** formal model/architecture are committed for
-local Lean verification; NO Rust compiler port and NO new
-full-source numeric-PNF job have been launched here.
+**Current boundary:** first pure Rust kernel committed and unverified;
+the full producer and persistence implementation, Lean kernel and
+Rust/strict parity remain open. No full-source numeric-PNF job has
+been launched here. Do not request operator execution before all
+completion criteria have been met.

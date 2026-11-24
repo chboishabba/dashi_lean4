@@ -375,6 +375,63 @@ theorem occurrence_transport_retains_both (s : State) (a b : NumericId) :
     b ∈ (transportOccurrence (transportOccurrence s a) b).semantic.represented := by
   simp [transportOccurrence]
 
+
+/-- The source occurrence fibre and the identity-class fibre are distinct.
+    The class map is partial until existing proof-relevant, source-bound
+    admission licenses it. It is not computed from spellings or QIDs. -/
+structure AdmittedClassProjection (Class : NumericId → Option NumericId)
+    (Admitted : NumericId → NumericId → Prop) where
+  sound : ∀ o e, Class o = some e → Admitted o e
+
+/-- This is a different endpoint from ExactTypedSelection: all live original
+    occurrences must be covered, and every one must have a licensed map to
+    the same entity. A class-level endpoint does not fabricate the unique
+    source-object witness required by the older m069/m072 demand API. -/
+structure VerifiedClassSelection (s : State) (Live : NumericId → Prop)
+    (Class : NumericId → Option NumericId)
+    (Admitted : NumericId → NumericId → Prop) (chosen : NumericId) where
+  coverage : VerifiedCoverage s Live
+  classProjection : AdmittedClassProjection Class Admitted
+  inhabited : ∃ o, Live o
+  allLiveInClass : ∀ o, Live o → Class o = some chosen
+
+theorem unique_class_preserves_occurrence_evidence
+    {s : State} {Live : NumericId → Prop}
+    {Class : NumericId → Option NumericId}
+    {Admitted : NumericId → NumericId → Prop} {chosen : NumericId}
+    (cert : VerifiedClassSelection s Live Class Admitted chosen)
+    (o : NumericId) (live : Live o) :
+    o ∈ s.semantic.represented ∧ Admitted o chosen :=
+  ⟨cert.coverage.allLiveRepresented o live,
+    cert.classProjection.sound o chosen (cert.allLiveInClass o live)⟩
+
+theorem unknown_class_blocks_selection
+    {s : State} {Live : NumericId → Prop}
+    {Class : NumericId → Option NumericId}
+    {Admitted : NumericId → NumericId → Prop} {chosen o : NumericId}
+    (live : Live o) (unknown : Class o = none) :
+    ¬ Nonempty (VerifiedClassSelection s Live Class Admitted chosen) := by
+  intro h
+  obtain ⟨cert⟩ := h
+  have contradictionEq := cert.allLiveInClass o live
+  rw [unknown] at contradictionEq
+  cases contradictionEq
+
+theorem different_class_blocks_selection
+    {s : State} {Live : NumericId → Prop}
+    {Class : NumericId → Option NumericId}
+    {Admitted : NumericId → NumericId → Prop} {chosen o other : NumericId}
+    (live : Live o) (mapped : Class o = some other) (different : other ≠ chosen) :
+    ¬ Nonempty (VerifiedClassSelection s Live Class Admitted chosen) := by
+  intro h
+  obtain ⟨cert⟩ := h
+  exact different (Option.some.inj (mapped.symm.trans (cert.allLiveInClass o live)))
+
+theorem two_occurrences_can_have_one_class :
+    ∃ (a b e : NumericId) (Class : NumericId → Option NumericId),
+      a ≠ b ∧ Class a = some e ∧ Class b = some e := by
+  exact ⟨1, 2, 3, fun _ => some 3, by decide, rfl, rfl⟩
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -397,3 +454,8 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_preserves_open_world
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_cannot_admit
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_retains_both
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unique_class_preserves_occurrence_evidence
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unknown_class_blocks_selection
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.different_class_blocks_selection
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.two_occurrences_can_have_one_class

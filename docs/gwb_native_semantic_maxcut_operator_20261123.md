@@ -7,6 +7,58 @@ source-bounded unresolved baseline**. It is not an S29 human review,
 an admitted referent, a GHWB/Q23505 external identity, a reviewed
 Wikipedia property alignment, or a complete 51-QID world theorem.
 
+## Updated 24 November 2026 P0 endpoint — positive local linguistic answer
+
+The previous operator `run-fmUVYwIY` PASSED its targeted
+C4.11/C4.12/M1 frontier and formal-boundary tests
+(operator-reported, new run artifacts not committed). However,
+its `answer_value=null` came from the **deliberate nonresolving
+pipeline design**, not from evidence that the original book's
+`he` is impossible to interpret.
+
+Original C4.10 was explicitly reviewer-supplied geometry; SLR
+never ran a nearest-name resolver. The original binder's
+distance ordering before a 64-member candidate cap is a
+completeness hazard, not a coreference decision. Crucially,
+original SLR accepts `DeterministicReviewedPolicy` and
+`HumanReview` as **distinct** authority routes; S29 human
+`Accept` is not necessary for ordinary linguistic inference.
+
+This updated operator packet also executes
+`sensiblaw native-antecedent-review derive REVIEW_ITEM_REF`,
+a source-native **named-topic continuity** policy. The first
+real source contains two original `Bush` PERSON annotations
+in distinct prior sentences and no different named PERSON
+before `he`. With matching original pronoun morphology and
+no source quotation barrier, the policy should derive
+`source_local_answer=Bush` and
+`source_local_inference_derived=true` while the
+S29 review remains Pending. A competing PERSON or scope
+conflict returns an explicit unresolved result. This result
+is **not** a human review receipt, universe-complete coreference
+or external Q23505 claim.
+
+The DASHI joint ledger now independently recomputes the
+named-PERSON grouping and source links; it changes the book
+lane's `answer_kind` to
+`DETERMINISTIC_POLICY_SOURCE_LOCAL` with `answer_value=Bush`
+when verified. It also runs independent
+`GwbNamedTopicPolicy.lean`, new marker
+`GWB_NAMED_TOPIC_LINGUISTIC_POLICY_KERNEL_OK`, and ten
+additional real-input mutations. The preexisting
+`GWB_NATIVE_FRONTIER_BOUNDARY_KERNEL_OK`,
+`GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK` and
+14 original adversarial controls are retained.
+Nine native named-topic unit tests plus ten Python policy
+tests are newly defined and **not yet locally run**.
+
+This is the requested **positive linguistic endpoint**, not
+another source inspector. Institutionally approved policy
+activation, universal typed live-candidate coverage, external
+Q23505 linkage, JMD property/KB support and historical truth
+remain separate obligations. See
+`docs/gwb_named_topic_positive_semantic_path_20261124.md`.
+
 ## First command: one targeted local acceptance
 
 Use the original SLR and dashi_lean4 PR checkouts; both must be current:
@@ -50,7 +102,7 @@ string does not pay this proof.
    observed rivals. The output explicitly marks morphology and
    quotation/accessibility `UNASSESSED` and does **not** assert
    exhaustive semantic readings, identity, QID, or truth.
-4. Run 39 Python fixture regressions and the new independent
+4. Run the original 39 Python fixture regressions plus ten named-topic policy cases and the new independent
    Lean theorem+frontier checker. Lean proves the original-level
    retention/retraction contract, source/revision mismatch exclusion,
    consumer-coverage/invariance implication and an explicit
@@ -77,6 +129,8 @@ Outputs inside that run include:
 - `native-inspection.json`: C4.12 exact original store review state
 - `original-parser-runs.json`: eligible original source-matching runs
 - `native-frontier.json`: bounded original parser nominations
+- `native-named-topic-inference.json`: **positive source-local Bush reading under explicit policy** when original discourse conditions hold
+- `lean-named-topic-policy.log`: independently checked source-local policy decision
 - `lean-frontier-kernel.log`: targeted independent Lean certificate
 - `joint-evidence-ledger.json`: book and Wikipedia *distinct* status
 - `original-antecedent-review-worksheet.json`: actual rivals, all unreviewed

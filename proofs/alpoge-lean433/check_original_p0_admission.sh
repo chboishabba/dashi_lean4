@@ -83,6 +83,54 @@ if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
   echo 'Optional RowSrc direct consumer: exact axiom receipt audit accepted.'
 fi
 
+
+# Optional independent arithmetic consumer, never a prerequisite for RH.
+# Use a separately prepared, unmodified Robin1984 checkout, not a new vendored copy.
+# Its full commit/tree and toolchain are checked before any optional build.
+if [[ -n "${GRH_P0_ROBIN_CHECKOUT:-}" ]]; then
+  ROBIN="$(cd "$GRH_P0_ROBIN_CHECKOUT" && pwd -P)"
+  [[ "$(git -C "$ROBIN" rev-parse HEAD)" == acab1a31f31e0499518a4416b63281e0b4838f9c ]]
+  [[ "$(git -C "$ROBIN" rev-parse 'HEAD^{tree}')" == 0627913ee1caa5b001c06df87b24d952ed03ec02 ]]
+  [[ "$(git -C "$ROBIN" rev-parse HEAD:lean-toolchain)" == a8afa7d1b02d96f0671eba854a8dc4b416beb473 ]]
+  [[ -z "$(git -C "$ROBIN" status --porcelain)" ]]
+  [[ "$(git -C "$ROBIN" rev-parse HEAD:lake-manifest.json)" == ce2d042a400921cd1f5af10a47d47c5e69cb0419 ]]
+  python3 - "$CHECKOUT/lake-manifest.json" "$ROBIN/lake-manifest.json" <<'PY'
+import json, sys
+from pathlib import Path
+a, b = [{p["name"]: p["rev"] for p in json.loads(Path(x).read_text())["packages"]} for x in sys.argv[1:]]
+if not a or not all(b.get(name) == rev for name, rev in a.items()):
+    raise SystemExit("BLOCKED: original RH dependencies do not match the arithmetic source")
+PY
+  (
+    cd "$ROBIN"
+    lake build Solution 2>&1 | tee "$REPORT_DIR/original-robin-build.log"
+  )
+  [[ -z "$(git -C "$ROBIN" status --porcelain)" ]]
+  # Obtain the actual Lake path rather than guess extra dependency directories.
+  # Normalize paths relative to the original arithmetic checkout.
+  ROBIN_PATH="$(cd "$ROBIN" && lake env bash -c 'printf "%s" "$LEAN_PATH"')"
+  ROBIN_PATH="$(python3 - "$ROBIN" "$ROBIN_PATH" <<'PY'
+import os, sys
+root, paths = sys.argv[1:]
+parts = [p for p in paths.split(os.pathsep) if p]
+if not parts:
+    raise SystemExit("BLOCKED: no arithmetic module search path")
+print(os.pathsep.join(os.path.abspath(os.path.join(root, p)) for p in parts))
+PY
+)"
+  (
+    cd "$CHECKOUT"
+    lake env bash -c 'export LEAN_PATH="$LEAN_PATH:$1"; exec lean "$2"' _ \
+      "$ROBIN_PATH" "$SIDECAR/RHArithmeticAdmission.lean" 2>&1 |
+      tee "$REPORT_DIR/arithmetic-admission-lean.log"
+  )
+  python3 "$ROOT/scripts/check_exact_lean_axiom_receipts.py" \
+    "$REPORT_DIR/arithmetic-admission-lean.log" \
+    DASHI.AlpogeRH.Arithmetic.robin \
+    DASHI.AlpogeRH.Arithmetic.lagarias
+  echo 'Optional original arithmetic consumers: exact axiom receipt audit accepted.'
+fi
+
 printf 'P0 SOURCE-ADMISSION ACCEPTED (isolated v4.33.1): %s\n' "$CHECKOUT"
 printf 'Receipts: %s\n' "$REPORT_DIR"
 printf 'Still OPEN: compatible root proof import and Agda all-character semantic mapping.\n'

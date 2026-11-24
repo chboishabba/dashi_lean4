@@ -89,8 +89,8 @@ fi
 # Its full commit/tree and toolchain are checked before any optional build.
 if [[ -n "${GRH_P0_ROBIN_CHECKOUT:-}" ]]; then
   ROBIN="$(cd "$GRH_P0_ROBIN_CHECKOUT" && pwd -P)"
-  [[ "$(git -C "$ROBIN" rev-parse HEAD)" == acab1a31f31e0499518a4416b63281e0b4838f9c ]]
-  [[ "$(git -C "$ROBIN" rev-parse 'HEAD^{tree}')" == 0627913ee1caa5b001c06df87b24d952ed03ec02 ]]
+  [[ "$(git -C "$ROBIN" rev-parse HEAD)" == 5ce18bf3487c68d9353276ef5811057f60d17808 ]]
+  [[ "$(git -C "$ROBIN" rev-parse 'HEAD^{tree}')" == 7714a8e1a93a7472e6f0ddf20211a4ef9e31c633 ]]
   [[ "$(git -C "$ROBIN" rev-parse HEAD:lean-toolchain)" == a8afa7d1b02d96f0671eba854a8dc4b416beb473 ]]
   [[ -z "$(git -C "$ROBIN" status --porcelain)" ]]
   [[ "$(git -C "$ROBIN" rev-parse HEAD:lake-manifest.json)" == ce2d042a400921cd1f5af10a47d47c5e69cb0419 ]]
@@ -127,7 +127,9 @@ PY
   python3 "$ROOT/scripts/check_exact_lean_axiom_receipts.py" \
     "$REPORT_DIR/arithmetic-admission-lean.log" \
     DASHI.AlpogeRH.Arithmetic.robin \
-    DASHI.AlpogeRH.Arithmetic.lagarias
+    DASHI.AlpogeRH.Arithmetic.lagarias \
+    DASHI.AlpogeRH.Arithmetic.cyclotomic_corrected_ideal_robin \
+    DASHI.AlpogeRH.Arithmetic.cyclotomic_dedekind_rh
   echo 'Optional original arithmetic consumers: exact axiom receipt audit accepted.'
 fi
 

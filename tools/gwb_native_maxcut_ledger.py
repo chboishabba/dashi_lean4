@@ -279,14 +279,157 @@ def validate_original_typed_binding_weld(
                     "foreign, future or promoted original factor anchor")
 
 
+def validate_named_topic_inference(
+    inspection: dict[str, Any], frontier: dict[str, Any],
+    inference: dict[str, Any], entries: list[dict[str, Any]],
+) -> bool:
+    """Independently reconstruct the named PERSON scope from real source data.
+
+    This deliberately verifies the Rust policy premise on the *source*, not a
+    success string. The result is a bounded linguistic inference and never
+    pretends to be a globally complete interpretation or human S29 action.
+    """
+    require(inference.get("schema") == "slr-native-named-topic-inference-v1"
+            and inference.get("policy_ref") ==
+            "slr:policy:source-local-repeated-person-topic:v1",
+            "native deterministic linguistic policy unknown")
+    for lhs, rhs in (
+        ("original_document_ref", "document_ref"),
+        ("original_source_revision_ref", "source_revision_ref"),
+        ("canonical_content_sha256", "canonical_content_sha256"),
+        ("parser_run_ref", "parser_run_ref"),
+        ("review_item_ref", "review_item_ref"),
+        ("focus_mention_ref", "focus_mention_ref"),
+    ):
+        expected = frontier.get(rhs)
+        require(inference.get(lhs) == expected,
+                f"native policy foreign {lhs}")
+    require(inference.get("focus_span") == [4534, 4536] and
+            inference.get("focus_surface") == "he" and
+            inference.get("s29_status_at_derivation") ==
+            inspection["s29_review_status"] and
+            inference.get("requires_human_s29_to_form_policy_inference")
+            is False and
+            inference.get("governed_source_local_admission_paid") is False and
+            inference.get("complete_all_live_referents_proven") is False and
+            inference.get("external_qid_paid") is False and
+            inference.get("historical_claim_truth_paid") is False,
+            "linguistic inference conflates source answer, human review or world truth")
+    require(isinstance(inference.get("derivation_ref"), str) and
+            inference["derivation_ref"].startswith(
+                "source-local-topic-inference:sha256:"),
+            "original native policy derivation ref missing")
+    require(frontier.get("focus_parser_pos") == "PRON" and
+            isinstance(frontier.get("focus_parser_dependency_ref"), str),
+            "original pronoun POS/dependency not reopened")
+    raw_morph = frontier.get("focus_parser_morph_json")
+    compatible = True
+    if raw_morph is not None:
+        require(isinstance(raw_morph, str),
+                "original pronoun morphology malformed")
+        try:
+            morph = json.loads(raw_morph)
+        except (ValueError, TypeError) as e:
+            raise EvidenceRejected("original morphology JSON malformed") from e
+        require(isinstance(morph, dict),
+                "original pronoun morphology not a typed object")
+        for key, desired in (("Person", "3"),("Number", "Sing"),("Gender","Masc")):
+            vals = morph.get(key)
+            if vals is not None and desired not in (
+                vals if isinstance(vals, list) else [vals]
+            ):
+                compatible = False
+    people = [
+        n for n in frontier["nominations"]
+        if n["observation_kind"] == "parser_entity"
+        and n["parser_pos_or_label"] == "PERSON"
+    ]
+    unique_mentions = {
+        (n["original_statement_ref"], n["original_start_char"],
+         n["original_end_char"]): n for n in people
+    }
+    groups: dict[str,list[dict[str,Any]]] = {}
+    for n in unique_mentions.values():
+        groups.setdefault(" ".join(n["surface"].split()).lower(), []).append(n)
+    names = sorted(groups)
+    require(inference.get("raw_parser_observation_count") ==
+            len(frontier["nominations"]) and
+            inference.get("named_person_observation_count") == len(people)
+            and inference.get("distinct_named_person_groups") == len(names)
+            and inference.get("named_person_groups") == names,
+            "policy hides or adds a PERSON group")
+    selected = inspection["candidate_antecedent"]
+    supports = groups.get(names[0], []) if len(names) == 1 else []
+    actually_in_group = any(
+        n["original_statement_ref"] == selected["statement_ref"]
+        and n["original_region_ref"] == selected["region_ref"]
+        and n["original_start_char"] == selected["start_char"]
+        and n["original_end_char"] == selected["end_char"]
+        and n["surface"] == selected["surface"]
+        for n in supports
+    )
+    distinct_sentences = len({n["original_statement_ref"] for n in supports})
+    quoted = any(any(c in s["literal"] for c in '"“”„«»')
+                 for s in entries[:5])
+    can_infer = (
+        len(names) == 1 and actually_in_group and
+        distinct_sentences >= 2 and not quoted and compatible and
+        inspection["s29_review_status"] not in ("Rejected", "Superseded")
+    )
+    returned_support = inference.get("supporting_person_mentions")
+    require(isinstance(returned_support, list) and
+            len(returned_support) == len(supports),
+            "policy hid original supporting PERSON observation")
+    expected = {
+        (n["original_statement_ref"], n["original_region_ref"],
+         n["original_start_char"], n["original_end_char"],
+         n["parser_observation_ref"], n["surface"])
+        for n in supports
+    }
+    provided = {
+        (n["statement_ref"],n["region_ref"],n["start_char"],
+         n["end_char"],n["original_observation_ref"],n["name"])
+        for n in returned_support
+    }
+    require(expected == provided and
+            inference.get("distinct_supporting_original_sentences")
+            == distinct_sentences,
+            "policy supporting mentions are not the original source")
+    require(inference.get("source_local_inference_derived") is can_infer,
+            "native policy inference result differs from source-derived rule")
+    if can_infer:
+        require(inference.get("status") ==
+                "DERIVED_SOURCE_LOCAL_NAMED_TOPIC" and
+                inference.get("source_local_answer") ==
+                selected["surface"],
+                "source-local policy actor answer mismatches original source")
+    else:
+        require(inference.get("status") !=
+                "DERIVED_SOURCE_LOCAL_NAMED_TOPIC" and
+                inference.get("source_local_answer") is None,
+                "ambiguous source incorrectly declared resolved")
+    return can_infer
+
+
 def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
                 *, lean_log: str = "",
                 q207_log: str = "",
-                typed_binding_weld: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
+                typed_binding_weld: dict[str, Any] | None = None,
+                named_topic_inference: dict[str, Any] | None = None,
+                named_topic_lean_log: str = "") -> tuple[dict[str, Any], dict[str, Any]]:
     entries = validate_inspection(inspection)
     nominations = validate_frontier(inspection, frontier, entries)
     if typed_binding_weld is not None:
         validate_original_typed_binding_weld(inspection, frontier, typed_binding_weld)
+    native_source_answer = False
+    if named_topic_inference is not None:
+        native_source_answer = validate_named_topic_inference(
+            inspection, frontier, named_topic_inference, entries
+        )
+    if named_topic_lean_log:
+        require(named_topic_inference is not None and
+                "GWB_NAMED_TOPIC_LINGUISTIC_POLICY_KERNEL_OK" in named_topic_lean_log,
+                "Lean named-topic policy check did not run on source evidence")
     if lean_log:
         require(LEAN_MARKER in lean_log,
                 "Lean kernel did not emit bounded frontier marker")
@@ -330,6 +473,8 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         "review_complete": False,
         "identity_admission_paid": False,
         "external_qid_paid": False,
+        "source_local_named_topic_policy_inference":
+            named_topic_inference if named_topic_inference is not None else None,
     }
     residuals = [
         "M1: full semantic accessibility / syntactic binding and quotation scope",
@@ -356,8 +501,20 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         "bounded_parser_nomination_count": len(nominations),
         "bounded_parser_source_regions": 5,
         "semantic_exhaustiveness_paid": False,
-        "answer_kind": "EXPLICIT_UNRESOLVED",
-        "answer_value": None,
+        "answer_kind": (
+            "DETERMINISTIC_POLICY_SOURCE_LOCAL" if native_source_answer
+            else "EXPLICIT_UNRESOLVED"
+        ),
+        "answer_value": (
+            named_topic_inference["source_local_answer"] if native_source_answer
+            else None
+        ),
+        "named_topic_source_inference_derived": native_source_answer,
+        "named_topic_policy_ref": (
+            named_topic_inference["policy_ref"]
+            if named_topic_inference is not None else None
+        ),
+        "named_topic_lean_checked_in_this_packet": bool(named_topic_lean_log),
         "possible_antecedent_surface": "Bush",
         "source_relative_identity_paid": False,
         "world_q23505_paid": False,
@@ -383,6 +540,10 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
         "authority": "EVIDENCE_INVENTORY_WITH_EXPLICIT_UNPAID_GATES",
         "input_inspection_sha256": hash_json(inspection),
         "input_frontier_sha256": hash_json(frontier),
+        "input_named_topic_policy_sha256": (
+            hash_json(named_topic_inference)
+            if named_topic_inference is not None else None
+        ),
         "input_original_typed_binding_weld_sha256":
             hash_json(typed_binding_weld) if typed_binding_weld is not None else None,
         "source_revision_scopes_distinct": BOOK_SHA != WIKI_SHA,
@@ -451,6 +612,8 @@ def main() -> int:
     p.add_argument("--lean-log", type=Path)
     p.add_argument("--q207-log", type=Path)
     p.add_argument("--typed-binding-weld", type=Path)
+    p.add_argument("--named-topic-inference", type=Path)
+    p.add_argument("--named-topic-lean-log", type=Path)
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--worksheet", type=Path, required=True)
     p.add_argument("--adversarial", action="store_true")
@@ -461,9 +624,16 @@ def main() -> int:
     q207log = args.q207_log.read_text(encoding="utf-8") if args.q207_log else ""
     typed = json.loads(args.typed_binding_weld.read_text(encoding="utf-8")) \
         if args.typed_binding_weld else None
+    named_topic = json.loads(
+        args.named_topic_inference.read_text(encoding="utf-8")
+    ) if args.named_topic_inference else None
+    named_topic_log = args.named_topic_lean_log.read_text(encoding="utf-8") \
+        if args.named_topic_lean_log else ""
     ledger, worksheet = make_ledger(
         inspection, frontier, lean_log=log, q207_log=q207log,
         typed_binding_weld=typed,
+        named_topic_inference=named_topic,
+        named_topic_lean_log=named_topic_log,
     )
     if args.adversarial:
         negative_count = run_live_adversarial_checks(inspection, frontier)
@@ -473,7 +643,8 @@ def main() -> int:
     print(
         "GWB_NATIVE_MAXCUT_LEDGER_OK "
         f"parser_nominations={worksheet['candidate_count_bounded_parser_observations']} "
-        "local_identity=UNPAID external_qid=UNPAID claim_truth=UNPAID "
+        f"source_answer={book_display if False else ledger['book_lane']['answer_value'] or 'UNRESOLVED'} " 
+        "governed_identity=UNPAID external_qid=UNPAID claim_truth=UNPAID "
         f"lean_frontier_boundary={'CHECKED' if log else 'UNTESTED'}"
     )
     return 0

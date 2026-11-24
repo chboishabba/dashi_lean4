@@ -643,7 +643,7 @@ def main() -> int:
     print(
         "GWB_NATIVE_MAXCUT_LEDGER_OK "
         f"parser_nominations={worksheet['candidate_count_bounded_parser_observations']} "
-        f"source_answer={book_display if False else ledger['book_lane']['answer_value'] or 'UNRESOLVED'} " 
+        f"source_answer={ledger['book_lane']['answer_value'] or 'UNRESOLVED'} " 
         "governed_identity=UNPAID external_qid=UNPAID claim_truth=UNPAID "
         f"lean_frontier_boundary={'CHECKED' if log else 'UNTESTED'}"
     )

@@ -40,12 +40,80 @@ Original SLR already has
 `ResolutionAuthority::HumanReview`; do not force human S29 into
 every source-local linguistic inference.
 
+## 24 November 2026 latest operator acceptance and P0-C/D maximum cut
+
+The operator reports the **P0-B delta succeeded end-to-end** in
+`dashi_lean4/.dashi/gwb-relation/m2-source-consumer/run-TnDZB8qZ/`.
+The original PostgreSQL-backed `derive` returned source-local
+`Bush`, with a CURRENT source-bound consumer/replay; targeted
+`GWB_SOURCE_LOCAL_CONSUMER_KERNEL_OK`, 17/17 contract tests,
+18/18 new real-input adversarial controls and
+`GWB_SOURCE_LOCAL_CONSUMER_DELTA_OK` all passed. The code and
+run artifacts for this delta have not been pushed: the operator
+explicitly corrected the **nonexistent original `answer/replay`
+CLI calls in the runner** and a Lean Boolean proof locally.
+**Do not overwrite or suggest rebasing away these local corrections**;
+our earlier remote delta runner and Lean source are stale until the
+operator pushes their validated versions. Local P0-B acceptance is
+real (operator-reported), but there is no independent remote artifact
+audit of this run.
+
+Status change:
+- **P0-A ACCEPTED**: source-local `he→Bush` under the versioned,
+  bounded discourse policy, not a world/entity identification.
+- **P0-B ACCEPTED LOCALLY**: original-source consumer certificate,
+  current replay, Lean policy/consumer and 18 adversarial controls.
+  Read-only replay is not actual SQL Level-3 retraction.
+- **P0-C/D OPEN**: actual source↔numeric PNF object manifestation,
+  H9 occurrence support, typed demand and open-world coverage,
+  one `resolved_unique` original object target, accepted
+  document-derived witness, supported Level-3 factor, selective
+  **transactional** retraction.
+- **P1-E OPEN**: independent pinned GHWB/Q23505 EntityData,
+  reviewed book/KB statement alignment and one actual JMD property.
+  Q207 Wikipedia is a distinct source/world actor.
+
+**New one-pass original-owner audit committed (new files only):**
+`tools/gwb_numeric_pnf_maxcut_audit.py` plus
+`tests/test_gwb_numeric_pnf_maxcut_audit.py`. It consumes an
+actual P0-B source-local consumer receipt and a **named original
+SensibLaw numeric-PNF run**, reads existing original migrations
+051/069/074/077/083/086/089/123/124 through PostgreSQL
+**READ ONLY** and reports parser-token↔object support,
+H9 occurrence-bearing typed demands, represented candidate
+state/open-world coverage, real `resolved_unique` targets,
+admitted identity witnesses, factor alignment and Level-3 argument
+witnesses in one report. It does NOT create parser data, guess
+run IDs, mutate admissions or mark WELD-01–05 paid. Any same-ref
+match is only a locator; numeric document manifestation/source
+digest is a separate witness, not established by name similarity.
+This is **new code not yet operator-run**. No preexisting local
+SLR CLI or Lean files were modified.
+
+Typical invocation, after locating a genuinely original numeric
+run and its document ref (do not guess latest run):
+
+```sh
+cd /path/to/dashi_lean4
+SENSIBLAW_DATABASE_URL="$SENSIBLAW_DATABASE_URL" \
+python3 -m tools.gwb_numeric_pnf_maxcut_audit \
+  --consumer .dashi/gwb-relation/m2-source-consumer/run-TnDZB8qZ/native-source-consumer.json \
+  --numeric-run-ref 'ORIGINAL_NUMERIC_PNF_RUN_REF' \
+  --output .dashi/gwb-relation/m2-source-consumer/numeric-pnf-maxcut-audit.json
+```
+
+If the exact original book is not present in numeric PNF, that is
+a **real P0-C source producer gap**, not another reason to keep
+`he` unresolved. The next implementation should batch WELD-01–05
+against the original SensibLaw owner, not create additional C4
+source inspectors or overwrite the verified local P0-B patch.
+
 ## 2. Five substantial endpoint phases (not C4.13, C4.14, ...)
 
 | Phase | Mathematical/operational deliverable | Current gate | Canonical producer -> consumer |
 | --- | --- | --- | --- |
 | **P0-A** | Exact original source, native parser, named-topic answer | **ACCEPTED under declared bounded policy**, latest run operator-reported | SLR original source/C4.12/M12 native parser → SLR `derive` → DASHI `GwbNamedTopicPolicy.lean` |
-| **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **IMPLEMENTED/PUSHED; local delta acceptance PENDING** | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
+| **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **ACCEPTED LOCALLY** in run-TnDZB8qZ (operator-reported; local CLI/Lean fixes unpushed) | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
 | **P0-C** | One real **typed-demand resolution** plus governed document-derived identity witness | **OPEN, first mathematical/semantic hard gate** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
 | **P0-D** | Witnessed Level-3 substitution, consumer query, selective retraction and replay | **OPEN; reuse existing SQL owner** | Original `semantic_pnf_identity_projection` → `semantic_pnf_factor_derivation` → query consumer; `execution.retract_numeric_pnf_identity_witness` → dependent reopen |
 | **P1-E** | Independently checked GHWB/Q23505 external alignment + one JMD property; separately Q207 article | **OPEN, independent source lane** | Pinned JMD EntityData/KB property → reviewed original source/KB alignment → DASHI Lean kernel/obligation payment |
@@ -216,9 +284,10 @@ PostgreSQL native `answer` and `replay`, then independently checks
 the resulting consumer receipt and read-only current replay in
 DASHI's original source ledger and targeted Lean consumer proof.
 Output is a fresh `.dashi/gwb-relation/m2-source-consumer/run-XXXXXXXX/`.
-No old local output is overwritten. The new code has been pushed;
-**this delta run has not yet been performed in the operator's local
-environment**.
+No old local output is overwritten. The original remote code was pushed, but the **locally fixed** delta
+has now passed: run-TnDZB8qZ. The operator's runner/Lean corrections
+and latest run outputs remain unpushed, so this receipt is not
+independently audited from the remote PR.
 
 P0-B success marker `GWB_SOURCE_LOCAL_CONSUMER_DELTA_OK` is
 **not** a proof of `WELD-03`, `WELD-04`, `WELD-05` or

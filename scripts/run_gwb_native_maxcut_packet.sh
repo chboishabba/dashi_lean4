@@ -26,6 +26,7 @@ echo "No identity or QID promotion is performed."
   cd "$SLR_ROOT"
   cargo test -p sensiblaw-pg-source-store --lib native_antecedent_review
   cargo test -p sensiblaw-pg-source-store --lib native_antecedent_frontier
+  cargo test -p sensiblaw-pg-source-store --lib native_antecedent_named_topic
   cargo test -p sensiblaw-cli native_antecedent_review
   cargo run -p sensiblaw-cli -- native-antecedent-review inspect \
     "$REVIEW_ITEM" > "$OUT/native-inspection.json"
@@ -38,6 +39,13 @@ echo "No identity or QID promotion is performed."
     # Only auto-select uniquely complete original parser runs.
     cargo run -p sensiblaw-cli -- native-antecedent-review frontier \
       "$REVIEW_ITEM" > "$OUT/native-frontier.json"
+  fi
+  if [[ -n "$PARSER_RUN" ]]; then
+    cargo run -p sensiblaw-cli -- native-antecedent-review derive \
+      "$REVIEW_ITEM" "$PARSER_RUN" > "$OUT/native-named-topic-inference.json"
+  else
+    cargo run -p sensiblaw-cli -- native-antecedent-review derive \
+      "$REVIEW_ITEM" > "$OUT/native-named-topic-inference.json"
   fi
 )
 (
@@ -64,6 +72,18 @@ echo "No identity or QID promotion is performed."
     DASHI/output-final_aristotle/RequestProject/Slr/GwbCoreferenceFormalRepair.lean
 ) | tee "$OUT/lean-coreference-formal-repair.log"
 echo "GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK"
+
+# New independent positive named-topic source/local policy check:
+# evidence-based interpretation of the original Bush/he discourse;
+# not a human S29 admission, QID or historical truth theorem.
+(
+  cd "$ROOT"
+  lake env lean --run \
+    DASHI/output-final_aristotle/RequestProject/Slr/GwbNamedTopicPolicy.lean \
+    "$OUT/native-inspection.json" \
+    "$OUT/native-frontier.json" \
+    "$OUT/native-named-topic-inference.json"
+) | tee "$OUT/lean-named-topic-policy.log"
 
 # Optional original SensibLaw typed-binding graph: this runs the ORIGINAL
 # producer on a full-book exact-content PNF/annotation graph, not a new binder.
@@ -95,6 +115,8 @@ LEDGER_OPTS=(
   --inspection "$OUT/native-inspection.json"
   --frontier "$OUT/native-frontier.json"
   --lean-log "$OUT/lean-frontier-kernel.log"
+  --named-topic-inference "$OUT/native-named-topic-inference.json"
+  --named-topic-lean-log "$OUT/lean-named-topic-policy.log"
   --ledger "$OUT/joint-evidence-ledger.json"
   --worksheet "$OUT/original-antecedent-review-worksheet.json"
   --adversarial
@@ -110,4 +132,5 @@ fi
   python3 -m tools.gwb_native_maxcut_ledger "${LEDGER_OPTS[@]}"
 )
 echo "M1_M3_MAXCUT_BOUNDED_PACKET_OK"
-echo "Source-local result remains unresolved until independent review."
+echo "Original-source named-topic linguistic interpretation reported separately."
+echo "S29 workflow, governed semantic admission, JMD QID and historical truth remain separate."

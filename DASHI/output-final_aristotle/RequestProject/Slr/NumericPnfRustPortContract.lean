@@ -140,6 +140,7 @@ structure OriginalUniqueIdentity
   allLiveSame : ∀ id, Live id → id = chosen
   sourceObjectId : NumericId
   targetObjectId : NumericId
+  targetMatchesChosen : targetObjectId = chosen
   originalOwnerWitnessRef : String
   authorityRef : String
   originalAdmission : Prop
@@ -214,6 +215,89 @@ theorem schedule_change_cannot_change_source_semantics
     (s : State) (other : ExecutionState) :
     ConsumerEquivalent s { s with execution := other } := rfl
 
+
+/-- Candidate keys include the target kind; object and entity IDs can collide
+    numerically. Only evidence for the same key can eliminate a possibility. -/
+structure CandidateKey where
+  kind : Nat
+  id : Nat
+  deriving Repr, BEq, DecidableEq
+
+structure CandidateEvidence where
+  demand : Nat
+  target : CandidateKey
+  evidenceRef : String
+  deriving Repr, BEq, DecidableEq
+
+def RefutedBy (demand : Nat) (candidate : CandidateKey)
+    (evidence : CandidateEvidence) : Prop :=
+  evidence.demand = demand ∧ evidence.target = candidate ∧
+    evidence.evidenceRef ≠ ""
+
+theorem foreign_candidate_evidence_cannot_refute
+    (demand : Nat) (a b : CandidateKey) (e : CandidateEvidence)
+    (different : a ≠ b) (bound : e.target = a) :
+    ¬ RefutedBy demand b e := by
+  intro h
+  exact different (bound.symm.trans h.2.1)
+
+/-- The coverage proof applies to every typed live key, not just currently
+    scheduled object candidates. The planner target and survivor must agree. -/
+structure ExactTypedSelection (Live : CandidateKey → Prop)
+    (represented : List CandidateKey) (selected : CandidateKey) where
+  complete : ∀ k, Live k → k ∈ represented
+  selectedLive : Live selected
+  unique : ∀ k, k ∈ represented → Live k → k = selected
+  objectKind : selected.kind = 1
+
+theorem typed_selection_global_unique {Live : CandidateKey → Prop}
+    {represented : List CandidateKey} {selected : CandidateKey}
+    (cert : ExactTypedSelection Live represented selected) :
+    ∀ k, Live k → k = selected := by
+  intro k live
+  exact cert.unique k (cert.complete k live) live
+
+theorem second_typed_live_key_blocks_selection
+    {Live : CandidateKey → Prop} {represented : List CandidateKey}
+    {selected other : CandidateKey} (live : Live other)
+    (different : other ≠ selected) :
+    ¬ Nonempty (ExactTypedSelection Live represented selected) := by
+  intro h
+  obtain ⟨cert⟩ := h
+  exact different (typed_selection_global_unique cert other live)
+
+theorem unique_actor_target_matches_live {s : State}
+    {Live : NumericId → Prop} {chosen : NumericId}
+    (w : OriginalUniqueIdentity s Live chosen) :
+    ∀ id, Live id → id = w.targetObjectId := by
+  intro id live
+  exact (w.allLiveSame id live).trans w.targetMatchesChosen.symm
+
+/-- A failed owner transaction leaves both the dirty key and its former
+    materialisation intact. This is an atomicity specification, not a
+    verification of PostgreSQL isolation or of the Rust client. -/
+structure DirtyFrontier where
+  dirty : List OwnerId
+  materialised : OwnerId → Nat
+
+def finishOwner (s : DirtyFrontier) (owner : OwnerId)
+    (value : Nat) (commit : Bool) : DirtyFrontier :=
+  if commit then
+    { dirty := s.dirty.filter (fun k => k != owner),
+      materialised := writeOwner s.materialised owner value }
+  else s
+
+theorem failed_owner_transaction_preserves_state
+    (s : DirtyFrontier) (owner : OwnerId) (value : Nat) :
+    finishOwner s owner value false = s := rfl
+
+theorem committed_owner_preserves_other_materialisation
+    (s : DirtyFrontier) (owner other : OwnerId) (value : Nat)
+    (different : other ≠ owner) :
+    (finishOwner s owner value true).materialised other =
+      s.materialised other := by
+  simp [finishOwner, writeOwner, different]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -223,3 +307,8 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.distinct_owner_updates_commute
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.zero_delta_cannot_hide_whole_document_work
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.foreign_manifest_invalidates_replay
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.typed_selection_global_unique
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.second_typed_live_key_blocks_selection
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unique_actor_target_matches_live
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.failed_owner_transaction_preserves_state

@@ -69,13 +69,18 @@ counts. Do not assume the original 51-QID seed is complete.
   surname equality or book title alone supply numeric object IDs.
   Missing original full-book PNF graph is an explicit residual.
 
-**WELD-02 — complete typed demand**
+**WELD-02 — complete typed demand plus open-world coverage**
   Produce a real, source-object-indexed, third-person singular
   antecedent demand and all accessible factor candidates. Use original
   `compact_binding_artifacts` scope, morphology, quotation and
   referential type, without promoting missing gender features.
   Record any 64-cap truncation and prove all omitted candidates
-  non-live **or** keep the demand unresolved. Two PERSON mentions with
+  non-live **or** keep the demand unresolved. Check original
+  `semantic_pnf_demand_open_world_state` and represented
+  `semantic_pnf_candidate_universe`: inactive or budget-pruned
+  candidates remain live possibilities until evidence refutes them;
+  closing the universe requires a real coverage witness.
+  Two PERSON mentions with
   surface `Bush` may be in the same reviewed local actor class, but
   neither span equality nor similar spelling proves this.
 
@@ -118,6 +123,9 @@ counts. Do not assume the original 51-QID seed is complete.
   exact original evidence, policy and reversible read-only dependency
   receipt, never mislabeled as a uniquely proven world entity.
   The P0-B consumer implements (b), P0-C/D must implement (a).
+  The original migration-086 3/6/9 evidence and consumer-specific
+  relevance fields may narrow the scoped answer, but evidence
+  weights never imply historical truth.
 
 **WELD-07 — independent JMD property**
   Pin actual GHWB/Q23505 EntityData revision, property and statement
@@ -128,6 +136,50 @@ counts. Do not assume the original 51-QID seed is complete.
   `Q207` as a book identity shortcut. Neither a JMD property
   proof nor a book textual assertion alone proves historical truth.
 
+### Existing consumer-indexed/open-world and H9 owners (do not duplicate)
+
+The original SensibLaw default branch already contains
+`database/postgres_migrations/086_consumer_indexed_reopenable_runtime.sql`,
+`123_h9_entity_bearing_from_occurrence.sql`, and
+`124_h9_entity_label_from_occurrence.sql`. These are **original
+production authority and consumer interfaces**, not missing
+infrastructure:
+
+- `execution.semantic_pnf_candidate_universe` contains represented
+  candidates. `semantic_pnf_candidate_state_v1` distinguishes
+  active, resource/pruning residual, refuted and admissible.
+  **Execution pruning is not a semantic refutation.**
+- `execution.semantic_pnf_demand_open_world_state` starts with
+  `outside_model_possible=true`. Closure requires a real
+  `coverage_witness_ref`: neither a 64-member bounded list nor a
+  single named PERSON proves the universe complete.
+- `execution.semantic_pnf_candidate_evidence` carries actual
+  provenance and signed residual at cumulative 3/6/9 horizons.
+  `execution.record_numeric_pnf_candidate_admissibility` requires
+  **same-candidate evidence_id** for a refutation/restoration.
+  Preference weights are not identity witnesses.
+- `execution.semantic_pnf_demand_relevance_accounting` is
+  consumer-indexed integer relevance accounting, not a probability
+  or global semantic closure.
+- `semantic_pnf_factor_identity_support_unique_v1` and
+  `semantic_pnf_identity_factor_alignment_audit_v1` check
+  actual direct-factor vs exact-token support, distinguishing
+  unbridged same-region occurrences before Level-3 substitution.
+- H9 `semantic_pnf_h9_entity_bearing_v1` and
+  `semantic_pnf_h9_preferred_entity_anchor_v1` derive bearer
+  and label from **supported original occurrences** rather
+  than treating legacy demand source-object fields or labels
+  as authoritative world-identity proof.
+
+These existing owners refine WELD-01–06. The next genuine
+end-to-end cut is *one* original manifestation
+→ supported numeric occurrence
+→ typed demand and open-world coverage
+→ evidence-backed uniquely resolved actor
+→ original accepted identity witness
+→ supported Level-3 derivation and exact retraction
+→ consumer-relative answer. No further C4 gates.
+
 ## 4. Preexisting code / provenance ownership to reuse
 
 | Owner | Existing producer | Required consumer / boundary |
@@ -136,6 +188,7 @@ counts. Do not assume the original 51-QID seed is complete.
 | SLR semantic | `crates/sl-semantic-status`, `crates/sl-semantic-admission` | Separate `DeterministicReviewedPolicy` vs human review; **not** numeric source-object proof by itself |
 | SensibLaw original PNF | `src/pnf/binding_candidate_sets.py`, original typed demand + `semantic_pnf_parser_object_anchor` | Original PostgreSQL migrations 072–080 and unique resolution witness; no duplicate NLP stack |
 | SensibLaw original proof | `docs/architecture/PROOF_RELEVANT_IDENTITY_AND_DERIVATIONS.md`, `PROOF_RELEVANT_IDENTITY_ACCEPTANCE.md` | Accepted document-authority witness, Level-3 and exact transactionally retractable projection |
+| SensibLaw original later numeric runtime | Migration-086 represented/active/refuted/open-world and consumer-indexed evidence; migrations 123–124 H9 occurrence bearer/labels | Exact typed-demand completeness, evidence-backed admissibility, supported occurrence alignment and selective reopening |
 | DASHI PR #112 | `GwbNativeAntecedentMaxCut.lean`, `GwbCoreferenceFormalRepair.lean`, `GwbNamedTopicPolicy.lean` | New `GwbSourceLocalConsumer.lean`, joint ledger and M2 delta runner; further typed-witness consumer once original numeric IDs exist |
 | Original JMD / meta-introspector | Pinned Wikidata `EntityData` importer, PKB property/KB checker | One explicitly reviewed source↔KB statement alignment and kernel-checked property, not prose label similarity |
 

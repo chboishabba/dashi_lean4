@@ -111,9 +111,9 @@ def checkSourceLocalPolicy
   getNat answer "distinct_named_person_groups" == 1 &&
   getNat answer "distinct_supporting_original_sentences" ==
     independentStatements.length &&
-  getNat answer "distinct_supporting_original_sentences" >= 2 &&
-  getNat answer "named_person_observation_count" >= 2 &&
-  actualStatements.eraseDups.length >= 2 &&
+  decide (getNat answer "distinct_supporting_original_sentences" >= 2) &&
+  decide (getNat answer "named_person_observation_count" >= 2) &&
+  decide (actualStatements.eraseDups.length >= 2) &&
   namedPersonNames == ["Bush"] &&
   allNamedSame &&
   supports.size == actualNames.length &&

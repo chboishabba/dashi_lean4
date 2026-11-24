@@ -15,7 +15,12 @@ structure Manifest where
   documentRef : String
   revisionRef : String
   canonicalSha256 : String
-  unicodeLength : Nat
+  canonicalByteLength : Nat
+  unicodeCodepointLength : Nat
+  coordinateContractRef : String
+  normalizationContractRef : String
+  parserRunRef : String
+  compilerRuleSetRef : String
   deriving Repr, BEq, DecidableEq
 
 abbrev NumericId := Nat

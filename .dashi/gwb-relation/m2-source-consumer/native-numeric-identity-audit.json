@@ -1,0 +1,50 @@
+{
+  "schema": "slr-original-numeric-pnf-identity-audit-v1",
+  "original_source_relative_answer": "Bush",
+  "original_source_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "original_source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+  "numeric_run_ref": "slr-native-numeric-run:sha256:b165d42870fc0afecdc101ea8919e5c3290b0b53b4556d51b42a9f85ae8e2737",
+  "exact_numeric_source_matched": true,
+  "original_focus_token_count": 1,
+  "original_named_person_support_count": 2,
+  "original_named_person_support_unique_statements": 2,
+  "original_bush_supported_numeric_object_count": 0,
+  "exact_numeric_focus_mention_found": true,
+  "native_anaphor_unresolved_demand_ids": [
+    22165
+  ],
+  "numeric_demand_open_world": [
+    {
+      "demand_id": 22165,
+      "source_object_id": 72766,
+      "outside_model_possible": true,
+      "coverage_witness_ref": null,
+      "resource_limited": false,
+      "represented_residual_count": 0,
+      "frontier_unique_object_count": 0,
+      "selected_live_object_id": null,
+      "live_candidate_count": 0,
+      "invalid_refutation_count": 0,
+      "producer_h9_target_occurrence_count": 0,
+      "quality_gated_h9_entity_occurrence_count": 0,
+      "represented_candidate_count": 0,
+      "active_candidate_count": 0,
+      "refuted_candidate_count": 0
+    }
+  ],
+  "resolved_unique_target_from_original_sql": false,
+  "observed_accepted_document_witness_ids": [],
+  "observed_witnessed_level_three_derivation_refs": [],
+  "original_accepted_document_identity_paid": false,
+  "original_level_three_substitution_paid": false,
+  "external_q23505_paid": false,
+  "q207_paid": false,
+  "historical_truth_paid": false,
+  "original_level_one_source_preserved": true,
+  "incomplete_obligations": [
+    "EXACT_BUSH_OBJECT_ANCHOR_MISSING",
+    "ORIGINAL_TYPED_UNIQUE_AND_OPEN_WORLD_COVERAGE_UNPAID",
+    "ORIGINAL_ACCEPTED_DOCUMENT_IDENTITY_WITNESS_UNPAID",
+    "ORIGINAL_LEVEL_THREE_TRANSACTIONAL_RETRACTION_UNPAID"
+  ]
+}

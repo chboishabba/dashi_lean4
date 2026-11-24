@@ -116,6 +116,65 @@ a **real P0-C source producer gap**, not another reason to keep
 against the original SensibLaw owner, not create additional C4
 source inspectors or overwrite the verified local P0-B patch.
 
+## Native Rust P0-C/D implementation reconciliation — 24 November
+
+The initial non-admitting reducer has been superseded by the
+**integrated source-written Rust numeric pipeline** on SLR PR #78:
+`numeric_pnf_source_bridge` → `numeric_pnf_parser_plan` →
+`numeric_pnf_parser_store` → original
+`semantic_parser_sentence` trigger/work queue →
+`numeric_pnf_operator` → `numeric_pnf_sql`,
+with `numeric_pnf_owner` indexed canonical reduction,
+`numeric_pnf_identity_audit` read-only original
+`he/Bush` typed-frontier audit, and explicit bounded
+`numeric-pnf-native` CLI. See
+[formal port specification](numeric_pnf_native_rust_formal_port_20261124.md).
+
+This source-written implementation includes exact run/source
+SHA and model provenance, original Unicode/NFC offsets,
+explicit numeric parser-tag fallback, source-backed NER spans,
+set-wise symbol/morph/token/entity persistence, original
+document/paragraph hierarchy, strict three-family numeric
+operator composition and binary digests, lease-fenced atomic
+sentence publication, and migration-180 source PRON → numeric
+object → unresolved anaphor demand. It imports at most 64
+sentences/12k tokens per transaction, with complete original
+sentence-ref digest verification before source coverage can
+close. Migration-086 evidence refutation remains bound to actual
+same-candidate original evidence, preserving horizons 3/6/9.
+Hostile same-owner grouping fails boundedly without discarding
+unseen alternatives. It makes NO governed identity, Level-3,
+Q23505/Q207 or historical truth claim.
+
+**Formal addition**:
+`DASHI/output-final_aristotle/RequestProject/Slr/
+NumericPnfCanonicalReducer.lean` models real
+first-compatible grouping and a same-owner reordering
+counterexample; preserves time/k-indexed sign/zero/residual.
+It complements `NumericPnfRustPortContract.lean`.
+
+**Still NOT complete or accepted**: no local Rust/Cargo or
+Lean toolchain has been available in the implementation
+environment; the new code and Lean are **uncompiled** and
+the live original PostgreSQL schema, m180 anaphor,
+strict Python-vs-Rust binary/source parity, Unicode
+casefold completeness, crash/resume, transactional
+retraction and governed identity have **not been tested**.
+The previous P0-A/P0-B acceptance must not be confused
+with native numeric-PNF acceptance. The user forbids
+intermediate workstation run requests. Do not ask for
+intermediate commands or claim F0–F5 success; continue
+code/proof/review until both implementation and formal
+acceptance can be grounded.
+
+**Ownership correction**: original migration 157 retired the
+legacy procedural noun/PROPN/NER mention trigger; migration
+180 retained a direct PRON source→object→typed demand
+projector. NER entity occurrence and H9/world alignments
+belong to separate original migrations 130–135 and 123–124.
+Do not recreate a new nearest-name numeric actor producer
+or derive original object identity from a Bush string.
+
 ## P0 native numeric PNF decision — formal proof BEFORE Rust port
 
 
@@ -202,7 +261,7 @@ transactional Level-3/retraction. No source→Q23505 shortcut.
 | --- | --- | --- | --- |
 | **P0-A** | Exact original source, native parser, named-topic answer | **ACCEPTED under declared bounded policy**, latest run operator-reported | SLR original source/C4.12/M12 native parser → SLR `derive` → DASHI `GwbNamedTopicPolicy.lean` |
 | **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **ACCEPTED AND PUSHED**, commit 385b32fbd; run-TnDZB8qZ | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
-| **P0-C** | Formal Rust numeric producer and exact source→typed demand→unique witness | **FORMAL MODEL WRITTEN; kernel/parity and original producer OPEN** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
+| **P0-C** | Integrated native Rust numeric source/parser/operator/SQL compiler plus genuine typed-demand identity | **SOURCE-WRITTEN; UNCOMPILED/UNVERIFIED; original actor witness OPEN** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
 | **P0-D** | Witnessed Level-3 substitution, consumer query, selective retraction and replay | **OPEN; original SQL authority and native parity required** | Original `semantic_pnf_identity_projection` → `semantic_pnf_factor_derivation` → query consumer; `execution.retract_numeric_pnf_identity_witness` → dependent reopen |
 | **P1-E** | Independently checked GHWB/Q23505 external alignment + one JMD property; separately Q207 article | **OPEN, independent source lane** | Pinned JMD EntityData/KB property → reviewed original source/KB alignment → DASHI Lean kernel/obligation payment |
 

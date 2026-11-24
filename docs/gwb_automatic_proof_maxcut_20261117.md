@@ -5,6 +5,68 @@ Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
 
 ## Controlling executive roadmap — 23 November 2026 (supersedes historical gate plans)
 
+### 24 November 2026 P0 correction — source-local derivation is not S29 human payment
+
+The operator reports the previous formal boundary packet `run-fmUVYwIY`
+passed 7/7 source-store, 6/6 frontier, 1/1 CLI,
+30/30 ledger, 9/9 binding tests, both Lean markers and 14/14
+adversarial controls. These artifacts have not been committed,
+so this is **operator-reported** acceptance, not an independent
+repo artifact audit. The earlier published first run
+`run-PELWk2Yh` does support the exact source analysis:
+one source-matching parser run, 27 observations/25 spans, two
+distinct sentences with `Bush` PERSON mentions and **no
+competing named PERSON** before the focus `he`.
+
+Critical correction: original SLR **never chose the nearest name as
+a resolver**. C4.10 accepted an explicitly selected candidate
+source span; SLR M1 did not resolve, only listed parser
+observations. Original SensibLaw typed binding sorts accessible
+compatible factors by token distance ONLY before its 64-cap
+truncation; this can hide candidates and must not be a
+completeness witness, but does not adjudicate coreference.
+Also, SLR's existing `ResolutionAuthority` explicitly includes
+`DeterministicReviewedPolicy` alongside `HumanReview`.
+Our previous Lean and roadmap *overconstrained* all positive
+local identity to an S29 Accepted human action. That was a
+formal design error.
+
+P0 real endpoint repair is now source-written:
+**SLR `native_antecedent_review derive`** computes a
+positive, source-local named-topic interpretation from the
+original parser PERSON group, exactly checked source revision,
+original focus PRON/morphology, repeated support in distinct
+sentences, no additional named PERSON or quote barrier.
+Its versioned policy returns `Bush` when satisfied and
+returns ambiguity/incomplete if not; **S29 Pending is allowed
+for linguistic inference**. It does not turn the result into
+historical truth, Q23505, Q207 or universal semantic completeness.
+DASHI independently recomputes the PERSON-group evidence in
+Python and `GwbNamedTopicPolicy.lean`, and the revised
+joint ledger distinguishes `DETERMINISTIC_POLICY_SOURCE_LOCAL`
+from `EXPLICIT_UNRESOLVED`. A distinct governed policy
+admission remains necessary if claiming institutionally admitted
+source identity, but this is NOT an obstruction to computing
+and reporting the source-local reading. Formal
+`GwbCoreferenceFormalRepair.lean` now admits both human-S29
+and deterministic-reviewed-policy authority constructors.
+
+See `docs/gwb_named_topic_positive_semantic_path_20261124.md`
+for the real original-source argument, scope, negative controls,
+code paths and one updated local acceptance command.
+**New positive policy code is staged and not operator-tested.**
+
+After this run P0 is actual source-local policy evidence,
+owner-checked deterministic semantic admission and reversible
+consumer use, followed by independently pinned Q23505 and a
+real reviewed JMD property statement. Keep book and Q207
+Wikipedia source lanes distinct. Do not add C4.xx micro-gates,
+do not force a human S29 click for normal deterministic
+discourse interpretation and do not claim world truth from a
+coreference result.
+
+
+
 
 ### Current formal repair (source-written, kernel run pending)
 

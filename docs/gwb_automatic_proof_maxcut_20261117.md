@@ -1,9 +1,34 @@
 # GWB → JMD → SLR → Lean/Agda automatic proof programme
-Updated: 2026-11-23 · execution branch: dashi_lean4 PR #112
+Updated: 2026-11-24 · execution branch: dashi_lean4 PR #112
 
-**Current controlling plan:** the executive roadmap immediately below. Earlier C4.09 "next cut", P0 and C4.11/C4.12 notes are historical receipts, not pending work.
+**Current controlling plan:** 24 November P0 roadmap linked directly below. All older gate tables are retained historical receipts.
 
-## Controlling executive roadmap — 23 November 2026 (supersedes historical gate plans)
+
+**24 November 2026 controlling P0:** 
+[docs/gwb_p0_endpoint_roadmap_20261124.md](gwb_p0_endpoint_roadmap_20261124.md)
+supersedes the historical C1–C6/C4.09–C4.12/M1–M3 queues below.
+The latest operator **run-q5AjcB6o PASSED** the source-local
+\`he → Bush\` policy answer (two original supporting sentences),
+Lean policy check and reported 14/14 adversarial controls.
+S29 remains Pending; this is not needed for linguistic inference.
+Actual proof-relevant typed identity, Level-3, Q23505 and JMD
+property proofs remain OPEN. The newest artifacts have not been
+pushed, so this is operator-reported acceptance; do not claim
+independent artifact audit.
+
+**P0-B implementation pushed but pending local acceptance:**
+new original SLR \`native_source_local_consumer.rs\`
+and CLI \`answer/replay\`, DASHI independent consumer source-ledger
+checks, \`GwbSourceLocalConsumer.lean\`, and the **delta-only**
+\`scripts/run_gwb_source_consumer_weld.sh\` using the existing
+\`run-q5AjcB6o\` input. Its result cannot substitute for
+the original SensibLaw numeric-PNF typed-demand/witness/Level-3
+contracts: the next hard phase is WELD-01–05 together, not
+more C4 inspectors.
+
+---
+
+## Historical executive roadmap — 23 November 2026
 
 ### 24 November 2026 P0 correction — source-local derivation is not S29 human payment
 

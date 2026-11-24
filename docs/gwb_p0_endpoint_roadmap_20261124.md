@@ -118,6 +118,19 @@ source inspectors or overwrite the verified local P0-B patch.
 
 ## P0 native numeric PNF decision — formal proof BEFORE Rust port
 
+
+**Port handoff gate is CLOSED:** the first non-admitting native Rust
+kernel is committed on SLR PR #78, providing canonical reduction,
+typed-canonical hashes, exact original manifest validation,
+dependency residuals, open-world F/P/Q state and physical counters.
+That is **partial implementation only**: no producer-complete numeric
+objects, H9 demand, original SQL sink/retraction, complete Lean
+kernel validation or Rust↔strict Python/SQL parity yet.
+The owner explicitly requires no intermediate workstation runs.
+Do not ask for Lean, Cargo, PostgreSQL or acceptance execution
+until formalization, Rust implementation and integration are complete.
+
+
 Owner request: after the stopped two-hour Python projection,
 **formalize strict numeric-PNF semantics and bounded execution
 before any Rust port**. New controlling design:

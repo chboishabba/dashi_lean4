@@ -68,6 +68,7 @@ echo "No S29 command, normative admission, Level-3 DB write or QID."
     --named-topic-inference "$BASE/native-named-topic-inference.json"
     --source-consumer "$OUT/native-source-consumer.json"
     --source-consumer-replay "$OUT/native-source-consumer-replay.json"
+    --consumer-adversarial
     --ledger "$OUT/joint-evidence-ledger-with-source-consumer.json"
     --worksheet "$OUT/original-review-worksheet.json"
   )

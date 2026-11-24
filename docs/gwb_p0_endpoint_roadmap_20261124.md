@@ -19,8 +19,9 @@ The user reports end-to-end **source-local policy** result:
   earlier conditional repair passed; original 14/14 adversarial controls
   passed. The previous `run-fmUVYwIY` also accepted 7/7 store,
   6/6 frontier, 1/1 CLI, 30/30 ledger and 9/9 binder contract tests.
-  The newest run artifact **has not been committed/pushed**, so the
-  newest results are operator-reported, not independently fetched.
+  The P0-B implementation and the later accepted run were subsequently
+  pushed to DASHI PR #112 at commit 385b32fbd; this early P0-A
+  receipt is historical and does not establish world identity.
 - Original S29 remains `Pending`. This is not a negative result:
   explicit versioned deterministic named-topic inference does not
   require human S29 review.
@@ -61,7 +62,7 @@ audit of this run.
 Status change:
 - **P0-A ACCEPTED**: source-local `he→Bush` under the versioned,
   bounded discourse policy, not a world/entity identification.
-- **P0-B ACCEPTED LOCALLY**: original-source consumer certificate,
+- **P0-B ACCEPTED AND PUSHED**: original-source consumer certificate,
   current replay, Lean policy/consumer and 18 adversarial controls.
   Read-only replay is not actual SQL Level-3 retraction.
 - **P0-C/D OPEN**: actual source↔numeric PNF object manifestation,
@@ -87,8 +88,17 @@ witnesses in one report. It does NOT create parser data, guess
 run IDs, mutate admissions or mark WELD-01–05 paid. Any same-ref
 match is only a locator; numeric document manifestation/source
 digest is a separate witness, not established by name similarity.
-This is **new code not yet operator-run**. No preexisting local
-SLR CLI or Lean files were modified.
+Numeric-PNF audit **was run**: 8/8 contract tests and a read-only
+database audit passed. The selected complete 48/48-partition numeric
+run had a **different source manifestation**, no original he/Bush
+coordinates, and `EXACT_HE_NUMERIC_PNF_OBJECT_MISSING`. A follow-up
+exact original source lookup established the original 7ff2ec8f…
+payload exists with two complete SLR parser runs but NO matching
+numeric-PNF run/document: `ORIGINAL_NUMERIC_RUN_OR_DOCUMENT_UNAVAILABLE`.
+The different large corpus cannot be repaired with an invented
+coordinate crosswalk. The later attempted exact-source compilation
+was stopped during broad Python expansion; no paid PNF object,
+typed-demand, identity or Level-3 result was obtained.
 
 Typical invocation, after locating a genuinely original numeric
 run and its document ref (do not guess latest run):
@@ -180,7 +190,7 @@ transactional Level-3/retraction. No source→Q23505 shortcut.
 | Phase | Mathematical/operational deliverable | Current gate | Canonical producer -> consumer |
 | --- | --- | --- | --- |
 | **P0-A** | Exact original source, native parser, named-topic answer | **ACCEPTED under declared bounded policy**, latest run operator-reported | SLR original source/C4.12/M12 native parser → SLR `derive` → DASHI `GwbNamedTopicPolicy.lean` |
-| **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **ACCEPTED LOCALLY** in run-TnDZB8qZ (operator-reported; local CLI/Lean fixes unpushed) | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
+| **P0-B** | Actual **source-relative query certificate** and dependency replay/invalidation | **ACCEPTED AND PUSHED**, commit 385b32fbd; run-TnDZB8qZ | SLR `native_source_local_consumer.rs` + `answer/replay` → DASHI independent `gwb_native_maxcut_ledger.py` + `GwbSourceLocalConsumer.lean` |
 | **P0-C** | Formal Rust numeric producer and exact source→typed demand→unique witness | **FORMAL MODEL WRITTEN; kernel/parity and original producer OPEN** | Exact original parser/PNF object anchor → SensibLaw typed binder + numeric PNF unique demand → original identity witness/admission |
 | **P0-D** | Witnessed Level-3 substitution, consumer query, selective retraction and replay | **OPEN; original SQL authority and native parity required** | Original `semantic_pnf_identity_projection` → `semantic_pnf_factor_derivation` → query consumer; `execution.retract_numeric_pnf_identity_witness` → dependent reopen |
 | **P1-E** | Independently checked GHWB/Q23505 external alignment + one JMD property; separately Q207 article | **OPEN, independent source lane** | Pinned JMD EntityData/KB property → reviewed original source/KB alignment → DASHI Lean kernel/obligation payment |
@@ -351,10 +361,10 @@ PostgreSQL native `answer` and `replay`, then independently checks
 the resulting consumer receipt and read-only current replay in
 DASHI's original source ledger and targeted Lean consumer proof.
 Output is a fresh `.dashi/gwb-relation/m2-source-consumer/run-XXXXXXXX/`.
-No old local output is overwritten. The original remote code was pushed, but the **locally fixed** delta
-has now passed: run-TnDZB8qZ. The operator's runner/Lean corrections
-and latest run outputs remain unpushed, so this receipt is not
-independently audited from the remote PR.
+No old local output was overwritten. The fixed delta
+passed in run-TnDZB8qZ; the corrected runner, Lean proof,
+certificate builder and acceptance logs were pushed together
+at DASHI commit 385b32fbd. This phase is complete.
 
 P0-B success marker `GWB_SOURCE_LOCAL_CONSUMER_DELTA_OK` is
 **not** a proof of `WELD-03`, `WELD-04`, `WELD-05` or

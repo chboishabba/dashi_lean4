@@ -597,6 +597,53 @@ def run_live_adversarial_checks(
     return checked + 1
 
 
+def run_live_named_topic_adversarial_checks(
+    inspection: dict[str, Any], frontier: dict[str, Any],
+    inference: dict[str, Any],
+) -> int:
+    """Mutate actual operator source. A spurious actor must fail closed."""
+    require(validate_named_topic_inference(
+        inspection,frontier,inference,validate_inspection(inspection)),
+        "operator source does not have a positive native topic inference")
+    def forged_person(i,f,p):
+        other=next((n for n in f["nominations"]
+                    if n["surface"]=="Capitol \nHill"),None)
+        if other is None:
+            # Any original source-backed OTHER named-entity span suffices.
+            other=next((n for n in f["nominations"]
+                if n["observation_kind"]=="parser_entity"
+                   and n["surface"]!="Bush"),None)
+        require(other is not None,"original native source has no alternate NER")
+        other["parser_pos_or_label"]="PERSON"
+    operations=(
+        lambda i,f,p:p.update(source_local_answer="Reagan"),
+        lambda i,f,p:p.update(governed_source_local_admission_paid=True),
+        lambda i,f,p:p.update(external_qid_paid=True),
+        lambda i,f,p:p.update(historical_claim_truth_paid=True),
+        lambda i,f,p:p.update(original_source_revision_ref="foreign:revision"),
+        lambda i,f,p:p.update(named_person_groups=["Bush","Reagan"]),
+        lambda i,f,p:p["supporting_person_mentions"].pop(),
+        lambda i,f,p:f.update(focus_parser_morph_json='{"Number":"Plur"}'),
+        forged_person,
+        lambda i,f,p:i["before"][1].update(
+            literal='"'+i["before"][1]["literal"][1:]
+        ),
+    )
+    passed=0
+    for operation in operations:
+        i,f,p=copy.deepcopy(inspection),copy.deepcopy(frontier),copy.deepcopy(inference)
+        operation(i,f,p)
+        try:
+            make_ledger(i,f,named_topic_inference=p)
+        except EvidenceRejected:
+            passed+=1
+        else:
+            raise EvidenceRejected(
+                f"real-source named-topic negative control {passed+1} spuriously accepted"
+            )
+    return passed
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -638,6 +685,11 @@ def main() -> int:
     if args.adversarial:
         negative_count = run_live_adversarial_checks(inspection, frontier)
         print(f"GWB_NATIVE_MAXCUT_LIVE_ADVERSARIAL_PASS {negative_count}/{negative_count}")
+        if named_topic is not None and named_topic.get("source_local_inference_derived") is True:
+            named_negative = run_live_named_topic_adversarial_checks(
+                inspection,frontier,named_topic
+            )
+            print(f"GWB_NAMED_TOPIC_LIVE_ADVERSARIAL_PASS {named_negative}/{named_negative}")
     write_json(args.ledger, ledger)
     write_json(args.worksheet, worksheet)
     print(

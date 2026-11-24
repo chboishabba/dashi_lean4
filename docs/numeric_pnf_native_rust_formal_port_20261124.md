@@ -45,14 +45,13 @@ and exported by the source-store crate. It implements:
 - accounting of actual proposal and dependency visits, group
   comparisons and emitted outputs; unit negative-control tests.
 
-**This is not yet a complete native numeric-PNF compiler.**
-The implementation currently lacks original H9 numeric object/typed
-demand production, original SQL sink integration, fully replayable
-source/owner checkpoints, accepted identity/Level-3/retraction,
-reference parity on original golden proposals and verified Lean-to-
-Rust correspondence. The Lean file is also still uncompiled here
-because no Lean/Cargo toolchain is available in this environment.
-No speedup or universal numerical equivalence has been certified.
+**The earlier pure-reducer-only status has been superseded by the
+multi-module integrated Rust source/persistence path documented above.**
+It remains uncompiled. H9 numeric occurrence/demand, strict source
+parity, documented Unicode casefold limitations, persisted owner
+checkpoints, accepted identity/Level-3/retraction, and Lean-to-Rust
+correspondence remain unverified. No speedup or semantic
+equivalence has been certified.
 
 **Operator instruction: do not hand off intermediate commands.**
 The requested threshold is BOTH completed formalization and
@@ -62,6 +61,68 @@ requesting any workstation run. No new full Python tranche,
 no early Lean script request, no incremental cargo trial request.
 Historical run scripts in this roadmap remain internal
 acceptance procedures rather than an operator task.
+
+## Native source-to-numeric implementation status (24 November 2026)
+
+SLR PR #78 now contains a multi-module **source-written Rust
+implementation** rather than only the original pure reducer:
+
+| Rust module | Producer/consumer function | Authority |
+| --- | --- | --- |
+| `numeric_pnf_native.rs` | Typed-canonical four-key factor reduction, first-compatible groups; candidate F/P/Q/refutation, horizon 3/6/9 and work budget | Candidate-only |
+| `numeric_pnf_owner.rs` | Reverse-indexed incremental dirty owner/observer closure; bounded whole-owner rebuild and producer multiplicity | Execution, no identity |
+| `numeric_pnf_source_bridge.rs` | Reopen original SLR source bytes and parser+NER with one UTF-8 codepoint index, exact spans, revision/model provenance | Original source |
+| `numeric_pnf_parser_plan.rs` | Immutable original numeric v2 sentence/token/NER binary digests, exact source coordinates, head validation and POS->TAG fallback | Numeric parser candidates |
+| `numeric_pnf_parser_store.rs` | Durable canonical byte artifact; original run/source, authored paragraphs, 64-sentence/12k-token set-wise staged parser/morph/NER import, original SQL work trigger, exact expected sentence reference hash for closed coverage | Original PostgreSQL |
+| `numeric_pnf_operator.rs` | Port of three original strict operator families (normative, condition/exception, legal transition), objects/factors/typed residual demands and digest recomputation | Original strict sentence composer |
+| `numeric_pnf_sql.rs` | Atomic, lease-fenced original SQL object/factor/slot/demand/interface publication; verifies original migration-180 pronoun occurrence **and** unresolved typed demand before commit | Original PostgreSQL |
+| `numeric_pnf_pipeline.rs` | Bound source/parser importer, deterministic numeric run identity distinct from SLR parser run, restartable bounded source work + leased sentence work | Integrated but unverified |
+| `numeric_pnf_identity_audit.rs` | Read-only original SLR consumer→numeric he/PERSON→migration180/migration086 witness audit, no false governance | Consumer P0-C/D audit |
+| `crates/sl-cli/src/numeric_pnf_native_cli.rs` | `inspect/plan` read-only, `audit` read-only, explicit bounded `compile --commit`; incomplete source must be explicitly selected and stays open-world | Operator surface, not licence |
+
+`crates/sl-pg-source-store/src/lib.rs` exports all integrated interfaces.
+`crates/sl-cli/src/main.rs` dispatches the new command.
+`unicode-normalization` is used for NFC. Non-ASCII alphabetic
+Python-casefold input currently fails closed rather than guessing
+incorrect numeric symbol IDs. This remains a **port completeness
+limitation**, not a parity pass.
+
+**Original SQL authority reused:** migrations 040/051 sentence region and
+fenced work, 059 annotation origin, 086 open-world 3/6/9 state,
+123/124 H9 supported occurrence, 157/180 relation-valued PRON
+source→object→unresolved demand. The original 045 noun/PROPN/entity
+procedural mention trigger was intentionally retired by migration 157;
+do NOT resurrect it as a Rust nearest-name or direct-identity
+shortcut. Original provider/NER-to-H9 occurrence bridge (130–135)
+remains an independent producer. A source-local Bush conclusion
+is not a uniquely admitted numeric actor.
+
+**Hard acceptance remains CLOSED:** no Rust compiler, cargo, Lean
+or live SensibLaw PostgreSQL verification is available in this
+environment; therefore the code is committed but **uncompiled and
+unverified**. Strict-reference parity (all rule families, binary
+digests, SQL projections, Unicode features, concurrency, crash
+replay) and actual source-bound accepted identity/witness/
+transactional retraction remain open. The user's instruction
+is to perform no intermediate workstation handoff. No runtime
+command or performance claim should be presented as a completed
+deliverable until all these gates are paid.
+
+**Bounded-work contract correction:** parser bootstrap itself
+now processes no more than 64 sentences /12,000 tokens per
+transaction, computes source-level expected sentence-ref SHA
+and remains open until every expected original sentence is
+registered. A hostile greedy same-signature owner aborts
+rather than silently performs more than 4,000,000 candidate
+comparisons; its semantic owner stays open. Measured
+wall-time/CPU/RAM and no-op replay work are still unverified.
+
+**Formal donor addition:** `DASHI/output-final_aristotle/
+RequestProject/Slr/NumericPnfCanonicalReducer.lean` encodes
+actual first-compatible grouping and a counterexample to
+same-owner reordering, along with a time/k-indexed ternary
+sign/zero/residual observer collision. It is source-written,
+**not kernel-checked**; Rust↔Lean correspondence is unpaid.
 
 ## 1. Existing donors and why the port is not a rewrite
 

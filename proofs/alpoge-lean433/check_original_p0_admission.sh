@@ -68,7 +68,19 @@ if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
     lake env lean "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" 2>&1 |
       tee "$REPORT_DIR/directional-donor-lean.log"
   )
-  echo 'Optional RowSrc direct consumer kernel ran; inspect its printed axioms.'
+  # Check the nine exact source-directed theorem receipts, not merely build exit.
+  python3 "$ROOT/scripts/check_exact_lean_axiom_receipts.py" \
+    "$REPORT_DIR/directional-donor-lean.log" \
+    DASHI.AlpogeRH.P0Directional.all_original_grh_and_rh_endpoints_from_galois_row \
+    DASHI.AlpogeRH.P0Directional.halfplane_iff_original_all_character \
+    DASHI.AlpogeRH.P0Directional.original_zeta_zeros_iff_mathlib_rh \
+    DASHI.AlpogeRH.P0Directional.original_zeta_iff_rh \
+    DASHI.AlpogeRH.P0Directional.every_character_of_original_galois_row \
+    DASHI.AlpogeRH.P0Directional.rh_of_original_galois_row \
+    DASHI.AlpogeRH.P0Directional.dirichlet_right_half_of_original_galois_row \
+    DASHI.AlpogeRH.P0Directional.dirichlet_strip_of_original_galois_row \
+    DASHI.AlpogeRH.P0Directional.primitive_strip_of_original_galois_row
+  echo 'Optional RowSrc direct consumer: exact axiom receipt audit accepted.'
 fi
 
 printf 'P0 SOURCE-ADMISSION ACCEPTED (isolated v4.33.1): %s\n' "$CHECKOUT"

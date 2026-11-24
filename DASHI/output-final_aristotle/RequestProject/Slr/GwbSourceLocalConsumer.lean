@@ -120,8 +120,9 @@ theorem checked_consumer_yields_source_local_bush
     {inspection frontier inference consumer replay : Json}
     (w : CheckedConsumer inspection frontier inference consumer replay) :
     field consumer "answer_value" = "Bush" := by
-  have h := (Bool.and_eq_true.mp w.check).1
-  exact of_decide_true h
+  have h := w.check
+  simp only [checkConsumer, Bool.and_eq_true] at h
+  exact of_decide_eq_true h.1
 
 theorem q207_cannot_be_q23505 :
     ("Q207" : String) ≠ "Q23505" := by decide

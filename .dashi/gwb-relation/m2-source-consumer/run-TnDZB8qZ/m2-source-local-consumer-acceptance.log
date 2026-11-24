@@ -1,0 +1,8 @@
+GWB_SOURCE_LOCAL_CONSUMER_LIVE_ADVERSARIAL_PASS 18/18
+GWB_NATIVE_MAXCUT_LEDGER_OK parser_nominations=27 source_answer=Bush governed_identity=UNPAID external_qid=UNPAID claim_truth=UNPAID lean_frontier_boundary=UNTESTED
+'Wikidata.Slr.GwbSourceLocalConsumer.checked_consumer_yields_source_local_bush' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Wikidata.Slr.GwbSourceLocalConsumer.q207_cannot_be_q23505' does not depend on any axioms
+GWB_SOURCE_LOCAL_CONSUMER_KERNEL_OK
+Current source-relative Bush answer, independent of governed identity/QID/truth

@@ -1,0 +1,51 @@
+{
+  "schema": "slr-native-named-topic-inference-v1",
+  "policy_ref": "slr:policy:source-local-repeated-person-topic:v1",
+  "derivation_ref": "source-local-topic-inference:sha256:a8bd023c0a57fe9537b2856139bb7ed113d20d40f0a392214e39daca44309fb8",
+  "original_document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "original_source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+  "canonical_content_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+  "review_item_ref": "review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+  "focus_mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+  "focus_span": [
+    4534,
+    4536
+  ],
+  "focus_surface": "he",
+  "raw_parser_observation_count": 27,
+  "named_person_observation_count": 2,
+  "distinct_named_person_groups": 1,
+  "supporting_person_mentions": [
+    {
+      "name": "Bush",
+      "statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "start_char": 4061,
+      "end_char": 4065,
+      "original_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:entity:0"
+    },
+    {
+      "name": "Bush",
+      "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "start_char": 4310,
+      "end_char": 4314,
+      "original_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:entity:0"
+    }
+  ],
+  "distinct_supporting_original_sentences": 2,
+  "named_person_groups": [
+    "bush"
+  ],
+  "status": "DERIVED_SOURCE_LOCAL_NAMED_TOPIC",
+  "reason": "unique repeatedly named PERSON across original scope; no competing PERSON or quote boundary",
+  "source_local_answer": "Bush",
+  "source_local_inference_derived": true,
+  "s29_status_at_derivation": "Pending",
+  "requires_human_s29_to_form_policy_inference": false,
+  "governed_source_local_admission_paid": false,
+  "complete_all_live_referents_proven": false,
+  "external_qid_paid": false,
+  "historical_claim_truth_paid": false
+}

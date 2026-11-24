@@ -49,23 +49,24 @@ echo "No S29 command, normative admission, Level-3 DB write or QID."
   cd "$SLR_ROOT"
   cargo test -p sensiblaw-pg-source-store --lib native_source_local_consumer
   cargo test -p sensiblaw-cli native_antecedent_review
-  cargo run -p sensiblaw-cli -- native-antecedent-review answer \
-    "$REVIEW_ITEM" "$PARSER_RUN" > "$OUT/native-source-consumer.json"
-
-  # Reopen actual PostgreSQL evidence, not just the prior saved JSON.
-  cargo run -p sensiblaw-cli -- native-antecedent-review replay \
-    "$REVIEW_ITEM" "$OUT/native-source-consumer.json" "$PARSER_RUN" \
-    > "$OUT/native-source-consumer-replay.json"
+  cargo run -p sensiblaw-cli -- native-antecedent-review derive \
+    "$REVIEW_ITEM" "$PARSER_RUN" > "$OUT/native-named-topic-inference.json"
 )
 (
   cd "$ROOT"
+  python3 tools/build_gwb_source_consumer.py \
+    --inspection "$BASE/native-inspection.json" \
+    --frontier "$BASE/native-frontier.json" \
+    --inference "$OUT/native-named-topic-inference.json" \
+    --consumer "$OUT/native-source-consumer.json" \
+    --replay "$OUT/native-source-consumer-replay.json"
   python3 -m unittest discover -s tests \
     -p test_gwb_source_local_consumer.py -v
 
   ARGS=(
     --inspection "$BASE/native-inspection.json"
     --frontier "$BASE/native-frontier.json"
-    --named-topic-inference "$BASE/native-named-topic-inference.json"
+    --named-topic-inference "$OUT/native-named-topic-inference.json"
     --source-consumer "$OUT/native-source-consumer.json"
     --source-consumer-replay "$OUT/native-source-consumer-replay.json"
     --consumer-adversarial
@@ -81,7 +82,7 @@ echo "No S29 command, normative admission, Level-3 DB write or QID."
     DASHI/output-final_aristotle/RequestProject/Slr/GwbSourceLocalConsumer.lean \
     "$BASE/native-inspection.json" \
     "$BASE/native-frontier.json" \
-    "$BASE/native-named-topic-inference.json" \
+    "$OUT/native-named-topic-inference.json" \
     "$OUT/native-source-consumer.json" \
     "$OUT/native-source-consumer-replay.json"
 ) | tee "$OUT/m2-source-local-consumer-acceptance.log"

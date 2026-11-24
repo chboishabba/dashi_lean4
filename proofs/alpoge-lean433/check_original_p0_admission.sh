@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # P0: ORIGINAL published Main.lean -> existing DASHI RHAdmission.lean.
 # User-selected local execution; NO GitHub CI, no theorem duplication,
-# no 4.33.1 OLean imported into the incompatible 4.35 root toolchain.
+# no 4.33.1 OLean imported into the incompatible 4.28 root toolchain.
 #
 # Usage:
 #   bash proofs/alpoge-lean433/check_original_p0_admission.sh [source-checkout]
@@ -50,32 +50,13 @@ bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT"
 # Audit the actual Lean output; #print axioms in RHAdmission.lean emits
 # each exact original target. A missing declaration/line or unexpected
 # axiom fails. Text/source-grep alone is NOT acceptance.
-python3 - "$REPORT_DIR/original-admission-lean.log" <<'PY'
-import pathlib, re, sys
-txt = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
-prefix = "DASHI.AlpogeRH."
-targets = (
-    "original_mathlib_rh",
-    "original_riemann_zero_location",
-    "original_dirichlet_nonvanishing",
-    "original_dirichlet_zeros",
-    "original_primitive_dirichlet_zeros",
-)
-allowed = {"propext", "Classical.choice", "Quot.sound"}
-for short in targets:
-    full = prefix + short
-    pat = r"axioms of\s+" + re.escape(full) + r"\s*:\s*\[([^\]]*)\]"
-    m = re.search(pat, txt, flags=re.IGNORECASE | re.MULTILINE)
-    if not m:
-        sys.exit(f"BLOCKED: missing kernel-printed axiom receipt for {full}")
-    axioms = {a.strip() for a in m.group(1).split(",") if a.strip()}
-    extra = axioms - allowed
-    if extra:
-        sys.exit(f"BLOCKED: unexpected axioms for {full}: {sorted(extra)}")
-    print(f"PASS actual Lean axiom receipt: {full}: {sorted(axioms)}")
-print("PASS: 5/5 original source-to-adapter statement/kernel axiom receipts")
-print("SCOPE: external Lean 4.33.1 original source; not the 4.35 root or Agda.")
-PY
+python3 "$ROOT/scripts/check_exact_lean_axiom_receipts.py" \
+  "$REPORT_DIR/original-admission-lean.log" \
+  DASHI.AlpogeRH.original_mathlib_rh \
+  DASHI.AlpogeRH.original_riemann_zero_location \
+  DASHI.AlpogeRH.original_dirichlet_nonvanishing \
+  DASHI.AlpogeRH.original_dirichlet_zeros \
+  DASHI.AlpogeRH.original_primitive_dirichlet_zeros
 
 if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
   if [[ ! -f "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" ]]; then

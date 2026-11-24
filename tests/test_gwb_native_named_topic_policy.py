@@ -102,6 +102,7 @@ class SourceLocalNamedTopicPolicyTests(unittest.TestCase):
         self.assertEqual(m["book_lane"]["answer_kind"],
                          "DETERMINISTIC_POLICY_SOURCE_LOCAL")
         self.assertTrue(m["book_lane"]["named_topic_source_inference_derived"])
+        self.assertTrue(m["book_lane"]["source_local_interpretation_paid_under_declared_policy"])
         self.assertFalse(m["book_lane"]["source_relative_identity_paid"])
         self.assertFalse(m["book_lane"]["world_q23505_paid"])
         self.assertFalse(m["wikipedia_lane"]["book_local_identity_from_Q207"])

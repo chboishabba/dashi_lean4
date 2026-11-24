@@ -107,12 +107,55 @@ theorem rejected_s29_cannot_pay :
   cases witness with
   | intro payment => cases payment.workflowAccepted
 
+/-- Original SLR supports a separate deterministic reviewed-policy
+    authority. The policy must be actual source/revision-bound evidence,
+    not a name-proximity guess or a magic JSON success flag. -/
+structure DeterministicPolicyPayment where
+  policyRef : String
+  sourceRevisionRef : String
+  resolverRef : String
+  originalEvidenceCheck : Prop
+  evidenceProof : originalEvidenceCheck
+  reviewedPolicyCheck : Prop
+  policyProof : reviewedPolicyCheck
+
+/-- The earlier formal proof model accidentally required human S29 for ALL
+    source-local resolution. That was overconstrained: SLR has two distinct
+    semantic-admission authority routes. -/
+inductive SourceLocalResolutionAuthority (status : S29Status) where
+  | byHuman : GovernedSemanticPayment status →
+      SourceLocalResolutionAuthority status
+  | byDeterministicPolicy : DeterministicPolicyPayment →
+      SourceLocalResolutionAuthority status
+
+theorem deterministic_policy_need_not_wait_for_s29
+    (policy : DeterministicPolicyPayment) :
+    Nonempty (SourceLocalResolutionAuthority .pending) :=
+  ⟨.byDeterministicPolicy policy⟩
+
+/-- A source-local named-topic inference is weaker than institutionally
+    admitted, all-live coreference: it can name Bush under a bounded,
+    source-checked convention without fabricating full semantic coverage. -/
+structure ScopedLinguisticInference (Factor : Type) where
+  source : SourceKey
+  focus : Mention
+  selected : Factor
+  algorithmRef : String
+  boundedSourceEvidence : Prop
+  evidenceChecked : boundedSourceEvidence
+  humanReviewRequired : Bool := false
+
+theorem bounded_linguistic_answer_available
+    {Factor : Type} (inference : ScopedLinguisticInference Factor) :
+    ∃ selected : Factor, selected = inference.selected :=
+  ⟨inference.selected, rfl⟩
+
 structure ResolvedSourceLocal
     {Factor : Type} (f : ScopedFrontier Factor)
     (chosen : Factor) (status : S29Status) where
   coverage : ScopedCoverage f
   dispositions : ReviewedDispositions f chosen
-  governed : GovernedSemanticPayment status
+  governed : SourceLocalResolutionAuthority status
 
 /-- Positive result is unique up to reviewed same-local-actor equivalence,
     not equality of two Bush strings or two distinct span positions. -/
@@ -192,6 +235,8 @@ end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.omitted_live_candidate_blocks_coverage
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.pending_s29_cannot_pay
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.deterministic_policy_need_not_wait_for_s29
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.bounded_linguistic_answer_available
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.unique_source_local_referent
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.all_surviving_readings_agree
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.rival_reading_blocks_answer

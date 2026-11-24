@@ -175,12 +175,13 @@ theorem distinct_owner_updates_commute
 structure DeltaWork where
   newObservations : Nat
   touchedDependencyEdges : Nat
+  canonicalDirtyOwnerCost : Nat
   outputRows : Nat
   actualVisitedUnits : Nat
   workMultiplier : Nat
 
 def charge (d : DeltaWork) : Nat :=
-  d.newObservations + d.touchedDependencyEdges + d.outputRows
+  d.newObservations + d.touchedDependencyEdges + d.canonicalDirtyOwnerCost + d.outputRows
 
 def WorkBounded (d : DeltaWork) : Prop :=
   d.actualVisitedUnits ≤ d.workMultiplier * charge d
@@ -298,6 +299,48 @@ theorem committed_owner_preserves_other_materialisation
       s.materialised other := by
   simp [finishOwner, writeOwner, different]
 
+
+/-- Original Level-1 premises and witness history are immutable; the current
+    dependent view is the authority-changing part. Multiple alternative
+    witnesses may support a re-materialised derivation after withdrawal. -/
+structure WitnessedDerivation where
+  ref : String
+  premise : Nat
+  witnessIds : List NumericId
+  deriving Repr, BEq, DecidableEq
+
+structure IdentityProjectionState where
+  levelOne : List Nat
+  witnessHistory : List NumericId
+  admitted : List NumericId
+  current : List WitnessedDerivation
+  deriving Repr, BEq, DecidableEq
+
+def withdrawWitness (s : IdentityProjectionState) (w : NumericId) :
+    IdentityProjectionState :=
+  { s with admitted := s.admitted.filter (fun i => i != w)
+           current := s.current.filter (fun d => !d.witnessIds.contains w) }
+
+theorem withdrawal_preserves_level_one (s : IdentityProjectionState)
+    (w : NumericId) :
+    (withdrawWitness s w).levelOne = s.levelOne := rfl
+
+theorem withdrawal_preserves_history (s : IdentityProjectionState)
+    (w : NumericId) :
+    (withdrawWitness s w).witnessHistory = s.witnessHistory := rfl
+
+theorem withdrawal_keeps_unrelated_derivation
+    (s : IdentityProjectionState) (w : NumericId) (d : WitnessedDerivation)
+    (present : d ∈ s.current) (unrelated : d.witnessIds.contains w = false) :
+    d ∈ (withdrawWitness s w).current := by
+  simp [withdrawWitness, present, unrelated]
+
+theorem withdrawal_excludes_revoked_dependency
+    (s : IdentityProjectionState) (w : NumericId) (d : WitnessedDerivation)
+    (dependent : d.witnessIds.contains w = true) :
+    d ∉ (withdrawWitness s w).current := by
+  simp [withdrawWitness, dependent]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -312,3 +355,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.second_typed_live_key_blocks_selection
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.unique_actor_target_matches_live
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.failed_owner_transaction_preserves_state
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_preserves_level_one
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_keeps_unrelated_derivation
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_excludes_revoked_dependency

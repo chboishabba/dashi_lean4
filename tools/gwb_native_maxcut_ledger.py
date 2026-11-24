@@ -752,6 +752,68 @@ def run_live_named_topic_adversarial_checks(
     return passed
 
 
+def run_live_source_consumer_adversarial_checks(
+    inspection: dict[str, Any],
+    frontier: dict[str, Any],
+    inference: dict[str, Any],
+    consumer: dict[str, Any],
+    replay: dict[str, Any],
+) -> int:
+    """Adversarial changes to the REAL accepted original-source consumer.
+
+    Mutated consumer fields are ALSO reflected into replay.current so a
+    failure cannot be credited merely to shallow JSON replay mismatch.
+    """
+    require(validate_native_source_consumer(
+        inspection,frontier,inference,consumer,replay),
+        "actual source consumer is not a positive policy result")
+    def changes_ledger(key: str, value):
+        def mutation(i,f,p,c,r):
+            c[key]=value
+            r["current"]=copy.deepcopy(c)
+        return mutation
+    operations=(
+        changes_ledger("source_revision_ref","source:foreign"),
+        changes_ledger("source_content_sha256","0"*64),
+        changes_ledger("original_focus_statement_ref","stmt:foreign"),
+        changes_ledger("original_selected_antecedent_span",[4311,4314]),
+        changes_ledger("original_selected_antecedent_surface","Reagan"),
+        changes_ledger("original_parser_run_ref","run:foreign"),
+        changes_ledger("original_candidate_set_ref","frontier:foreign"),
+        changes_ledger("original_policy_ref","policy:unreviewed"),
+        changes_ledger("original_derivation_ref","derivation:forged"),
+        changes_ledger("answer_value","Reagan"),
+        changes_ledger("governed_semantic_identity_paid",True),
+        changes_ledger("level_three_substitution_paid",True),
+        changes_ledger("external_qid_paid",True),
+        changes_ledger("historical_truth_paid",True),
+        lambda i,f,p,c,r:r.update(result="INVALIDATED"),
+        lambda i,f,p,c,r:r.update(
+            previous_interpretation_usable=False),
+        lambda i,f,p,c,r:r.update(
+            original_level_three_retracted_here=True),
+        lambda i,f,p,c,r:r.update(
+            prior_receipt_ref="source-relative-answer:forged"),
+    )
+    accepted=0
+    for mutate in operations:
+        i,f,p,d,r=(copy.deepcopy(x) for x in
+                   (inspection,frontier,inference,consumer,replay))
+        mutate(i,f,p,d,r)
+        try:
+            make_ledger(
+                i,f,named_topic_inference=p,
+                source_consumer=d,source_consumer_replay=r,
+            )
+        except EvidenceRejected:
+            accepted+=1
+        else:
+            raise EvidenceRejected(
+                f"real consumer negative control #{accepted+1} was promoted"
+            )
+    return accepted
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -771,6 +833,7 @@ def main() -> int:
     p.add_argument("--named-topic-lean-log", type=Path)
     p.add_argument("--source-consumer", type=Path)
     p.add_argument("--source-consumer-replay", type=Path)
+    p.add_argument("--consumer-adversarial", action="store_true")
     p.add_argument("--ledger", type=Path, required=True)
     p.add_argument("--worksheet", type=Path, required=True)
     p.add_argument("--adversarial", action="store_true")
@@ -805,6 +868,17 @@ def main() -> int:
                 inspection,frontier,named_topic
             )
             print(f"GWB_NAMED_TOPIC_LIVE_ADVERSARIAL_PASS {named_negative}/{named_negative}")
+    if args.consumer_adversarial:
+        require(args.source_consumer is not None and
+                args.source_consumer_replay is not None and
+                named_topic is not None,
+                "live source-consumer negatives require the original full consumer inputs")
+        count=run_live_source_consumer_adversarial_checks(
+            inspection,frontier,named_topic,
+            json.loads(args.source_consumer.read_text(encoding="utf-8")),
+            json.loads(args.source_consumer_replay.read_text(encoding="utf-8")),
+        )
+        print(f"GWB_SOURCE_LOCAL_CONSUMER_LIVE_ADVERSARIAL_PASS {count}/{count}")
     write_json(args.ledger, ledger)
     write_json(args.worksheet, worksheet)
     print(

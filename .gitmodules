@@ -1,3 +1,6 @@
 [submodule "vendor/JordanAlgebra"]
 	path = vendor/JordanAlgebra
 	url = https://github.com/Cobord/JordanAlgebra.git
+[submodule "vendor/pequalnp-proofs"]
+	path = vendor/pequalnp-proofs
+	url = https://github.com/brilliant-hq/pequalnp-proofs.git

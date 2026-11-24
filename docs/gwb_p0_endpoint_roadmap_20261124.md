@@ -49,15 +49,13 @@ The original PostgreSQL-backed `derive` returned source-local
 `Bush`, with a CURRENT source-bound consumer/replay; targeted
 `GWB_SOURCE_LOCAL_CONSUMER_KERNEL_OK`, 17/17 contract tests,
 18/18 new real-input adversarial controls and
-`GWB_SOURCE_LOCAL_CONSUMER_DELTA_OK` all passed. The code and
-run artifacts for this delta have not been pushed: the operator
-explicitly corrected the **nonexistent original `answer/replay`
-CLI calls in the runner** and a Lean Boolean proof locally.
-**Do not overwrite or suggest rebasing away these local corrections**;
-our earlier remote delta runner and Lean source are stale until the
-operator pushes their validated versions. Local P0-B acceptance is
-real (operator-reported), but there is no independent remote artifact
-audit of this run.
+`GWB_SOURCE_LOCAL_CONSUMER_DELTA_OK` all passed. The operator
+corrected the nonexistent original `answer/replay` CLI calls
+in the runner and a Lean Boolean proof, then **pushed the runner,
+Lean fix, consumer certificate builder, tests and
+run-TnDZB8qZ acceptance logs** to DASHI PR #112 at
+`385b32fbd`. Preserve these accepted changes.
+P0-B is complete; original numeric-PNF/Level-3 remain unpaid.
 
 Status change:
 - **P0-A ACCEPTED**: source-local `he→Bush` under the versioned,

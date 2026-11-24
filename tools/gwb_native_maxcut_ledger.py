@@ -510,6 +510,8 @@ def make_ledger(inspection: dict[str, Any], frontier: dict[str, Any],
             else None
         ),
         "named_topic_source_inference_derived": native_source_answer,
+        "source_local_interpretation_paid_under_declared_policy": native_source_answer,
+        "source_local_policy_scope": "original five pre-focus/focus regions; repeated single named PERSON topic",
         "named_topic_policy_ref": (
             named_topic_inference["policy_ref"]
             if named_topic_inference is not None else None

@@ -341,6 +341,40 @@ theorem withdrawal_excludes_revoked_dependency
     d ∉ (withdrawWitness s w).current := by
   simp [withdrawWitness, dependent]
 
+
+/-- Occurrence transport extends represented possibilities, not the
+    admitted identity relation. The two distinct source objects remain
+    distinct even if their labels agree. -/
+def transportOccurrence (s : State) (id : NumericId) : State :=
+  { s with semantic := {
+      s.semantic with represented := id :: s.semantic.represented
+    }
+  }
+
+theorem occurrence_transport_preserves_manifest (s : State) (id : NumericId) :
+    (transportOccurrence s id).semantic.manifest = s.semantic.manifest := rfl
+
+theorem occurrence_transport_preserves_open_world (s : State) (id : NumericId) :
+    (transportOccurrence s id).semantic.outsideModelPossible =
+      s.semantic.outsideModelPossible := rfl
+
+theorem occurrence_transport_preserves_refutation (s : State) (id : NumericId) :
+    (transportOccurrence s id).semantic.semanticRefutations =
+      s.semantic.semanticRefutations := rfl
+
+theorem occurrence_transport_cannot_admit (s : State) (id : NumericId) :
+    (transportOccurrence s id).semantic.admittedWitnesses =
+      s.semantic.admittedWitnesses := rfl
+
+theorem occurrence_transport_cannot_substitute (s : State) (id : NumericId) :
+    (transportOccurrence s id).semantic.levelThreeDerivations =
+      s.semantic.levelThreeDerivations := rfl
+
+theorem occurrence_transport_retains_both (s : State) (a b : NumericId) :
+    a ∈ (transportOccurrence (transportOccurrence s a) b).semantic.represented ∧
+    b ∈ (transportOccurrence (transportOccurrence s a) b).semantic.represented := by
+  simp [transportOccurrence]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -359,3 +393,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_preserves_level_one
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_keeps_unrelated_derivation
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_excludes_revoked_dependency
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_preserves_open_world
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_cannot_admit
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.occurrence_transport_retains_both

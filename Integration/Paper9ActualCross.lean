@@ -161,5 +161,37 @@ theorem actualRawCross (hu : unitOK=true) (hd : diagOK=true)
     ((chartValue 1 τ-(K:ℂ))*(chartValue 0 τ-(K:ℂ)))*
       ((j τ-chartValue 1 τ)*(j τ-chartValue 0 τ))*hT
 
+-- Local disk normalization: the three original branch values must
+-- supply their genuine scalar normalized germs. No division at w=0.
+-- At zero the literal quadratic relation pays the cross; elsewhere
+-- cancel only the coordinate power w^4, not any Hecke factor.
+theorem normalizedActualCross (hu : unitOK=true) (hd : diagOK=true)
+    (hs : sliceOK=true) (hc : jetOK=true)
+    (τ : ℂ → ℍ) (X Xp Xm : ℂ → ℂ) (A : ℂ)
+    (hx : ∀ᶠ w in 𝓝 (0:ℂ), j (τ w)-(K:ℂ)=w*X w)
+    (hp : ∀ᶠ w in 𝓝 (0:ℂ), chartValue 1 (τ w)-(K:ℂ)=w*Xp w)
+    (hm : ∀ᶠ w in 𝓝 (0:ℂ), chartValue 0 (τ w)-(K:ℂ)=w*Xm w)
+    (hN : Xp 0*Xm 0=A^2)
+    (hM : (X 0-Xp 0)*(X 0-Xm 0)=(163/41)*A^2) :
+    ∀ᶠ w in 𝓝 (0:ℂ),
+      let N := Xp w*Xm w
+      let M := (X w-Xp w)*(X w-Xm w)
+      (N*complement.eval (w*X w)-M*sliceComplement.eval (w*X w))*(X w)^2 =
+        N*M*X w*(w*(restSlope (τ w)).eval (w*X w)) := by
+  obtain ⟨_,_,_,_,_,hq,_⟩ := jetFacts hc
+  filter_upwards [hx,hp,hm] with w hx' hp' hm'
+  dsimp
+  by_cases hw : w=0
+  · subst w
+    rw [hN,hM,zero_mul,← Polynomial.coeff_zero_eq_eval_zero,
+      ← Polynomial.coeff_zero_eq_eval_zero,complementCoeff,sliceComplementCoeff]
+    simp only [zero_mul,mul_zero]
+    linear_combination (A^2*(X 0)^2/41)*hq
+  · have h := actualRawCross hu hd hs hc (τ w)
+    dsimp at h
+    rw [hx',hp',hm'] at h
+    apply (mul_left_cancel₀ (pow_ne_zero 4 hw))
+    linear_combination h
+
 end
 end Integration.Paper9ActualCross

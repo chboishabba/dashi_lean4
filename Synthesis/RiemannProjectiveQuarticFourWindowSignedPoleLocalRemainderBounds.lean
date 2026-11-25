@@ -3260,4 +3260,172 @@ theorem real_cosh_sub_sixth_abs_le_eighth
       ring
 
 
+
+/-!
+## Signed eighth harmonic: original local consumer, no far polynomial sum
+
+The sixth harmonic above already uses the actual multiplicity and scale.
+Keep the eighth harmonic on that same source and retain an exact tenth-order
+residual. Analytic bounds on the tenth residual are separate from the ring
+identities below.
+-/
+
+def quarticSignedPoleEighthPhaseReal (alpha q : ℝ) : ℝ :=
+  alpha^8 - 28*alpha^6*q^2 + 70*alpha^4*q^4 - 28*alpha^2*q^6 + q^8
+
+theorem quarticSignedPoleEighthPhaseReal_eq_complex_re (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal alpha q =
+      (((alpha : ℂ) + (q : ℂ) * Complex.I)^8).re := by
+  unfold quarticSignedPoleEighthPhaseReal
+  norm_num [pow_succ, Complex.mul_re, Complex.add_re]
+  ring
+
+theorem quarticSignedPoleSixthPhaseReal_eq_mixed (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal alpha q =
+      (alpha^6-q^6) - 15*(alpha^2*q^2*(alpha^2-q^2)) := by
+  unfold quarticSignedPoleSixthPhaseReal
+  ring
+
+theorem quarticSignedPoleEighthPhaseReal_eq_mixed (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal alpha q =
+      (alpha^4-q^4)^2 + 16*alpha^4*q^4 -
+        28*(alpha^2*q^2*(alpha^2-q^2)^2) := by
+  unfold quarticSignedPoleEighthPhaseReal
+  ring
+
+theorem quarticSignedPoleSixthPhaseReal_horizontal_reflect (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal (-alpha) q =
+      quarticSignedPoleSixthPhaseReal alpha q := by
+  unfold quarticSignedPoleSixthPhaseReal
+  ring
+
+theorem quarticSignedPoleEighthPhaseReal_horizontal_reflect (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal (-alpha) q =
+      quarticSignedPoleEighthPhaseReal alpha q := by
+  unfold quarticSignedPoleEighthPhaseReal
+  ring
+
+def QuarticFourSignedPolePair.signedProfileMomentEight
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ u : ℝ, quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t u * u^8
+
+def QuarticFourSignedPolePair.completeJointEighthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (alpha q : ℝ) : ℝ :=
+  (W.signedProfileMomentEight / 40320) * quarticSignedPoleEighthPhaseReal alpha q
+
+def QuarticFourSignedPolePair.completeJointBeyondEighthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (alpha q : ℝ) : ℝ :=
+  W.completeJointBeyondSixthRemainder alpha q -
+    W.completeJointEighthHarmonic alpha q
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixth_eq_eighth_add_beyond
+    {t alpha q : ℝ} (W : QuarticFourSignedPolePair t) :
+    W.completeJointBeyondSixthRemainder alpha q =
+      W.completeJointEighthHarmonic alpha q +
+        W.completeJointBeyondEighthRemainder alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointBeyondEighthRemainder
+  ring
+
+def QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2 *
+    W.completeJointEighthHarmonic alpha q
+
+def QuarticFourSignedPolePair.literalCompleteJointBeyondEighthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2 *
+    W.completeJointBeyondEighthRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalSixth_physical_scale
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointSixthHarmonic sigma =
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) * W.signedProfileMomentSix *
+        quarticSignedPoleSixthPhaseReal (heightOf sigma) ((sigma : ℂ).im-t) /
+        (720*(t/16)^8) := by
+  have hr : t/16 ≠ 0 := by positivity
+  unfold QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    QuarticFourSignedPolePair.completeJointSixthHarmonic quarticSignedPoleSixthPhaseReal
+  dsimp
+  field_simp
+  <;> ring
+
+theorem QuarticFourSignedPolePair.literalEighth_physical_scale
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointEighthHarmonic sigma =
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) * W.signedProfileMomentEight *
+        quarticSignedPoleEighthPhaseReal (heightOf sigma) ((sigma : ℂ).im-t) /
+        (40320*(t/16)^10) := by
+  have hr : t/16 ≠ 0 := by positivity
+  unfold QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    QuarticFourSignedPolePair.completeJointEighthHarmonic quarticSignedPoleEighthPhaseReal
+  dsimp
+  field_simp
+  <;> ring
+
+theorem QuarticFourSignedPolePair.literalBeyondSixth_eq_eighth_add_beyond
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointBeyondSixthRemainder sigma =
+      W.literalCompleteJointEighthHarmonic sigma +
+        W.literalCompleteJointBeyondEighthRemainder sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+    QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    QuarticFourSignedPolePair.literalCompleteJointBeyondEighthRemainder
+  dsimp
+  rw [W.completeJointBeyondSixth_eq_eighth_add_beyond]
+  ring
+
+def QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointEighthHarmonic rho
+      else 0
+    else 0
+
+def QuarticFourSignedPolePair.literalLocalBeyondEighthRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointBeyondEighthRemainder rho
+      else 0
+    else 0
+
+theorem QuarticFourSignedPolePair.literalLocalBeyondSixth_eq_eighth_add_beyond
+    {t eta : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalBeyondSixthRemainderAt eta n =
+      W.literalLocalSignedEighthHarmonicAt eta n +
+        W.literalLocalBeyondEighthRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+    QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalBeyondEighthRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff, W.literalBeyondSixth_eq_eighth_add_beyond rho]
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalCompleteRemainder_eq_sixth_eighth_beyond
+    {t eta : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalCompleteRemainderAt eta n =
+      W.literalLocalSignedSixthHarmonicAt eta n +
+      W.literalLocalSignedEighthHarmonicAt eta n +
+      W.literalLocalBeyondEighthRemainderAt eta n := by
+  rw [W.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond n,
+      W.literalLocalBeyondSixth_eq_eighth_add_beyond n]
+  ring
+
 end Synthesis

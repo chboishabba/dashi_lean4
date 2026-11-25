@@ -173,7 +173,8 @@ theorem cmRatio (n : ℕ) :
     -(24*(2*(n : ℚ)+1)*(6*(n : ℚ)+1)*(6*(n : ℚ)+5))/
       (C*((n : ℚ)+1)^3) := by
   unfold cmZ ratio C
-  ring
+  have hn : (n : ℚ)+1 ≠ 0 := by positivity
+  field_simp [hn] <;> ring
 
 theorem cmTermSucc (n : ℕ) :
     coeff (n+1)*cmZ^(n+1) =
@@ -181,6 +182,43 @@ theorem cmTermSucc (n : ℕ) :
       (C*((n : ℚ)+1)^3))*(coeff n*cmZ^n) := by
   rw [coeffSucc,pow_succ,← cmRatio]
   ring
+
+
+-- Actual signed-sum to reciprocal observation comparison. Here r is
+-- the fixed positive radical numerator 426880 sqrt(10005) (or its
+-- rational floor corner); it is not an independent address metric.
+theorem reciprocalEdge (r s t : ℚ) (hr : 0 ≤ r) (hs : 0 < s) (ht : 0 < t) :
+    |r/s-r/t| = r*|t-s|/(s*t) := by
+  have h : r/s-r/t = r*(t-s)/(s*t) := by
+    field_simp [ne_of_gt hs,ne_of_gt ht] <;> ring
+  rw [h,abs_div,abs_mul,abs_of_nonneg hr,abs_of_pos (mul_pos hs ht)]
+
+-- Shared middle endpoint cancels one denominator exactly. No
+-- squared distortion factor is needed on adjacent intervals.
+theorem reciprocalAdjacentContraction (r s t u lam : ℚ)
+    (hr : 0 ≤ r) (hs : 0 < s) (ht : 0 < t) (hu : 0 < u)
+    (hstep : |u-t| ≤ lam*|t-s|) :
+    |r/t-r/u| ≤ (lam*s/u)*|r/s-r/t| := by
+  rw [reciprocalEdge r t u hr ht hu,reciprocalEdge r s t hr hs ht]
+  have h : r*|u-t| ≤ r*(lam*|t-s|) := mul_le_mul_of_nonneg_left hstep hr
+  calc
+    r*|u-t|/(t*u) ≤ (r*(lam*|t-s|))/(t*u) :=
+      div_le_div_of_nonneg_right h (mul_nonneg ht.le hu.le)
+    _ = (lam*s/u)*(r*|t-s|/(s*t)) := by
+      field_simp [ne_of_gt hs,ne_of_gt ht,ne_of_gt hu] <;> ring
+
+-- A radical refinement is a separate edge: keep the signed change
+-- rather than treating the sum-coordinate metric as the whole output.
+theorem radicalEdge (r r' s : ℚ) (hs : 0 < s) :
+    |r'/s-r/s| = |r'-r|/s := by
+  rw [← sub_div,abs_div,abs_of_pos hs]
+
+theorem combinedEdge (r r' s t : ℚ) (hr : 0 ≤ r) (hs : 0 < s) (ht : 0 < t) :
+    |r'/t-r/s| ≤ |r'-r|/t + r*|s-t|/(t*s) := by
+  calc
+    |r'/t-r/s| = |(r'/t-r/t)+(r/t-r/s)| := by ring_nf
+    _ ≤ |r'/t-r/t|+|r/t-r/s| := abs_add_le _ _
+    _ = _ := by rw [radicalEdge r r' t ht,reciprocalEdge r t s hr ht hs]
 
 end
 end Integration.Paper9CuspOrderFactorial

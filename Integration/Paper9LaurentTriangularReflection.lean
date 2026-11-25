@@ -39,6 +39,7 @@ theorem normalizedCoeff (J : PowerSeries ℂ) (d n : ℕ) (c : ℕ → ℂ)
       ∑ k ∈ Finset.range (n+1), c k*coefficient J d n k := by
   unfold normalized coefficient
   simp only [map_sum,PowerSeries.coeff_C_mul]
+  symm
   apply Finset.sum_subset (Finset.range_mono (by omega))
   intro k hk hkn
   have h : n<k := by
@@ -96,7 +97,7 @@ theorem normRecurrence (N V : PowerSeries ℂ)
     (∑ ij ∈ Finset.antidiagonal n,
       PowerSeries.coeff ij.1 V*PowerSeries.coeff ij.2 N) =
       (n : ℂ)*PowerSeries.coeff n N :=
-  logRecurrence V N h n
+  by rw [← PowerSeries.coeff_mul,h,eulerCoeff]
 
 -- Exact degree frontiers for the original p=41 coefficient producers.
 theorem diagonalFrontier : 41*82=3362 ∧ 41*82-41+1=3322 := by decide

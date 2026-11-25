@@ -175,3 +175,29 @@ theorem selectedPhysicalPrincipal (c ω x y z m : ℚ) :
       -ω^2+c^2*(x^2+y^2+z^2) := by ring
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Real and imaginary components of the ORIGINAL selected amplitudes
+(1,b+i*d), after a late real rotation of the pointer. This is a
+conditioned amplitude identity, not an unconditioned signal. -/
+theorem lateRotationWeightSum (c s b d : ℚ)
+    (h : c*c+s*s=1) :
+    (c+b*s)^2+(d*s)^2+(-s+b*c)^2+(d*c)^2 = 1+b*b+d*d := by
+  calc
+    _ = (c*c+s*s)*(1+b*b+d*d) := by ring
+    _ = _ := by rw [h]; ring
+
+/-- Each already registered branch has the same unconditioned norm
+after a complete final measurement. -/
+theorem lateRotationBranchNorm (c s : ℚ) (h : c*c+s*s=1) :
+    c^2+s^2=1 ∧ (-s)^2+c^2=1 := by
+  constructor <;> nlinarith
+
+/-- ABL's incoherent positive denominator does not imply nonzero
+coherent weak overlap. Original source amplitudes (1,-1). -/
+theorem ablPositiveWeakOverlapZero :
+    (0:ℚ) < 1^2+(-1)^2 ∧ (1:ℚ)+(-1)=0 := by norm_num
+
+end DASHITOE.HopfMonsterSourceCut

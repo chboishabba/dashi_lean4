@@ -3,7 +3,7 @@ import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 
 /-! SOURCE-WRITTEN, UNCOMPILED.
 Original E4/E6 Fourier streams via Birkbeck's pinned q_expansion_bernoulli
-and ModularFormClass.qExpansion_coeff_unique, not a new analytic evaluator.
+and qExpansion_coeff_unique, not a new analytic evaluator.
 Keep the zero mode and the signed 1728 residual. -/
 namespace Integration.Paper9EisensteinIntegerBinding
 
@@ -24,7 +24,7 @@ theorem sigmaBound (k n : ℕ) : sigma k n ≤ n^(k+1) := by
     _ ≤ ∑ d ∈ n.divisors, n^k := by
       apply Finset.sum_le_sum
       intro d hd
-      exact Nat.pow_le_pow_left (Nat.le_of_dvd (Nat.pos_of_ne_zero (Nat.ne_zero_of_mem_divisors hd))
+      exact Nat.pow_le_pow_left (Nat.le_of_dvd (Nat.pos_of_ne_zero (Nat.mem_divisors.mp hd).2)
         (Nat.dvd_of_mem_divisors hd)) _
     _ = n.divisors.card * n^k := by simp
     _ ≤ n^(k+1) := by
@@ -64,7 +64,9 @@ theorem divisorSeries (k : ℕ) (a q : ℂ) (hq : ‖q‖ < 1) :
 -- Actual all-index coefficient statements, via the original modular forms.
 theorem e4Integer (n : ℕ) : E4PS.coeff n = (e4Z n : ℂ) := by
   symm
-  apply ModularFormClass.qExpansion_coeff_unique (h := 1) one_pos one_mem_strictPeriods_SL
+  unfold E4PS
+  refine qExpansion_coeff_unique (h := 1) (c := fun m => (e4Z m : ℂ))
+    (f := Integration.MoonshineEisensteinAnalytic.E4) one_pos one_mem_strictPeriods_SL ?_ n
   intro τ
   have h := divisorSeries 3 240 (Periodic.qParam 1 τ)
     (by simpa [Periodic.qParam] using Complex.norm_exp_two_pi_I_lt_one τ)
@@ -76,7 +78,9 @@ theorem e4Integer (n : ℕ) : E4PS.coeff n = (e4Z n : ℂ) := by
 
 theorem e6Integer (n : ℕ) : E6PS.coeff n = (e6Z n : ℂ) := by
   symm
-  apply ModularFormClass.qExpansion_coeff_unique (h := 1) one_pos one_mem_strictPeriods_SL
+  unfold E6PS
+  refine qExpansion_coeff_unique (h := 1) (c := fun m => (e6Z m : ℂ))
+    (f := Integration.MoonshineEisensteinAnalytic.E6) one_pos one_mem_strictPeriods_SL ?_ n
   intro τ
   have h := divisorSeries 5 (-504) (Periodic.qParam 1 τ)
     (by simpa [Periodic.qParam] using Complex.norm_exp_two_pi_I_lt_one τ)

@@ -47,7 +47,7 @@ theorem coordinateMulDeriv (f : ℂ → ℂ) (hf : ContinuousAt f 0) :
   apply ht.congr'
   filter_upwards [self_mem_nhdsWithin] with w hw
   have hn : w≠0 := by simpa using hw
-  simp [smul_eq_mul,hn]
+  simp [smul_eq_mul,← mul_assoc,hn]
 
 theorem denominatorLocal (c : ℂ) :
     ∀ᶠ w in 𝓝 (0:ℂ), 1-c*w≠0 := by
@@ -112,12 +112,12 @@ theorem actualThreeBranches (X : ℂ → ℂ)
     exact he
   · filter_upwards [diskTauLocal,hden,denominatorLocal alpha,
       (hc alpha).eventually h] with w hw hd ha he
-    rw [forwardChartValue,hw,forwardUndisk w hd ha,← mul_assoc]
-    exact he
+    rw [forwardChartValue,hw,forwardUndisk w hd ha]
+    linear_combination he
   · filter_upwards [diskTauLocal,hden,denominatorLocal alpha⁻¹,
       (hc alpha⁻¹).eventually h] with w hw hd ha he
-    rw [reverseChartValue,hw,reverseUndisk w hd ha,← mul_assoc]
-    exact he
+    rw [reverseChartValue,hw,reverseUndisk w hd ha]
+    linear_combination he
 
 -- Original affine chart and actual j extension imply continuity at the
 -- disk center for EVERY chart, including all forty residual indices.
@@ -211,7 +211,7 @@ theorem branchProducts (X : ℂ → ℂ) (x0 : X 0=A)
     simp only [mul_zero,x0]
     have hsq : alpha^2+(alpha⁻¹)^2=(81/41:ℂ)^2-2 := by
       linear_combination (alpha+alpha⁻¹-81/41)*htr-2*hi
-    linear_combination A*B*(2*htr-hsq+(alpha+alpha⁻¹)*hi)
+    linear_combination A*B*(-hsq+(alpha+alpha⁻¹)*hi)
 
 -- All analytic inputs are constructed above. Only literal finite
 -- predicates and the selected original CM root are arguments.
@@ -250,6 +250,20 @@ theorem actualDiskCorrection (hu : unitOK=true) (hd : diagOK=true)
   exact crossPeriodOfCross X N M p s T A B
     (shiftedZ 2:ℂ) (shiftedZ 3:ℂ) (sliceShiftZ 2:ℂ) (sliceShiftZ 3:ℂ)
     hA hS x0 n0 m0 hp0 hs0 hX hn hM hpd hsd hw he
+
+-- A4 plus A5 plus the already existing positive A7 period.
+-- The six root and two slice/jet checks are the ONLY explicit inputs.
+theorem literalPrefixFromFiniteChecks
+    (hu : unitOK=true) (hd : diagOK=true) (hz : shiftOK=true)
+    (hs : sliceOK=true) (hc : jetOK=true)
+    (hp : Integration.Paper9CMOriginalMachinWindow.piRoundOK)
+    (hq : Integration.Paper9CMOriginalMachinWindow.sqrtRoundOK)
+    (hw : Integration.Paper9CMExpWindow.expWindowOK) :
+    Tendsto (fun N => (Integration.Paper9LiteralFactorialPrefix.sum N : ℂ))
+      atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ)) := by
+  have hj := Integration.Paper9CMExpWindow.rootFromOriginalFiniteChecks hu hd hz hp hq hw
+  exact literalPeriodFromDisk (by simpa [K] using hj) hc
+    (actualDiskCorrection hu hd hs hc hj)
 
 end
 end Integration.Paper9DiskGerm

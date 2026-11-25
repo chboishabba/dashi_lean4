@@ -1,0 +1,54 @@
+{
+  "schema": "dashi-alpoge-licensed-rewrite-v1",
+  "repository": "lsernau/grh-lean",
+  "url": "https://github.com/lsernau/grh-lean.git",
+  "revision": "72fead102f663d5c7a407964a13dc0cf9d977207",
+  "toolchain": "leanprover/lean4:v4.35.0",
+  "mathlib_revision": "56a005855ea17e0b0958f73ec801ae140b0a1679",
+  "license": "Apache-2.0",
+  "root_git_blobs": {
+    "LICENSE": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+    "README.md": "fdca72cbfa3557506543b662317267897e0058a0"
+  },
+  "editions": {
+    "compact": {
+      "project": "grh-compact",
+      "tree": "dba7a002d3863a6fdeeefe0528b1a232e732b8d5",
+      "git_blobs": {
+        "src/Statements.lean": "1cd1bce93344065936b2b392b23306254e0785ef",
+        "lean-toolchain": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+        "lake-manifest.json": "4fb97032cff9044f1ad40f17668f4fcb8ec6d2c7",
+        "lakefile.toml": "171c6a3a8cf59aaf629a4a2c8b5533ae1e80c611",
+        "scripts/PrintAxioms.lean": "ec5adcfd7baeff36130db9a763720ba1a6567c57",
+        "comparator.json": "41af22dfbc5566ecd62268b4fed5548c30a8f529",
+        "src/Main.lean": "a5d8389131c985a0b54ce5b0e778ee5c8126a997",
+        "src/New/Main.lean": "198ed5bf26aa294898931e0649bc2b88f1389f65",
+        "NOTICE": "fa2198fa11ad92110c4607c19e28838d81888b87",
+        "ATTRIBUTION.md": "514369638c5aedbd6abf12598cc966c5806d24c5",
+        "Challenge.lean": "4230ff8fe8b0265a44db348c22cd5f03a7c3f3fe",
+        "README.md": "85d43d83a7fa3b496968ce9216f4a7d75e44e84a"
+      }
+    },
+    "readable": {
+      "project": "grh",
+      "tree": "2e133df63d7f4da6b3059c4195324f8e9187ba73",
+      "git_blobs": {
+        "src/Statements.lean": "1cd1bce93344065936b2b392b23306254e0785ef",
+        "lean-toolchain": "a6aff065db2882c535684f8c5bcd4f16e9a23915",
+        "lake-manifest.json": "4fb97032cff9044f1ad40f17668f4fcb8ec6d2c7",
+        "lakefile.toml": "171c6a3a8cf59aaf629a4a2c8b5533ae1e80c611",
+        "scripts/PrintAxioms.lean": "ec5adcfd7baeff36130db9a763720ba1a6567c57",
+        "comparator.json": "41af22dfbc5566ecd62268b4fed5548c30a8f529",
+        "src/Main.lean": "1adf4187a938510363cdb0dde0a6d628ff39c600",
+        "src/New/Reduction/MainInequality.lean": "97f83ab52b2feb420e952a2722b4cef454b9e579",
+        "src/New/Reduction/OneSidedBound.lean": "99e5240de112527b739068b692e5007720d310c1",
+        "NOTICE": "cb3b006e6e0ffa63a987479f7fdd0ce5863608cb",
+        "ATTRIBUTION.md": "07bb12d3103451bedb35d236825d946c33b8ba0d",
+        "README.md": "68cd862687bac1dadf3f14dc7266365e5c8b1ec4",
+        "GUIDE.md": "c2acf9584b58efcb39ac1d668d25c107c3e76a0b"
+      }
+    }
+  },
+  "authority": "upstream-reported checks; local kernel and cross-kernel admission not yet performed",
+  "attribution": "Proof Levent Alpöge with Claude; rewriting Anthropic collaborators with Claude; Copyright 2026 Anthropic, PBC."
+}

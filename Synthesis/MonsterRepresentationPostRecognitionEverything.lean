@@ -1,3 +1,4 @@
+import Synthesis.MonsterParityProjectors
 import Synthesis.MonsterCentralProjectorSplit
 import Synthesis.MonsterActualMultiplicityCharacter
 import Synthesis.MonsterSignedEndpointComposition

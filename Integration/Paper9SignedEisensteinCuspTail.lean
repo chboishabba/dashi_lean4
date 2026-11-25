@@ -111,5 +111,63 @@ theorem e6TwoTailAt (τ : ℍ)
   rw [yAtQ,he,hp]
   convert hb using 1 <;> ring
 
+-- Stable normalized cusp quotient. Consume the two polynomial
+-- remainders; no tiny discriminant division in the error estimate.
+theorem cuspRemainder (q N D : ℂ)
+    (hq : q≠0) (hr : ‖q‖≤(1/2:ℝ)^36)
+    (hN : ‖N-(1+720*q+179280*q^2)‖≤20000000*‖q‖^3)
+    (hD : ‖D-(1-24*q)‖≤24000*‖q‖^2) :
+    ‖N/D/q-1/q-744‖≤500000*‖q‖ := by
+  let r := ‖q‖
+  have hpos : 0<r := norm_pos_iff.mpr hq
+  have hr0 : 0≤r := hpos.le
+  have hsmall : r≤(1/2:ℝ)^36 := hr
+  have hδ : ‖D-1‖≤24000*r^2+24*r := by
+    calc
+      _ = ‖(D-(1-24*q))-24*q‖ := by congr 1 <;> ring
+      _ ≤ ‖D-(1-24*q)‖+‖24*q‖ := norm_sub_le _ _
+      _ ≤ _ := by rw [norm_mul,norm_ofNat]; exact add_le_add_right hD _
+  have hdsmall : 24000*r^2+24*r≤1/2 := by
+    have hp : r^2≤((1/2:ℝ)^36)^2 := by gcongr
+    linarith
+  have hd : 1/2≤‖D‖ := by
+    have hn := norm_add_le D (1-D)
+    rw [show D+(1-D)=1 by ring,norm_one,norm_sub_rev] at hn
+    linarith
+  have hdne : D≠0 := by
+    intro he
+    rw [he,norm_zero] at hd
+    norm_num at hd
+  have hb : ‖1+744*q‖≤2 := by
+    calc
+      _ ≤ ‖(1:ℂ)‖+‖744*q‖ := norm_add_le _ _
+      _ = 1+744*r := by simp [norm_mul,r]
+      _ ≤ _ := by linarith
+  have hex : N-(1+744*q)*D =
+      (N-(1+720*q+179280*q^2))+197136*q^2-
+        (1+744*q)*(D-(1-24*q)) := by ring
+  have hn : ‖N-(1+744*q)*D‖≤250000*r^2 := by
+    rw [hex]
+    calc
+      _ ≤ ‖(N-(1+720*q+179280*q^2))+197136*q^2‖+
+            ‖(1+744*q)*(D-(1-24*q))‖ := norm_sub_le _ _
+      _ ≤ ‖N-(1+720*q+179280*q^2)‖+‖197136*q^2‖+
+            ‖(1+744*q)*(D-(1-24*q))‖ :=
+        add_le_add_right (norm_add_le _ _) _
+      _ ≤ 20000000*r^3+197136*r^2+2*(24000*r^2) := by
+        rw [norm_mul,norm_ofNat,norm_pow,norm_mul]
+        gcongr
+      _ ≤ _ := by
+        have hc : 20000000*r+197136+2*24000≤250000 := by linarith
+        nlinarith [mul_le_mul_of_nonneg_right hc (sq_nonneg r)]
+  have he : N/D/q-1/q-744=(N-(1+744*q)*D)/(D*q) := by
+    field_simp [hq,hdne] <;> ring
+  rw [he,norm_div,norm_mul]
+  apply (div_le_iff₀ (mul_pos (norm_pos_iff.mpr hdne) hpos)).2
+  calc
+    _ ≤ 250000*r^2 := hn
+    _ ≤ 500000*r*(‖D‖*r) := by
+      nlinarith [mul_le_mul_of_nonneg_right hd (sq_nonneg r)]
+
 end
 end Integration.Paper9SignedEisensteinCuspTail

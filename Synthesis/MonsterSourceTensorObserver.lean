@@ -28,8 +28,7 @@ def compressedWeil (ell : H →ₗ[k] k) (v : H) (K : H →ₗ[k] H) : H →ₗ[
 
 theorem compressedWeilTrace (ell : H →ₗ[k] k) (v : H) (K : H →ₗ[k] H) :
     LinearMap.trace k H (compressedWeil ell v K) = ell (K v) := by
-  rw [compressedWeil, LinearMap.trace_smulRight]
-  rfl
+  exact LinearMap.trace_smulRight (ell.comp K) v
 
 /-- Here R includes the untouched original zero phase and opposite marked
 phase. It is killed by this observer, not discarded from the actual module. -/
@@ -62,6 +61,30 @@ theorem sourceTraceInOriginalBasis {V : Type u}
     LinearMap.trace k V op =
       ell (K v) * (LinearMap.trace k A a + LinearMap.trace k B b) := by
   rw [← LinearMap.trace_conj' op e, h, sourceBlockTrace]
+
+/-- Supply the weighted source equality consumed by originalCharacterWeld
+using original word-character equality and the literal BW tensor model.
+The source block compression is the only operator attachment; the trace
+formula is a derived consequence. -/
+theorem sourceWeightedFromModel {G β V V' : Type u}
+    [Group G] [Fintype β]
+    [AddCommGroup V] [Module k V] [FiniteDimensional k V]
+    [AddCommGroup V'] [Module k V'] [FiniteDimensional k V']
+    (rho : Representation k G V) (sigma : Representation k G V')
+    (c : β → k) (w : β → G) (h : G)
+    (e : V' ≃ₗ[k] (R × ((H ⊗[k] A) × (H ⊗[k] B))))
+    (ell : H →ₗ[k] k) (v : H) (K : H →ₗ[k] H)
+    (a : A →ₗ[k] A) (b : B →ₗ[k] B)
+    (hmatch : ∀ t, LinearMap.trace k V (rho (w t * h)) =
+      LinearMap.trace k V' (sigma (w t * h)))
+    (hsource : e.conj
+      ((Synthesis.MonsterProjectedOriginalCharacter.wordObserver sigma c w).comp (sigma h)) =
+        sourceBlockOperator ell v K a b) :
+    (∑ t, c t * LinearMap.trace k V (rho (w t * h))) =
+      ell (K v) * (LinearMap.trace k A a + LinearMap.trace k B b) := by
+  rw [← Synthesis.MonsterProjectedOriginalCharacter.wordObserverTrace rho c w h,
+    Synthesis.MonsterProjectedOriginalCharacter.weightedSourceTransfer rho sigma c w h hmatch]
+  exact sourceTraceInOriginalBasis e _ ell v K a b hsource
 
 end
 end Synthesis.MonsterSourceTensorObserver

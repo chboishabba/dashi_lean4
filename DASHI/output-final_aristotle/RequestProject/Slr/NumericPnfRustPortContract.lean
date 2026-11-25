@@ -915,6 +915,24 @@ theorem unaffected_derivation_membership_preserved (original : List String)
     ref ∈ suspendDerivedRefs original affected ↔ ref ∈ original := by
   simp [suspendDerivedRefs, h]
 
+/-- A previously admitted identity witness is an additional authority
+lane. A candidate-only reconciliation must not restore that witness
+merely by deleting the execution debt. -/
+def candidateOnlyReconciliationWithIdentity
+    (drained projectionExact admissibility proof coverage sufficiency identity : Bool) : Bool :=
+  candidateOnlyReconciliation drained projectionExact admissibility proof coverage sufficiency && !identity
+
+theorem admitted_identity_blocks_candidate_only_reconciliation
+    (d e a p c s : Bool) :
+    candidateOnlyReconciliationWithIdentity d e a p c s true = false := by
+  simp [candidateOnlyReconciliationWithIdentity]
+
+theorem no_identity_retains_original_candidate_only_rule
+    (d e a p c s : Bool) :
+    candidateOnlyReconciliationWithIdentity d e a p c s false =
+      candidateOnlyReconciliation d e a p c s := by
+  simp [candidateOnlyReconciliationWithIdentity]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -988,3 +1006,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.suspension_never_creates_unique_target
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.suspended_derivation_not_current
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.unaffected_derivation_membership_preserved
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.admitted_identity_blocks_candidate_only_reconciliation
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.no_identity_retains_original_candidate_only_rule

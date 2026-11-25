@@ -437,17 +437,17 @@ theorem two_occurrences_can_have_one_class :
     before publication. Unavailable coverage is a separate residual, not
     a reason to execute unrelated corpus regions. This specializes the
     existing DeltaWork contract, not a new semantic reducer. -/
-def consumerRegionWork (required published : List NumericId) : List NumericId :=
+def consumerRegionWork {α : Type} [BEq α] (required published : List α) : List α :=
   required.filter (fun id => !published.contains id)
 
 theorem consumer_work_cannot_include_unrequested
-    (required published : List NumericId) (id : NumericId)
+    {α : Type} [BEq α] (required published : List α) (id : α)
     (h : id ∈ consumerRegionWork required published) :
     id ∈ required := by
   exact (List.mem_filter.mp h).1
 
 theorem consumer_work_empty_if_required_published
-    (required published : List NumericId)
+    {α : Type} [BEq α] (required published : List α)
     (covered : ∀ id, id ∈ required → published.contains id = true) :
     consumerRegionWork required published = [] := by
   induction required with
@@ -473,8 +473,9 @@ theorem shared_producer_same_snapshot {Input Output Admission : Type}
     (produce : Input → Output) (admit : Output → Admission) (i : Input) :
     sharedProducer produce admit i = (produce i, admit (produce i)) := rfl
 
-example : consumerRegionWork [1, 2, 3] [1, 3, 99] = [2] := by decide
-example : consumerRegionWork [1, 2] [1, 2, 99] = [] := by decide
+example : consumerRegionWork ([1, 2, 3] : List Nat) [1, 3, 99] = [2] := by decide
+example : consumerRegionWork ([1, 2] : List Nat) [1, 2, 99] = [] := by decide
+example : consumerRegionWork ["s1", "s2", "s3"] ["s1", "s3", "unrelated"] = ["s2"] := by decide
 
 end Wikidata.Slr.NumericPnfRustPortContract
 

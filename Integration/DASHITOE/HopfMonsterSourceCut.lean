@@ -69,3 +69,43 @@ theorem coordinateDonorDoesNotPromote :
     composeGrade .sharedCarrier .conjecturalStructural = .conjecturalStructural := rfl
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Polynomial graph metric equality along the full chosen affine path.
+The variables are scalar evaluations on two original tangents, not
+an asserted Lorentzian manifold or integrated action. -/
+theorem kkGraphPath (g dg a b da db f k df dk r dr t : ℚ) :
+    g + t*dg + (r+t*dr)*((f+t*df)+(a+t*da))*((k+t*dk)+(b+t*db)) =
+    g + t*dg + (r+t*dr)*((a+f)+t*(da+df))*((b+k)+t*(db+dk)) := by ring
+
+/-- Original AK warp lapse equation, after selecting its first integral. -/
+theorem periodicWarpLapse (c h b v : ℚ)
+    (hv : v^2 = c^2*b^2-h^2) :
+    b^2*(-12*h^2)-12*b^2*v^2+12*c^2*b^4 = 0 := by
+  rw [hv]
+  ring
+
+/-- Warp variation of the same reduced EH density at unit normal lapse. -/
+theorem periodicWarpEulerLagrange (c h b v w : ℚ)
+    (hv : v^2 = c^2*b^2-h^2) (hw : w = c^2*b) :
+    2*b*(-12*h^2)-24*b*v^2-24*b^2*w+48*c^2*b^3 = 0 := by
+  rw [hv, hw]
+  ring
+
+/-- The boundary term obtained by varying the same warped EH action,
+including the periodic pure-tension surface action. -/
+theorem periodicWarpSeam (b t : ℚ) :
+    -24*b^2*(-t*b/3)-8*t*b^3 = 0 := by ring
+
+/-- Integrated bulk total derivative b^3 b' yields the supplied relation
+between warp moments and tension. This lemma pays only its algebraic
+consequence, not the integration or the continuum variation. -/
+theorem periodicWarpReducedPotential (c h I2 I4 t : ℚ)
+    (ht : t = 3*(4*c^2*I4-3*h^2*I2)) :
+    24*c^2*I4-12*h^2*I2-2*t = 6*h^2*I2 := by
+  rw [ht]
+  ring
+
+end DASHITOE.HopfMonsterSourceCut

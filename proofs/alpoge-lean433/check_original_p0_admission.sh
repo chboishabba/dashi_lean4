@@ -55,7 +55,7 @@ for p in manifest["packages"]:
     path = base / p["name"]
     def git(*args):
         return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
-    if git("rev-parse", "HEAD") != p["rev"] or git("status", "--porcelain", "--untracked-files=no"):
+    if git("rev-parse", "HEAD") != p["rev"] or git("status", "--porcelain", "--untracked-files=all"):
         raise SystemExit("BLOCKED: package revision/working-tree mismatch: " + p["name"])
     if any(s[:1] == "S" or s[:1].islower() for s in git("ls-files", "-v").splitlines()):
         raise SystemExit("BLOCKED: hidden package source paths: " + p["name"])
@@ -76,6 +76,35 @@ PY
     # defined constants into a fresh kernel environment, not just Main.
     lake env leanchecker --fresh --verbose Main 2>&1 | tee "$REPORT_DIR/fresh-kernel.log"
   fi
+  if [[ "${GRH_P0_CLAY:-$REPLAY}" == 1 ]]; then
+    # Consume the existing exact target vendor, not a restatement of RH.
+    VENDOR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "${GRH_P0_CLAY_VENDOR:-$ROOT/vendor/LeanMillenniumPrizeProblems}")"
+    if [[ ! -e "$VENDOR" ]]; then
+      bash "$ROOT/scripts/vendor_millennium_targets.sh" "$VENDOR"
+    fi
+    CLAY_PIN=603053dc267cf3efe422f438eb78098c0ececd6f
+    CLAY_TREE=b7c2004c0e8cb192d3dc7d740551a2de04068b61
+    CLAY_BLOB=26356e8fecc91562eb2af2564e852e1b33c63005
+    TARGET=Problems/RiemannHypothesis/Millennium.lean
+    [[ "$(git -C "$VENDOR" rev-parse HEAD)" == "$CLAY_PIN" ]]
+    [[ "$(git -C "$VENDOR" rev-parse 'HEAD^{tree}')" == "$CLAY_TREE" ]]
+    [[ "$(git -C "$VENDOR" rev-parse "HEAD:$TARGET")" == "$CLAY_BLOB" ]]
+    [[ "$(git hash-object --no-filters "$VENDOR/$TARGET")" == "$CLAY_BLOB" ]]
+    [[ -z "$(git -C "$VENDOR" status --porcelain --untracked-files=all)" ]]
+    BUILD="$REPORT_DIR/clay-olean"
+    mkdir -p "$BUILD/Problems/RiemannHypothesis"
+    # Compile the unmodified upstream target in THIS Mathlib environment.
+    # It has a final unused challenge sorry; the actual exported proof
+    # below must not depend on sorryAx or any nonstandard axiom.
+    lake env lean --root="$VENDOR" -o "$BUILD/Problems/RiemannHypothesis/Millennium.olean" "$VENDOR/$TARGET" 2>&1 |
+      tee "$REPORT_DIR/clay-target-build.log"
+    lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$3" -o "$1/RHClayAdmission.olean" "$2"' \
+      _ "$BUILD" "$SIDECAR/RHClayAdmission.lean" "$SIDECAR" 2>&1 |
+      tee "$REPORT_DIR/clay-admission.log"
+    python3 "$SIDECAR/audit_p0_axioms.py" clay "$REPORT_DIR/clay-admission.log" |
+      tee "$REPORT_DIR/clay-axiom-audit.log"
+  fi
+
   if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
     lake env lean "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" 2>&1 |
       tee "$REPORT_DIR/directional-donor-lean.log"
@@ -83,11 +112,14 @@ PY
 )
 # Detect modifications made during the build. This is still a local trusted
 # toolchain receipt, not independent checker or Agda/cross-version admission.
-bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin-after.log"
+GRH_P0_VERIFY_ONLY=1 bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin-after.log"
 if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
   printf 'LOCAL SOURCE ADMISSION + FRESH KERNEL REPLAY: %s Lean %s\n' "$SOURCE" "$VERSION"
 else
   printf 'LOCAL SOURCE BUILD + ADAPTER AXIOM AUDIT ONLY (fresh replay not requested): %s Lean %s\n' "$SOURCE" "$VERSION"
 fi
 printf 'Receipts: %s\n' "$REPORT_DIR"
-printf 'Still separate: compatible root proof import, Agda same-object transport, independent external checker acceptance.\n'
+if [[ "${GRH_P0_CLAY:-$REPLAY}" == 1 ]]; then
+  printf 'SAME-KERNEL PINNED CLAY RH AND XI ADAPTER CHECKED (isolated %s).\n' "$VERSION"
+fi
+printf 'Still separate: root-package proof import, Agda same-object transport, independent external checker acceptance.\n'

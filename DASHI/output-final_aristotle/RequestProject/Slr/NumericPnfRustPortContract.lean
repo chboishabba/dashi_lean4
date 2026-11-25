@@ -559,6 +559,33 @@ theorem outside_insertion_preserves_dependency_coverage
   intro h
   exact outside ⟨i, dep, h⟩
 
+/-- A typed refutation is an original admission event with same-demand,
+    same-target evidence, not a numerical sign or execution-prune event. -/
+def checkedRefutation (demand : Nat) (candidate : CandidateKey)
+    (e : CandidateEvidence) : Bool :=
+  decide (e.demand = demand ∧ e.target = candidate ∧ e.evidenceRef ≠ "")
+
+theorem checked_refutation_sound (demand : Nat) (candidate : CandidateKey)
+    (e : CandidateEvidence) (h : checkedRefutation demand candidate e = true) :
+    RefutedBy demand candidate e := by
+  exact of_decide_eq_true h
+
+def liveTypedKeys (represented refuted : List CandidateKey) : List CandidateKey :=
+  represented.filter (fun k => !refuted.contains k)
+
+theorem live_typed_keys_sound (represented refuted : List CandidateKey)
+    (k : CandidateKey) (h : k ∈ liveTypedKeys represented refuted) :
+    k ∈ represented ∧ k ∉ refuted := by
+  have hm := List.mem_filter.mp h
+  refine ⟨hm.1, ?_⟩
+  simpa [List.contains_eq_mem] using hm.2
+
+theorem live_typed_keys_complete (represented refuted : List CandidateKey)
+    (k : CandidateKey) (hr : k ∈ represented) (hn : k ∉ refuted) :
+    k ∈ liveTypedKeys represented refuted := by
+  apply List.mem_filter.mpr
+  exact ⟨hr, by simp [List.contains_eq_mem, hn]⟩
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -594,3 +621,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.extension_exact_coverage
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.newly_covered_dependency_requires_wake
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.outside_insertion_preserves_dependency_coverage
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.checked_refutation_sound
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.live_typed_keys_sound
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.live_typed_keys_complete

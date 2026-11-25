@@ -40,8 +40,8 @@ theorem traceSum (g : G) :
 theorem traceTwist (g : G) :
     LinearMap.trace k V (rho (g * D.j)) =
       -LinearMap.trace k M (minus g) + LinearMap.trace k P (plus g) := by
-  rw [traceSum rho minus plus D, map_mul, map_mul, D.negative, D.positive,
-    mul_neg, mul_one, mul_one, map_neg]
+  simp only [traceSum rho minus plus D, map_mul, D.negative, D.positive,
+    mul_neg, mul_one, map_neg]
 
 theorem negativeTrace (g : G) :
     LinearMap.trace k M (minus g) =
@@ -67,10 +67,10 @@ theorem blockCharacterOfSum (a b : G → k)
     (∀ g, LinearMap.trace k P (plus g) = b g) := by
   constructor
   · intro g
-    rw [negativeTrace rho minus plus D, h, h, ha, hb]
+    rw [negativeTrace rho minus plus D, h g, h (g * D.j), ha, hb]
     ring
   · intro g
-    rw [positiveTrace rho minus plus D, h, h, ha, hb]
+    rw [positiveTrace rho minus plus D, h g, h (g * D.j), ha, hb]
     ring
 
 /-- The standard FDRep of the actual operator has literally the same trace. -/

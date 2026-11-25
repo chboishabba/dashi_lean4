@@ -156,7 +156,7 @@ theorem actualRawCross (hu : unitOK=true) (hd : diagOK=true)
   have hY : (K:ℂ)+(j τ-(K:ℂ))=j τ := by ring
   rw [hY] at hT
   linear_combination
-    ((chartValue 1 τ-(K:ℂ))*(chartValue 0 τ-(K:ℂ)))*hp -
+    -((chartValue 1 τ-(K:ℂ))*(chartValue 0 τ-(K:ℂ)))*hp +
     ((j τ-chartValue 1 τ)*(j τ-chartValue 0 τ))*ha +
     ((chartValue 1 τ-(K:ℂ))*(chartValue 0 τ-(K:ℂ)))*
       ((j τ-chartValue 1 τ)*(j τ-chartValue 0 τ))*hT

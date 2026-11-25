@@ -18,7 +18,7 @@ theorem rhoFormula (n : ℕ) : rho n =
     ((640320:ℚ)^3*((n:ℚ)+1)^3*(13591409+545140134*(n:ℚ))) := by
   unfold rho leaf leafP leafQ weight
   push_cast
-  ring
+  field_simp <;> ring
 
 -- Same positive weighted gap as the original native positive-gap owner.
 -- The expanded polynomial has positive coefficients at every n>=0.
@@ -53,7 +53,7 @@ theorem adjacentConvex (n : ℕ) :
   have hw : (weight n:ℚ)≠0 := by unfold weight; push_cast; positivity
   unfold rho
   field_simp [hw]
-  linear_combination (weight n:ℚ)*h1+
+  linear_combination (weight n:ℚ)*h1-
     (leaf (n+1)*(weight (n+1):ℚ))*h0
 
 def lo (n : ℕ) : ℚ := min (sum n) (sum (n+1))

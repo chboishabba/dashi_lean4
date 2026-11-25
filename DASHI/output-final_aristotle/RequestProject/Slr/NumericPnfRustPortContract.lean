@@ -586,6 +586,49 @@ theorem live_typed_keys_complete (represented refuted : List CandidateKey)
   apply List.mem_filter.mpr
   exact ⟨hr, by simp [List.contains_eq_mem, hn]⟩
 
+/-- Numerical ABI specialization of the existing Agda
+    DASHI.Cognition.PNF.IdentityEvidenceProduction permission boundary
+    and SensibLaw m079/m080, not a new identity rule. The full family
+    cardinality, not the bounded retained member count, controls permission.
+    Actual original admitted witness/authority remains an independent premise. -/
+def parserEvidencePermission (kind fullCardinality : Nat)
+    (independentlyCorroborated : Bool) : Bool :=
+  (fullCardinality == 1) &&
+    ((kind == 2) || (kind == 4) || (kind == 6) ||
+      ((kind == 3) && independentlyCorroborated))
+
+theorem ambiguous_parser_evidence_cannot_license
+    (kind fullCardinality : Nat) (corroborated : Bool)
+    (ambiguous : fullCardinality ≠ 1) :
+    parserEvidencePermission kind fullCardinality corroborated = false := by
+  simp [parserEvidencePermission, ambiguous]
+
+theorem proper_name_cannot_bootstrap (fullCardinality : Nat) :
+    parserEvidencePermission 3 fullCardinality false = false := by
+  simp [parserEvidencePermission]
+
+/-- Bounded family execution retains the original full count. Even a
+    one-member execution packet cannot manufacture unique admissibility. -/
+structure BoundedParserFamily where
+  fullCardinality : Nat
+  retainedCardinality : Nat
+  retainedBound : retainedCardinality ≤ fullCardinality
+
+theorem retained_singleton_does_not_pay_ambiguous_family
+    (f : BoundedParserFamily) (kind : Nat) (corroborated : Bool)
+    (_retained : f.retainedCardinality = 1)
+    (ambiguous : f.fullCardinality ≠ 1) :
+    parserEvidencePermission kind f.fullCardinality corroborated = false :=
+  ambiguous_parser_evidence_cannot_license kind f.fullCardinality corroborated ambiguous
+
+example : parserEvidencePermission 2 1 false = true := by decide
+example : parserEvidencePermission 4 1 false = true := by decide
+example : parserEvidencePermission 6 1 false = true := by decide
+example : parserEvidencePermission 3 1 true = true := by decide
+example : parserEvidencePermission 3 1 false = false := by decide
+example : parserEvidencePermission 3 17 true = false := by decide
+example : parserEvidencePermission 5 1 true = false := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -625,3 +668,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.checked_refutation_sound
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.live_typed_keys_sound
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.live_typed_keys_complete
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.ambiguous_parser_evidence_cannot_license
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.proper_name_cannot_bootstrap
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.retained_singleton_does_not_pay_ambiguous_family

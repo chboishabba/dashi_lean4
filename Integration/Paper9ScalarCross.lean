@@ -172,4 +172,23 @@ theorem literalPeriodFromDisk (hj : jTarget cmTau=-(640320:ℂ)^3)
   exact Integration.Paper9SignedCMPeriod.actualLiteralPrefixPeriod hj h.symm
 
 end
+end Integration.Paper9ScalarCross    (he : (fun w => (N w*p w-M w*s w)*(X w)^2) =ᶠ[𝓝 0]
+      (fun w => N w*M w*X w*(w*T w))) :
+    2*B/A^2=(41*P3-326*S3)/(163*S2) := by
+  exact crossPeriodOfCross X N M p s T A B P2 P3 S2 S3 hA hS
+    x0 n0 m0 p0 s0 hx hn hm hp hs hw he
+
+-- Source endpoint from the literal ratio and the disk correction.
+-- The scalar germ proof supplies the single remaining signed equality.
+theorem literalPeriodFromDisk (hj : jTarget cmTau=-(640320:ℂ)^3)
+    (hc : jetOK=true)
+    (h : 2*(a*d+b*d^2/2)/(a*d)^2 =
+       (41*(shiftedZ 3:ℂ)-326*(sliceShiftZ 3:ℂ))/(163*(sliceShiftZ 2:ℂ))) :
+    Tendsto (fun N => (Integration.Paper9LiteralFactorialPrefix.sum N : ℂ))
+      atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ)) := by
+  obtain ⟨_,_,_,_,_,_,hk⟩ := jetFacts hc
+  rw [diskJetCorrection a b d (aNonzero hj) dNe,hk] at h
+  exact Integration.Paper9SignedCMPeriod.actualLiteralPrefixPeriod hj h.symm
+
+end
 end Integration.Paper9ScalarCross

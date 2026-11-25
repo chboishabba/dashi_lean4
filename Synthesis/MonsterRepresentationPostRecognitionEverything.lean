@@ -1,3 +1,5 @@
+import Synthesis.MonsterSourceTensorObserver
+import Synthesis.MonsterOrdinaryGaugeFromSourceCharacter
 import Synthesis.MonsterParityProjectors
 import Synthesis.MonsterCentralProjectorSplit
 import Synthesis.MonsterActualMultiplicityCharacter

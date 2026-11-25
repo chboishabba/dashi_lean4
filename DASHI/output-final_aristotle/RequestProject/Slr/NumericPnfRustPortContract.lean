@@ -672,6 +672,29 @@ example :
 
 example : parserEvidencePermission 3 4 true = false := by decide
 
+/-- Source-permission refinement of the original Agda
+    BoundedProperNameEvidenceExecution.embeddedPersonTokenCannotExpand.
+    The m090 reference producer by itself does not discharge this premise.
+    This is a golden boundary, not authority to change the SQL producer. -/
+def parserEvidencePermissionWithSourceContext
+    (kind fullCardinality : Nat) (corroborated embeddedInPerson : Bool) : Bool :=
+  parserEvidencePermission kind fullCardinality corroborated &&
+    (!(kind == 3) || !embeddedInPerson)
+
+theorem embedded_proper_name_cannot_license
+    (fullCardinality : Nat) (corroborated : Bool) :
+    parserEvidencePermissionWithSourceContext 3 fullCardinality corroborated true = false := by
+  simp [parserEvidencePermissionWithSourceContext]
+
+theorem standalone_name_retains_original_permission
+    (fullCardinality : Nat) (corroborated : Bool) :
+    parserEvidencePermissionWithSourceContext 3 fullCardinality corroborated false =
+      parserEvidencePermission 3 fullCardinality corroborated := by
+  simp [parserEvidencePermissionWithSourceContext]
+
+example : parserEvidencePermissionWithSourceContext 3 1 true true = false := by decide
+example : parserEvidencePermissionWithSourceContext 3 1 true false = true := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -718,3 +741,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.parser_family_exact_cardinality
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.parser_family_retained_deferred_exact
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.embedded_proper_name_cannot_license
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.standalone_name_retains_original_permission

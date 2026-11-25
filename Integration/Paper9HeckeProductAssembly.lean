@@ -1,6 +1,7 @@
 import Integration.Paper9ActualTaylorUnit
 import Mathlib.Algebra.Polynomial.Div
 import Mathlib.Analysis.Complex.Exponential
+import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-! SOURCE-WRITTEN, UNCOMPILED.
 Actual normalized product, sharp finite remainder and concrete polynomial
@@ -349,6 +350,63 @@ theorem sliceFromCoefficients (K : ℂ) (c : ℕ → ℂ)
   exact Filter.Eventually.of_forall (fun τ => by
     unfold sliceResidual
     rw [mul_sub,sliceProduct,show (1722:ℕ)=41*42 by decide,columnProduct])
+
+-- A rotation invariant coefficient packet cannot contain fractional
+-- q modes. This consumes the primitive-root law, not numerical phases.
+theorem offSectorZero (ζ : ℂ) (p n : ℕ) (c : ℂ)
+    (hζ : IsPrimitiveRoot ζ p) (h : ζ^n*c=c) (hn : ¬ p ∣ n) :
+    c=0 := by
+  have hne : ζ^n-1≠0 := sub_ne_zero.mpr
+    (fun he => hn ((hζ.pow_eq_one_iff_dvd n).mp he))
+  have hz : (ζ^n-1)*c=0 := by linear_combination h
+  exact (mul_eq_zero.mp hz).resolve_left hne
+
+-- Once rotational covariance has been reflected, only q coefficients
+-- through degree d need comparison to the original integer recurrence.
+theorem sectorPacketZero (ζ : ℂ) (p d : ℕ) (P : Polynomial ℂ)
+    (hp : 0<p) (hζ : IsPrimitiveRoot ζ p)
+    (hrot : ∀ n, ζ^n*P.coeff n=P.coeff n)
+    (hpacket : ∀ i≤d, P.coeff (p*i)=0) :
+    ∀ n<p*d+1, P.coeff n=0 := by
+  intro n hn
+  by_cases hd : p ∣ n
+  · obtain ⟨i,hi⟩ := hd
+    have hle : i≤d := by
+      by_contra h
+      have hh : d+1≤i := by omega
+      have hm := Nat.mul_le_mul_left p hh
+      rw [hi] at hn
+      rw [Nat.mul_add,Nat.mul_one] at hm
+      omega
+    rw [hi]
+    exact hpacket i hle
+  · exact offSectorZero ζ p n _ hζ (hrot n) hd
+
+-- Same triangular recurrence as unit_norm: n is nonzero at each
+-- positive step, with the actual constant coefficient retained.
+theorem finiteNormUnique (D : ℕ) (v a b : ℕ → ℂ)
+    (h0 : a 0=b 0)
+    (ha : ∀ n, 0<n → n≤D →
+      (n:ℂ)*a n=∑ i ∈ Finset.range n, v (i+1)*a (n-(i+1)))
+    (hb : ∀ n, 0<n → n≤D →
+      (n:ℂ)*b n=∑ i ∈ Finset.range n, v (i+1)*b (n-(i+1))) :
+    ∀ n≤D, a n=b n := by
+  intro n
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    intro hn
+    by_cases hz : n=0
+    · simpa [hz] using h0
+    have hp : 0<n := Nat.pos_of_ne_zero hz
+    have hsum : (∑ i ∈ Finset.range n, v (i+1)*a (n-(i+1))) =
+        ∑ i ∈ Finset.range n, v (i+1)*b (n-(i+1)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      have hi' : i<n := Finset.mem_range.mp hi
+      rw [ih (n-(i+1)) (by omega) (by omega)]
+    have he := (ha n hp hn).trans (hsum.trans (hb n hp hn).symm)
+    exact mul_left_cancel₀ (by exact_mod_cast hz) he
+
 
 end
 end Integration.Paper9HeckeProductAssembly

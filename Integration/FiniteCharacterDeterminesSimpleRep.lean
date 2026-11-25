@@ -8,7 +8,7 @@ This is the exact lower-level theorem needed by the Monster-3B finite
 Stone--von Neumann lane.  It deliberately avoids algebraic closure.
 
 For simple finite-dimensional representations of a finite group over a field
-in which the group order is invertible:
+of characteristic zero in which the group order is invertible:
 
 1. `FDRep.scalar_product_char_eq_finrank_equivariant` identifies the character
    scalar product with the dimension of the equivariant Hom space;
@@ -30,12 +30,11 @@ open Module
 
 universe u v
 
-variable {k : Type u} [Field k]
-variable {G : Type v} [Group G] [Fintype G] [Invertible (Nat.card G : k)]
+variable {k : Type u} [Field k] [CharZero k]
+variable {G : Type v} [Group G] [Fintype G] [Invertible (Fintype.card G : k)]
 
 /-- Equal characters determine isomorphism for simple finite-dimensional
-representations of a finite group whenever the group order is invertible in the
-coefficient field.  No algebraic-closure hypothesis is used. -/
+representations of a finite group over a characteristic-zero coefficient field in which the group order is invertible.  No algebraic-closure hypothesis is used. -/
 theorem isoOfEqualCharacters (V W : FDRep k G) [Simple V] [Simple W]
     (hchar : V.character = W.character) : Nonempty (V ≅ W) := by
   have hself : 0 < Module.finrank k (V ⟶ V) := by
@@ -44,9 +43,10 @@ theorem isoOfEqualCharacters (V W : FDRep k G) [Simple V] [Simple W]
 
   have hcrossEqSelf :
       Module.finrank k (V ⟶ W) = Module.finrank k (V ⟶ V) := by
-    rw [← FDRep.scalar_product_char_eq_finrank_equivariant V W]
-    rw [← FDRep.scalar_product_char_eq_finrank_equivariant V V]
-    rw [← hchar]
+    have h := FDRep.scalar_product_char_eq_finrank_equivariant V W
+    rw [← hchar] at h
+    have hc := (FDRep.scalar_product_char_eq_finrank_equivariant V V).symm.trans h
+    exact_mod_cast hc.symm
 
   have hcross : 0 < Module.finrank k (V ⟶ W) := by
     rw [hcrossEqSelf]

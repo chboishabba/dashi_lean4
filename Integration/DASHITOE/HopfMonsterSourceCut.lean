@@ -201,3 +201,30 @@ theorem ablPositiveWeakOverlapZero :
     (0:ℚ) < 1^2+(-1)^2 ∧ (1:ℚ)+(-1)=0 := by norm_num
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Cross-multiplied normalized conditional derivative and inverse.
+No derivative or positive denominator is inferred from this algebra. -/
+theorem conditionalResponseNumerator (a b da db : ℚ) :
+    da*(a+b)-a*(da+db)=da*b-a*db := by ring
+
+theorem conditionalResponseReconstruct (a b da db : ℚ) :
+    (da*b-a*db)+a*(da+db)=da*(a+b) := by ring
+
+theorem binarySelectionCovariance (p x y a b : ℚ) :
+    p*x*a+(1-p)*y*b-(p*x+(1-p)*y)*(p*a+(1-p)*b) =
+      p*(1-p)*(x-y)*(a-b) := by ring
+
+/-- The two polynomial families for the original 5^3 torus:
+ordinary endpoint count versus shortest-path count divided by d!.
+Not a native proof of the graph enumeration correspondence. -/
+theorem periodFiveThreeCoordination (z : ℚ) :
+    (1+2*z+2*z^2)^3 =
+      1+6*z+18*z^2+32*z^3+36*z^4+24*z^5+8*z^6 := by ring
+
+theorem periodFiveThreePathEGF (z : ℚ) :
+    (1+2*z+z^2)^3 = (1+z)^6 := by ring
+
+end DASHITOE.HopfMonsterSourceCut

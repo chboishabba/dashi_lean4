@@ -30,11 +30,11 @@ def sector (s : k) : Submodule k V where
 
 theorem square (v : V) : rho j (rho j v) = v := by
   have h := congrArg (fun g : G => rho g v) hj
-  simpa only [map_mul, LinearMap.mul_apply, map_one, LinearMap.one_apply] using h
+  simpa only [map_mul, Module.End.mul_apply, map_one, Module.End.one_apply] using h
 
 theorem commute (g : G) (v : V) : rho j (rho g v) = rho g (rho j v) := by
   have h := congrArg (fun a : G => rho a v) (hc g)
-  simpa only [map_mul, LinearMap.mul_apply] using h
+  simpa only [map_mul, Module.End.mul_apply] using h
 
 def restricted (s : k) : Representation k G (sector rho j s) where
   toFun g :=
@@ -54,8 +54,7 @@ def restricted (s : k) : Representation k G (sector rho j s) where
     intro x
     apply Subtype.ext
     change rho (g*h) (x : V) = rho g (rho h (x : V))
-    rw [map_mul]
-    rfl
+    simp only [map_mul, Module.End.mul_apply]
 
 def negPart (v : V) : sector rho j (-1) :=
   ⟨(2 : k)⁻¹ • (v - rho j v), by

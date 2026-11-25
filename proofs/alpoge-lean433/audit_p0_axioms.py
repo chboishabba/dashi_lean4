@@ -20,6 +20,11 @@ ADAPTER = tuple("DASHI.AlpogeRH." + x for x in (
     "original_dirichlet_zero_horizontal",
     "original_dirichlet_cosh_collapse",
 ))
+CLAY = tuple("DASHI.AlpogeRH." + x for x in (
+    "original_clay_rh",
+    "original_clay_xi",
+    "original_clay_mathlib_roundtrip",
+))
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 
 
@@ -46,11 +51,11 @@ def audit(txt, targets):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("upstream", "adapter"))
+    parser.add_argument("mode", choices=("upstream", "adapter", "clay"))
     parser.add_argument("log", type=pathlib.Path)
     args = parser.parse_args()
     try:
-        result = audit(args.log.read_text(encoding="utf-8"), UPSTREAM if args.mode == "upstream" else ADAPTER)
+        result = audit(args.log.read_text(encoding="utf-8"), {"upstream": UPSTREAM, "adapter": ADAPTER, "clay": CLAY}[args.mode])
     except (ValueError, OSError) as exc:
         parser.exit(1, f"BLOCKED: {exc}\n")
     for name, axioms in result.items():

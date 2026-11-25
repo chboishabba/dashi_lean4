@@ -758,6 +758,29 @@ example : candidateOnlyReconciliation true true false false false true = false :
 example : candidateOnlyReconciliation false true false false false false = false := by decide
 example : candidateOnlyReconciliation true false false false false false = false := by decide
 
+/-- Journal insertion records physical withdrawal for either represented
+horizon. Restoration is not an owner reconciliation. Initial supported
+observation is neutral. Reuse pendingAuthorityAfter rather than minting
+another semantic authority state. -/
+def pendingAfterValidityObservation (pending supported : Bool) : Bool :=
+  pendingAuthorityAfter pending (!supported) false
+
+theorem validity_withdrawal_then_restoration_preserves_debt (pending : Bool) :
+    pendingAfterValidityObservation
+      (pendingAfterValidityObservation pending false) true = true := by
+  cases pending <;> rfl
+
+theorem restored_physical_support_cannot_reactivate_unreconciled_authority
+    (pending : Bool) :
+    authorityUsable
+      (pendingAfterValidityObservation
+        (pendingAfterValidityObservation pending false) true) true = false := by
+  cases pending <;> rfl
+
+theorem supported_observation_preserves_debt (pending : Bool) :
+    pendingAfterValidityObservation pending true = pending := by
+  cases pending <;> rfl
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -815,3 +838,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.candidate_only_reconciliation_no_authority
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.candidate_only_reconciliation_clears_debt
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.validity_withdrawal_then_restoration_preserves_debt
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.restored_physical_support_cannot_reactivate_unreconciled_authority
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.supported_observation_preserves_debt

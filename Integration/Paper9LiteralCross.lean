@@ -316,7 +316,7 @@ theorem rawCrossFromFiniteChecks
     (hc : Integration.Paper9ScalarCross.jetOK=true)
     (hp : Integration.Paper9CMOriginalMachinWindow.piRoundOK)
     (hq : Integration.Paper9CMOriginalMachinWindow.sqrtRoundOK)
-    (hw : Integration.Paper9CMExpWindow.expWindowOK) :
+    (hw : Integration.Paper9CMNormalizedCuspWindow.expWindowOK) :
     ∀ k, RawCross k :=
   rawCrossAt (Integration.Paper9DiskGerm.literalPrefixFromFiniteChecks
     hu hd hz hs hc hp hq hw)

@@ -781,6 +781,45 @@ theorem supported_observation_preserves_debt (pending : Bool) :
     pendingAfterValidityObservation pending true = pending := by
   cases pending <;> rfl
 
+/-- A signed contribution and its observation count are separate. In
+particular zero evidence has count one; an absent observation has count
+zero. This is the exact three-threshold aggregate used by the SLR SQL
+production view, not a new preference or authority rule. -/
+abbrev HorizonAtom := Nat × Int
+abbrev HorizonTally := Int × Nat
+
+def horizonAtomTally (cutoff : Nat) (atom : HorizonAtom) : HorizonTally :=
+  if atom.1 ≤ cutoff then (atom.2, 1) else (0, 0)
+
+def addHorizonTally (a b : HorizonTally) : HorizonTally :=
+  (a.1 + b.1, a.2 + b.2)
+
+def oneHorizonTally (cutoff : Nat) : List HorizonAtom → HorizonTally
+  | [] => (0, 0)
+  | a :: rest => addHorizonTally (horizonAtomTally cutoff a)
+      (oneHorizonTally cutoff rest)
+
+/-- One traversal carries all three independent exact threshold tallies. -/
+def threeHorizonTallies : List HorizonAtom → HorizonTally × HorizonTally × HorizonTally
+  | [] => ((0, 0), (0, 0), (0, 0))
+  | a :: rest =>
+      let t := threeHorizonTallies rest
+      (addHorizonTally (horizonAtomTally 3 a) t.1,
+       addHorizonTally (horizonAtomTally 6 a) t.2.1,
+       addHorizonTally (horizonAtomTally 9 a) t.2.2)
+
+theorem three_horizon_tallies_exact (atoms : List HorizonAtom) :
+    threeHorizonTallies atoms =
+      (oneHorizonTally 3 atoms, oneHorizonTally 6 atoms, oneHorizonTally 9 atoms) := by
+  induction atoms with
+  | nil => rfl
+  | cons a rest ih =>
+      simp only [threeHorizonTallies, oneHorizonTally, ih]
+
+example : threeHorizonTallies [(3, 0), (3, 5), (6, -5), (9, -2)] =
+    ((5, 2), (0, 3), (-2, 4)) := by decide
+example : threeHorizonTallies [] = ((0, 0), (0, 0), (0, 0)) := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -842,3 +881,5 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.validity_withdrawal_then_restoration_preserves_debt
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.restored_physical_support_cannot_reactivate_unreconciled_authority
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.supported_observation_preserves_debt
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.three_horizon_tallies_exact

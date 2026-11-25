@@ -283,6 +283,42 @@ theorem foreign_focus_binding_cannot_pay
   intro eq
   exact changed (eq.symm.trans proof.exactBinding)
 
+
+/-- The same packet cannot be both the candidate-only warm replay and
+the closed authority endpoint. Acceptance must join separate evidence,
+never weaken either predicate to make a Boolean conjunction pass. -/
+theorem candidate_replay_cannot_be_closed
+    (outsideModelPossible governedIdentityPaid : Bool)
+    (candidate : outsideModelPossible = true ∧ governedIdentityPaid = false) :
+    ¬ (outsideModelPossible = false ∧ governedIdentityPaid = true) := by
+  intro closed
+  have impossible : true = false := candidate.1.symm.trans closed.1
+  cases impossible
+
+/-- A historical candidate execution receipt can establish execution
+parity, not current semantic authority. Its exact source and complete
+implementation/scope coordinate must agree with the independently
+checked governed lane. Full relation parity and inverse replay are
+independent premises, not inferred from a supplied-prefix comparator.
+The current owner proof supplies the actual all-live consumer result. -/
+theorem joined_endpoint_lanes_pay_scoped_consumer
+    {Factor Answer : Type} {f : ScopedFrontier Factor}
+    {chosen : Factor} {status : S29Status} {binding : String}
+    (candidateSource : SourceKey) (sameSource : candidateSource = f.originalSource)
+    (candidateScope currentScope : String) (sameScope : candidateScope = currentScope)
+    (candidateExecution wholeRelationParity inverseReplay : Prop)
+    (candidateChecked : candidateExecution)
+    (relationChecked : wholeRelationParity) (inverseChecked : inverseReplay)
+    (owner : CurrentFocusOwnerProof f chosen status binding)
+    (evaluate : Factor → Answer)
+    (congruent : ∀ x y, owner.resolution.dispositions.sameActor x y →
+      evaluate x = evaluate y) :
+    candidateSource = f.originalSource ∧ candidateScope = currentScope ∧
+      candidateExecution ∧ wholeRelationParity ∧ inverseReplay ∧
+      ScopedCoverage f ∧ (∀ r, f.isLive r → evaluate r = evaluate chosen) := by
+  exact ⟨sameSource, sameScope, candidateChecked, relationChecked, inverseChecked,
+    owner.resolution.coverage, all_surviving_readings_agree owner.resolution evaluate congruent⟩
+
 end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.omitted_live_candidate_blocks_coverage
@@ -299,3 +335,6 @@ end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.current_focus_owner_proof_pays_exact_scope
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.foreign_focus_binding_cannot_pay
+
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.candidate_replay_cannot_be_closed
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.joined_endpoint_lanes_pay_scoped_consumer

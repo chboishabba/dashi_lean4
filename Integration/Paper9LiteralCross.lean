@@ -207,4 +207,100 @@ theorem rawRadiusValue (k : ℕ) : value (rawRadius k)=radius k := by
   cases k <;> simp [value,rawRadius,radius]
 
 
+local notation "Pfx" => Integration.Paper9LiteralFactorialPrefix.prefix
+local notation "S" => Integration.Paper9LiteralFactorialPrefix.sum
+
+-- The original positiveView uses T and Q with B=1. No reduction
+-- by gcd is done in these exported coordinates.
+def rawCorner (n r s : ℕ) : Raw :=
+  (Int.ofNat (426880*r*(Pfx n).q),s*(Pfx n).t.toNat)
+
+theorem prefixTPositive (n : ℕ) (hn : 1≤n) : 0<(Pfx n).t := by
+  have h : 0<S n := (loPositive n hn).trans_le (min_le_left _ _)
+  have hq : 0<((Pfx n).q:ℚ) := by
+    exact_mod_cast Integration.Paper9LiteralFactorialPrefix.prefixQ_pos n
+  change 0<((Pfx n).t:ℚ)/((Pfx n).q:ℚ) at h
+  have ht := (lt_div_iff₀ hq).1 h
+  simp only [zero_mul] at ht
+  exact_mod_cast ht
+
+theorem rawCornerPositive (n r s : ℕ) (hn : 1≤n) (hs : 0<s) :
+    0<(rawCorner n r s).2 := by
+  have ht := prefixTPositive n hn
+  have hcast := Int.toNat_of_nonneg ht.le
+  change 0<s*(Pfx n).t.toNat
+  exact Nat.mul_pos hs (by omega)
+
+theorem rawCornerValue (n r s : ℕ) (hn : 1≤n) (hs : 0<s) :
+    value (rawCorner n r s)=(426880*r:ℚ)/(s:ℚ)/S n := by
+  have ht := prefixTPositive n hn
+  have hcast : (((Pfx n).t.toNat:ℕ):ℚ)=((Pfx n).t:ℚ) := by
+    exact_mod_cast Int.toNat_of_nonneg ht.le
+  have htn : ((Pfx n).t:ℚ)≠0 := by exact_mod_cast ht.ne'
+  have hqn : ((Pfx n).q:ℚ)≠0 := by
+    exact_mod_cast (Integration.Paper9LiteralFactorialPrefix.prefixQ_pos n).ne'
+  have hsn : (s:ℚ)≠0 := by exact_mod_cast hs.ne'
+  unfold rawCorner value Integration.Paper9LiteralFactorialPrefix.sum
+  push_cast
+  rw [hcast]
+  field_simp [htn,hqn,hsn] <;> ring
+
+theorem rawSort (n : ℕ) :
+    S n≤S (n+1) ↔
+      (Pfx n).t*((Pfx (n+1)).q:ℤ)≤(Pfx (n+1)).t*((Pfx n).q:ℤ) :=
+  fractionLeIff _ _ _ _
+    (Integration.Paper9LiteralFactorialPrefix.prefixQ_pos n)
+    (Integration.Paper9LiteralFactorialPrefix.prefixQ_pos (n+1))
+
+def rawWindow (n r s : ℕ) : Raw × Raw :=
+  if S n≤S (n+1) then
+    (rawCorner (n+1) r s,rawCorner n (r+1) s)
+  else
+    (rawCorner n r s,rawCorner (n+1) (r+1) s)
+
+theorem rawWindowValue (n r s : ℕ) (hn : 1≤n) (hs : 0<s) :
+    value (rawWindow n r s).1=low n r s ∧
+    value (rawWindow n r s).2=high n r s := by
+  have hn' : 1≤n+1 := by omega
+  unfold rawWindow low high lo hi
+  split
+  next h =>
+    simp only [min_eq_left h,max_eq_right h]
+    exact ⟨rawCornerValue _ _ _ hn' hs,rawCornerValue _ _ _ hn hs⟩
+  next h =>
+    have h' := le_of_not_ge h
+    simp only [min_eq_right h',max_eq_left h']
+    exact ⟨rawCornerValue _ _ _ hn hs,rawCornerValue _ _ _ hn' hs⟩
+
+theorem rawWindowDenPositive (n r s : ℕ) (hn : 1≤n) (hs : 0<s) :
+    0<(rawWindow n r s).1.2 ∧ 0<(rawWindow n r s).2.2 := by
+  have hn' : 1≤n+1 := by omega
+  unfold rawWindow
+  split <;> exact ⟨rawCornerPositive _ _ _ (by omega) hs,
+    rawCornerPositive _ _ _ (by omega) hs⟩
+
+-- All-index literal INTEGER cross on the source-shaped raw fields.
+-- This still needs actual cross-kernel proof transportation.
+theorem rawCrossAt (h : Tendsto
+    (fun N => (S N:ℂ)) atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi:ℝ):ℂ)))
+    (k : ℕ) :
+    let w := rawWindow (cutoff k) (rootNumerator k) (rootScale k)
+    let l := w.1
+    let u := w.2
+    let m := rawStage k
+    let e := rawRadius k
+    l.1*(m.2:ℤ)*(e.2:ℤ)≤(m.1*(e.2:ℤ)+e.1*(m.2:ℤ))*(l.2:ℤ) ∧
+    m.1*(u.2:ℤ)*(e.2:ℤ)≤(u.1*(e.2:ℤ)+e.1*(u.2:ℤ))*(m.2:ℤ) := by
+  dsimp
+  have hn : 1≤cutoff k := by unfold cutoff; omega
+  have hs : 0<rootScale k := by unfold rootScale; positivity
+  obtain ⟨hl,hu⟩ := crossAt h k
+  obtain ⟨hL,hU⟩ := rawWindowValue _ _ _ hn hs
+  obtain ⟨hdL,hdU⟩ := rawWindowDenPositive _ _ _ hn hs
+  have he : 0<(rawRadius k).2 := by cases k <;> simp [rawRadius] <;> positivity
+  exact crossCoordinates _ _ _ _ hl hu _ _ _ _ _ _ _ _
+    hdL hdU (rawStageDenPositive k) he hL.symm hU.symm
+    (rawStageValue k).symm (rawRadiusValue k).symm
+
+
 end Integration.Paper9LiteralCross

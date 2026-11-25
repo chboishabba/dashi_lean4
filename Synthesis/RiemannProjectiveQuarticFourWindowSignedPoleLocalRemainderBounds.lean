@@ -3428,4 +3428,90 @@ theorem QuarticFourSignedPolePair.literalLocalCompleteRemainder_eq_sixth_eighth_
       W.literalLocalBeyondSixth_eq_eighth_add_beyond n]
   ring
 
+
+-- Original finite local source: all phase moments share precisely the same
+-- centeredZeroFinset, multiplicity and off-ordinate guard.
+def literalLocalPhysicalPhaseAt (t eta : ℝ) (n : ℕ)
+    (phase : ℝ → ℝ → ℝ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ) *
+          phase (heightOf rho) ((rho : ℂ).im-t)
+      else 0
+    else 0
+
+theorem QuarticFourSignedPolePair.literalLocalSixth_eq_physical_phase
+    {t eta : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalSignedSixthHarmonicAt eta n =
+      (W.signedProfileMomentSix / (720*(t/16)^8)) *
+        literalLocalPhysicalPhaseAt t eta n quarticSignedPoleSixthPhaseReal := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, W.literalSixth_physical_scale ht rho]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalEighth_eq_physical_phase
+    {t eta : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalSignedEighthHarmonicAt eta n =
+      (W.signedProfileMomentEight / (40320*(t/16)^10)) *
+        literalLocalPhysicalPhaseAt t eta n quarticSignedPoleEighthPhaseReal := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, W.literalEighth_physical_scale ht rho]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem literalLocalSixthPhase_eq_mixed (t eta : ℝ) (n : ℕ) :
+    literalLocalPhysicalPhaseAt t eta n quarticSignedPoleSixthPhaseReal =
+      literalLocalPhysicalPhaseAt t eta n (fun a d => a^6-d^6) -
+      15 * literalLocalPhysicalPhaseAt t eta n
+        (fun a d => a^2*d^2*(a^2-d^2)) := by
+  classical
+  unfold literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, quarticSignedPoleSixthPhaseReal_eq_mixed]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem literalLocalEighthPhase_eq_mixed (t eta : ℝ) (n : ℕ) :
+    literalLocalPhysicalPhaseAt t eta n quarticSignedPoleEighthPhaseReal =
+      literalLocalPhysicalPhaseAt t eta n (fun a d => (a^4-d^4)^2) +
+      16 * literalLocalPhysicalPhaseAt t eta n (fun a d => a^4*d^4) -
+      28 * literalLocalPhysicalPhaseAt t eta n
+        (fun a d => a^2*d^2*(a^2-d^2)^2) := by
+  classical
+  unfold literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
+      ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, quarticSignedPoleEighthPhaseReal_eq_mixed]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
 end Synthesis

@@ -820,6 +820,40 @@ example : threeHorizonTallies [(3, 0), (3, 5), (6, -5), (9, -2)] =
     ((5, 2), (0, 3), (-2, 4)) := by decide
 example : threeHorizonTallies [] = ((0, 0), (0, 0), (0, 0)) := by decide
 
+/-- The original ITIR source-bound referee receipt is necessary but not
+sufficient for paying an exact SLR formal premise. The independently
+issued binding must match all coordinates of the persisted demand and
+artifact, and its receipt store must not be writable by the consumer.
+No conclusion about legal truth or typed coverage follows. -/
+structure RefereePremiseBinding where
+  demandRef : String
+  obligationRef : String
+  consumerRef : String
+  pnfRevisionRef : String
+  statementDigest : String
+  resultKind : String
+  sourceRevisions : List String
+  artifactDigest : String
+  checkerRevision : String
+  dependencies : List String
+  deriving DecidableEq
+
+def authenticatedPremiseCheck (readOnly sourceBound : Bool)
+    (expected : RefereePremiseBinding) (observed : Option RefereePremiseBinding) : Bool :=
+  readOnly && sourceBound && decide (observed = some expected)
+
+theorem authenticated_premise_requires_exact_binding
+    (ro sb : Bool) (expected : RefereePremiseBinding)
+    (observed : Option RefereePremiseBinding)
+    (h : authenticatedPremiseCheck ro sb expected observed = true) :
+    ro = true ∧ sb = true ∧ observed = some expected := by
+  cases ro <;> cases sb <;> simp_all [authenticatedPremiseCheck]
+
+theorem source_only_receipt_cannot_pay
+    (expected : RefereePremiseBinding) :
+    authenticatedPremiseCheck true true expected none = false := by
+  simp [authenticatedPremiseCheck]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -883,3 +917,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.supported_observation_preserves_debt
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.three_horizon_tallies_exact
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.authenticated_premise_requires_exact_binding
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.source_only_receipt_cannot_pay

@@ -88,11 +88,15 @@ theorem diagonalProduct (τ : ℍ) :
   rw [Fin.prod_univ_castSucc]
   change z^3362*((∏ a : Fin 41, (j τ-chartValue a.castSucc τ))*
       (j τ-chartValue (Fin.last 41) τ)) = _
-  rw [show z^3362=q^41*q^41 by rw [← hqt]; ring]
   rw [hqt]
-  rw [← hinf,← hp]
-  simp_rw [hfin]
-  ring
+  calc
+    _ = (q^41*(j τ-chartValue (Fin.last 41) τ)) *
+        (q^41*(∏ a : Fin 41, (j τ-chartValue a.castSucc τ))) := by
+          rw [← hqt]
+          ring
+    _ = _ := by
+      rw [hinf,← hp]
+      simp_rw [hfin]
 
 theorem sliceProduct (K : ℂ) (τ : ℍ) :
     tParam τ^1722*actualProduct τ K=
@@ -126,10 +130,15 @@ theorem sliceProduct (K : ℂ) (τ : ℍ) :
   rw [Fin.prod_univ_castSucc]
   change z^1722*((∏ a : Fin 41, (K-chartValue a.castSucc τ))*
       (K-chartValue (Fin.last 41) τ)) = _
-  rw [show z^1722=(-q)*(-(q^41)) by rw [← hqt]; ring]
-  rw [hqt,← hinf,← hp]
-  simp_rw [hfin]
-  ring
+  rw [hqt]
+  calc
+    _ = (-(q^41)*(K-chartValue (Fin.last 41) τ)) *
+        (-q*(∏ a : Fin 41, (K-chartValue a.castSucc τ))) := by
+          rw [← hqt]
+          ring
+    _ = _ := by
+      rw [hinf,← hp]
+      simp_rw [hfin]
 
 def packet (d : ℕ) (c : ℕ → ℂ) : Polynomial ℂ :=
   ∑ k ∈ Finset.range (d+1), Polynomial.C (c k)*Polynomial.X^(d-k)

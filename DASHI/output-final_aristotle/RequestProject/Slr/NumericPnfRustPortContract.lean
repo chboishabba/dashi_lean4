@@ -881,6 +881,40 @@ theorem unrelated_demand_authority_not_affected
     demandAuthorityAffected withdrawn demand = false := by
   simp [demandAuthorityAffected, List.contains_eq_mem, h]
 
+/-- Suspension is a property of the entire accepted witness fibre.
+Filtering a blocked witness before testing uniqueness could turn a
+conflicting fibre into a false unique target. Keep the original fibre
+and suppress its projection if any accepted witness is blocked. -/
+def debtSafeProjection (blocked : Bool) (original : Option Nat) : Option Nat :=
+  if blocked then none else original
+
+theorem blocked_witness_fibre_cannot_project (original : Option Nat) :
+    debtSafeProjection true original = none := rfl
+
+theorem unaffected_witness_fibre_preserves_projection (original : Option Nat) :
+    debtSafeProjection false original = original := rfl
+
+theorem suspension_never_creates_unique_target (blocked : Bool)
+    (original : Option Nat) (target : Nat)
+    (h : debtSafeProjection blocked original = some target) :
+    original = some target := by
+  cases blocked <;> simp_all [debtSafeProjection]
+
+/-- Exact affected derivations are found through their existing witness
+or support coordinates. The immutable Level-1 carrier is not modified. -/
+def suspendDerivedRefs (original : List String) (affected : String → Bool) :
+    List String := original.filter (fun ref => !affected ref)
+
+theorem suspended_derivation_not_current (original : List String)
+    (affected : String → Bool) (ref : String) (h : affected ref = true) :
+    ref ∉ suspendDerivedRefs original affected := by
+  simp [suspendDerivedRefs, h]
+
+theorem unaffected_derivation_membership_preserved (original : List String)
+    (affected : String → Bool) (ref : String) (h : affected ref = false) :
+    ref ∈ suspendDerivedRefs original affected ↔ ref ∈ original := by
+  simp [suspendDerivedRefs, h]
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -950,3 +984,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.same_demand_authority_must_reopen
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.unrelated_demand_authority_not_affected
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.suspension_never_creates_unique_target
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.suspended_derivation_not_current
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unaffected_derivation_membership_preserved

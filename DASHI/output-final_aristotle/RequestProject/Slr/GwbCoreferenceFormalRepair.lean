@@ -255,6 +255,34 @@ theorem original_omitted_rival_blocks_numeric_selection
   exact omitted_live_candidate_blocks_coverage f rival live omitted
     (numeric_selection_pays_original_scoped_coverage f chosen cert)
 
+/-- Exact independent current authority is a proof-bearing binding, not
+a digest or a successful generic source kernel check. The existing governed
+resolution remains the semantic owner. -/
+structure CurrentFocusOwnerProof {Factor : Type}
+    (f : ScopedFrontier Factor) (chosen : Factor) (status : S29Status)
+    (currentBinding : String) where
+  issuedBinding : String
+  exactBinding : issuedBinding = currentBinding
+  resolution : ResolvedSourceLocal f chosen status
+
+theorem current_focus_owner_proof_pays_exact_scope
+    {Factor : Type} {f : ScopedFrontier Factor} {chosen : Factor}
+    {status : S29Status} {binding : String}
+    (proof : CurrentFocusOwnerProof f chosen status binding) :
+    proof.issuedBinding = binding ∧ ScopedCoverage f ∧
+      (∀ c, f.isLive c → proof.resolution.dispositions.sameActor c chosen) := by
+  exact ⟨proof.exactBinding, proof.resolution.coverage,
+    unique_source_local_referent proof.resolution⟩
+
+theorem foreign_focus_binding_cannot_pay
+    {Factor : Type} {f : ScopedFrontier Factor} {chosen : Factor}
+    {status : S29Status} {binding : String}
+    (proof : CurrentFocusOwnerProof f chosen status binding)
+    (other : String) (changed : other ≠ binding) :
+    proof.issuedBinding ≠ other := by
+  intro eq
+  exact changed (eq.symm.trans proof.exactBinding)
+
 end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.omitted_live_candidate_blocks_coverage
@@ -268,3 +296,6 @@ end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.numeric_selection_pays_original_scoped_coverage
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.original_omitted_rival_blocks_numeric_selection
+
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.current_focus_owner_proof_pays_exact_scope
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.foreign_focus_binding_cannot_pay

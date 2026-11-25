@@ -933,6 +933,48 @@ theorem no_identity_retains_original_candidate_only_rule
       candidateOnlyReconciliation d e a p c s := by
   simp [candidateOnlyReconciliationWithIdentity]
 
+/-- Parser-leaf replay scope contains *all* selected compilation keys,
+including ones with no existing row. The job-key domain and non-leaf
+relations are distinct global premises. -/
+def ParserLeafEquivalent {Key Value : Type}
+    (selected : Key → Prop) (before after : Key → Option Value) : Prop :=
+  ∀ k, selected k → before k = after k
+
+theorem outside_parser_leaf_change_preserves_scope
+    {Key Value : Type} [DecidableEq Key]
+    (selected : Key → Prop) (before : Key → Option Value)
+    (key : Key) (new : Option Value) (outside : ¬ selected key) :
+    ParserLeafEquivalent selected before
+      (fun k => if k = key then new else before k) := by
+  intro k hk
+  have different : k ≠ key := by
+    intro eq
+    exact outside (eq ▸ hk)
+  simp [different]
+
+theorem absent_selected_parser_leaf_insertion_invalidates
+    {Key Value : Type} (selected : Key → Prop)
+    (before after : Key → Option Value) (key : Key) (value : Value)
+    (inside : selected key) (absent : before key = none)
+    (inserted : after key = some value) :
+    ¬ ParserLeafEquivalent selected before after := by
+  intro eq
+  have h := eq key inside
+  rw [absent, inserted] at h
+  cases h
+
+/-- A blocked historical identity is not current authority even when its
+admitted witness set is still a singleton. -/
+def CurrentSingletonProjection {Entity : Type}
+    (usable : Bool) (entities : List Entity) (entity : Entity) : Prop :=
+  usable = true ∧ entities = [entity]
+
+theorem suspended_singleton_cannot_publish {Entity : Type}
+    (entities : List Entity) (entity : Entity) :
+    ¬ CurrentSingletonProjection false entities entity := by
+  intro h
+  cases h.1
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -1009,3 +1051,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.admitted_identity_blocks_candidate_only_reconciliation
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.no_identity_retains_original_candidate_only_rule
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.outside_parser_leaf_change_preserves_scope
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.absent_selected_parser_leaf_insertion_invalidates
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.suspended_singleton_cannot_publish

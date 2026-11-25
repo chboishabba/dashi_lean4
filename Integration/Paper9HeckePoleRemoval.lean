@@ -183,5 +183,80 @@ theorem sliceIdentity (K : ℂ) (P : Polynomial ℂ)
   intro τ
   exact sub_eq_zero.mp (invariantZero _ hf hi hz τ)
 
+-- Keep the actual ramified parameter t = exp(2 pi i tau / 41).
+-- Cancellation of t^d is legitimate away from the cusp. The residual
+-- then extends with zero limit, without a separate inverse-j theorem.
+def tParam (τ : ℍ) : ℂ := Periodic.qParam 41 (τ : ℂ)
+
+theorem tNonzero (τ : ℍ) : tParam τ ≠ 0 :=
+  Periodic.qParam_ne_zero 41 τ
+
+theorem tPower (τ : ℍ) : tParam τ^41=qExt τ := by
+  unfold tParam qExt Periodic.qParam
+  rw [← Complex.exp_nat_mul]
+  congr 1
+  norm_num
+  ring
+
+theorem tTendsto : Tendsto tParam atImInfty (𝓝 0) :=
+  UpperHalfPlane.qParam_tendsto_atImInfty (h := 41) (by norm_num)
+
+theorem normalizedResidualZero (d : ℕ) (f : ℍ → ℂ) (G : ℂ → ℂ)
+    (hG : ContinuousAt G 0)
+    (he : ∀ᶠ τ in atImInfty,
+      tParam τ^d*f τ=tParam τ^(d+1)*G (tParam τ)) :
+    IsZeroAtImInfty f := by
+  have hlocal : ∀ᶠ τ in atImInfty, f τ=tParam τ*G (tParam τ) :=
+    he.mono fun τ h => by
+      apply mul_left_cancel₀ (pow_ne_zero d (tNonzero τ))
+      rw [h,pow_succ,mul_assoc]
+  have ht := tTendsto.mul (hG.tendsto.comp tTendsto)
+  rw [zero_mul] at ht
+  rw [IsZeroAtImInfty,Filter.ZeroAtFilter]
+  exact ht.congr' hlocal.symm
+
+-- Actual normalized unit factors, retaining the sign and q/t powers.
+theorem diagonalFiniteFactor (q t : ℂ) (hq : q≠0) (ht : t≠0)
+    (hp : q=t^41) :
+    q*(jQ q-jQ t)=jUnit q-t^40*jUnit t := by
+  unfold jQ
+  rw [hp]
+  field_simp [ht] <;> ring
+
+theorem diagonalInfinityFactor (q : ℂ) (hq : q≠0) :
+    q^41*(jQ q-jQ (q^41))=q^40*jUnit q-jUnit (q^41) := by
+  unfold jQ
+  field_simp [hq] <;> ring
+
+theorem fixedFiniteFactor (K t : ℂ) (ht : t≠0) :
+    -t*(K-jQ t)=jUnit t-K*t := by
+  unfold jQ
+  field_simp [ht] <;> ring
+
+theorem fixedInfinityFactor (K q : ℂ) (hq : q≠0) :
+    -q^41*(K-jQ (q^41))=jUnit (q^41)-K*q^41 := by
+  unfold jQ
+  field_simp [hq] <;> ring
+
+-- Direct residual consumers at the original finite truncation depths.
+-- The unpaid producer is an analytic order factorization, not a new
+-- modularity, symmetry or arbitrary real equality assumption.
+theorem diagonalFromRamifiedReplay (P : Polynomial ℂ) (G : ℂ → ℂ)
+    (hG : ContinuousAt G 0)
+    (he : ∀ᶠ τ in atImInfty,
+      tParam τ^3362*diagonalResidual P τ =
+        tParam τ^3363*G (tParam τ)) :
+    ∀ τ, actualProduct τ (j τ)=P.eval (j τ) :=
+  diagonalIdentity P (normalizedResidualZero 3362 _ G hG he)
+
+theorem sliceFromRamifiedReplay (K : ℂ) (P : Polynomial ℂ) (G : ℂ → ℂ)
+    (hG : ContinuousAt G 0)
+    (he : ∀ᶠ τ in atImInfty,
+      tParam τ^1722*sliceResidual K P τ =
+        tParam τ^1723*G (tParam τ)) :
+    ∀ τ, actualProduct τ K=P.eval (j τ) :=
+  sliceIdentity K P (normalizedResidualZero 1722 _ G hG he)
+
+
 end
 end Integration.Paper9HeckePoleRemoval

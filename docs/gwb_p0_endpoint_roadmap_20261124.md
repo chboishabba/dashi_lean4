@@ -1,5 +1,16 @@
 # GWB / SLR / SensibLaw / JMD — controlling P0 endpoint roadmap
 
+## 2026-11-26 — bounded direct acceptance paid; v8 formal gate blocked
+
+SLR #78 result commit [f974e9e](https://github.com/chboishabba/slr/commit/f974e9e50deaeb68d342eab4632f04772d951afc) contains the accepted direct staging/reopen JSON for implementation head b0fe66107940, exact first-sentence scope (one token), and executable SHA b75b56684f862f594d95c988aad85397ced2f4096c04eb1d6a7ada9ee932d9fd. Operator reports SLR 50/50 and CLI 1/1 passing. Warm zero rule solves/mutations and nonvacuous exact readback are paid for that scope only. Do not rerun this milestone or promote it to full relation, current-generation authority or governed acceptance.
+
+The operator's v8 attempt found stale Lean checkout then a real compiler defect; exact file/line/message has not been supplied. No kernel available here. The build script now retains exact head/version/source hashes, per-module diagnostics, and rejects sorry-dependent output; this is a diagnostic/acceptance hardening change, NOT a claim that the compiler defect was repaired. Keep theorem statements and owner-premises intact. Recover the actual first failing diagnostic and repair its proof, then execute the original bounded v8 campaign with a new exact-head checkpoint. No skipped kernel gate.
+
+Readback of v7 original source: uncovered [230,2215) (1644 nonwhitespace codepoints) and [2660,3603) (738), heading-excluded original paragraphs [233,2213) and [2663,3602); existing SLR heading partition extension and selective partition wake already own repair. Demand 22165 (historic source object 72766) had 166 represented unresolved typed keys, no admitted classes/refutations, outside-model possible; 125 entity candidates with 61 deferred in the 64-member index packet, 17 eventuality and one proposition index members, two unobservable morphology heads. These are old observed inventories, not current post-repair counts. H9 target occurrence/quality/contract/admission rows were zero. H9 target evidence must be original source-region producer evidence, not a cross-sentence antecedent relabel; external H9 is separately licensed by consumer need and exact eligible target, not a compulsory external search to pay internal identity.
+
+Use existing ScopedCoverage, ExactTypedSelection, CurrentFocusOwnerProof, proof-relevant identity and independent referee owner. Source repair alone does not discharge outside-model or typed relation/morphology residuals; prove complete scoped live coverage, actual unique original resolution and admitted witness, inverse and derived Level-3, or preserve unresolved. No fabricated flags, no implementation in SensibLaw, no new theorem family. SLR production; Agda/Lean golden; legacy prototype is reference only. Full relation/authority publication and remaining direct hierarchical activation remain open.
+
+
 ## 2026-11-26 — direct candidate execution and staging implementation status
 
 Agda/Lean are golden, SLR Rust/PostgreSQL is production, SensibLaw is deprecated read-only historical reference. The actual [SLR production maximum-cut update](https://github.com/chboishabba/slr/blob/b0fe6610794059e5bbd9b72e1e2cd371e7ddecfd/docs/roadmap/gwb_native_antecedent_s29_review_20261123.md) is controlling; do not duplicate milestones or theorem owners.

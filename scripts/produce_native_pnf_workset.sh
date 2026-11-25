@@ -8,12 +8,35 @@ out="$root/.lake/build/lib/lean/RequestProject/Slr/NumericPnfRustPortContract.ol
 src="$root/DASHI/output-final_aristotle/RequestProject/Slr/NumericPnfRustPortContract.lean"
 mkdir -p "$(dirname "$out")"
 if [[ "${1:-}" == "--build" ]]; then
-  timeout --kill-after=5s 90s lake env lean -o "$out" "$src"
-  # Reuse and check the existing GWB scoped-coverage owner, now welded
-  # to the numeric contract. Do not infer governed admission from either.
+  # Preserve the exact diagnostic and isolate output by attempted build.
+  # A failed or sorry-dependent theorem must not look like a paid gate
+  # merely because an earlier .olean happens to exist.
+  log_root="${SLR_NATIVE_LEAN_BUILD_LOG_ROOT:-$root/.dashi/native-typed-evidence/builds}"
+  mkdir -p "$log_root"
+  build_log="$(mktemp -d "$log_root/build-XXXXXXXX")"
+  git rev-parse HEAD > "$build_log/lean-head"
+  lake env lean --version > "$build_log/lean-version"
   coref="$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbCoreferenceFormalRepair.lean"
   coref_out="$root/.lake/build/lib/lean/RequestProject/Slr/GwbCoreferenceFormalRepair.olean"
-  timeout --kill-after=5s 90s lake env lean -o "$coref_out" "$coref"
+  sha256sum "$src" "$coref" > "$build_log/sources.sha256"
+  echo "Native formal build diagnostics: $build_log" >&2
+  compile_checked() {
+    local name=$1 input=$2 output=$3
+    if ! timeout --kill-after=5s 90s lake env lean -o "$output" "$input" 2>&1 | tee "$build_log/$name.log"; then
+      echo "Native formal gate failed: $name ($build_log/$name.log)" >&2
+      return 1
+    fi
+    if grep -Eq 'sorryAx|declaration uses .sorry.|unknown constant' "$build_log/$name.log"; then
+      echo "Native formal gate rejected untrusted declaration: $name" >&2
+      return 1
+    fi
+  }
+  compile_checked numeric "$src" "$out"
+  # Coreference imports the just-built numeric contract.
+  compile_checked coreference "$coref" "$coref_out"
+  sha256sum -c "$build_log/sources.sha256"
+  sha256sum "$out" "$coref_out" > "$build_log/outputs.sha256"
+  printf '%s\n' NATIVE_FORMAL_BUILD_CHECKED > "$build_log/status"
   exit
 fi
 [[ -f "$out" && "$out" -nt "$src" ]] || { echo "Run $0 --build first" >&2; exit 2; }

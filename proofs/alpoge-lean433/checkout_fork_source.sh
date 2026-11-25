@@ -12,6 +12,7 @@ case "$SOURCE" in
 esac
 python3 - "$SIDECAR" "$SOURCE" "${1:-$DEFAULT}" <<'PY'
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -44,7 +45,9 @@ def clean():
     require(not any(s[:1] == "S" or s[:1].islower() for s in flags),
             "skip-worktree or assume-unchanged source paths")
 
+verify_only = os.environ.get("GRH_P0_VERIFY_ONLY") == "1"
 if not target.exists():
+    require(not verify_only, "source disappeared during build")
     target.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["git", "clone", pin["url"], str(target)], check=True)
 require(target.is_dir() and (target / ".git").exists(), "not a source Git checkout")
@@ -55,6 +58,7 @@ clean()  # reject local changes BEFORE changing HEAD
 revision = pin["revision"]
 git("cat-file", "-e", revision + "^{commit}")
 if git("rev-parse", "HEAD") != revision:
+    require(not verify_only, "source HEAD changed during build")
     git("checkout", "--detach", revision)
 require(git("rev-parse", "HEAD") == revision, "source revision mismatch")
 clean()

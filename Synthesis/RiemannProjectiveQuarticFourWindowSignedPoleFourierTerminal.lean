@@ -2039,4 +2039,98 @@ theorem QuarticFourSignedPolePair.exists_normalizedOuterPairedAbel_invSq_add_phy
       (W.outerFourthPrimitiveUniformBound_to_anchored ht hprim)
       henv
 
+
+/-!
+## Sharpened local debt and exact reverse far allowance
+
+Use the original canonical exhaustion and signed fourth/sixth data. The
+post-sixth budget improvement is a real nonnegative saving, not an
+independent proof of the strict global signed inequality.
+-/
+
+def QuarticFourSignedPolePair.canonicalG1EighthCap
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  let eta := quarticSignedPoleCanonicalLocalRadius
+  let r := quarticSignedPoleLocalHalfWidth t eta
+  (((Real.pi+1)^2 * W.fourthLipschitz) *
+      quarticSignedPoleLocalEighthPhysicalEnvelope t eta / (t/16)^10) *
+    (zetaZeroConfig.N (t-r-1) (t+r) : ℝ)
+
+theorem QuarticFourSignedPolePair.canonicalG1EighthCap_nonneg
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) :
+    0 <= W.canonicalG1EighthCap := by
+  have hK : 0 <= W.fourthLipschitz :=
+    W.signedProfileAbsMomentSix_nonneg.trans W.signedProfileAbsMomentSix_le_fourthLipschitz
+  have henv := quarticSignedPoleLocalEighthPhysicalEnvelope_nonneg
+    ht.le quarticSignedPoleCanonicalLocalRadius_pos.le
+  unfold QuarticFourSignedPolePair.canonicalG1EighthCap
+  dsimp
+  positivity
+
+theorem QuarticFourSignedPolePair.canonicalScaledLocalBudget_le_old_sub_saving
+    {t EV : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (hM6lo : -(3/20 : ℝ) * Real.pi^6 <= W.signedProfileMomentSix)
+    (hM6neg : W.signedProfileMomentSix < 0)
+    (hV : |quarticSignedPoleRvMVerticalFourthDiscrepancy t
+      (quarticSignedPoleLocalHalfWidth t quarticSignedPoleCanonicalLocalRadius)| <= EV)
+    (k : ℝ) (hk : 0 <= k) :
+    W.canonicalScaledLocalBudget k <=
+      W.postSixthTerminalLocalM6Budget EV - (1-k)*W.canonicalG1EighthCap := by
+  let n := quarticSignedPoleCanonicalLocalExhaustionIndex t
+  have ht0 : 0 < t := by linarith
+  have hn := quarticSignedPoleCanonicalLocalExhaustionIndex_spec t
+  have hphase := W.literalLocalFourthPhaseMomentAt_ge_corrected_scalar ht n hn hV
+  have hcoef : 0 <= W.targetStrength / (6 * (t/16)^6) := by positivity
+  have hlead := mul_le_mul_of_nonneg_left hphase hcoef
+  have hM6abs : |W.signedProfileMomentSix| <= (3/20 : ℝ)*Real.pi^6 := by
+    rw [abs_of_neg hM6neg]
+    nlinarith
+  have hsix := W.literalLocalSignedSixthHarmonicAt_le_cap_expandedWindowN
+    ht0 quarticSignedPoleCanonicalLocalRadius_pos.le
+    (by positivity : 0 <= (3/20 : ℝ)*Real.pi^6) hM6abs n
+  have heighth := W.literalLocalEighthDebtAt_le_G1_expandedWindowN
+    ht0 quarticSignedPoleCanonicalLocalRadius_pos.le n
+  have hscaled := mul_le_mul_of_nonneg_left heighth hk
+  unfold QuarticFourSignedPolePair.canonicalScaledLocalBudget
+    QuarticFourSignedPolePair.literalScaledLocalBudgetAt
+    QuarticFourSignedPolePair.postSixthTerminalLocalM6Budget
+    QuarticFourSignedPolePair.canonicalG1EighthCap
+  dsimp [n] at hlead hsix hscaled ⊢
+  nlinarith
+
+def QuarticFourSignedPolePair.canonicalScaledLocalSlack
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (k : ℝ) : ℝ :=
+  W.canonicalScaledLocalBudget k - W.canonicalLiteralLocalExact
+
+theorem QuarticFourSignedPolePair.canonicalTightLocalSlack_nonneg
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t) :
+    0 <= W.canonicalScaledLocalSlack (375/448) := by
+  unfold QuarticFourSignedPolePair.canonicalScaledLocalSlack
+  linarith [W.canonicalLiteralLocalExact_le_tightBudget ht]
+
+theorem QuarticFourSignedPolePair.canonicalScaledHighCut_iff_completed
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (k : ℝ) :
+    (W.canonicalSignedHighResidual <
+      2*W.combinedZeroHeightDefect rho - W.canonicalScaledLocalBudget k/2)
+    ↔
+    (W.completedSignedResidual + W.canonicalScaledLocalSlack k/2 <
+      2*W.combinedZeroHeightDefect rho) := by
+  rw [W.canonicalSignedHighResidual_eq_completed_sub_localHalf (by linarith : 0 < t)]
+  unfold QuarticFourSignedPolePair.canonicalScaledLocalSlack
+  constructor <;> intro h <;> linarith
+
+theorem QuarticFourSignedPolePair.canonicalScaledHighCut_iff_farAllowance
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (rho : Zeros) (k : ℝ) :
+    (W.canonicalSignedHighResidual <
+      2*W.combinedZeroHeightDefect rho - W.canonicalScaledLocalBudget k/2)
+    ↔
+    (W.canonicalLiteralFarPairSource <
+      4*W.combinedZeroHeightDefect rho +
+        (∫ tau : ℝ, W.signedOrdinateTest tau * Zeta23.mu tau) -
+        W.canonicalScaledLocalBudget k) := by
+  rw [W.canonicalSignedHighResidual_eq_literal_far_sub_mu ht]
+  constructor <;> intro h <;> linarith
+
 end Synthesis

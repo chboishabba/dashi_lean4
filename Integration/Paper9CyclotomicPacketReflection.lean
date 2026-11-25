@@ -205,5 +205,110 @@ theorem normRecurrenceActual (H L : P) (d n : ℕ)
   push_cast at hz
   linear_combination hz
 
+-- The literal H used by the original scalar producer; the infinity
+-- factor and columns are already polynomials in q=t^41.
+def diagH (m : ℕ) : P :=
+  (jPoly m).comp qPoly-Polynomial.X^40*jPoly m
+def sliceH (m : ℕ) (K : ℂ) : P := jPoly m-Polynomial.C K*Polynomial.X
+
+theorem diagFactor (m : ℕ) (a : Fin 41) :
+    scale (phase a) (diagH m)=
+      (jPoly m).comp qPoly-(phasePoly a)^40*(jPoly m).comp (phasePoly a) := by
+  unfold diagH
+  rw [map_sub,map_mul,map_pow]
+  have he : scale (phase a) ((jPoly m).comp qPoly)=(jPoly m).comp qPoly := by
+    change ((jPoly m).comp qPoly).comp (phasePoly a)=_
+    rw [Polynomial.comp_assoc]
+    exact congrArg (fun Q => (jPoly m).comp Q) (scaleQ a)
+  rw [he]
+  rfl
+
+theorem sliceFactor (m : ℕ) (K : ℂ) (a : Fin 41) :
+    scale (phase a) (sliceH m K)=
+      (jPoly m).comp (phasePoly a)-Polynomial.C K*phasePoly a := by
+  unfold sliceH
+  rw [map_sub,map_mul]
+  change _ - (Polynomial.C K).comp (phasePoly a)*Polynomial.X.comp (phasePoly a)=_
+  rw [Polynomial.C_comp,Polynomial.X_comp]
+  rfl
+
+theorem diagNormAttached (m : ℕ) :
+    diagonalPoly m =
+      (qPoly^40*(jPoly m).comp qPoly-(jPoly m).comp (qPoly^41))*
+        cyclicNorm (diagH m) := by
+  unfold diagonalPoly cyclicNorm
+  simp_rw [diagFactor]
+
+theorem sliceNormAttached (m : ℕ) (K : ℂ) :
+    slicePoly m K =
+      ((jPoly m).comp (qPoly^41)-Polynomial.C K*qPoly^41)*
+        cyclicNorm (sliceH m K) := by
+  unfold slicePoly cyclicNorm
+  simp_rw [sliceFactor]
+
+def diagInfinityQ (m : ℕ) : P :=
+  Polynomial.X^40*jPoly m-(jPoly m).comp qPoly
+def sliceInfinityQ (m : ℕ) (K : ℂ) : P :=
+  (jPoly m).comp qPoly-Polynomial.C K*Polynomial.X^41
+def columnQ (m d : ℕ) (c : ℕ → ℂ) : P :=
+  ∑ k ∈ Finset.range (d+1), Polynomial.C (c k)*Polynomial.X^k*(jPoly m)^(d-k)
+
+theorem diagExpand (m : ℕ) :
+    diagonalPoly m=Polynomial.expand ℂ 41
+      (diagInfinityQ m*Polynomial.contract 41 (cyclicNorm (diagH m))) := by
+  rw [diagNormAttached,map_mul,normDescent]
+  congr 1
+  unfold diagInfinityQ
+  rw [map_sub,map_mul,map_pow,Polynomial.expand_X]
+  change _ = qPoly^40*(jPoly m).comp qPoly-
+    Polynomial.expand ℂ 41 ((jPoly m).comp qPoly)
+  rw [Polynomial.expand_eq_comp_X_pow,Polynomial.comp_assoc]
+  rfl
+
+theorem sliceExpand (m : ℕ) (K : ℂ) :
+    slicePoly m K=Polynomial.expand ℂ 41
+      (sliceInfinityQ m K*Polynomial.contract 41 (cyclicNorm (sliceH m K))) := by
+  rw [sliceNormAttached,map_mul,normDescent]
+  congr 1
+  unfold sliceInfinityQ
+  rw [map_sub,map_mul,map_pow,Polynomial.expand_X,Polynomial.expand_C,
+    Polynomial.expand_eq_comp_X_pow,Polynomial.comp_assoc]
+  rfl
+
+theorem columnExpand (m d : ℕ) (c : ℕ → ℂ) :
+    columnPoly m d c=Polynomial.expand ℂ 41 (columnQ m d c) := by
+  unfold columnPoly columnQ
+  simp only [map_sum,map_mul,map_pow,Polynomial.expand_C,Polynomial.expand_X]
+  simp only [Polynomial.expand_eq_comp_X_pow,qPoly]
+
+-- Exact bridge to original analytic consumers: 83 and 43 coefficients
+-- on the descended polynomials, not a 5086-position certificate.
+theorem diagonalSectorConsumer (c : ℕ → ℂ)
+    (h : ∀ n≤82, (diagInfinityQ 3322*
+      Polynomial.contract 41 (cyclicNorm (diagH 3322))-columnQ 3322 82 c).coeff n=0) :
+    ∀ τ, Integration.Paper9Hecke41ChartGeometry.actualProduct τ
+      (Integration.MoonshineEisensteinAgdaTarget.jTarget τ)=
+      (packet 82 c).eval (Integration.MoonshineEisensteinAgdaTarget.jTarget τ) := by
+  apply diagonalFromCoefficients
+  intro k hk
+  rw [diagExpand,columnExpand,← map_sub,Polynomial.coeff_expand (by decide : 0<41)]
+  split_ifs with he
+  · apply h
+    omega
+  · rfl
+
+theorem sliceSectorConsumer (K : ℂ) (c : ℕ → ℂ)
+    (h : ∀ n≤42, (sliceInfinityQ 1722 K*
+      Polynomial.contract 41 (cyclicNorm (sliceH 1722 K))-columnQ 1722 42 c).coeff n=0) :
+    ∀ τ, Integration.Paper9Hecke41ChartGeometry.actualProduct τ K=
+      (packet 42 c).eval (Integration.MoonshineEisensteinAgdaTarget.jTarget τ) := by
+  apply sliceFromCoefficients
+  intro k hk
+  rw [sliceExpand,columnExpand,← map_sub,Polynomial.coeff_expand (by decide : 0<41)]
+  split_ifs with he
+  · apply h
+    omega
+  · rfl
+
 end
 end Integration.Paper9CyclotomicPacketReflection

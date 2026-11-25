@@ -1,12 +1,13 @@
 import Main
 
 /-!
-# Exact locally materialized source handoff (Lean/Mathlib 4.33.1 ONLY)
+# Exact locally materialized source handoff (isolated pinned toolchain)
 
-This file is new DASHI adapter code, not a copy of the unlicensed external
-submission. It is compilable only when the user has separately acquired the
-published original source from its author, checked the exact archive SHA-256,
-and provided its original `Main` and dependencies in this isolated toolchain.
+DASHI adapter code: the original v4.33.1 source and the licensed v4.35.0
+readable/compact rewritings expose the same five names and the byte-identical
+Statements.lean. Select and verify the exact source through checkout_fork_source.sh.
+The toolchains are separate; no imported olean is carried across versions.
+The new licensed source retains Alpöge/Claude/Anthropic provenance.
 
 Do NOT expose `sorry`, `axiom` or a synthesized witness to satisfy this import.
 -/
@@ -40,5 +41,30 @@ theorem original_primitive_dirichlet_zeros :
 #print axioms original_dirichlet_nonvanishing
 #print axioms original_dirichlet_zeros
 #print axioms original_primitive_dirichlet_zeros
+
+
+/-- Actual all-character zero -> vanishing signed horizontal displacement.
+The source predicate is the literal Mathlib LFunction, not a finite proxy.
+This is restricted to the original open strip, including imprimitive characters. -/
+theorem original_dirichlet_zero_horizontal
+    (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ)
+    (hlo : 0 < s.re) (hhi : s.re < 1)
+    (hz : DirichletCharacter.LFunction χ s = 0) :
+    s.re - (1 / 2 : ℝ) = 0 := by
+  rw [original_dirichlet_zeros N χ s hlo hhi hz]
+  ring
+
+/-- The exact horizontal factor collapses for the same actual zero.
+This does not imply an independent signed ordinate/prime/far estimate. -/
+theorem original_dirichlet_cosh_collapse
+    (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ)
+    (hlo : 0 < s.re) (hhi : s.re < 1)
+    (hz : DirichletCharacter.LFunction χ s = 0) (u : ℝ) :
+    Real.cosh ((s.re - (1 / 2 : ℝ)) * u) = 1 := by
+  rw [original_dirichlet_zero_horizontal N χ s hlo hhi hz]
+  simp
+
+#print axioms original_dirichlet_zero_horizontal
+#print axioms original_dirichlet_cosh_collapse
 
 end DASHI.AlpogeRH

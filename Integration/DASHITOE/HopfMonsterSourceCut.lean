@@ -109,3 +109,47 @@ theorem periodicWarpReducedPotential (c h I2 I4 t : ℚ)
   ring
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Signed null endpoints in the same KK graph quadratic. -/
+theorem kkSignedNullEndpoints (q r a p : ℚ) (hq : q = -r*p^2) :
+    q+r*((p-a)+a)^2 = 0 ∧ q+r*((-p-a)+a)^2 = 0 := by
+  rw [hq]
+  constructor <;> ring
+
+theorem kkSignedEndpointRecovery (a p : ℚ) :
+    ((p-a)+(-p-a))/2 = -a ∧ ((p-a)-(-p-a))/2 = p := by
+  constructor <;> ring
+
+/-- Any nonnegative positive-fibre penalty preserves the base causal
+inequality. Conversely the original horizontal lift has zero penalty.
+This is ordered-field algebra for the selected pointwise cone. -/
+theorem kkConeProjects (q r w : ℚ) (hr : 0 ≤ r)
+    (h : q+r*w^2 ≤ 0) : q ≤ 0 := by
+  have hp : 0 ≤ r*w^2 := mul_nonneg hr (sq_nonneg w)
+  linarith
+
+theorem kkHorizontalCausalLift (q r : ℚ) (h : q ≤ 0) :
+    q+r*(0:ℚ)^2 ≤ 0 := by simpa using h
+
+/-- Finite null probes in a source-orthonormal frame recover each
+time-space cross term and diagonal relation, then each spatial cross
+term. The global metric and measured frame are not supplied here. -/
+theorem oppositeNullProbes (a b c : ℚ)
+    (hp : a+2*b+c=0) (hm : a-2*b+c=0) :
+    b=0 ∧ c = -a := by constructor <;> linarith
+
+theorem mixedNullProbe (a b : ℚ)
+    (h : a + (3/5:ℚ)^2*(-a) + (4/5:ℚ)^2*(-a) +
+      2*(3/5:ℚ)*(4/5:ℚ)*b = 0) : b=0 := by linarith
+
+/-- A selected positive time coordinate does not make a two-time
+quadratic causal set convex. -/
+theorem twoTimeConeNonconvexControl :
+    -(1:ℤ)^2-2^2+2^2 < 0 ∧
+    -(1:ℤ)^2-(-2)^2+2^2 < 0 ∧
+    0 < -(2:ℤ)^2-0^2+4^2 := by norm_num
+
+end DASHITOE.HopfMonsterSourceCut

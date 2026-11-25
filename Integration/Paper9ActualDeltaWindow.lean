@@ -101,7 +101,7 @@ theorem deltaTail (q N Y D : ℂ)
   have hb := norm_sub_le (N-(1+720*q+179280*q^2)) (Y-(1-1008*q+220752*q^2))
   rw [← h,norm_mul,norm_mul,norm_ofNat] at hb
   have hp : 0<‖q‖ := norm_pos_iff.mpr hq
-  apply (le_of_mul_le_mul_left ?_ (show 0<1728*‖q‖ by positivity))
+  apply (mul_le_mul_left₀ (show 0<1728*‖q‖ by positivity)).mp
   calc
     _ ≤ (17232484+18252361)*‖q‖^3 := by linarith
     _ ≤ (1728*‖q‖)*(24000*‖q‖^2) := by
@@ -114,16 +114,14 @@ theorem originalDeltaRelation (τ : ℍ) :
       x (Periodic.qParam 1 τ)^3-y (Periodic.qParam 1 τ)^2 := by
   have hd := deltaUnitSourceOnDisk (Metric.mem_ball_zero_iff.mpr
     (Integration.Paper9EulerMobiusTransport.qNorm τ))
-  have hf := Integration.Paper9OriginalEisensteinDerivative.deltaCuspFunction
   -- deltaQ is the actual cusp function of normalizedDeltaForm.
   have hs := Integration.Paper9EulerMobiusTransport.formExtAt
     Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm τ
   change deltaQ (Periodic.qParam 1 τ) = _ at hs
   rw [hd,Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm_apply] at hs
   rw [xAtQ,yAtQ]
-  unfold Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit at hs
-  rw [Integration.MoonshineEisensteinAgdaTarget.e4Limit_eq_mathlib_E4,
-    Integration.MoonshineEisensteinAgdaTarget.e6Limit_eq_mathlib_E6] at hs
+  unfold Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaLimit
+    Integration.MoonshineEisensteinAgdaTarget.discriminantNumeratorLimit at hs
   linear_combination 1728*hs
 
 theorem actualCuspRemainder (τ : ℍ)

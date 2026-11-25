@@ -75,10 +75,14 @@ theorem centeredHeckeTaylor :
   unfold hecke at hf
   unfold centeredHecke hecke tangent secondTangent
   have hu' : u+cmPoint+1=z+u := by dsimp [z]; ring
-  rw [hu',← hf]
-  change -41/(z+u)-(-41/z)-(41/z^2*u+(-82/z^3)*u^2/2)=
-    u^3*(41/(z^3*(z+u)))
-  field_simp [hz,hu] <;> ring
+  rw [hu']
+  have hf' : -41/z=cmPoint := hf
+  have heq : -41/(z+u)-(-41/z)-(41/z^2*u+(-82/z^3)*u^2/2)=
+      u^3*(41/(z^3*(z+u))) := by
+    field_simp [hz,hu] <;> ring
+  change -41/(z+u)-cmPoint-(41/z^2*u+(-82/z^3)*u^2/2)=_
+  rw [← hf']
+  exact heq
 
 -- Actual branch, not only the CM fixed-point evaluation.
 theorem heckeChartAt (τ : ℍ) :

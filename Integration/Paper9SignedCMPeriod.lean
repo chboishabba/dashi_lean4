@@ -184,5 +184,85 @@ theorem actualPositiveRatio (hj : Integration.MoonshineEisensteinAgdaTarget.jTar
   rw [← cmFReal,← cmXReal,← cmYReal]
   exact_mod_cast he
 
+-- Actual z at CM is the original literal factorial-series argument.
+theorem actualCMZ (hj : Integration.MoonshineEisensteinAgdaTarget.jTarget cmTau = K) :
+    zCoord q = (cmZ : ℂ) := by
+  have hz := actualJZ cmTau cmXNonzero
+    (Integration.MoonshineDeltaFinalMinCut.normalizedDelta_ne_zero_canonical cmTau)
+  rw [hj] at hz
+  change K*zCoord q=1728 at hz
+  apply (mul_left_cancel₀ (show K ≠ 0 by norm_num))
+  rw [hz]
+  norm_num [cmZ,C]
+
+-- The actual period, on exactly the two still-unpaid analytic CM inputs.
+theorem actualCMWeightedPeriod
+    (hj : Integration.MoonshineEisensteinAgdaTarget.jTarget cmTau = K)
+    (hκ : κ = deriv (deriv jExt) (cmTau : ℂ) /
+      (deriv jExt (cmTau : ℂ))^2 +
+      2/((2*cmPoint+1)*deriv jExt (cmTau : ℂ))) :
+    13591409*H (cmZ : ℂ)+545140134*jet 1 (cmZ : ℂ) =
+      ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ) := by
+  have hz := actualCMZ hj
+  have hH : F = H (cmZ : ℂ) := by
+    have h := selectedHyperAtCM
+    change F=H (zCoord q) at h
+    rwa [hz] at h
+  have hJ : L rootF q = jet 1 (cmZ : ℂ) := by
+    have h := selectedFirstJetAtCM
+    change L rootF q=jet 1 (zCoord q) at h
+    rwa [hz] at h
+  have hF := rootFirstAll q (goodSelected q cmQSmall.le).1
+  rw [hJ] at hF
+  have hc := actualCMCorrection hj hκ
+  have he : (13591409 : ℂ)/545140134 =
+      (1-(X/Y)*(E-3/p))/6 := by
+    rw [hc]
+    norm_num
+  have hsum : 13591409*H (cmZ : ℂ)+545140134*jet 1 (cmZ : ℂ) =
+      545140134*(F*X/Y)/(2*p) := by
+    rw [← hH,hF]
+    unfold aCoord
+    have hh := periodAlgebra E X Y F p cmYNonzero cmPNonzero
+    rw [← he] at hh
+    linear_combination 545140134*hh
+  rw [hsum,actualPositiveRatio hj]
+  let v : ℝ := root163*Real.sqrt (1+1728/(640320^3 : ℝ))
+  have hv : 0 < v := by
+    unfold v
+    exact mul_pos (by linarith [root163_gt]) (Real.sqrt_pos.2 (by positivity))
+  have hvs : v^2 = 163*(1+1728/(640320^3 : ℝ)) := by
+    unfold v
+    rw [mul_pow,root163_sq,Real.sq_sqrt (by positivity)]
+  have hR : 0 < Real.sqrt 10005 := Real.sqrt_pos.2 (by norm_num)
+  have hR2 : (Real.sqrt 10005)^2 = 10005 := Real.sq_sqrt (by norm_num)
+  have hn := positiveNormalization Real.pi v (Real.sqrt 10005)
+    Real.pi_pos hv hR hvs hR2
+  have hscale : (545140134 : ℂ)*((1/Real.sqrt (1+1728/(640320^3 : ℝ)) : ℝ) : ℂ)/
+      (2*p) = ((545140134/(Real.pi*v) : ℝ) : ℂ) := by
+    push_cast
+    unfold v
+    push_cast
+    have hr : (root163 : ℂ) ≠ 0 := by
+      exact_mod_cast (show root163 ≠ 0 by linarith [root163_gt])
+    have hp : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+    have hs : ((Real.sqrt (1+1728/(640320^3 : ℝ))) : ℂ) ≠ 0 := by
+      exact_mod_cast (Real.sqrt_pos.2 (by positivity : 0 < 1+1728/(640320^3 : ℝ))).ne'
+    field_simp [hr,hp,hs] <;> ring
+  rw [hscale]
+  exact_mod_cast hn
+
+-- Same literal Lean integer prefix, with no new stream.
+theorem actualLiteralPrefixPeriod
+    (hj : Integration.MoonshineEisensteinAgdaTarget.jTarget cmTau = K)
+    (hκ : κ = deriv (deriv jExt) (cmTau : ℂ) /
+      (deriv jExt (cmTau : ℂ))^2 +
+      2/((2*cmPoint+1)*deriv jExt (cmTau : ℂ))) :
+    Tendsto (fun N => (Integration.Paper9LiteralFactorialPrefix.sum N : ℂ))
+      atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ)) := by
+  rw [← actualCMWeightedPeriod hj hκ]
+  exact Integration.Paper9LiteralFactorialPrefix.literalPrefixTendsto
+
+
 end
 end Integration.Paper9SignedCMPeriod

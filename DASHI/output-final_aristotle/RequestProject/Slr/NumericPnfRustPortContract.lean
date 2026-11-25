@@ -695,6 +695,42 @@ theorem standalone_name_retains_original_permission
 example : parserEvidencePermissionWithSourceContext 3 1 true true = false := by decide
 example : parserEvidencePermissionWithSourceContext 3 1 true false = true := by decide
 
+
+/-- A nonmonotone source delta is an outstanding authority obligation,
+not a flag on a single execution pass. Only a separately checked owner
+reconciliation can discharge it. An empty scheduling pass cannot do so. -/
+def pendingAuthorityAfter (pending withdrawn checkedReconciliation : Bool) : Bool :=
+  (pending || withdrawn) && !checkedReconciliation
+
+theorem empty_pass_preserves_pending_authority (pending : Bool) :
+    pendingAuthorityAfter pending false false = pending := by
+  cases pending <;> rfl
+
+theorem withdrawal_blocks_without_reconciliation (pending : Bool) :
+    pendingAuthorityAfter pending true false = true := by
+  cases pending <;> rfl
+
+def authorityUsable (pending currentEvidenceValid : Bool) : Bool :=
+  !pending && currentEvidenceValid
+
+theorem pending_authority_cannot_be_used (valid : Bool) :
+    authorityUsable true valid = false := by
+  cases valid <;> rfl
+
+/-- Evidence withdrawal does not delete the represented carrier or
+change semantic admissibility by itself. The physical support predicate
+is supplied by the original producer, not inferred from residual sign. -/
+def currentOwnedAtoms {α : Type} (history : List α) (supported : α → Bool) :=
+  history.filter supported
+
+theorem current_owned_atom_exact {α : Type} (history : List α)
+    (supported : α → Bool) (a : α) :
+    a ∈ currentOwnedAtoms history supported ↔ a ∈ history ∧ supported a = true := by
+  simp [currentOwnedAtoms]
+
+example : pendingAuthorityAfter (pendingAuthorityAfter false true false) false false = true := by decide
+example : pendingAuthorityAfter true false true = false := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -744,3 +780,8 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.embedded_proper_name_cannot_license
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.standalone_name_retains_original_permission
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.empty_pass_preserves_pending_authority
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_blocks_without_reconciliation
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.pending_authority_cannot_be_used
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.current_owned_atom_exact

@@ -10564,4 +10564,80 @@ theorem QuarticFourSignedPolePair.canonicalLiteralLocalExact_le_tightBudget
   W.canonicalLiteralLocalExact_le_scaledBudget ht _
     (fun a b ha hb => real_cosh_mul_cos_sub_mixedSixth_abs_le_eighth_tight ha hb)
 
+
+/-! Signed eighth candidate: keep the exact moment on the original guard. -/
+def QuarticFourSignedPolePair.literalLocalTenthDebtAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eta : ℝ) (n : ℕ) : ℝ :=
+  ((66/(65*3628800) : ℝ) * W.signedProfileAbsMomentTen / (t/16)^12) *
+    literalLocalPhysicalPhaseAt t eta n (fun a d => (a^2+d^2)^5)
+
+theorem QuarticFourSignedPolePair.literalLocalBeyondEighth_le_tenthDebt
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (hscalar : QuarticSignedPoleTenthTaylorBound) (n : ℕ) :
+    W.literalLocalBeyondEighthRemainderAt quarticSignedPoleCanonicalLocalRadius n
+      <= W.literalLocalTenthDebtAt quarticSignedPoleCanonicalLocalRadius n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalBeyondEighthRemainderAt
+    QuarticFourSignedPolePair.literalLocalTenthDebtAt literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t quarticSignedPoleCanonicalLocalRadius rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have ha := quarticSignedPole_normalizedHeight_abs_le_canonicalRadius ht rho
+      have hq : |((rho : ℂ).im-t)/(t/16)| <= quarticSignedPoleCanonicalLocalRadius := hl
+      have hnorm := W.completeJointBeyondEighthRemainder_abs_le_tenth hscalar ha hq
+      have hr : 0 < t/16 := by positivity
+      have hm : 0 <= ((zetaZeroConfig).mult (rho : ℂ) : ℝ)/(t/16)^2 := by positivity
+      have hscaled := mul_le_mul_of_nonneg_left ((le_abs_self _).trans hnorm) hm
+      simp only [hl, hoff, dite_true, if_true]
+      unfold QuarticFourSignedPolePair.literalCompleteJointBeyondEighthRemainder
+      dsimp
+      convert hscaled using 1 <;> field_simp [hr.ne'] <;> ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+def QuarticFourSignedPolePair.literalSignedEighthLocalBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) : ℝ :=
+  -W.targetStrength / (6*(t/16)^6) *
+    W.literalLocalFourthPhaseMomentAt quarticSignedPoleCanonicalLocalRadius n
+  + W.literalLocalSignedSixthHarmonicAt quarticSignedPoleCanonicalLocalRadius n
+  + W.literalLocalSignedEighthHarmonicAt quarticSignedPoleCanonicalLocalRadius n
+  + W.literalLocalTenthDebtAt quarticSignedPoleCanonicalLocalRadius n
+
+theorem QuarticFourSignedPolePair.literalLocalExact_le_signedEighthBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (hscalar : QuarticSignedPoleTenthTaylorBound) (n : ℕ) :
+    W.literalLocalExactAt quarticSignedPoleCanonicalLocalRadius n <=
+      W.literalSignedEighthLocalBudgetAt n := by
+  rw [W.literalLocalExactAt_eq_fourthHarmonic_add_remainder (by linarith : 0 < t),
+    W.literalLocalCompleteRemainder_eq_sixth_eighth_beyond n,
+    W.literalLocalFourthHarmonicAt_eq_phaseMoment
+      (by linarith : 0 < t) (eta:=quarticSignedPoleCanonicalLocalRadius) n]
+  unfold QuarticFourSignedPolePair.literalSignedEighthLocalBudgetAt
+  linarith [W.literalLocalBeyondEighth_le_tenthDebt ht hscalar n]
+
+def QuarticFourSignedPolePair.canonicalSignedEighthLocalBudget
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  W.literalSignedEighthLocalBudgetAt (quarticSignedPoleCanonicalLocalExhaustionIndex t)
+
+theorem QuarticFourSignedPolePair.canonicalLiteralLocalExact_le_signedEighthBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (hscalar : QuarticSignedPoleTenthTaylorBound) :
+    W.canonicalLiteralLocalExact <= W.canonicalSignedEighthLocalBudget :=
+  W.literalLocalExact_le_signedEighthBudget ht hscalar
+    (quarticSignedPoleCanonicalLocalExhaustionIndex t)
+
+def QuarticFourSignedPolePair.canonicalBestLocalBudget
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  min (W.canonicalScaledLocalBudget (375/448)) W.canonicalSignedEighthLocalBudget
+
+theorem QuarticFourSignedPolePair.canonicalLiteralLocalExact_le_bestBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (hscalar : QuarticSignedPoleTenthTaylorBound) :
+    W.canonicalLiteralLocalExact <= W.canonicalBestLocalBudget := by
+  unfold QuarticFourSignedPolePair.canonicalBestLocalBudget
+  exact le_min (W.canonicalLiteralLocalExact_le_tightBudget ht)
+    (W.canonicalLiteralLocalExact_le_signedEighthBudget ht hscalar)
+
 end Synthesis

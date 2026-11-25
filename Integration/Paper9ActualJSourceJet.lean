@@ -141,7 +141,7 @@ theorem jExtSecond (t : ℂ) (hq : ‖qExt t‖ < 1)
   have hlocal : ∀ᶠ w in 𝓝 t,
       ‖qExt w‖ < 1 ∧ qExt w ≠ 0 ∧ x (qExt w) ≠ 0 := by
     filter_upwards
-      [continuous_norm.continuousAt.comp hqc |>.eventually_lt continuousAt_const hq,
+      [(continuous_norm.continuousAt.comp hqc).eventually_lt continuousAt_const hq,
        hqc (isOpen_compl_singleton.mem_nhds (by simpa using hn)),
        hxc (isOpen_compl_singleton.mem_nhds (by simpa using hx))]
       with w hw hwn hwx
@@ -165,7 +165,7 @@ theorem reopenCorrection (X Y e J p k : ℂ)
     (hk : 4+3*X^3/Y^2-6*J*k = (X/Y)*(e-3/p)) :
     k = (J*(-e*X*Y+3*X^3+4*Y^2)/(6*X^2))/
       (J*Y/X)^2+X/(2*J*p*Y) := by
-  apply (mul_left_cancel₀ (show 6*J ≠ 0 by positivity))
+  apply (mul_left_cancel₀ (show 6*J ≠ 0 from mul_ne_zero (by norm_num) hj))
   have h := correctionFromJet X Y e J p
     ((J*(-e*X*Y+3*X^3+4*Y^2)/(6*X^2))/(J*Y/X)^2+X/(2*J*p*Y))
     hx hy hj hp rfl

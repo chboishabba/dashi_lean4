@@ -169,5 +169,40 @@ theorem originalRamanujan46 (τ : ℍ) :
       Integration.MoonshineEisensteinAnalytic.E4 τ ^ 2 :=
   ramanujan46FromSlash originalBracketSlash τ
 
+
+-- Use the SAME transport on normalized Delta (weight 12), not a
+-- replacement E2 or assumed quasimodular transformation.
+theorem e2AsEuler (τ : ℍ) :
+    e2 τ =
+      formEuler Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm τ /
+      Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm τ := by
+  rw [Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm_apply]
+  rfl
+
+theorem originalE2Transform (γ : SL(2, ℤ)) (τ : ℍ) :
+    e2 (γ • τ) = (linear γ τ)^2 * e2 τ +
+      12 * ((γ 1 0 : ℂ)/scaleD) * linear γ τ := by
+  let Δ := Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm
+  have hΔ : Δ τ ≠ 0 := by
+    change Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm τ ≠ 0
+    rw [Integration.MoonshineEisensteinAgdaTarget.normalizedDeltaForm_apply]
+    exact Integration.MoonshineDeltaFinalMinCut.normalizedDelta_ne_zero_canonical τ
+  have hj := linear_ne_zero γ τ
+  rw [e2AsEuler, e2AsEuler]
+  change formEuler Δ (γ • τ) / Δ (γ • τ) =
+    (linear γ τ)^2 * (formEuler Δ τ / Δ τ) +
+      12*((γ 1 0 : ℂ)/scaleD)*linear γ τ
+  rw [eulerTransform 11 Δ γ τ, formTransform 11 Δ γ τ]
+  norm_num
+  field_simp [hΔ,hj,scaleD_ne_zero] <;> ring
+
+-- Once the actual derivative of the preceding transformation is
+-- bound, this algebra pays the weight-four cancellation exactly.
+-- It does NOT assert that the second derivative source is inhabited.
+theorem e2CorrectedCovarianceAlgebra (e de x j c : ℂ) :
+    12*(j^4*de + 2*c*j^3*e + 12*c^2*j^2) -
+      (j^2*e + 12*c*j)^2 + j^4*x =
+      j^4*(12*de-e^2+x) := by ring
+
 end
 end Integration.Paper9EulerMobiusTransport

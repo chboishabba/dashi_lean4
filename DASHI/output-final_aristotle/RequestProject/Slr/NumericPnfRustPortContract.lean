@@ -491,6 +491,74 @@ example : consumerRegionWork ([1, 2, 3] : List Nat) [1, 3, 99] = [2] := by decid
 example : consumerRegionWork ([1, 2] : List Nat) [1, 2, 99] = [] := by decide
 example : consumerRegionWork ["s1", "s2", "s3"] ["s1", "s3", "unrelated"] = ["s2"] := by decide
 
+/-- A repaired segmentation adds source-indexed candidate regions, never
+    replaces existing region IDs or grants semantic authority. Coverage here
+    is structural; actual parser token coverage is a separate obligation. -/
+structure SourceRegionSpan where
+  ref : String
+  parentRef : String
+  startChar : Nat
+  endChar : Nat
+  deriving Repr, BEq, DecidableEq
+
+def coversChar (r : SourceRegionSpan) (i : Nat) : Prop :=
+  r.startChar ≤ i ∧ i < r.endChar
+
+def regionCovered (rs : List SourceRegionSpan) (i : Nat) : Prop :=
+  ∃ r, r ∈ rs ∧ coversChar r i
+
+def extendPartition (old added : List SourceRegionSpan) : List SourceRegionSpan :=
+  old ++ added
+
+theorem extension_preserves_original_region
+    (old added : List SourceRegionSpan) (r : SourceRegionSpan)
+    (h : r ∈ old) : r ∈ extendPartition old added := by
+  simp [extendPartition, h]
+
+theorem extension_exact_coverage
+    (old added : List SourceRegionSpan) (i : Nat) :
+    regionCovered (extendPartition old added) i ↔
+      regionCovered old i ∨ regionCovered added i := by
+  constructor
+  · rintro ⟨r, hr, hc⟩
+    rcases List.mem_append.mp hr with ho | ha
+    · exact Or.inl ⟨r, ho, hc⟩
+    · exact Or.inr ⟨r, ha, hc⟩
+  · intro h
+    rcases h with ⟨r, hr, hc⟩ | ⟨r, hr, hc⟩
+    · exact ⟨r, List.mem_append.mpr (Or.inl hr), hc⟩
+    · exact ⟨r, List.mem_append.mpr (Or.inr hr), hc⟩
+
+theorem extension_preserves_unaffected_coverage
+    (old added : List SourceRegionSpan) (i : Nat)
+    (outside : ¬ regionCovered added i) :
+    regionCovered (extendPartition old added) i ↔ regionCovered old i := by
+  rw [extension_exact_coverage]
+  exact or_iff_left outside
+
+/-- Region insertion must wake consumers which depended on absence or
+    completeness over the repaired interval, not only existing positive
+    observations. A dependency predicate comes from the original owner. -/
+def insertionAffects (depends : Nat → Prop) (added : List SourceRegionSpan) : Prop :=
+  ∃ i, depends i ∧ regionCovered added i
+
+theorem newly_covered_dependency_requires_wake
+    (depends : Nat → Prop) (old added : List SourceRegionSpan) (i : Nat)
+    (dep : depends i) (absent : ¬ regionCovered old i)
+    (present : regionCovered (extendPartition old added) i) :
+    insertionAffects depends added := by
+  rcases (extension_exact_coverage old added i).mp present with h | h
+  · exact False.elim (absent h)
+  · exact ⟨i, dep, h⟩
+
+theorem outside_insertion_preserves_dependency_coverage
+    (depends : Nat → Prop) (old added : List SourceRegionSpan)
+    (outside : ¬ insertionAffects depends added) (i : Nat) (dep : depends i) :
+    regionCovered (extendPartition old added) i ↔ regionCovered old i := by
+  apply extension_preserves_unaffected_coverage
+  intro h
+  exact outside ⟨i, dep, h⟩
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -522,3 +590,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.consumer_work_cannot_include_unrequested
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.consumer_work_empty_if_required_published
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.shared_producer_same_snapshot
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.extension_exact_coverage
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.newly_covered_dependency_requires_wake
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.outside_insertion_preserves_dependency_coverage

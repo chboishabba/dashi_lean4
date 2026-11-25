@@ -88,6 +88,50 @@ theorem ordinaryCoordinates_inverse
     (ordinaryCoordinates F e).symm x =
       evaluate F (fun i => e.symm (x i)) := rfl
 
+/-- Genuine tensor product, in the required H ⊗ ordinary orientation.
+This is the existing mathlib finite-copy equivalence, not a Cartesian inverse. -/
+def ordinaryTensor
+    (F : Frame (k := k) (S := S) (W := W) (ι := ι))
+    (e : S ≃ₗ[k] P) :
+    (ι → k) ⊗[k] P ≃ₗ[k] W :=
+  TensorProduct.comm k (ι → k) P ≪≫ₗ
+    TensorProduct.piScalarRight k k P ι ≪≫ₗ (ordinaryCoordinates F e).symm
+
+section SignedEntry
+open Synthesis.MonsterSignedHomComposition
+open Synthesis.MonsterVacuumHomEquivalence
+open Synthesis.MonsterNormalizerHomAction
+variable {E : Type u} [Group E]
+variable (F : Frame (k := k) (S := S) (W := W) (ι := ι))
+variable (G : Frame (k := k) (S := T) (W := U) (ι := ι))
+variable (A : EActionPair (k := k) (E := E) (H := Schr k ι) (W := W))
+variable (B : EActionPair (k := k) (E := E) (H := Schr k ι) (W := U))
+variable (R : SignedArrow A B)
+variable (L : WeylVacuumLaws F A) (K : WeylVacuumLaws G B)
+
+/-- The FULL transported source operator follows from the genuine
+multiplicity intertwiner and the already derived Weyl/Hom action.
+In particular zero entries of the Weil kernel are not dropped. -/
+theorem ordinaryEntry (e : S ≃ₗ[k] P) (f : T ≃ₗ[k] M)
+    (a : P →ₗ[k] M)
+    (ha : ∀ u, f (vacuumArrow F G A B R L K u) = a (e u))
+    (w : W) (j : ι) :
+    ordinaryCoordinates G f (R.onW w) j =
+      ∑ i, (R.onH (delta i) j) • a (ordinaryCoordinates F e w i) := by
+  have h := full_entry F G A B R L K (recover F w) j
+  change G.recoverWeight j (R.onW (evaluate F (recover F w))) = _ at h
+  rw [evaluate_recover] at h
+  change f (G.recoverWeight j (R.onW w)) =
+    ∑ i, (R.onH (delta i) j) • a (e (F.recoverWeight i w))
+  rw [h, map_sum]
+  apply Finset.sum_congr rfl
+  intro i _
+  change f ((R.onH (delta i) j) • vacuumArrow F G A B R L K
+    (F.recoverWeight i w)) = _
+  rw [map_smul, ha]
+
+end SignedEntry
+
 /-- Reuse the original zero-sector carrier unchanged. The input splitting
 must come from the actual central projections; the two signed coordinates
 may have distinct source types. -/
@@ -136,8 +180,9 @@ def descendAction (q : G →* N) (hq : Function.Surjective q)
     (a : G →* Module.End k W) (hk : ∀ g, q g = 1 → a g = 1) :
     N →* Module.End k W where
   toFun n := a (Classical.choose (hq n))
-  map_one' := actionConstantOnFibre q a hk
-    ((Classical.choose_spec (hq 1)).trans (map_one q).symm) |>.trans (map_one a)
+  map_one' := by
+    exact (actionConstantOnFibre q a hk
+      ((Classical.choose_spec (hq 1)).trans (map_one q).symm)).trans (map_one a)
   map_mul' x y := by
     have h : q (Classical.choose (hq (x*y))) =
         q (Classical.choose (hq x) * Classical.choose (hq y)) := by

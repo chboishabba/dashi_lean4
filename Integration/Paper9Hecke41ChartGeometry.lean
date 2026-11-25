@@ -121,4 +121,118 @@ theorem productTransport (τ σ : ℍ) (e : Equiv.Perm Chart)
   simp only [h]
   exact e.prod_comp (fun i => Y-chartValue i τ)
 
+-- Explicit analytic transport of the original chart coordinates.
+-- Matrix multiplication is paid by a cleared-denominator identity.
+def denom (m : Mat) (z : ℂ) : ℂ := (m 1 0 : ℂ)*z+(m 1 1 : ℂ)
+def numer (m : Mat) (z : ℂ) : ℂ := (m 0 0 : ℂ)*z+(m 0 1 : ℂ)
+def eval (m : Mat) (z : ℂ) : ℂ := numer m z/denom m z
+
+theorem evalMul (m n : Mat) (z : ℂ)
+    (hn : denom n z ≠ 0) (hm : denom m (eval n z) ≠ 0) :
+    eval (m*n) z = eval m (eval n z) := by
+  have hd : denom (m*n) z=denom m (eval n z)*denom n z := by
+    unfold denom eval numer
+    simp only [Matrix.mul_apply,Fin.sum_univ_two,Int.cast_add,Int.cast_mul]
+    field_simp [hn] <;> ring
+  have hv : numer (m*n) z=numer m (eval n z)*denom n z := by
+    unfold denom eval numer
+    simp only [Matrix.mul_apply,Fin.sum_univ_two,Int.cast_add,Int.cast_mul]
+    field_simp [hn] <;> ring
+  unfold eval at *
+  rw [hd,hv]
+  field_simp [hn,hm] <;> ring
+
+theorem chartEval (i : Chart) (τ : ℍ) :
+    eval (a i) τ = (chartPoint i τ : ℂ) := by
+  by_cases h : i.val=41
+  · simp [eval,numer,denom,a,chartPoint,h]
+  · simp [eval,numer,denom,a,chartPoint,h]
+
+theorem chartDenom (i : Chart) (τ : ℍ) : denom (a i) τ ≠ 0 := by
+  by_cases h : i.val=41 <;> simp [denom,a,h]
+
+theorem slEval (g : SL(2, ℤ)) (τ : ℍ) :
+    eval (g : Mat) τ = ((g • τ : ℍ) : ℂ) := mobiusAt g τ
+
+theorem slDenom (g : SL(2, ℤ)) (τ : ℍ) :
+    denom (g : Mat) τ ≠ 0 := linear_ne_zero g τ
+
+def sSL (i : Chart) : SL(2, ℤ) := ⟨sCorrection i,allSDet i⟩
+def tSL (i : Chart) : SL(2, ℤ) := ⟨tCorrection i,allTDet i⟩
+def dualSL (i : Chart) : SL(2, ℤ) := ⟨dualCorrection i,allDualDet i⟩
+
+-- Consume a specific exact correction edge in the actual H action.
+theorem chartCovariance (i k : Chart) (g c : SL(2, ℤ)) (τ : ℍ)
+    (he : a i*(g : Mat)=(c : Mat)*a k) :
+    chartPoint i (g • τ)=c • chartPoint k τ := by
+  apply UpperHalfPlane.ext
+  rw [← chartEval,← slEval]
+  have h1 := evalMul (a i) (g : Mat) (τ : ℂ) (slDenom g τ)
+    (by rw [slEval]; exact chartDenom i _)
+  have h2 := evalMul (c : Mat) (a k) (τ : ℂ) (chartDenom k τ)
+    (by rw [chartEval]; exact slDenom c _)
+  rw [he] at h1
+  rw [slEval] at h1
+  rw [chartEval] at h2
+  exact h1.symm.trans h2
+
+theorem chartSTransport (i : Chart) (τ : ℍ) :
+    chartPoint i (ModularGroup.S • τ)=sSL i • chartPoint (sIndex i) τ := by
+  apply chartCovariance
+  change a i*s=sCorrection i*a (sIndex i)
+  exact allS i
+
+theorem chartTTransport (i : Chart) (τ : ℍ) :
+    chartPoint i (ModularGroup.T • τ)=tSL i • chartPoint (tIndex i) τ := by
+  apply chartCovariance
+  change a i*t=tCorrection i*a (tIndex i)
+  exact allT i
+
+theorem productSInvariant (τ : ℍ) (Y : ℂ) :
+    actualProduct (ModularGroup.S • τ) Y=actualProduct τ Y := by
+  apply productTransport τ _ sPerm
+  intro i
+  unfold chartValue
+  rw [chartSTransport,jInvariant]
+
+theorem productTInvariant (τ : ℍ) (Y : ℂ) :
+    actualProduct (ModularGroup.T • τ) Y=actualProduct τ Y := by
+  apply productTransport τ _ tPerm
+  intro i
+  unfold chartValue
+  rw [chartTTransport,jInvariant]
+
+-- Actual reverse chart, retaining the dual correction; this gives the
+-- opposite root independently of any presumed symmetry of Phi.
+theorem reverseChart (i : Chart) (τ : ℍ) :
+    dualSL i • chartPoint (dualIndex i) (chartPoint i τ)=τ := by
+  apply UpperHalfPlane.ext
+  rw [← slEval,← chartEval]
+  have h1 := evalMul (dualCorrection i) (a (dualIndex i))
+    (chartPoint i τ : ℂ) (chartDenom _ _) (by
+      rw [chartEval]; exact slDenom (dualSL i) _)
+  rw [← allDual i] at h1
+  have h2 := evalMul (adj2 (a i)) (a i) (τ : ℂ) (chartDenom i τ) (by
+    rw [chartEval,allDual i]
+    have h := evalMul (dualCorrection i) (a (dualIndex i))
+      (chartPoint i τ : ℂ) (chartDenom _ _) (by
+        rw [chartEval]; exact slDenom (dualSL i) _)
+    -- direct denominator product (the two known positive chart scales)
+    by_cases hi : i.val=41 <;>
+      simp [denom,adj2,a,dualIndex,dualCorrection,hi])
+  rw [allDualBack i] at h2
+  rw [chartEval] at h2
+  rw [← h1,← h2]
+  simp [eval,numer,denom,Matrix.smul_apply]
+  ring
+
+theorem reverseRoot (i : Chart) (τ : ℍ) :
+    actualProduct (chartPoint i τ)
+      (Integration.MoonshineEisensteinAgdaTarget.jTarget τ)=0 := by
+  unfold actualProduct
+  apply Finset.prod_eq_zero (Finset.mem_univ (dualIndex i))
+  unfold chartValue
+  rw [← jInvariant (dualSL i),reverseChart,sub_self]
+
+
 end Integration.Paper9Hecke41ChartGeometry

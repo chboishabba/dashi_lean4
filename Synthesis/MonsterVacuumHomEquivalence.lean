@@ -25,6 +25,7 @@ def delta (i : ι) : Schr k ι := fun j => if j = i then 1 else 0
 theorem delta_expansion (h : Schr k ι) :
     (∑ i, h i • delta (k := k) i) = h := by
   funext j
+  rw [Finset.sum_apply]
   change (∑ i, h i * (if j = i then 1 else 0)) = h j
   calc
     _ = h j * (if j = j then 1 else 0) :=
@@ -37,8 +38,12 @@ theorem linear_ext_delta (f g : Schr k ι →ₗ[k] W)
     (h : ∀ i, f (delta i) = g (delta i)) : f = g := by
   apply LinearMap.ext
   intro x
-  rw [← delta_expansion x, map_sum, map_sum]
-  simp only [map_smul, h]
+  calc
+    f x = f (∑ i, x i • delta i) := congrArg f (delta_expansion x).symm
+    _ = g (∑ i, x i • delta i) := by
+      rw [map_sum, map_sum]
+      simp only [map_smul, h]
+    _ = g x := congrArg g (delta_expansion x)
 
 variable (F : Frame (k := k) (S := S) (W := W) (ι := ι))
 

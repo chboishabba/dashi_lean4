@@ -39,6 +39,7 @@ theorem prefixStep (x : ℝ) (n : ℕ) :
 -- actual arctangent. The first omitted term bounds the signed difference.
 theorem atanError (x : ℝ) (hx : 0≤x) (hx1 : x<1) (n : ℕ) :
     |Real.arctan x-prefix x n|≤magnitude x n := by
+  have hmag (k : ℕ) : 0≤magnitude x k := by unfold magnitude; positivity
   let j := n/2
   have hn : n=2*j ∨ n=2*j+1 := by dsimp [j]; omega
   obtain ⟨hl,hu⟩ := atanBracket x hx hx1 j
@@ -48,24 +49,25 @@ theorem atanError (x : ℝ) (hx : 0≤x) (hx1 : x<1) (n : ℕ) :
     have hs := prefixStep x (2*j)
     rw [pow_mul] at hs
     norm_num at hs
-    exact ⟨by linarith,by linarith⟩
+    exact ⟨by linarith [hmag (2*j), hmag (2*j+1)],by linarith [hmag (2*j),hmag (2*j+1)]⟩
   · rw [h,abs_le]
     have hs := prefixStep x (2*j+1)
     rw [pow_add,pow_mul] at hs
     norm_num at hs
     rw [show 2*(j+1)=2*j+1+1 by omega] at hnxt
-    exact ⟨by linarith,by linarith⟩
+    exact ⟨by linarith [hmag (n/2*2), hmag (2*j), hmag (2*j+1)],by linarith [hmag (2*j),hmag (2*j+1)]⟩
 
 theorem magnitudeFifth (x : ℝ) (hx : 0≤x) (h : x≤1/5) (n : ℕ) :
     magnitude x n≤1/(5:ℝ)*(1/25:ℝ)^n := by
   have hp : x^(2*n+1)≤(1/5:ℝ)^(2*n+1) := by gcongr
-  have hn : (1:ℝ)≤((2*n+1:ℕ):ℝ) := by positivity
+  have hn : (1:ℝ)≤((2*n+1:ℕ):ℝ) := by
+    exact_mod_cast (show 1≤2*n+1 by omega)
   calc
     magnitude x n≤x^(2*n+1) := by
       unfold magnitude
       exact div_le_self (pow_nonneg hx _) hn
     _ ≤ _ := hp
-    _ = _ := by rw [pow_succ,pow_mul]; norm_num; ring
+    _ = _ := by rw [pow_succ,pow_mul]; norm_num <;> ring
 
 theorem machinGeometric (n : ℕ) :
     |Real.pi-(machinStage n:ℝ)|≤4/(25:ℝ)^n := by
@@ -114,7 +116,7 @@ theorem fractionLeIff (a b : ℤ) (c d : ℕ) (hc : 0<c) (hd : 0<d) :
     ((a:ℚ)/(c:ℚ)≤(b:ℚ)/(d:ℚ)) ↔ a*(d:ℤ)≤b*(c:ℤ) := by
   rw [div_le_div_iff₀ (by exact_mod_cast hc : 0<(c:ℚ))
     (by exact_mod_cast hd : 0<(d:ℚ))]
-  exact_mod_cast Iff.rfl
+  constructor <;> intro h <;> exact_mod_cast h
 
 theorem crossCoordinates
     (l u m e : ℚ) (hl : l≤m+e) (hu : m≤u+e)
@@ -143,5 +145,66 @@ theorem crossCoordinates
       ((mn:ℚ)*(ed:ℚ)+(en:ℚ)*(md:ℚ))*(ld:ℚ) by simpa [mul_assoc] using hl)
   · exact_mod_cast (show (mn:ℚ)*(ud:ℚ)*(ed:ℚ)≤
       ((un:ℚ)*(ed:ℚ)+(en:ℚ)*(ud:ℚ))*(md:ℚ) by simpa [mul_assoc] using hu)
+
+-- Raw source fields, not a replacement arithmetic or real carrier.
+-- Agda's qMachinTerm performs the same unreduced products and sums.
+abbrev Raw := ℤ × ℕ
+def value (p : Raw) : ℚ := (p.1:ℚ)/(p.2:ℚ)
+def addRaw (p q : Raw) : Raw :=
+  (p.1*(q.2:ℤ)+q.1*(p.2:ℤ),p.2*q.2)
+
+theorem addRawValue (p q : Raw) (hp : 0<p.2) (hq : 0<q.2) :
+    value (addRaw p q)=value p+value q := by
+  have hp' : (p.2:ℚ)≠0 := by exact_mod_cast hp.ne'
+  have hq' : (q.2:ℚ)≠0 := by exact_mod_cast hq.ne'
+  unfold value addRaw
+  push_cast
+  field_simp [hp',hq'] <;> ring
+
+def omittedDen (d k : ℕ) : ℕ := (2*k+1)*d^(2*k+1)
+def rawTerm (k : ℕ) : Raw :=
+  let a := omittedDen 5 k
+  let b := omittedDen 239 k
+  ((-1:ℤ)^k*(16*(b:ℤ)-4*(a:ℤ)),a*b)
+
+def rawStage : ℕ → Raw
+  | 0 => (0,1)
+  | k+1 => addRaw (rawStage k) (rawTerm k)
+
+def rawRadius : ℕ → Raw
+  | 0 => (22,7)
+  | k+1 => (4,25^(k+1))
+
+theorem rawTermDenPositive (k : ℕ) : 0<(rawTerm k).2 := by
+  simp only [rawTerm,omittedDen]
+  positivity
+
+theorem rawStageDenPositive (k : ℕ) : 0<(rawStage k).2 := by
+  induction k with
+  | zero => decide
+  | succ k ih => exact Nat.mul_pos ih (rawTermDenPositive k)
+
+theorem rawTermValue (k : ℕ) :
+    value (rawTerm k) =
+      16*((-1:ℚ)^k/((2*k+1:ℕ):ℚ)/(5:ℚ)^(2*k+1))-
+      4*((-1:ℚ)^k/((2*k+1:ℕ):ℚ)/(239:ℚ)^(2*k+1)) := by
+  unfold value rawTerm omittedDen
+  push_cast
+  field_simp <;> ring
+
+theorem rawStageValue (k : ℕ) : value (rawStage k)=machinStage k := by
+  induction k with
+  | zero => norm_num [rawStage,value,machinStage,prefixRat]
+  | succ k ih =>
+    change value (addRaw (rawStage k) (rawTerm k))=machinStage (k+1)
+    rw [addRawValue _ _ (rawStageDenPositive k) (rawTermDenPositive k),
+      ih,rawTermValue]
+    unfold machinStage prefixRat
+    rw [Finset.sum_range_succ,Finset.sum_range_succ]
+    ring
+
+theorem rawRadiusValue (k : ℕ) : value (rawRadius k)=radius k := by
+  cases k <;> simp [value,rawRadius,radius]
+
 
 end Integration.Paper9LiteralCross

@@ -153,3 +153,25 @@ theorem twoTimeConeNonconvexControl :
     0 < -(2:ℤ)^2-0^2+4^2 := by norm_num
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Original selected six-neighbour impulse readout. The signed centre
+and marked neighbour recover both coupling and mass squared. -/
+theorem selectedImpulseProbeInverse (k m : ℚ) :
+    (k, - (-(m+6*k)) - 6*k) = (k,m) := by
+  congr 1 <;> ring
+
+theorem selectedImpulseProbeRightInverse (neighbor center : ℚ) :
+    (neighbor, -((-center-6*neighbor)+6*neighbor)) = (neighbor,center) := by
+  congr 1 <;> ring
+
+/-- The principal symbol in the calibrated clock chart follows after
+removing the lower-order mass and dividing by the measured c².
+This is only the coefficient identity, not a wave convergence proof. -/
+theorem selectedPhysicalPrincipal (c ω x y z m : ℚ) :
+    (-ω^2+c^2*(x^2+y^2+z^2)+m)-m =
+      -ω^2+c^2*(x^2+y^2+z^2) := by ring
+
+end DASHITOE.HopfMonsterSourceCut

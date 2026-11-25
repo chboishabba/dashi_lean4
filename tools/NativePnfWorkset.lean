@@ -45,6 +45,21 @@ def decodeKey (j : Json) : Except String CandidateKey := do
 def encodeKey (k : CandidateKey) : Json :=
   Json.mkObj [("target_kind", toJson k.kind), ("target_id", toJson k.id)]
 
+-- Emit only numeric Lean literals. Source strings are never interpolated
+-- into executable proof syntax. The checker separately binds the full input
+-- digest and original same-key evidence payload.
+def keyListSource (ks : List CandidateKey) : String :=
+  "[" ++ String.intercalate ", " (ks.map fun k =>
+    "⟨" ++ toString k.kind ++ ", " ++ toString k.id ++ "⟩") ++ "]"
+
+def typedProjectionProofSource (represented refuted live : List CandidateKey) : String :=
+  "import RequestProject.Slr.NumericPnfRustPortContract\n" ++
+  "open Wikidata.Slr.NumericPnfRustPortContract\n" ++
+  "theorem slrTypedProjectionCertificate : liveTypedKeys " ++
+    keyListSource represented ++ " " ++ keyListSource refuted ++
+    " = " ++ keyListSource live ++ " := by decide\n" ++
+  "#print axioms slrTypedProjectionCertificate\n"
+
 def produceTypedEvidence (j : Json) : Except String Json := do
   let source ← j.getObjValAs? String "source_sha256"
   let revision ← j.getObjValAs? String "source_revision_ref"
@@ -91,6 +106,7 @@ def produceTypedEvidence (j : Json) : Except String Json := do
     ("represented", toJson (represented.map encodeKey)),
     ("refuted", toJson (refuted.map encodeKey)),
     ("live", toJson (live.map encodeKey)),
+    ("proof_source", toJson (typedProjectionProofSource represented refuted live)),
     ("typed_coverage_paid", toJson false), ("identity_paid", toJson false)]
 
 def dispatch (j : Json) : Except String Json := do

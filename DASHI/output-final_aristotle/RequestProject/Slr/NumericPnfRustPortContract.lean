@@ -731,6 +731,33 @@ theorem current_owned_atom_exact {α : Type} (history : List α)
 example : pendingAuthorityAfter (pendingAuthorityAfter false true false) false false = true := by decide
 example : pendingAuthorityAfter true false true = false := by decide
 
+/-- A drained represented slice may reconcile execution debt without a
+semantic proof only if every original current authority lane is absent.
+This is the authority-free branch, not a proof of typed coverage. -/
+def candidateOnlyReconciliation
+    (drained projectionExact admissibility proof coverage sufficiency : Bool) : Bool :=
+  drained && projectionExact && !admissibility && !proof && !coverage && !sufficiency
+
+theorem candidate_only_reconciliation_no_authority
+    (d e a p c s : Bool)
+    (h : candidateOnlyReconciliation d e a p c s = true) :
+    d = true ∧ e = true ∧ a = false ∧ p = false ∧ c = false ∧ s = false := by
+  cases d <;> cases e <;> cases a <;> cases p <;> cases c <;> cases s <;>
+    simp_all [candidateOnlyReconciliation]
+
+theorem candidate_only_reconciliation_clears_debt
+    (pending withdrawn : Bool) :
+    pendingAuthorityAfter pending withdrawn
+      (candidateOnlyReconciliation true true false false false false) = false := by
+  cases pending <;> cases withdrawn <;> rfl
+
+example : candidateOnlyReconciliation true true true false false false = false := by decide
+example : candidateOnlyReconciliation true true false true false false = false := by decide
+example : candidateOnlyReconciliation true true false false true false = false := by decide
+example : candidateOnlyReconciliation true true false false false true = false := by decide
+example : candidateOnlyReconciliation false true false false false false = false := by decide
+example : candidateOnlyReconciliation true false false false false false = false := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -785,3 +812,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.withdrawal_blocks_without_reconciliation
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.pending_authority_cannot_be_used
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.current_owned_atom_exact
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.candidate_only_reconciliation_no_authority
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.candidate_only_reconciliation_clears_debt

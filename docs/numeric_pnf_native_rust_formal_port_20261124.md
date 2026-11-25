@@ -1,5 +1,10 @@
 # P0 — Native Rust numeric-PNF port, formal constitution before implementation
 
+## 2026-11-26 — maximum-cut acceptance lanes and m084 composition debt
+
+Source audit of SLR #78 `2acebedd6dfa` / Lean #112 `e8ca8397872f` against actual main: SLR 378 ahead/1 behind, Lean 181 ahead/869 behind (no merge/rebase). The old v8 integrated gate required a candidate-only warm replay to be simultaneously a closed governed endpoint, which is impossible. Lean `4491517f` adds exact-scope independent lane composition and the candidate/closed obstruction using existing CurrentFocusOwnerProof and ResolvedSourceLocal. This tranche also specifies whole m084 ranked-pair/overflow withholding rather than reranking a partial group. SLR `59cf53c` routes newly closed focus through the existing authenticated owner/inverse; `09e434b` retains separate candidate and governed receipts, exact source/run/focus/runtime/independent-reference scope, and fail-closed exit status; `e6b2235` ports the exact pinned original m084 pair/overflow guards, retires both projections for debt groups and upgrades the installer to v12. No second authority, parser, or prototype code. Historical candidate acceptance cannot pay current semantic authority. Independent finite model: 64 Boolean lane cases and 2,040 rank-group cases (1,836 naive nonempty suspended group cases); jq scope filter exercised. These are not Rust/SQL/Lean kernel acceptance. Full original relation/TAG/H3 producer parity, independent live typed coverage/identity issuance, debt reconciliation/restoration, historical resolution-anchor provenance, concurrent DB proof and minimal non-leaf/numeric replay remain open. Preserve v7; do not claim v8 integrated acceptance. No CI, main, Agda or SensibLaw changes.
+
+
 
 ## 24 November — restore the existing cross-resource identity/uncertainty spine
 

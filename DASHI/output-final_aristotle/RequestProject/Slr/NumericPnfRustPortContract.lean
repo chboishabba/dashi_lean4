@@ -975,6 +975,23 @@ theorem suspended_singleton_cannot_publish {Entity : Type}
   intro h
   cases h.1
 
+
+/-- m084 ranks and counts the entire region/entity/authority fibre.
+A suspended group is absent as an authority projection, not a freshly
+ranked subset of its surviving edges, nor a certified zero-overflow group. -/
+def currentCompositionGroup {Pair : Type}
+    (authorityUsable : Bool) (rankedPairs : List Pair) (overflow : Option Nat) :
+    Option (List Pair × Option Nat) :=
+  if authorityUsable then some (rankedPairs, overflow) else none
+
+theorem suspended_composition_group_cannot_publish {Pair : Type}
+    (pairs : List Pair) (overflow : Option Nat) :
+    currentCompositionGroup false pairs overflow = none := rfl
+
+theorem unaffected_composition_group_preserves_pairs_and_overflow {Pair : Type}
+    (pairs : List Pair) (overflow : Option Nat) :
+    currentCompositionGroup true pairs overflow = some (pairs, overflow) := rfl
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -1055,3 +1072,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.outside_parser_leaf_change_preserves_scope
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.absent_selected_parser_leaf_insertion_invalidates
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.suspended_singleton_cannot_publish
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.suspended_composition_group_cannot_publish
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unaffected_composition_group_preserves_pairs_and_overflow

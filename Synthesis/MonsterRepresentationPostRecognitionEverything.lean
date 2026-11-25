@@ -1,3 +1,4 @@
+import Synthesis.MonsterVacuumHomEquivalence
 import Synthesis.MonsterWeightFrame
 import Synthesis.MonsterWholeCharacterModuleAdapterLive
 import Synthesis.MonsterWholeCharacterModuleAdapterLiveRegression

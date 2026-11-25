@@ -44,7 +44,7 @@ structure PhaseAttachment where
   ambient : Representation k N V
   covariant : ∀ g w, ambient g (inc w) = inc ((D.arrow g).onW w)
 
-variable (P : PhaseAttachment D)
+variable (P : PhaseAttachment (A := A) D)
 
 def vacuumIn (i : ι) : S →ₗ[k] V :=
   P.inc.comp (F.includeWeight i)
@@ -54,18 +54,18 @@ def vacuumOut (i : ι) : V →ₗ[k] S :=
 
 /-- This is the actual composite P_{i,s} on the full ambient module. -/
 def vacuumProjection (i : ι) : V →ₗ[k] V :=
-  (vacuumIn F A D P i).comp (vacuumOut F A D P i)
+  (vacuumIn (A := A) (D := D) F P i).comp (vacuumOut (A := A) (D := D) F P i)
 
 theorem vacuumRetraction (i : ι) (u : S) :
-    vacuumOut F A D P i (vacuumIn F A D P i u) = u := by
+    vacuumOut (A := A) (D := D) F P i (vacuumIn (A := A) (D := D) F P i u) = u := by
   change F.recoverWeight i (P.res (P.inc (F.includeWeight i u))) = u
   rw [P.retraction, F.orthogonal, if_pos rfl]
 
 /-- Derive the compressed actual operator, rather than postulate the
 multiplicity character or identify the two carriers by their dimensions. -/
 theorem compressed (g : N) (i : ι) :
-    (vacuumOut F A D P i).comp
-        ((P.ambient g).comp (vacuumIn F A D P i)) =
+    (vacuumOut (A := A) (D := D) F P i).comp
+        ((P.ambient g).comp (vacuumIn (A := A) (D := D) F P i)) =
       ((D.arrow g).onH (delta i) i) • actualMultiplicity F A L D g := by
   apply LinearMap.ext
   intro u
@@ -77,22 +77,21 @@ theorem compressed (g : N) (i : ι) :
 /-- Original full-weight trace with the phase and vacuum observer inserted.
 The 729-dimensional Weil trace need not be divided out. -/
 theorem projectedTrace (g : N) (i : ι) :
-    LinearMap.trace k V ((vacuumProjection F A D P i).comp (P.ambient g)) =
+    LinearMap.trace k V ((vacuumProjection (A := A) (D := D) F P i).comp (P.ambient g)) =
       ((D.arrow g).onH (delta i) i) * actualCharacter F A L D g := by
   calc
-    _ = LinearMap.trace k V ((vacuumIn F A D P i).comp
-          ((vacuumOut F A D P i).comp (P.ambient g))) := by
+    _ = LinearMap.trace k V ((vacuumIn (A := A) (D := D) F P i).comp
+          ((vacuumOut (A := A) (D := D) F P i).comp (P.ambient g))) := by
       rfl
-    _ = LinearMap.trace k S (((vacuumOut F A D P i).comp
-          (P.ambient g)).comp (vacuumIn F A D P i)) :=
+    _ = LinearMap.trace k S (((vacuumOut (A := A) (D := D) F P i).comp
+          (P.ambient g)).comp (vacuumIn (A := A) (D := D) F P i)) :=
       LinearMap.trace_comp_comm'
-        ((vacuumOut F A D P i).comp (P.ambient g)) (vacuumIn F A D P i)
-    _ = LinearMap.trace k S ((vacuumOut F A D P i).comp
-          ((P.ambient g).comp (vacuumIn F A D P i))) := by
+        ((vacuumOut (A := A) (D := D) F P i).comp (P.ambient g)) (vacuumIn (A := A) (D := D) F P i)
+    _ = LinearMap.trace k S ((vacuumOut (A := A) (D := D) F P i).comp
+          ((P.ambient g).comp (vacuumIn (A := A) (D := D) F P i))) := by
       rfl
     _ = _ := by
-      rw [compressed F A L D P, map_smul]
-      rfl
+      simp only [compressed F A L D P, map_smul, smul_eq_mul, actualCharacter]
 
 section OriginalWordTrace
 variable {G β : Type u} [Group G] [Fintype β]
@@ -115,8 +114,7 @@ theorem wordObserverTrace (c : β → k) (w : β → G) (h : G) :
   rw [he, map_sum]
   apply Finset.sum_congr rfl
   intro b _
-  rw [map_smul]
-  rfl
+  simp only [map_smul, smul_eq_mul]
 
 /-- With the original marked group words and the original phase vacuum
 projector expansion, the derived actual character is fixed by the original
@@ -124,7 +122,7 @@ full ambient traces. No new multiplicity character is assumed here. -/
 theorem originalCharacterWeld (c : β → k) (w : β → G)
     (h : N → G) (i : ι)
     (sameAction : ∀ g, rho (h g) = P.ambient g)
-    (sameObserver : wordObserver rho c w = vacuumProjection F A D P i)
+    (sameObserver : wordObserver rho c w = vacuumProjection (A := A) (D := D) F P i)
     (nonzeroEntry : ∀ g, (D.arrow g).onH (delta i) i ≠ 0)
     (a b : N → k)
     (sourceWeighted : ∀ g,
@@ -147,7 +145,7 @@ theorem weightedSourceTransfer
       LinearMap.trace k V' (sigma (w t * h))) :
     LinearMap.trace k V ((wordObserver rho c w).comp (rho h)) =
       LinearMap.trace k V' ((wordObserver sigma c w).comp (sigma h)) := by
-  rw [wordObserverTrace, wordObserverTrace]
+  rw [wordObserverTrace rho c w h, wordObserverTrace sigma c w h]
   apply Finset.sum_congr rfl
   intro t _
   rw [hmatch]

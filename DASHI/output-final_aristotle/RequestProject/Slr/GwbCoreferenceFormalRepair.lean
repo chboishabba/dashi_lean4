@@ -1,4 +1,5 @@
 import Lean
+import RequestProject.Slr.NumericPnfRustPortContract
 
 /-!
 GWB native semantic repair.
@@ -231,6 +232,29 @@ theorem book_is_not_wikipedia_source :
     ("a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" : String) := by
   decide
 
+/-- Weld the existing numeric typed selection to the original
+    source-scoped coreference coverage contract. This does not construct
+    a governed payment or conflate a class with an occurrence. -/
+theorem numeric_selection_pays_original_scoped_coverage
+    (f : ScopedFrontier NumericPnfRustPortContract.CandidateKey)
+    (chosen : NumericPnfRustPortContract.CandidateKey)
+    (cert : NumericPnfRustPortContract.ExactTypedSelection
+      f.isLive f.candidates chosen) :
+    ScopedCoverage f := cert.complete
+
+/-- Reuse the original scoped-live-rival obstruction, rather than
+    interpreting a bounded numeric candidate list as exhaustive. -/
+theorem original_omitted_rival_blocks_numeric_selection
+    (f : ScopedFrontier NumericPnfRustPortContract.CandidateKey)
+    (chosen rival : NumericPnfRustPortContract.CandidateKey)
+    (live : f.isLive rival) (omitted : rival ∉ f.candidates) :
+    ¬ Nonempty (NumericPnfRustPortContract.ExactTypedSelection
+      f.isLive f.candidates chosen) := by
+  intro h
+  obtain ⟨cert⟩ := h
+  exact omitted_live_candidate_blocks_coverage f rival live omitted
+    (numeric_selection_pays_original_scoped_coverage f chosen cert)
+
 end Wikidata.Slr.GwbCoreferenceFormalRepair
 
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.omitted_live_candidate_blocks_coverage
@@ -241,3 +265,6 @@ end Wikidata.Slr.GwbCoreferenceFormalRepair
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.all_surviving_readings_agree
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.rival_reading_blocks_answer
 #print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.retract_preserves_original
+
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.numeric_selection_pays_original_scoped_coverage
+#print axioms Wikidata.Slr.GwbCoreferenceFormalRepair.original_omitted_rival_blocks_numeric_selection

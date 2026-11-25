@@ -254,7 +254,7 @@ theorem actualDiskCorrection (hu : unitOK=true) (hd : diagOK=true)
 -- A4 plus A5 plus the already existing positive A7 period.
 -- The six root and two slice/jet checks are the ONLY explicit inputs.
 theorem literalPrefixFromFiniteChecks
-    (hu : unitOK=true) (hd : diagOK=true) (hz : shiftOK=true)
+    (hu : unitOK=true) (hd : diagOK=true) (hz : Integration.Paper9CMShiftCheck.shiftOK=true)
     (hs : sliceOK=true) (hc : jetOK=true)
     (hp : Integration.Paper9CMOriginalMachinWindow.piRoundOK)
     (hq : Integration.Paper9CMOriginalMachinWindow.sqrtRoundOK)

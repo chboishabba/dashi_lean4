@@ -230,5 +230,32 @@ theorem actualHyperIdentityGerm :
   rootEqualsHyperGerm (rootAnalyticGoodZ 0 goodZZero)
     (hyperAnalyticGoodZ 0 goodZZero) hyperODEGerm
 
+
+-- Reuse the analytic identity theorem on the actual selected disk;
+-- never extend the modular/branch equality through a denominator zero.
+theorem actualHyperIdentityOn (U : Set ℂ) (hU : IsPreconnected U)
+    (h0 : (0 : ℂ) ∈ U) (hgood : ∀ q ∈ U, GoodZ q) :
+    Set.EqOn rootF (H ∘ zCoord) U :=
+  (fun q hq => rootAnalyticGoodZ q (hgood q hq) :
+    AnalyticOnNhd ℂ rootF U).eqOn_of_preconnected_of_eventuallyEq
+      (fun q hq => hyperAnalyticGoodZ q (hgood q hq)) hU h0 actualHyperIdentityGerm
+
+theorem actualHyperIdentityBall (R : ℝ) (hR : 0 < R)
+    (hgood : ∀ q : ℂ, ‖q‖ < R → GoodZ q) (q : ℂ) (hq : ‖q‖ < R) :
+    rootF q = H (zCoord q) :=
+  actualHyperIdentityOn (Metric.ball 0 R)
+    (convex_ball (0 : ℂ) R).isPreconnected
+    (Metric.mem_ball_self hR)
+    (fun w hw => hgood w (Metric.mem_ball_zero_iff.mp hw))
+    (Metric.mem_ball_zero_iff.mpr hq)
+
+-- Exact period algebra on the original selected nonzero branch.
+-- The real-positive square-root identification is a separate source
+-- statement; this lemma keeps x/y and F, and does not square away sign.
+theorem periodAlgebra (e x y F p : ℂ) (hy : y ≠ 0) (hp : p ≠ 0) :
+    ((e*x/y-1)/6)*F + (1-(x/y)*(e-3/p))/6*F =
+      F*(x/y)/(2*p) := by
+  field_simp [hy,hp] <;> ring
+
 end
 end Integration.Paper9HypergeometricSeriesODE

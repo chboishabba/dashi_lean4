@@ -41,8 +41,8 @@ theorem columnQCoeff (m d n : ℕ) (c : ℕ → ℂ) (hn : n≤d) :
 
 theorem pivotOne (A : Polynomial ℂ) (hA : A.coeff 0=1) (d n : ℕ) :
     pivot A d n n=1 := by
-  simp [pivot,Polynomial.coeff_zero_eq_eval_zero,
-    ← Polynomial.coeff_zero_eq_eval_zero A,hA]
+  rw [pivot,if_pos le_rfl,Nat.sub_self,Polynomial.coeff_zero_eq_eval_zero,
+    Polynomial.eval_pow,← Polynomial.coeff_zero_eq_eval_zero,hA,one_pow]
 
 -- Finite extension of an already paid prefix. The new coordinate has
 -- a unit pivot and has no effect on any earlier row.

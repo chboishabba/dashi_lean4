@@ -1,3 +1,5 @@
+import Synthesis.MonsterActualMultiplicityCharacter
+import Synthesis.MonsterSignedEndpointComposition
 import Synthesis.MonsterVacuumHomEquivalence
 import Synthesis.MonsterWeightFrame
 import Synthesis.MonsterWholeCharacterModuleAdapterLive

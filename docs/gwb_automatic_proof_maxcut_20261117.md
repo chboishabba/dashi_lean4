@@ -1,4 +1,9 @@
 # GWB → JMD → SLR → Lean/Agda automatic proof programme
+
+## 25 November — native current-evidence authority and exact relation reference cut
+
+SLR production #78 head [6058659](https://github.com/chboishabba/slr/commit/6058659bd96c7f892fb6e96c146d3a3f0430b327); Lean golden [ce89802](https://github.com/chboishabba/dashi_lean4/commit/ce8980205fbeaee3c4f093e2562b7853f888c5a2). Reuse the Agda delta/identity owners (DeltaNativePNFDreamFlowExact, ProofRelevantIdentityFibres, IdentityEvidenceProduction) and original SensibLaw m086/m095/m110. No prototype extension. Native H3 actual transport/head-morphology/original-binding-member atoms now have revisioned current validity; withdrawal changes cumulative H3/H6/H9 evidence without fabricating semantic refutation. The durable nonmonotone authority obligation cannot disappear on empty replay; original consumer stop and derived proof/sufficiency flags are suspended until owner revalidation. Cache additionally checks canonical source file bytes. Native relation root references reconstructed using original typed canonical bytes and atom allocation; original complete bundle and role-factor identity not independently compared. v8 includes rollback-only actual H3 control and source-byte cache guard. No Rust/PG/Lean/Agda acceptance run in this environment. The existing v7 accepted baseline is unchanged. P0 semantic coverage, original stale-proof revalidation and governed focus identity remain open. Do not promote Level-3, QID or truth from candidate replay.
+
 Updated: 2026-11-24 · execution branch: dashi_lean4 PR #112
 
 **Current controlling plan:** 24 November P0 roadmap linked directly below. All older gate tables are retained historical receipts.

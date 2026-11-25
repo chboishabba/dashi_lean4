@@ -1,4 +1,5 @@
 import Integration.Paper9ConcreteSectorConsumer
+import Integration.Paper9SignedCMPeriod
 
 /-! SOURCE-WRITTEN, UNCOMPILED.
 A4: original CM point and original literal diagonal only. Use the exact
@@ -75,20 +76,8 @@ theorem shiftedFactor (h0 : shiftedZ 0=0) (h1 : shiftedZ 1=0) :
 -- actual j is conjugation-fixed without a new real-slice carrier.
 local notation "j" => Integration.MoonshineEisensteinAgdaTarget.jTarget
 theorem cmJReal : (j cmTau).im=0 := by
-  let σ := Integration.MoonshineEisensteinAgdaTarget.negConj cmTau
-  have hq : qExt σ=qExt cmTau := by
-    change Periodic.qParam 1 (σ : ℂ)=Periodic.qParam 1 (cmTau : ℂ)
-    rw [← qOfTargetPeriodic σ, ← qOfTargetPeriodic cmTau]
-    unfold σ
-    rw [Integration.MoonshineEisensteinAgdaTarget.qOfTarget_negConj,
-      qOfTargetPeriodic cmTau, cmQPhase]
-    simp
-  have hj : j σ=j cmTau := by rw [jAtQ,jAtQ,hq]
-  have hc := Integration.MoonshineEisensteinAgdaTarget.jTarget_negConj cmTau
-  have he : j cmTau=conj (j cmTau) := hj.symm.trans hc
-  have hi := congrArg Complex.im he
-  simp only [Complex.conj_im] at hi
-  linarith
+  have h := congrArg Complex.im Integration.Paper9SignedCMPeriod.cmJReal
+  simpa using h.symm
 
 -- All four remaining premises are literal: the existing diagonal
 -- coefficient gate, two integer shift zeros, integer dominance reflected

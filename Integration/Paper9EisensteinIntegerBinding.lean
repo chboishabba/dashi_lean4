@@ -18,77 +18,54 @@ open Integration.Paper9DiscriminantUnitReflection
 def e4Z (n : ℕ) : ℤ := if n = 0 then 1 else 240 * (sigma 3 n : ℤ)
 def e6Z (n : ℕ) : ℤ := if n = 0 then 1 else -504 * (sigma 5 n : ℤ)
 
-theorem sigmaBound (k n : ℕ) : sigma k n ≤ n^(k+1) := by
-  rw [ArithmeticFunction.sigma_apply]
-  calc
-    _ ≤ ∑ d ∈ n.divisors, n^k := by
-      apply Finset.sum_le_sum
-      intro d hd
-      exact Nat.pow_le_pow_left (Nat.le_of_dvd (Nat.pos_of_ne_zero (Nat.mem_divisors.mp hd).2)
-        (Nat.dvd_of_mem_divisors hd)) _
-    _ = n.divisors.card * n^k := by simp
-    _ ≤ n^(k+1) := by
-      rw [pow_succ, mul_comm (n^k)]
-      exact Nat.mul_le_mul_right _ (Nat.card_divisors_le_self n)
+-- Reuse the actual shifted term and limit owners, rather than proving a
+-- second summability theorem. The original source includes the zero term
+-- separately; HasSum's finite-prefix reflection restores precisely that term.
+theorem qOfTargetPeriodic (τ : ℍ) :
+    Integration.MoonshineEisensteinAgdaTarget.qOfTarget τ=Periodic.qParam 1 τ := by
+  rw [Integration.MoonshineEisensteinAgdaTarget.qOfTarget_eq_qParam]
+  simp [Integration.MoonshineEisensteinAnalytic.qParam, Periodic.qParam]
 
--- Use a polynomial-geometric majorant on the actual q disk.
-theorem sigmaSummable (k : ℕ) (q : ℂ) (hq : ‖q‖ < 1) :
-    Summable (fun n : ℕ => (sigma k n : ℂ)*q^n) := by
-  apply Summable.of_norm
-  apply Summable.of_nonneg_of_le (fun n => norm_nonneg _) (fun n => ?_)
-    (summable_norm_pow_mul_geometric_of_norm_lt_one (k+1) hq)
-  rw [norm_mul, norm_mul, norm_pow, norm_pow, Complex.norm_natCast, Complex.norm_natCast]
-  exact mul_le_mul_of_nonneg_right (by exact_mod_cast sigmaBound k n) (by positivity)
+theorem e4HasSum (τ : ℍ) :
+    HasSum (fun n : ℕ => (e4Z n : ℂ) • Periodic.qParam 1 τ ^ n)
+      (Integration.MoonshineEisensteinAnalytic.E4 τ) := by
+  let f := fun n : ℕ => (e4Z n : ℂ) • Periodic.qParam 1 τ ^ n
+  have hs : HasSum (fun n : ℕ => f (n+1))
+      (∑' n : ℕ, Integration.MoonshineEisensteinAgdaTarget.e4Term τ n) := by
+    convert (Integration.MoonshineEisensteinAgdaTarget.summable_e4Term τ).hasSum using 1
+    funext n
+    simp [f, e4Z, Integration.MoonshineEisensteinAgdaTarget.e4Term,
+      Integration.MoonshineEisensteinAgdaTarget.scaleNatTarget,
+      qOfTargetPeriodic, smul_eq_mul, mul_assoc]
+  have h := (hasSum_nat_add_iff' 1).mp hs
+  rw [← Integration.MoonshineEisensteinAgdaTarget.e4Limit_eq_mathlib_E4 τ]
+  simpa [f, e4Z, Integration.MoonshineEisensteinAgdaTarget.e4Limit, add_comm] using h
 
--- The pinned Eisenstein theorem is in positive-natural coordinates.
--- Split off the original constant coefficient, using sigma(k,0)=0.
-theorem divisorSeries (k : ℕ) (a q : ℂ) (hq : ‖q‖ < 1) :
-    HasSum (fun n : ℕ => (if n=0 then 1 else a*(sigma k n : ℂ))*q^n)
-      (1+a*∑' n : ℕ+, (sigma k n : ℂ)*q^(n:ℕ)) := by
-  have hs := (sigmaSummable k q hq).hasSum
-  have hz : (∑' n : ℕ, (sigma k n : ℂ)*q^n) =
-      ∑' n : ℕ+, (sigma k n : ℂ)*q^(n:ℕ) := by
-    rw [← tsum_zero_pnat_eq_tsum_nat (sigmaSummable k q hq)]
-    simp
-  have ha := hs.mul_left a
-  have hsingle := hasSum_ite_eq (0 : ℕ) (1 : ℂ)
-  have hsum := hsingle.add ha
-  rw [hz] at hsum
-  convert hsum using 1
-  · funext n
-    by_cases hn : n=0
-    · subst n; simp
-    · simp [hn, mul_assoc]
-  · rfl
+theorem e6HasSum (τ : ℍ) :
+    HasSum (fun n : ℕ => (e6Z n : ℂ) • Periodic.qParam 1 τ ^ n)
+      (Integration.MoonshineEisensteinAnalytic.E6 τ) := by
+  let f := fun n : ℕ => (e6Z n : ℂ) • Periodic.qParam 1 τ ^ n
+  have hs : HasSum (fun n : ℕ => f (n+1))
+      (-(∑' n : ℕ, Integration.MoonshineEisensteinAgdaTarget.e6Term τ n)) := by
+    convert (Integration.MoonshineEisensteinAgdaTarget.summable_e6Term τ).hasSum.neg using 1
+    funext n
+    simp [f, e6Z, Integration.MoonshineEisensteinAgdaTarget.e6Term,
+      Integration.MoonshineEisensteinAgdaTarget.scaleNatTarget,
+      qOfTargetPeriodic, smul_eq_mul, mul_assoc, neg_mul]
+  have h := (hasSum_nat_add_iff' 1).mp hs
+  rw [← Integration.MoonshineEisensteinAgdaTarget.e6Limit_eq_mathlib_E6 τ]
+  simpa [f, e6Z, Integration.MoonshineEisensteinAgdaTarget.e6Limit,
+    sub_eq_add_neg, add_comm] using h
 
--- Actual all-index coefficient statements, via the original modular forms.
 theorem e4Integer (n : ℕ) : E4PS.coeff n = (e4Z n : ℂ) := by
   symm
   unfold E4PS
-  refine qExpansion_coeff_unique (h := 1) (c := fun m => (e4Z m : ℂ))
-    (f := Integration.MoonshineEisensteinAnalytic.E4) one_pos one_mem_strictPeriods_SL ?_ n
-  intro τ
-  have h := divisorSeries 3 240 (Periodic.qParam 1 τ)
-    (by simpa [Periodic.qParam] using Complex.norm_exp_two_pi_I_lt_one τ)
-  have he := EisensteinSeries.q_expansion_bernoulli (k := 4)
-    (by norm_num) (by norm_num) τ
-  norm_num [show bernoulli 4 = -1 / 30 by decide +kernel] at he
-  simpa [E4PS, e4Z, Integration.MoonshineEisensteinAnalytic.E4, Periodic.qParam,
-    smul_eq_mul, zpow_natCast, sub_eq_add_neg] using (he ▸ h)
+  exact qExpansion_coeff_unique (h := 1) one_pos one_mem_strictPeriods_SL e4HasSum n
 
 theorem e6Integer (n : ℕ) : E6PS.coeff n = (e6Z n : ℂ) := by
   symm
   unfold E6PS
-  refine qExpansion_coeff_unique (h := 1) (c := fun m => (e6Z m : ℂ))
-    (f := Integration.MoonshineEisensteinAnalytic.E6) one_pos one_mem_strictPeriods_SL ?_ n
-  intro τ
-  have h := divisorSeries 5 (-504) (Periodic.qParam 1 τ)
-    (by simpa [Periodic.qParam] using Complex.norm_exp_two_pi_I_lt_one τ)
-  have he := EisensteinSeries.q_expansion_bernoulli (k := 6)
-    (by norm_num) (by norm_num) τ
-  norm_num [show bernoulli 6 = 1 / 42 by decide +kernel] at he
-  simpa [E6PS, e6Z, Integration.MoonshineEisensteinAnalytic.E6, Periodic.qParam,
-    smul_eq_mul, zpow_natCast, sub_eq_add_neg] using (he ▸ h)
+  exact qExpansion_coeff_unique (h := 1) one_pos one_mem_strictPeriods_SL e6HasSum n
 
 def e4PSZ : PowerSeries ℤ := PowerSeries.mk e4Z
 def e6PSZ : PowerSeries ℤ := PowerSeries.mk e6Z

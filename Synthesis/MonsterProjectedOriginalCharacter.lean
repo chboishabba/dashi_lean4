@@ -44,7 +44,7 @@ structure PhaseAttachment where
   ambient : Representation k N V
   covariant : ∀ g w, ambient g (inc w) = inc ((D.arrow g).onW w)
 
-variable (P : PhaseAttachment (A := A) D)
+variable (P : PhaseAttachment (A := A) (V := V) D)
 
 def vacuumIn (i : ι) : S →ₗ[k] V :=
   P.inc.comp (F.includeWeight i)

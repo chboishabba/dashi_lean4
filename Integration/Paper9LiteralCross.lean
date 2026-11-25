@@ -186,8 +186,8 @@ theorem rawStageDenPositive (k : ℕ) : 0<(rawStage k).2 := by
 
 theorem rawTermValue (k : ℕ) :
     value (rawTerm k) =
-      16*((-1:ℚ)^k/((2*k+1:ℕ):ℚ)/(5:ℚ)^(2*k+1))-
-      4*((-1:ℚ)^k/((2*k+1:ℕ):ℚ)/(239:ℚ)^(2*k+1)) := by
+      16*((-1:ℚ)^k/(((2*k+1:ℕ):ℚ)*(5:ℚ)^(2*k+1)))-
+      4*((-1:ℚ)^k/(((2*k+1:ℕ):ℚ)*(239:ℚ)^(2*k+1))) := by
   unfold value rawTerm omittedDen
   push_cast
   field_simp <;> ring

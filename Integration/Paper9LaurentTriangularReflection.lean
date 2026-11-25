@@ -85,7 +85,7 @@ theorem eulerCoeff (H : PowerSeries ℂ) (n : ℕ) :
 
 theorem logRecurrence (H L : PowerSeries ℂ)
     (h : H*L=PowerSeries.X*PowerSeries.derivative ℂ H) (n : ℕ) :
-    (∑ ij ∈ Finset.antidiagonal n,
+    (∑ ij ∈ Finset.Nat.antidiagonal n,
       PowerSeries.coeff ij.1 H*PowerSeries.coeff ij.2 L) =
       (n : ℂ)*PowerSeries.coeff n H := by
   rw [← PowerSeries.coeff_mul,h,eulerCoeff]
@@ -94,7 +94,7 @@ theorem logRecurrence (H L : PowerSeries ℂ)
 -- log derivative. The finite producer divides by n only at n>0.
 theorem normRecurrence (N V : PowerSeries ℂ)
     (h : V*N=PowerSeries.X*PowerSeries.derivative ℂ N) (n : ℕ) :
-    (∑ ij ∈ Finset.antidiagonal n,
+    (∑ ij ∈ Finset.Nat.antidiagonal n,
       PowerSeries.coeff ij.1 V*PowerSeries.coeff ij.2 N) =
       (n : ℂ)*PowerSeries.coeff n N :=
   by rw [← PowerSeries.coeff_mul,h,eulerCoeff]

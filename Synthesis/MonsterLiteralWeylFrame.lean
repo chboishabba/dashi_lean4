@@ -68,12 +68,12 @@ def recoverActual (x : X6) : V →ₗ[k] Vacuum P where
     apply Subtype.ext
     change P ((T x).symm (v+w)) =
       P ((T x).symm v) + P ((T x).symm w)
-    rw [map_add, map_add]
+    simp only [map_add]
   map_smul' := by
     intro c v
     apply Subtype.ext
     change P ((T x).symm (c • v)) = c • P ((T x).symm v)
-    rw [map_smul, map_smul]
+    simp only [map_smul]
 
 theorem includeRecover (x : X6) (v : V) :
     includeActual T P x (recoverActual T P x v) =
@@ -122,5 +122,47 @@ def literalFrame
     simpa only [includeRecover] using complete v
 
 end FrameFromOriginalAction
+
+section LiteralSource
+variable {V : Type u} [AddCommGroup V] [Module k V]
+variable (rho : Representation k G V)
+
+/-- Original group multiplication gives inverse operators, not a separate
+translation-inverse hypothesis. -/
+def sourceActionEquiv (g : G) : V ≃ₗ[k] V :=
+  { rho g with
+    invFun := rho g⁻¹
+    left_inv := by
+      intro v
+      have h := congrArg (fun a : G => rho a v) (inv_mul_cancel g)
+      simpa only [map_mul, Module.End.mul_apply, map_one, Module.End.one_apply] using h
+    right_inv := by
+      intro v
+      have h := congrArg (fun a : G => rho a v) (mul_inv_cancel g)
+      simpa only [map_mul, Module.End.mul_apply, map_one, Module.End.one_apply] using h }
+
+def sourceTranslations (A : Fin 6 → G) : X6 → V ≃ₗ[k] V :=
+  fun x => sourceActionEquiv rho (axisWord A x)
+
+/-- Use rho on the actual nontrivial phase range. The central projector
+has already selected the phase; the B-fixed projector is only the six-axis
+average. -/
+def sourceVacuum (B : Fin 6 → G) : Module.End k V :=
+  (729 : k)⁻¹ • ∑ x : X6, rho (axisWord B x)
+
+/-- The existing weight-frame consumer now takes exactly the literal
+representation and 6+6 source words. The remaining equations are on
+their actual Fourier projector, not an arbitrary separate carrier. -/
+def sourceFrame (A B : Fin 6 → G)
+    (idem : ∀ v, sourceVacuum rho B (sourceVacuum rho B v) = sourceVacuum rho B v)
+    (orth : ∀ x y v, translatedProjection (sourceTranslations rho A) (sourceVacuum rho B) x
+      (translatedProjection (sourceTranslations rho A) (sourceVacuum rho B) y v) =
+      if x = y then translatedProjection (sourceTranslations rho A) (sourceVacuum rho B) y v else 0)
+    (complete : ∀ v, (∑ x, translatedProjection (sourceTranslations rho A)
+      (sourceVacuum rho B) x v) = v) :
+    Frame (k := k) (S := Vacuum (sourceVacuum rho B)) (W := V) (ι := X6) :=
+  literalFrame (sourceTranslations rho A) (sourceVacuum rho B) idem orth complete
+
+end LiteralSource
 end
 end Synthesis.MonsterLiteralWeylFrame

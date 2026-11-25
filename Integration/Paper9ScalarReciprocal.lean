@@ -106,6 +106,41 @@ theorem scalarPeriodAlgebra (A B P2 P3 S2 S3 R0 R1 : ℂ)
   have h := (mul_eq_zero.mp hh).resolve_left hA
   field_simp [hA,hS] <;> linear_combination -h
 
+-- Scalar germ extraction, using only ordinary product/chain rules.
+-- N,M are normalized branch products; T is the finite telescoping
+-- polynomial quotient evaluated at x(w), with T(0)=S3.
+theorem scalarGermPeriod
+    (X N M p s R T : ℂ → ℂ)
+    (A B P2 P3 S2 S3 R0 R1 T1 : ℂ)
+    (hA : A≠0) (hS : S2≠0)
+    (x0 : X 0=A) (n0 : N 0=A^2) (m0 : M 0=(163/41)*A^2)
+    (p0 : p 0=P2) (s0 : s 0=S2) (r0 : R 0=R0) (t0 : T 0=S3)
+    (hx : HasDerivAt X B 0)
+    (hn : HasDerivAt N (-(81/41)*A*B) 0)
+    (hm : HasDerivAt M ((163/41)*(1/41)*A*B) 0)
+    (hp : HasDerivAt p (P3*A) 0)
+    (hs : HasDerivAt s (S3*A) 0)
+    (hr : HasDerivAt R R1 0)
+    (ht : HasDerivAt T T1 0)
+    (ha : (fun w => s w*(X w)^2) =ᶠ[𝓝 0] (fun w => N w*R w))
+    (hd : (fun w => p w*(X w)^2) =ᶠ[𝓝 0]
+      (fun w => M w*(R w+w*X w*T w))) :
+    2*B/A^2=(41*P3-326*S3)/(163*S2) := by
+  have h0 := ha.eq_of_nhds
+  have h1 := hd.eq_of_nhds
+  have haxis := ((hs.mul (hx.pow 2)).congr_of_eventuallyEq ha.symm).unique
+    (hn.mul hr)
+  have hdiag := ((hp.mul (hx.pow 2)).congr_of_eventuallyEq hd.symm).unique
+    (hm.mul (hr.add (((hasDerivAt_id (0:ℂ)).mul hx).mul ht)))
+  rw [s0,x0,n0,r0] at h0
+  rw [p0,x0,m0,r0,t0] at h1
+  rw [s0,x0,n0,r0] at haxis
+  rw [p0,x0,m0,r0,t0] at hdiag
+  simp at h1 haxis hdiag
+  apply scalarPeriodAlgebra A B P2 P3 S2 S3 R0 R1 hA hS h0 h1
+  · linear_combination haxis
+  · linear_combination hdiag
+
 -- Consume the scalar correction directly at the existing positive
 -- period endpoint; no mixed cubic argument in this consumer.
 theorem periodFromScalar (hj : j cmTau=-(640320:ℂ)^3)

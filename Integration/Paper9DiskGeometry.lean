@@ -58,15 +58,25 @@ theorem diskTauLocal : ∀ᶠ w in 𝓝 (0:ℂ), (diskTau w:ℂ)=undisk w := by
   filter_upwards [undiskUpper] with w hw
   simp [diskTau,hw]
 
+theorem alphaLinear : (cmPoint+1)*alpha=-cmPoint := by
+  unfold alpha
+  rw [tangentRatio]
+  field_simp [cmApart]
+
+theorem alphaTrace : alpha+alpha⁻¹=-(81/41:ℂ) := by
+  have h : 41*alpha^2+81*alpha+41=0 := tangentPolynomial
+  apply (mul_left_cancel₀ alphaNe)
+  field_simp [alphaNe]
+  linear_combination h/41
+
 -- Exact multiplication of the denominator, prior to division.
 theorem forwardDiskDen (w : ℂ) (hw : 1-w≠0) :
     (undisk w+1)*(1-w)=(cmPoint+1)*(1-alpha*w) := by
-  unfold undisk d alpha
-  rw [tangentRatio]
-  field_simp [hw,cmApart] <;> ring
+  unfold undisk d
+  field_simp [hw]
+  ring_nf
+  linear_combination w*alphaLinear
 
--- The source Hecke map in the literal reciprocal disk, not a
--- relabelled engineering phase. The denominator premises are explicit.
 theorem forwardUndisk (w : ℂ) (hw : 1-w≠0) (ha : 1-alpha*w≠0) :
     hecke (undisk w)=undisk (alpha*w) := by
   have hd := forwardDiskDen w hw
@@ -74,22 +84,22 @@ theorem forwardUndisk (w : ℂ) (hw : 1-w≠0) (ha : 1-alpha*w≠0) :
     intro hn
     rw [hn,zero_mul] at hd
     exact (mul_ne_zero cmApart ha) hd.symm
-  have hf := fixedPoint
-  unfold hecke at hf ⊢
-  have hleft : -41/(undisk w+1) =
-      cmPoint*(1-w)/(1-alpha*w) := by
-    apply (div_eq_iff hden).2
+  have hf : -41=cmPoint*(cmPoint+1) := by
+    linear_combination -cmQuadratic
+  have hright : undisk (alpha*w)*(1-alpha*w)=cmPoint*(1-w) := by
+    unfold undisk d
     field_simp [ha]
-    rw [mul_assoc,hd]
-    have hh := (div_eq_iff cmApart).1 hf
-    linear_combination (1-alpha*w)*hh
-  rw [hleft]
-  unfold undisk d
-  field_simp [ha]
-  unfold alpha
-  rw [tangentRatio]
-  field_simp [cmApart]
-  linear_combination -w*cmQuadratic
+    linear_combination w*alphaLinear
+  unfold hecke
+  apply (div_eq_iff hden).2
+  apply (mul_right_cancel₀ ha)
+  calc
+    -41*(1-alpha*w) = cmPoint*((cmPoint+1)*(1-alpha*w)) := by rw [hf]; ring
+    _ = cmPoint*((undisk w+1)*(1-w)) := by rw [hd]
+    _ = undisk (alpha*w)*(undisk w+1)*(1-alpha*w) := by
+      rw [show undisk (alpha*w)*(undisk w+1)*(1-alpha*w)=
+        (undisk (alpha*w)*(1-alpha*w))*(undisk w+1) by ring,hright]
+      ring
 
 theorem reverseUndisk (w : ℂ) (hw : 1-w≠0)
     (hr : 1-alpha⁻¹*w≠0) :

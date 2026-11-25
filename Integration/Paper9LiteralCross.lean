@@ -281,16 +281,19 @@ theorem rawWindowDenPositive (n r s : ℕ) (hn : 1≤n) (hs : 0<s) :
 
 -- All-index literal INTEGER cross on the source-shaped raw fields.
 -- This still needs actual cross-kernel proof transportation.
-theorem rawCrossAt (h : Tendsto
-    (fun N => (S N:ℂ)) atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi:ℝ):ℂ)))
-    (k : ℕ) :
+def RawCross (k : ℕ) : Prop :=
     let w := rawWindow (cutoff k) (rootNumerator k) (rootScale k)
     let l := w.1
     let u := w.2
     let m := rawStage k
     let e := rawRadius k
     l.1*(m.2:ℤ)*(e.2:ℤ)≤(m.1*(e.2:ℤ)+e.1*(m.2:ℤ))*(l.2:ℤ) ∧
-    m.1*(u.2:ℤ)*(e.2:ℤ)≤(u.1*(e.2:ℤ)+e.1*(u.2:ℤ))*(m.2:ℤ) := by
+    m.1*(u.2:ℤ)*(e.2:ℤ)≤(u.1*(e.2:ℤ)+e.1*(u.2:ℤ))*(m.2:ℤ)
+
+theorem rawCrossAt (h : Tendsto
+    (fun N => (S N:ℂ)) atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi:ℝ):ℂ)))
+    (k : ℕ) : RawCross k := by
+  unfold RawCross
   dsimp
   have hn : 1≤cutoff k := by unfold cutoff; omega
   have hs : 0<rootScale k := by unfold rootScale; positivity
@@ -302,5 +305,20 @@ theorem rawCrossAt (h : Tendsto
     hdL hdU (rawStageDenPositive k) he hL.symm hU.symm
     (rawStageValue k).symm (rawRadiusValue k).symm
 
+
+-- A4/A5/A7 + F5 in one explicit source theorem. Still no native
+-- decider/kernel receipt and no proof transport into Agda.
+theorem rawCrossFromFiniteChecks
+    (hu : Integration.Paper9ExecutableCM163.unitOK=true)
+    (hd : Integration.Paper9ExecutableCM163.diagOK=true)
+    (hz : Integration.Paper9CMShiftCheck.shiftOK=true)
+    (hs : Integration.Paper9ExecutableCM163.sliceOK=true)
+    (hc : Integration.Paper9ScalarCross.jetOK=true)
+    (hp : Integration.Paper9CMOriginalMachinWindow.piRoundOK)
+    (hq : Integration.Paper9CMOriginalMachinWindow.sqrtRoundOK)
+    (hw : Integration.Paper9CMExpWindow.expWindowOK) :
+    ∀ k, RawCross k :=
+  rawCrossAt (Integration.Paper9DiskGerm.literalPrefixFromFiniteChecks
+    hu hd hz hs hc hp hq hw)
 
 end Integration.Paper9LiteralCross

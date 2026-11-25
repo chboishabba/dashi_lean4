@@ -836,6 +836,17 @@ structure RefereePremiseBinding where
   artifactDigest : String
   checkerRevision : String
   dependencies : List String
+  residualRef : String
+  propositionRef : Option String
+  da51Address : Option String
+  artifactRef : String
+  sourceRevision : String
+  evidenceRef : String
+  producer : String
+  checker : String
+  statementLanguage : String
+  targetProver : String
+  dependentRefs : List String
   deriving DecidableEq
 
 def authenticatedPremiseCheck (readOnly sourceBound : Bool)
@@ -853,6 +864,22 @@ theorem source_only_receipt_cannot_pay
     (expected : RefereePremiseBinding) :
     authenticatedPremiseCheck true true expected none = false := by
   simp [authenticatedPremiseCheck]
+
+/-- Original authority is demand-scoped. If any consumer projection
+uses that demand, newly recorded withdrawal invalidates its authority
+regardless of whether it registered the particular evidence atom. -/
+def demandAuthorityAffected (withdrawn : List Nat) (demand : Nat) : Bool :=
+  withdrawn.contains demand
+
+theorem same_demand_authority_must_reopen
+    (withdrawn : List Nat) (demand : Nat) (h : demand ∈ withdrawn) :
+    demandAuthorityAffected withdrawn demand = true := by
+  simp [demandAuthorityAffected, List.contains_eq_mem, h]
+
+theorem unrelated_demand_authority_not_affected
+    (withdrawn : List Nat) (demand : Nat) (h : demand ∉ withdrawn) :
+    demandAuthorityAffected withdrawn demand = false := by
+  simp [demandAuthorityAffected, List.contains_eq_mem, h]
 
 end Wikidata.Slr.NumericPnfRustPortContract
 
@@ -920,3 +947,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.authenticated_premise_requires_exact_binding
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.source_only_receipt_cannot_pay
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.same_demand_authority_must_reopen
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.unrelated_demand_authority_not_affected

@@ -46,16 +46,31 @@ log_sha="$(sha256sum "$stage/kernel.log" | cut -d ' ' -f1)"
 contract_sha="$(sha256sum "$src" | cut -d ' ' -f1)"
 producer_sha="$(sha256sum "$root/tools/NativePnfWorkset.lean" | cut -d ' ' -f1)"
 checker="$(lake env lean --version)"
-jq --arg proof_sha "$proof_sha" --arg input_sha "$input_sha" --arg log_sha "$log_sha" \
-  --arg contract_sha "$contract_sha" --arg producer_sha "$producer_sha" \
-  --arg checker "$checker" --arg artifact_dir "$stage" \
-  'del(.proof_source) | .kernel_receipt = {
-    schema:"slr-lean-typed-projection-kernel-v1",
-    input_digest:.input_digest,
-    input_artifact_sha256:$input_sha,proof_sha256:$proof_sha,
-    kernel_log_sha256:$log_sha,contract_sha256:$contract_sha,
-    producer_sha256:$producer_sha,checker:$checker,artifact_dir:$artifact_dir,
-    theorem:"slrTypedProjectionCertificate",kernel_checked:true,
-    typed_coverage_paid:false,identity_paid:false
-  }' "$stage/producer.json"
+# Python is transport only; keep exact 64-bit numeric IDs rather than
+# passing the JSON number carrier through jq's floating-point representation.
+python3 - "$stage" "$proof_sha" "$input_sha" "$log_sha" "$contract_sha" "$producer_sha" "$checker" <<'PY'
+import json
+import sys
+from pathlib import Path
 
+stage, proof, raw, log, contract, producer, checker = sys.argv[1:]
+with (Path(stage) / "producer.json").open(encoding="utf-8") as stream:
+    result = json.load(stream)
+result.pop("proof_source")
+result["kernel_receipt"] = {
+    "schema": "slr-lean-typed-projection-kernel-v1",
+    "input_digest": result["input_digest"],
+    "input_artifact_sha256": raw,
+    "proof_sha256": proof,
+    "kernel_log_sha256": log,
+    "contract_sha256": contract,
+    "producer_sha256": producer,
+    "checker": checker,
+    "artifact_dir": stage,
+    "theorem": "slrTypedProjectionCertificate",
+    "kernel_checked": True,
+    "typed_coverage_paid": False,
+    "identity_paid": False,
+}
+print(json.dumps(result, ensure_ascii=False, separators=(",", ":")))
+PY

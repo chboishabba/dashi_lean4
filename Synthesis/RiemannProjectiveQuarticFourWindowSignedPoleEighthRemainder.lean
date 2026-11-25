@@ -678,4 +678,300 @@ theorem QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder_abs_l
         field_simp [hr.ne']
         ring
 
+
+/-! Sharper existing-scalar envelope: same source, no new moment norm. -/
+
+theorem quarticSignedPoleMixedPolynomialTail_abs_le_eighth_tight
+    {alpha q : ℝ}
+    (ha : |alpha| <= 1)
+    (hq : |q| <= 1) :
+    |quarticSignedPoleMixedPolynomialTail alpha q|
+      <=
+    (1/500 : ℝ)
+      * (alpha^2*q^6 + alpha^4*q^4 + alpha^6*q^2) := by
+  have ha2abs := pow_le_one₀ (abs_nonneg alpha) ha 2
+  have hq2abs := pow_le_one₀ (abs_nonneg q) hq 2
+  have ha2 : alpha^2 <= 1 := by
+    rw [← abs_pow] at ha2abs
+    simpa [abs_of_nonneg (sq_nonneg alpha)] using ha2abs
+  have hq2 : q^2 <= 1 := by
+    rw [← abs_pow] at hq2abs
+    simpa [abs_of_nonneg (sq_nonneg q)] using hq2abs
+
+  have hred46 : alpha^4*q^6 <= alpha^4*q^4 := by
+    have h :
+        0 <= alpha^4*q^4*(1-q^2) :=
+      mul_nonneg (by positivity) (sub_nonneg.mpr hq2)
+    nlinarith
+  have hred64 : alpha^6*q^4 <= alpha^4*q^4 := by
+    have h :
+        0 <= alpha^4*q^4*(1-alpha^2) :=
+      mul_nonneg (by positivity) (sub_nonneg.mpr ha2)
+    nlinarith
+  have ha2q2 : alpha^2*q^2 <= 1 := by
+    have h :=
+      mul_le_mul ha2 hq2 (sq_nonneg q) (by norm_num : (0:ℝ) <= 1)
+    norm_num at h ⊢
+    exact h
+  have hred66 : alpha^6*q^6 <= alpha^4*q^4 := by
+    have h :
+        0 <= alpha^4*q^4*(1-alpha^2*q^2) :=
+      mul_nonneg (by positivity) (sub_nonneg.mpr ha2q2)
+    nlinarith
+
+  unfold quarticSignedPoleMixedPolynomialTail
+  apply abs_le.mpr
+  constructor <;>
+    nlinarith [hred46, hred64, hred66,
+      mul_nonneg (sq_nonneg alpha) (by positivity : 0 <= q^6),
+      mul_nonneg (by positivity : 0 <= alpha^4) (by positivity : 0 <= q^4),
+      mul_nonneg (by positivity : 0 <= alpha^6) (sq_nonneg q)]
+
+theorem real_cosh_mul_cos_sub_mixedSixth_abs_le_eighth_tight
+    {alpha q : ℝ}
+    (ha : |alpha| <= 1)
+    (hq : |q| <= 1) :
+    |Real.cosh alpha * Real.cos q
+        - quarticSignedPoleMixedDegreeSixTaylor alpha q|
+      <= (375/448 : ℝ) * quarticSignedPoleMixedEighthEnvelope alpha q := by
+  let Ch : ℝ :=
+    1 + alpha^2/2 + alpha^4/24 + alpha^6/720
+  let Co : ℝ :=
+    1 - q^2/2 + q^4/24 - q^6/720
+
+  have ha2abs := pow_le_one₀ (abs_nonneg alpha) ha 2
+  have ha4abs := pow_le_one₀ (abs_nonneg alpha) ha 4
+  have ha6abs := pow_le_one₀ (abs_nonneg alpha) ha 6
+  have ha2 : alpha^2 <= 1 := by
+    rw [← abs_pow] at ha2abs
+    simpa [abs_of_nonneg (sq_nonneg alpha)] using ha2abs
+  have ha4 : alpha^4 <= 1 := by
+    rw [← abs_pow] at ha4abs
+    simpa [abs_of_nonneg (by positivity : 0 <= alpha^4)] using ha4abs
+  have ha6 : alpha^6 <= 1 := by
+    rw [← abs_pow] at ha6abs
+    simpa [abs_of_nonneg (by positivity : 0 <= alpha^6)] using ha6abs
+
+  have hCh0 : 0 <= Ch := by
+    dsimp [Ch]
+    positivity
+  have hChLe : Ch <= 8/5 := by
+    dsimp [Ch]
+    nlinarith
+  have hChAbs : |Ch| <= 8/5 := by
+    rw [abs_of_nonneg hCh0]
+    exact hChLe
+
+  have ha8eq : |alpha|^8 = alpha^8 := by
+    rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= alpha^8)]
+  have hq8eq : |q|^8 = q^8 := by
+    rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= q^8)]
+
+  have hCosh0 :=
+    real_cosh_sub_sixth_abs_le_eighth (x:=alpha) ha
+  have hCosh :
+      |Real.cosh alpha - Ch| <= alpha^8 / 35840 := by
+    rw [ha8eq] at hCosh0
+    dsimp [Ch]
+    convert hCosh0 using 1 <;> ring
+
+  have hCos0 :=
+    real_cos_sub_sixth_abs_le_eighth (x:=q) hq
+  have hCos :
+      |Real.cos q - Co| <= q^8 / 35840 := by
+    rw [hq8eq] at hCos0
+    dsimp [Co]
+    convert hCos0 using 1 <;> ring
+
+  have h1 :
+      |(Real.cosh alpha - Ch) * Real.cos q|
+        <= alpha^8 / 35840 := by
+    rw [abs_mul]
+    calc
+      |Real.cosh alpha - Ch| * |Real.cos q|
+        <= |Real.cosh alpha - Ch| * 1 :=
+          mul_le_mul_of_nonneg_left
+            (Real.abs_cos_le_one q)
+            (abs_nonneg _)
+      _ <= (alpha^8 / 35840) * 1 :=
+          mul_le_mul_of_nonneg_right hCosh (by norm_num)
+      _ = alpha^8 / 35840 := by ring
+
+  have h2 :
+      |Ch * (Real.cos q - Co)|
+        <= q^8 / 22400 := by
+    rw [abs_mul]
+    calc
+      |Ch| * |Real.cos q - Co|
+        <= (8/5 : ℝ) * (q^8 / 35840) := by
+          exact mul_le_mul hChAbs hCos
+            (abs_nonneg _) (by norm_num)
+      _ = q^8 / 22400 := by ring
+
+  have htail :=
+    quarticSignedPoleMixedPolynomialTail_abs_le_eighth_tight ha hq
+
+  have hsplit :
+      Real.cosh alpha * Real.cos q
+          - quarticSignedPoleMixedDegreeSixTaylor alpha q
+        =
+      (Real.cosh alpha - Ch) * Real.cos q
+        + Ch * (Real.cos q - Co)
+        + quarticSignedPoleMixedPolynomialTail alpha q := by
+    have hp :=
+      quarticSignedPoleMixedDegreeSixProduct_eq alpha q
+    dsimp [Ch,Co] at hp ⊢
+    rw [hp]
+    ring
+
+  rw [hsplit]
+  calc
+    |(Real.cosh alpha - Ch) * Real.cos q
+        + Ch * (Real.cos q - Co)
+        + quarticSignedPoleMixedPolynomialTail alpha q|
+      <=
+    |(Real.cosh alpha - Ch) * Real.cos q|
+      + |Ch * (Real.cos q - Co)|
+      + |quarticSignedPoleMixedPolynomialTail alpha q| := by
+        exact (abs_add _ _).trans
+          (add_le_add (abs_add _ _) le_rfl)
+    _ <=
+      alpha^8 / 35840
+        + q^8 / 22400
+        + (1/500 : ℝ)
+            * (alpha^2*q^6 + alpha^4*q^4 + alpha^6*q^2) := by
+        exact add_le_add (add_le_add h1 h2) htail
+    _ <= (375/448 : ℝ) * quarticSignedPoleMixedEighthEnvelope alpha q := by
+        unfold quarticSignedPoleMixedEighthEnvelope
+        have ha8 : 0 <= alpha^8 := by positivity
+        have hq8 : 0 <= q^8 := by positivity
+        nlinarith
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixthRemainder_abs_le_scaled_eighth
+    {t alpha q : ℝ}
+    (W : QuarticFourSignedPolePair t)
+    (k : ℝ)
+    (hscalar : ∀ a b : ℝ, |a| <= 1 → |b| <= 1 →
+      |Real.cosh a * Real.cos b - quarticSignedPoleMixedDegreeSixTaylor a b|
+        <= k * quarticSignedPoleMixedEighthEnvelope a b)
+    (ha : |alpha| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |q| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.completeJointBeyondSixthRemainder alpha q|
+      <=
+    (k * quarticSignedPoleMixedEighthEnvelope alpha q)
+      * W.signedProfileAbsMomentEight := by
+  let P : ℝ -> ℝ :=
+    quarticFourSignedPoleCombinedProfile
+      W.R W.muHalf W.muTwo t
+  let E : ℝ := k * quarticSignedPoleMixedEighthEnvelope alpha q
+  have hP : Continuous P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_continuous W.Rpos
+  have hPc : HasCompactSupport P := by
+    dsimp [P]
+    exact quarticFourSignedPoleCombinedProfile_compact W.Rpos
+  have hi :
+      Integrable
+        (fun u : ℝ =>
+          P u *
+          (Real.cosh (alpha*u) * Real.cos (q*u)
+            - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))) :=
+    Continuous.integrable_of_hasCompactSupport
+      (by
+        dsimp [P]
+        unfold quarticSignedPoleMixedDegreeSixTaylor
+          quarticSignedPoleSixthPhaseReal
+        fun_prop)
+      hPc.mul_right
+  have hmaj :
+      Integrable
+        (fun u : ℝ => E * (|P u| * |u|^8)) :=
+    (compactProfile_absMoment_integrable hP hPc 8).const_mul E
+
+  rw [W.completeJointBeyondSixthRemainder_eq_integral]
+  calc
+    |∫ u : ℝ,
+      P u *
+      (Real.cosh (alpha*u) * Real.cos (q*u)
+        - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))|
+      <=
+    ∫ u : ℝ,
+      |P u *
+      (Real.cosh (alpha*u) * Real.cos (q*u)
+        - quarticSignedPoleMixedDegreeSixTaylor (alpha*u) (q*u))| :=
+      abs_integral_le_integral_abs
+    _ <=
+    ∫ u : ℝ, E * (|P u| * |u|^8) := by
+      apply integral_mono hi.abs hmaj
+      intro u
+      by_cases hz : P u = 0
+      · simp [hz]
+      · have hau :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=alpha) ha hz
+        have hqu :=
+          W.abs_q_mul_u_le_one_of_local
+            (q:=q) hq hz
+        have hmixed :=
+          hscalar (alpha*u) (q*u) hau hqu
+        have hu8 : |u|^8 = u^8 := by
+          rw [← abs_pow, abs_of_nonneg (by positivity : 0 <= u^8)]
+        have hscale :
+            k * quarticSignedPoleMixedEighthEnvelope (alpha*u) (q*u)
+              =
+            E * |u|^8 := by
+          dsimp [E]
+          unfold quarticSignedPoleMixedEighthEnvelope
+          rw [hu8]
+          ring
+        rw [hscale] at hmixed
+        rw [abs_mul]
+        have hmul :=
+          mul_le_mul_of_nonneg_left hmixed (abs_nonneg (P u))
+        simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
+    _ =
+    E * W.signedProfileAbsMomentEight := by
+      unfold QuarticFourSignedPolePair.signedProfileAbsMomentEight
+        compactProfileAbsMoment
+      dsimp [P,E]
+      rw [integral_const_mul]
+
+
+theorem QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder_abs_le_scaled
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t)
+    (k : ℝ)
+    (hscalar : ∀ a b : ℝ, |a| <= 1 → |b| <= 1 →
+      |Real.cosh a * Real.cos b - quarticSignedPoleMixedDegreeSixTaylor a b|
+        <= k * quarticSignedPoleMixedEighthEnvelope a b)
+    (sigma : Zeros)
+    (ha : |heightOf sigma/(t/16)| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |((sigma : ℂ).im-t)/(t/16)| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.literalCompleteJointBeyondSixthRemainder sigma|
+      <= k * W.literalCompleteEighthRemainderBound sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+  dsimp
+  have hr2 : 0 < (t/16)^2 := by positivity
+  have hm : 0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) := by positivity
+  rw [abs_mul, abs_div, abs_of_nonneg hm, abs_of_pos hr2]
+  have hnorm := W.completeJointBeyondSixthRemainder_abs_le_scaled_eighth
+    k hscalar ha hq
+  have hfac : 0 <= ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / (t/16)^2 := by
+    positivity
+  have hscaled := mul_le_mul_of_nonneg_left hnorm hfac
+  rw [W.mixedEighthEnvelope_physical_rescale ht sigma] at hscaled
+  unfold QuarticFourSignedPolePair.literalCompleteEighthRemainderBound
+  have hr : 0 < t/16 := by positivity
+  convert hscaled using 1 <;> field_simp [hr.ne'] <;> ring
+
+theorem QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder_abs_le_tight
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t)
+    (sigma : Zeros)
+    (ha : |heightOf sigma/(t/16)| <= quarticSignedPoleCanonicalLocalRadius)
+    (hq : |((sigma : ℂ).im-t)/(t/16)| <= quarticSignedPoleCanonicalLocalRadius) :
+    |W.literalCompleteJointBeyondSixthRemainder sigma|
+      <= (375/448 : ℝ) * W.literalCompleteEighthRemainderBound sigma :=
+  W.literalCompleteJointBeyondSixthRemainder_abs_le_scaled ht _
+    (fun a b ha hq => real_cosh_mul_cos_sub_mixedSixth_abs_le_eighth_tight ha hq)
+    sigma ha hq
+
 end Synthesis

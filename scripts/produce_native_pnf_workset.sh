@@ -9,6 +9,11 @@ src="$root/DASHI/output-final_aristotle/RequestProject/Slr/NumericPnfRustPortCon
 mkdir -p "$(dirname "$out")"
 if [[ "${1:-}" == "--build" ]]; then
   timeout --kill-after=5s 90s lake env lean -o "$out" "$src"
+  # Reuse and check the existing GWB scoped-coverage owner, now welded
+  # to the numeric contract. Do not infer governed admission from either.
+  coref="$root/DASHI/output-final_aristotle/RequestProject/Slr/GwbCoreferenceFormalRepair.lean"
+  coref_out="$root/.lake/build/lib/lean/RequestProject/Slr/GwbCoreferenceFormalRepair.olean"
+  timeout --kill-after=5s 90s lake env lean -o "$coref_out" "$coref"
   exit
 fi
 [[ -f "$out" && "$out" -nt "$src" ]] || { echo "Run $0 --build first" >&2; exit 2; }

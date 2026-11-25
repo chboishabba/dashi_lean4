@@ -194,5 +194,79 @@ theorem ramanujan46 (τ : ℍ)
   · change V = E*Y-X^2
     linear_combination h6'
 
+
+-- Original normalized Delta on the entire cusp coordinate, including zero.
+-- This uses the pinned Mathlib product/sum cusp laws rather than equality
+-- at an isolated point (which would not justify differentiating).
+theorem deltaCuspFunction :
+    cuspFunction 1 T.normalizedDeltaForm =
+      fun q => (x q ^ 3 - y q ^ 2) / 1728 := by
+  have hx := xAnalyticZero.continuousAt
+  have hy := yAnalyticZero.continuousAt
+  have hc : cuspFunction 1 T.e4CubeWeight12 = fun q => x q ^ 3 := by
+    change cuspFunction 1 (((A.E4.mul A.E4).mul A.E4 :
+      ModularForm 𝒮ℒ 12) : ℍ → ℂ) = _
+    rw [ModularForm.cuspFunction_mul one_pos one_mem_strictPeriods_SL,
+      ModularForm.cuspFunction_mul one_pos one_mem_strictPeriods_SL]
+    funext q
+    simp only [Pi.mul_apply, x]
+    ring
+  have hs : cuspFunction 1 T.e6SquareWeight12 = fun q => y q ^ 2 := by
+    change cuspFunction 1 ((A.E6.mul A.E6 : ModularForm 𝒮ℒ 12) : ℍ → ℂ) = _
+    rw [ModularForm.cuspFunction_mul one_pos one_mem_strictPeriods_SL]
+    funext q
+    simp only [Pi.mul_apply, y]
+    ring
+  have hdiff : cuspFunction 1 ((T.e4CubeWeight12 - T.e6SquareWeight12 :
+      ModularForm 𝒮ℒ 12) : ℍ → ℂ) =
+      fun q => x q ^ 3 - y q ^ 2 := by
+    change cuspFunction 1 ((T.e4CubeWeight12 : ℍ → ℂ) -
+      (T.e6SquareWeight12 : ℍ → ℂ)) = _
+    rw [cuspFunction_sub
+      (analyticAt_cuspFunction_zero T.e4CubeWeight12 one_pos one_mem_strictPeriods_SL).continuousAt
+      (analyticAt_cuspFunction_zero T.e6SquareWeight12 one_pos one_mem_strictPeriods_SL).continuousAt,
+      hc, hs]
+    rfl
+  change cuspFunction 1 (((1728 : ℂ)⁻¹) •
+    ((T.e4CubeWeight12 - T.e6SquareWeight12 : ModularForm 𝒮ℒ 12) : ℍ → ℂ)) = _
+  rw [cuspFunction_smul
+    (analyticAt_cuspFunction_zero (T.e4CubeWeight12 - T.e6SquareWeight12)
+      one_pos one_mem_strictPeriods_SL).continuousAt, hdiff]
+  funext q
+  simp [div_eq_mul_inv, mul_comm]
+
+theorem deltaCuspDeriv (q : ℂ) (hq : ‖q‖ < 1) :
+    deriv (cuspFunction 1 T.normalizedDeltaForm) q =
+      (3 * x q ^ 2 * deriv x q - 2 * y q * deriv y q) / 1728 := by
+  have hx := (xDifferentiable q hq).hasDerivAt
+  have hy := (yDifferentiable q hq).hasDerivAt
+  have h := ((hx.pow 3).sub (hy.pow 2)).div_const (1728 : ℂ)
+  rw [deltaCuspFunction]
+  convert h.deriv using 1 <;> ring
+
+theorem actualDiscDerivative (τ : ℍ)
+    (hq : ‖Periodic.qParam 1 τ‖ < 1) :
+    A.E4 τ ^ 2 * (3 * dx τ) - A.E6 τ * (2 * dy τ) =
+      e2 τ * (A.E4 τ ^ 3 - A.E6 τ ^ 2) := by
+  have hn := Final.normalizedDelta_ne_zero_canonical τ
+  have hd : A.E4 τ ^ 3 - A.E6 τ ^ 2 = 1728 * T.normalizedDeltaLimit τ := by
+    unfold T.normalizedDeltaLimit T.discriminantNumeratorLimit
+    ring
+  rw [hd]
+  unfold e2 dx dy euler
+  rw [deltaCuspDeriv _ hq, xAtQ, yAtQ]
+  field_simp [hn]
+  <;> ring
+
+-- Cusp packaging now only needs to be paid for the actual bracket.
+-- The disk premise is the existing qParam norm theorem, not a derivative oracle.
+theorem ramanujan46FromBracket (τ : ℍ)
+    (hq : ‖Periodic.qParam 1 τ‖ < 1)
+    (hBracket : bracketQ (Periodic.qParam 1 τ) =
+      1728 * T.normalizedDeltaLimit τ) :
+    3 * dx τ = e2 τ * A.E4 τ - A.E6 τ ∧
+    2 * dy τ = e2 τ * A.E6 τ - A.E4 τ ^ 2 :=
+  ramanujan46 τ (actualDiscDerivative τ hq) hBracket
+
 end
 end Integration.Paper9OriginalEisensteinDerivative

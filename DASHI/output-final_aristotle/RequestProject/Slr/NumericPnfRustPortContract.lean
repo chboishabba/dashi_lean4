@@ -629,6 +629,49 @@ example : parserEvidencePermission 3 1 false = false := by decide
 example : parserEvidencePermission 3 17 true = false := by decide
 example : parserEvidencePermission 5 1 true = false := by decide
 
+/-- Original m090 excludes the same object and the same containing PERSON
+    span. Their intersection must be subtracted only once. This is the
+    exact finite family carrier used by the SLR bounded SQL refinement. -/
+def eligibleParserFamily {α : Type} (family : List α)
+    (sameAnchor sameSpan : α → Bool) : List α :=
+  family.filter (fun x => !sameAnchor x && !sameSpan x)
+
+def anchorExcludedFamily {α : Type} (family : List α)
+    (sameAnchor : α → Bool) : List α :=
+  family.filter sameAnchor
+
+def spanOnlyExcludedFamily {α : Type} (family : List α)
+    (sameAnchor sameSpan : α → Bool) : List α :=
+  family.filter (fun x => !sameAnchor x && sameSpan x)
+
+theorem parser_family_exact_cardinality {α : Type} (family : List α)
+    (sameAnchor sameSpan : α → Bool) :
+    (eligibleParserFamily family sameAnchor sameSpan).length +
+      (anchorExcludedFamily family sameAnchor).length +
+      (spanOnlyExcludedFamily family sameAnchor sameSpan).length =
+      family.length := by
+  induction family with
+  | nil => rfl
+  | cons x xs ih =>
+    cases ha : sameAnchor x <;> cases hs : sameSpan x <;>
+      simp [eligibleParserFamily, anchorExcludedFamily, spanOnlyExcludedFamily,
+        ha, hs] at ih ⊢ <;> omega
+
+/-- Retained and deferred members are an exact ordered partition. The
+    deferred suffix is execution debt, never semantic refutation. -/
+theorem parser_family_retained_deferred_exact {α : Type}
+    (family : List α) (sameAnchor sameSpan : α → Bool) (limit : Nat) :
+    (eligibleParserFamily family sameAnchor sameSpan).take limit ++
+      (eligibleParserFamily family sameAnchor sameSpan).drop limit =
+      eligibleParserFamily family sameAnchor sameSpan := by
+  exact List.take_append_drop limit _
+
+example :
+    eligibleParserFamily ([1,2,3,4] : List Nat) (fun x => x == 1 || x == 2)
+      (fun x => x == 2 || x == 3) = [4] := by decide
+
+example : parserEvidencePermission 3 4 true = false := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -672,3 +715,6 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.ambiguous_parser_evidence_cannot_license
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.proper_name_cannot_bootstrap
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.retained_singleton_does_not_pay_ambiguous_family
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.parser_family_exact_cardinality
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.parser_family_retained_deferred_exact

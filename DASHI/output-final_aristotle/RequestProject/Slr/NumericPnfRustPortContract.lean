@@ -432,6 +432,50 @@ theorem two_occurrences_can_have_one_class :
       a ≠ b ∧ Class a = some e ∧ Class b = some e := by
   exact ⟨1, 2, 3, fun _ => some 3, by decide, rfl, rfl⟩
 
+
+/-- Consumer-relative physical workset: original region IDs are selected
+    before publication. Unavailable coverage is a separate residual, not
+    a reason to execute unrelated corpus regions. This specializes the
+    existing DeltaWork contract, not a new semantic reducer. -/
+def consumerRegionWork (required published : List NumericId) : List NumericId :=
+  required.filter (fun id => !published.contains id)
+
+theorem consumer_work_cannot_include_unrequested
+    (required published : List NumericId) (id : NumericId)
+    (h : id ∈ consumerRegionWork required published) :
+    id ∈ required := by
+  exact (List.mem_filter.mp h).1
+
+theorem consumer_work_empty_if_required_published
+    (required published : List NumericId)
+    (covered : ∀ id, id ∈ required → published.contains id = true) :
+    consumerRegionWork required published = [] := by
+  induction required with
+  | nil => rfl
+  | cons id rest ih =>
+    have head : published.contains id = true := covered id (by simp)
+    have tail : ∀ x, x ∈ rest → published.contains x = true := by
+      intro x hx
+      exact covered x (by simp [hx])
+    simp [consumerRegionWork, head, ih tail]
+
+/-- One owner refresh supplies both observation and prospective admission.
+    Equality is a pure snapshot law, not a claim about an arbitrary SQL
+    function's transactional semantics. Callers must establish same input
+    and preserve candidate-only versus admitted output boundaries. -/
+def sharedProducer {Input Output Admission : Type}
+    (produce : Input → Output) (admit : Output → Admission) (i : Input) :
+    Output × Admission :=
+  let observed := produce i
+  (observed, admit observed)
+
+theorem shared_producer_same_snapshot {Input Output Admission : Type}
+    (produce : Input → Output) (admit : Output → Admission) (i : Input) :
+    sharedProducer produce admit i = (produce i, admit (produce i)) := rfl
+
+example : consumerRegionWork [1, 2, 3] [1, 3, 99] = [2] := by decide
+example : consumerRegionWork [1, 2] [1, 2, 99] = [] := by decide
+
 end Wikidata.Slr.NumericPnfRustPortContract
 
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.equivalent_preserves_original_manifest
@@ -459,3 +503,7 @@ end Wikidata.Slr.NumericPnfRustPortContract
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.unknown_class_blocks_selection
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.different_class_blocks_selection
 #print axioms Wikidata.Slr.NumericPnfRustPortContract.two_occurrences_can_have_one_class
+
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.consumer_work_cannot_include_unrequested
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.consumer_work_empty_if_required_published
+#print axioms Wikidata.Slr.NumericPnfRustPortContract.shared_producer_same_snapshot

@@ -125,6 +125,35 @@ theorem actualShiftedProducts (hu : unitOK=true) (hd : diagOK=true)
 -- The zero mode and the first derivative of the cross identity suffice.
 -- W=w*T. Its derivative at zero uses only continuity of T at zero.
 -- No derivative of R, or of T away from zero, is needed.
+theorem crossPeriodOfCross (X N M p s T : ℂ → ℂ)
+    (A B P2 P3 S2 S3 : ℂ) (hA : A≠0) (hS : S2≠0)
+    (x0 : X 0=A) (n0 : N 0=A^2) (m0 : M 0=(163/41)*A^2)
+    (p0 : p 0=P2) (s0 : s 0=S2)
+    (hx : HasDerivAt X B 0)
+    (hn : HasDerivAt N (-(81/41)*A*B) 0)
+    (hm : HasDerivAt M ((163/1681)*A*B) 0)
+    (hp : HasDerivAt p (P3*A) 0)
+    (hs : HasDerivAt s (S3*A) 0)
+    (hw : HasDerivAt (fun w => w*T w) S3 0)
+    (he : (fun w => (N w*p w-M w*s w)*(X w)^2) =ᶠ[𝓝 0]
+      (fun w => N w*M w*X w*(w*T w))) :
+    2*B/A^2=(41*P3-326*S3)/(163*S2) := by
+  have hzero := he.eq_of_nhds
+  change (N 0*p 0-M 0*s 0)*(X 0)^2=N 0*M 0*X 0*(0*T 0) at hzero
+  rw [x0,n0,m0,p0,s0] at hzero
+  simp only [zero_mul,mul_zero] at hzero
+  have hq : 41*P2=163*S2 := by
+    apply (mul_right_cancel₀ (pow_ne_zero 4 hA))
+    linear_combination 41*hzero
+  have hder := ((((hn.mul hp).sub (hm.mul hs)).mul (hx.pow 2)).
+    congr_of_eventuallyEq he.symm).unique (((hn.mul hm).mul hx).mul hw)
+  rw [x0,n0,m0,p0,s0] at hder
+  simp only [zero_mul,mul_zero,zero_add,add_zero] at hder
+  have h : A^3*((41*P3-326*S3)*A^2-326*B*S2)=0 := by
+    linear_combination 41*hder- ( ( -81/41:ℂ)*A^3*B + 2*A^3*B)*hq
+  have hc := (mul_eq_zero.mp h).resolve_left (pow_ne_zero 3 hA)
+  field_simp [hA,hS] <;> linear_combination -hc
+
 theorem crossPeriod (X N M p s R T : ℂ → ℂ)
     (A B P2 P3 S2 S3 : ℂ) (hA : A≠0) (hS : S2≠0)
     (x0 : X 0=A) (n0 : N 0=A^2) (m0 : M 0=(163/41)*A^2)
@@ -143,38 +172,6 @@ theorem crossPeriod (X N M p s R T : ℂ → ℂ)
       (fun w => N w*M w*X w*(w*T w)) := by
     filter_upwards [ha,hd] with w ha' hd'
     linear_combination N w*hd'-M w*ha'
-  have hzero := he.eq_of_nhds
-  change (N 0*p 0-M 0*s 0)*(X 0)^2=N 0*M 0*X 0*(0*T 0) at hzero
-  rw [x0,n0,m0,p0,s0] at hzero
-  simp only [zero_mul,mul_zero] at hzero
-  have hq : 41*P2=163*S2 := by
-    apply (mul_right_cancel₀ (pow_ne_zero 4 hA))
-    linear_combination 41*hzero
-  have hder := ((((hn.mul hp).sub (hm.mul hs)).mul (hx.pow 2)).
-    congr_of_eventuallyEq he.symm).unique (((hn.mul hm).mul hx).mul hw)
-  rw [x0,n0,m0,p0,s0] at hder
-  simp only [zero_mul,mul_zero,zero_add,add_zero] at hder
-  have h : A^3*((41*P3-326*S3)*A^2-326*B*S2)=0 := by
-    linear_combination 41*hder- ( ( -81/41:ℂ)*A^3*B + 2*A^3*B)*hq
-  have hc := (mul_eq_zero.mp h).resolve_left (pow_ne_zero 3 hA)
-  field_simp [hA,hS] <;> linear_combination -hc
-
--- Source endpoint from the literal ratio and the disk correction.
--- The scalar germ proof supplies the single remaining signed equality.
-theorem literalPeriodFromDisk (hj : jTarget cmTau=-(640320:ℂ)^3)
-    (hc : jetOK=true)
-    (h : 2*(a*d+b*d^2/2)/(a*d)^2 =
-       (41*(shiftedZ 3:ℂ)-326*(sliceShiftZ 3:ℂ))/(163*(sliceShiftZ 2:ℂ))) :
-    Tendsto (fun N => (Integration.Paper9LiteralFactorialPrefix.sum N : ℂ))
-      atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ)) := by
-  obtain ⟨_,_,_,_,_,_,hk⟩ := jetFacts hc
-  rw [diskJetCorrection a b d (aNonzero hj) dNe,hk] at h
-  exact Integration.Paper9SignedCMPeriod.actualLiteralPrefixPeriod hj h.symm
-
-end
-end Integration.Paper9ScalarCross    (he : (fun w => (N w*p w-M w*s w)*(X w)^2) =ᶠ[𝓝 0]
-      (fun w => N w*M w*X w*(w*T w))) :
-    2*B/A^2=(41*P3-326*S3)/(163*S2) := by
   exact crossPeriodOfCross X N M p s T A B P2 P3 S2 S3 hA hS
     x0 n0 m0 p0 s0 hx hn hm hp hs hw he
 

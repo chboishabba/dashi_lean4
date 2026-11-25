@@ -258,7 +258,7 @@ theorem literalPrefixFromFiniteChecks
     (hs : sliceOK=true) (hc : jetOK=true)
     (hp : Integration.Paper9CMOriginalMachinWindow.piRoundOK)
     (hq : Integration.Paper9CMOriginalMachinWindow.sqrtRoundOK)
-    (hw : Integration.Paper9CMExpWindow.expWindowOK) :
+    (hw : Integration.Paper9CMNormalizedCuspWindow.expWindowOK) :
     Tendsto (fun N => (Integration.Paper9LiteralFactorialPrefix.sum N : ℂ))
       atTop (𝓝 ((426880*Real.sqrt 10005/Real.pi : ℝ) : ℂ)) := by
   have hj := Integration.Paper9CMExpWindow.rootFromOriginalFiniteChecks hu hd hz hp hq hw

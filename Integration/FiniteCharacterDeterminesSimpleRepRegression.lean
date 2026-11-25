@@ -7,8 +7,8 @@ open CategoryTheory
 
 universe u v
 
-variable {k : Type u} [Field k]
-variable {G : Type v} [Group G] [Fintype G] [Invertible (Nat.card G : k)]
+variable {k : Type u} [Field k] [CharZero k]
+variable {G : Type v} [Group G] [Fintype G] [Invertible (Fintype.card G : k)]
 
 example (V W : FDRep k G) [Simple V] [Simple W]
     (hchar : V.character = W.character) : Nonempty (V ≅ W) :=

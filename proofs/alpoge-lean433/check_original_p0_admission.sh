@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # P0: ORIGINAL published Main.lean -> existing DASHI RHAdmission.lean.
 # User-selected local execution; NO GitHub CI, no theorem duplication,
-# no 4.33.1 OLean imported into the incompatible 4.35 root toolchain.
+# no 4.33.1 OLean imported into the incompatible 4.28 root toolchain.
 #
 # Usage:
 #   bash proofs/alpoge-lean433/check_original_p0_admission.sh [source-checkout]
@@ -64,17 +64,21 @@ targets = (
 allowed = {"propext", "Classical.choice", "Quot.sound"}
 for short in targets:
     full = prefix + short
-    pat = r"axioms of\s+" + re.escape(full) + r"\s*:\s*\[([^\]]*)\]"
-    m = re.search(pat, txt, flags=re.IGNORECASE | re.MULTILINE)
-    if not m:
-        sys.exit(f"BLOCKED: missing kernel-printed axiom receipt for {full}")
-    axioms = {a.strip() for a in m.group(1).split(",") if a.strip()}
+    # Lean v4.33.1 Elab/Print.lean: printAxiomsOf logs the quoted full
+    # declaration name, then one of these two literal messages.
+    pat = (r"(?m)^(?:[^\r\n]*:\d+:\d+:[ \t]*info:[ \t]*|info:[ \t]*)?'"
+           + re.escape(full)
+           + r"' (?:depends on axioms:[ \t]*\[([^\]]*)\]|does not depend on any axioms)[ \t]*\r?$")
+    receipts = list(re.finditer(pat, txt))
+    if len(receipts) != 1:
+        sys.exit(f"BLOCKED: expected one kernel-printed axiom receipt for {full}, got {len(receipts)}")
+    axioms = {a.strip() for a in (receipts[0].group(1) or "").split(",") if a.strip()}
     extra = axioms - allowed
     if extra:
         sys.exit(f"BLOCKED: unexpected axioms for {full}: {sorted(extra)}")
     print(f"PASS actual Lean axiom receipt: {full}: {sorted(axioms)}")
 print("PASS: 5/5 original source-to-adapter statement/kernel axiom receipts")
-print("SCOPE: external Lean 4.33.1 original source; not the 4.35 root or Agda.")
+print("SCOPE: external Lean 4.33.1 original source; not the 4.28 root or Agda.")
 PY
 
 if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then

@@ -1,5 +1,12 @@
 # GWB / SLR / SensibLaw / JMD — controlling P0 endpoint roadmap
 
+## 25 November — binding v2, governed replay and H9 source gates
+
+Operator's committed [SLR f6c14e5 receipt](https://github.com/chboishabba/slr/blob/f6c14e59191ab861c1972b78a6a158c8fc4a24fa/native-numeric-binding.json): 25 focused Rust + 1 CLI tests reported passing; 49 new nominal heads, none remaining; 64 represented, 34 untransported; 192 horizon observations with execution residuals; 33 original identity candidates (27 name expansion, four kind 2, two kind 4). No admitted class, H6 insertions or observed external need. No typed coverage or governed focus identity.
+
+SLR [0742fdb](https://github.com/chboishabba/slr/commit/0742fdb00765d47b1855fcacfb23cdf5b54ff615) and [b014272](https://github.com/chboishabba/slr/commit/b0142720ad74ce5cb918c27c3925b35a8c20fe05) add SHA-256-checked canonical-source quotation/paragraph observations and exact-head POS; existing m090/m080 governed parser admission plus m086 supported Level-3 in a savepoint after bounded occurrence/morphology drain; Level-1 and rollback snapshot checks; a covered-class uniqueness gate; and m135/m119/m120 H9 target/quality/queue/contract readiness. No committed identity, no focus-demand substitution, no provider execution. A probe class ID is ephemeral; do not use it as an admitted database identity. Source-written only; workstation should repeat the existing bind command (v2 receipt) without broad Python. Full typed mention/accessibility transport, independent coverage, class-aware governed focus witness and its Level-3 forward/retraction remain P0. The existing Lean partial class-map theorem remains a specification, not a kernel-verified SQL correspondence. No new Lean proof claimed.
+
+
 
 ## Native binding execution handoff — 24 November
 

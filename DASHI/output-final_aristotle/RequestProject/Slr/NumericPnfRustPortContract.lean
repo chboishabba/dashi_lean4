@@ -333,13 +333,24 @@ theorem withdrawal_keeps_unrelated_derivation
     (s : IdentityProjectionState) (w : NumericId) (d : WitnessedDerivation)
     (present : d ∈ s.current) (unrelated : d.witnessIds.contains w = false) :
     d ∈ (withdrawWitness s w).current := by
-  simp [withdrawWitness, present, unrelated]
+  apply List.mem_filter.mpr
+  constructor
+  · exact present
+  · have hnot : ¬ w ∈ d.witnessIds := by
+      simpa [List.contains_eq_mem] using unrelated
+    simpa [hnot]
 
 theorem withdrawal_excludes_revoked_dependency
     (s : IdentityProjectionState) (w : NumericId) (d : WitnessedDerivation)
     (dependent : d.witnessIds.contains w = true) :
     d ∉ (withdrawWitness s w).current := by
-  simp [withdrawWitness, dependent]
+  intro h
+  have hkeep := (List.mem_filter.mp h).2
+  have hmem : w ∈ d.witnessIds := by
+    simpa [List.contains_eq_mem] using dependent
+  have hbad : false = true := by
+    simpa [List.contains_eq_mem, hmem] using hkeep
+  cases hbad
 
 
 /-- Occurrence transport extends represented possibilities, not the
@@ -457,7 +468,10 @@ theorem consumer_work_empty_if_required_published
     have tail : ∀ x, x ∈ rest → published.contains x = true := by
       intro x hx
       exact covered x (by simp [hx])
-    simp [consumerRegionWork, head, ih tail]
+    simp only [consumerRegionWork, List.filter_cons]
+    have hnot : ¬ ((!published.contains id) = true) := by simp [head]
+    rw [if_neg hnot]
+    exact ih tail
 
 /-- One owner refresh supplies both observation and prospective admission.
     Equality is a pure snapshot law, not a claim about an arbitrary SQL

@@ -1,3 +1,4 @@
+import Synthesis.MonsterLiteralWeylFrame
 import Synthesis.MonsterSourceTensorObserver
 import Synthesis.MonsterOrdinaryGaugeFromSourceCharacter
 import Synthesis.MonsterParityProjectors

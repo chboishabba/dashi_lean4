@@ -70,44 +70,34 @@ theorem eval_covariance (u : S) (x : Schr k ι) :
     R.onW (vacuumEval F u (R.onH.symm (R.onH x))) at he
   simpa only [LinearEquiv.symm_apply_apply] using he
 
-/-- The signed multiplicity arrow is linear, as a composite of the actual
-Hom linear identification, conjugation, and actual vacuum recovery. -/
-def vacuumLinearArrow : S →ₗ[k] T where
-  toFun := vacuumArrow F G A B R L M
+/-- Linear conjugation on the actual Hom submodules. -/
+def homLinearArrow : homSubmodule A →ₗ[k] homSubmodule B where
+  toFun := homArrow A B R
   map_add' := by
-    intro u v
-    apply (vacuumHomLinearEquiv G B M).injective
+    intro f g
     apply Subtype.ext
     apply LinearMap.ext
     intro x
-    obtain ⟨y, rfl⟩ := R.onH.surjective x
-    change vacuumEval G (vacuumArrow F G A B R L M (u+v)) (R.onH y) =
-      (vacuumHomLinearEquiv G B M (vacuumArrow F G A B R L M u +
-        vacuumArrow F G A B R L M v)).1 (R.onH y)
-    rw [map_add]
-    change vacuumEval G (vacuumArrow F G A B R L M (u+v)) (R.onH y) =
-      vacuumEval G (vacuumArrow F G A B R L M u) (R.onH y) +
-      vacuumEval G (vacuumArrow F G A B R L M v) (R.onH y)
-    rw [eval_covariance, eval_covariance, eval_covariance, ← map_add]
-    congr 1
-    have h := (vacuumHomLinearEquiv F A L).map_add u v
-    exact congrArg (fun f : homSubmodule A => f.1 y) h
+    change R.onW (f.1 (R.onH.symm x) + g.1 (R.onH.symm x)) =
+      R.onW (f.1 (R.onH.symm x)) + R.onW (g.1 (R.onH.symm x))
+    exact R.onW.map_add _ _
   map_smul' := by
-    intro c u
-    apply (vacuumHomLinearEquiv G B M).injective
+    intro c f
     apply Subtype.ext
     apply LinearMap.ext
     intro x
-    obtain ⟨y, rfl⟩ := R.onH.surjective x
-    change vacuumEval G (vacuumArrow F G A B R L M (c • u)) (R.onH y) =
-      (vacuumHomLinearEquiv G B M (c • vacuumArrow F G A B R L M u)).1 (R.onH y)
-    rw [map_smul]
-    change vacuumEval G (vacuumArrow F G A B R L M (c • u)) (R.onH y) =
-      c • vacuumEval G (vacuumArrow F G A B R L M u) (R.onH y)
-    rw [eval_covariance, eval_covariance, ← map_smul]
-    congr 1
-    have h := (vacuumHomLinearEquiv F A L).map_smul c u
-    exact congrArg (fun f : homSubmodule A => f.1 y) h
+    change R.onW (c • f.1 (R.onH.symm x)) =
+      c • R.onW (f.1 (R.onH.symm x))
+    exact R.onW.map_smul _ _
+
+/-- The signed multiplicity arrow is the composite of actual linear Hom
+identification, conjugation, and actual vacuum recovery. -/
+def vacuumLinearArrow : S →ₗ[k] T :=
+  (vacuumHomLinearEquiv G B M).symm.toLinearMap.comp
+    ((homLinearArrow A B R).comp (vacuumHomLinearEquiv F A L).toLinearMap)
+
+theorem vacuumLinearArrow_apply (u : S) :
+    vacuumLinearArrow F G A B R L M u = vacuumArrow F G A B R L M u := rfl
 
 /-- Derive the literal kernel entry law from the existing Hom equivalence. -/
 theorem basis_entry (i j : ι) (u : S) :

@@ -16,6 +16,9 @@ open Integration.Paper9DiscriminantUnitReflection
 open Integration.Paper9OriginalEisensteinDerivative
 open Integration.Paper9E2CorrectedClosure
 open Integration.Paper9HeckeFiniteRemainder
+open Integration.Paper9Hecke41ChartGeometry
+open Integration.Paper9HeckePoleRemoval
+open Integration.Paper9EulerMobiusTransport
 
 noncomputable section
 
@@ -118,11 +121,70 @@ theorem seriesTail (f : ℂ → ℂ) (c : ℕ → ℂ)
     ring
   have hfull := (hasSum_nat_add_iff' n).mp ht''
   have he := hz.unique hfull
-  simp only [mul_comm (z^_)] at he
+  have hsum : (∑ i ∈ Finset.range n, z^i*c i) =
+      ∑ i ∈ Finset.range n, c i*z^i := by
+    apply Finset.sum_congr rfl
+    intro i hi
+    ring
+  rw [hsum] at he
   linear_combination he
 
 theorem actualJTruncation (m : ℕ) : Rem (m+1) jUnit (truncJ m) :=
   seriesTail _ _ actualJSeries (m+1)
+
+-- Actual finite and infinite chart q-coordinates; retain the phase.
+theorem finiteChartQ (a : Fin 41) (τ : ℍ) :
+    qExt (chartPoint (a.castSucc) τ) = phase a*tParam τ := by
+  have ha : a.val ≠ 41 := by omega
+  unfold qExt tParam phase Periodic.qParam chartPoint
+  simp only [Fin.val_castSucc, dif_neg ha]
+  rw [← Complex.exp_add]
+  congr 1
+  ring
+
+theorem infinityChartQ (τ : ℍ) :
+    qExt (chartPoint 41 τ) = (qExt τ)^41 := by
+  unfold qExt Periodic.qParam chartPoint
+  simp
+  rw [← Complex.exp_nat_mul]
+  congr 1
+  ring
+
+theorem phasePower (a : Fin 41) : phase a ^ 41 = 1 := by
+  unfold phase
+  rw [← Complex.exp_nat_mul]
+  convert Complex.exp_int_mul_two_pi_mul_I (a.val : ℤ) using 1
+  push_cast
+  ring
+
+-- Shift a remainder without dropping its first missing coefficient.
+theorem remShift (n b : ℕ) (a : ℂ) (f g : ℂ → ℂ)
+    (h : Rem n f g) :
+    Rem (n+b) (fun z => (a*z)^b*f z) (fun z => (a*z)^b*g z) := by
+  obtain ⟨r,hr,he⟩ := h
+  refine ⟨fun z => a^b*r z,continuousAt_const.mul hr,?_⟩
+  filter_upwards [he] with z hz
+  calc
+    (a*z)^b*f z-(a*z)^b*g z = (a*z)^b*(f z-g z) := by ring
+    _ = z^(n+b)*(a^b*r z) := by rw [hz,mul_pow,pow_add]; ring
+
+-- Original sharp degree-3322 cutoff: 3323 + 40 = 3363.
+theorem diagonalShiftedTail (a : Fin 41) :
+    Rem 3363
+      (fun z => (phase a*z)^40*jUnit (phase a*z))
+      (fun z => (phase a*z)^40*truncJ 3322 (phase a*z)) := by
+  have h := remMonomial 3323 1 (phase a) jUnit (truncJ 3322)
+    (by decide) (actualJTruncation 3322)
+  simp only [one_mul,pow_one] at h
+  exact remShift 3323 40 (phase a) _ _ h
+
+theorem sliceFiniteTail (a : Fin 41) :
+    Rem 1723 (fun z => jUnit (phase a*z))
+      (fun z => truncJ 1722 (phase a*z)) := by
+  simpa only [one_mul,pow_one] using
+    remMonomial 1723 1 (phase a) jUnit (truncJ 1722)
+      (by decide) (actualJTruncation 1722)
+
 
 end
 end Integration.Paper9ActualTaylorUnit

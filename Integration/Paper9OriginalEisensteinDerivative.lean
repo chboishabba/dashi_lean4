@@ -1,5 +1,5 @@
 import Integration.MoonshineDeltaFinalMinCut
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+import Integration.Paper9OriginalEisensteinCoeff
 
 /-!
 Paper 9, source-written, NOT compiled.
@@ -59,25 +59,23 @@ theorem xAtQ (τ : ℍ) : x (Periodic.qParam 1 τ) = A.E4 τ :=
 theorem yAtQ (τ : ℍ) : y (Periodic.qParam 1 τ) = A.E6 τ :=
   eq_cuspFunction A.E6 τ one_mem_strictPeriods_SL one_ne_zero
 
+-- The zero and first coefficient now consume the all-index original
+-- Fourier-stream binding, rather than a possibly version-specific lemma.
 theorem e4Coeff0 : (qExpansion 1 A.E4).coeff 0 = 1 := by
-  simpa [A.E4] using
-    (EisensteinSeries.E_qExpansion_coeff_zero (k := 4)
-      (by norm_num : 3 ≤ 4) (by norm_num : Even 4))
+  simpa [Integration.Paper9OriginalEisensteinCoeff.e4Z] using
+    Integration.Paper9OriginalEisensteinCoeff.e4Coeff 0
 
 theorem e6Coeff0 : (qExpansion 1 A.E6).coeff 0 = 1 := by
-  simpa [A.E6] using
-    (EisensteinSeries.E_qExpansion_coeff_zero (k := 6)
-      (by norm_num : 3 ≤ 6) (by norm_num : Even 6))
+  simpa [Integration.Paper9OriginalEisensteinCoeff.e6Z] using
+    Integration.Paper9OriginalEisensteinCoeff.e6Coeff 0
 
 theorem e4Coeff1 : (qExpansion 1 A.E4).coeff 1 = 240 := by
-  rw [EisensteinSeries.E_qExpansion_coeff (k := 4)
-    (by norm_num : 3 ≤ 4) (by norm_num : Even 4) (m := 1)]
-  norm_num [show bernoulli 4 = -1 / 30 by decide +kernel]
+  simpa [Integration.Paper9OriginalEisensteinCoeff.e4Z] using
+    Integration.Paper9OriginalEisensteinCoeff.e4Coeff 1
 
 theorem e6Coeff1 : (qExpansion 1 A.E6).coeff 1 = -504 := by
-  rw [EisensteinSeries.E_qExpansion_coeff (k := 6)
-    (by norm_num : 3 ≤ 6) (by norm_num : Even 6) (m := 1)]
-  norm_num [show bernoulli 6 = 1 / 42 by decide +kernel]
+  simpa [Integration.Paper9OriginalEisensteinCoeff.e6Z] using
+    Integration.Paper9OriginalEisensteinCoeff.e6Coeff 1
 
 theorem xZero : x 0 = 1 := by
   simpa [qExpansion_coeff, x] using e4Coeff0

@@ -1,99 +1,93 @@
 #!/usr/bin/env bash
-# P0: ORIGINAL published Main.lean -> existing DASHI RHAdmission.lean.
-# User-selected local execution; NO GitHub CI, no theorem duplication,
-# no 4.33.1 OLean imported into the incompatible 4.28 root toolchain.
-#
-# Usage:
-#   bash proofs/alpoge-lean433/check_original_p0_admission.sh [source-checkout]
-# Optional (separate experimental donor, NOT a prerequisite for Main P0):
-#   GRH_P0_CHECK_DIRECTIONAL=1 bash proofs/alpoge-lean433/check_original_p0_admission.sh
-#
-# The unmodified author fork is materialized locally by the EXISTING
-# checkout_fork_source.sh, which verifies commit, blob hashes, Lean
-# toolchain and Mathlib revision. This script DOES NOT vendor that source.
+# One local admission runner for the original author fork and the licensed
+# compact/readable rewritings. No CI and no cross-version OLean reuse.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SIDECAR="$ROOT/proofs/alpoge-lean433"
-CHECKOUT="${1:-$ROOT/.local/alpoge-rh-v4331}"
-REPORT_DIR="${GRH_P0_REPORT_DIR:-$ROOT/.local/grh-p0-admission}"
-# Custom paths should remain relative to the DASHI root, not the build cwd.
-if [[ "$REPORT_DIR" != /* ]]; then REPORT_DIR="$ROOT/$REPORT_DIR"; fi
-
-# Fail fast BEFORE a potentially large original source checkout.
+SOURCE="${GRH_P0_SOURCE:-original}"
+case "$SOURCE" in
+  original) DEFAULT="$ROOT/.local/alpoge-rh-v4331"; PROJECT=""; VERSION=4.33.1; REPLAY=0; CACHE=0 ;;
+  compact) DEFAULT="$ROOT/.local/alpoge-grh-v4350"; PROJECT=grh-compact; VERSION=4.35.0; REPLAY=1; CACHE=1 ;;
+  readable) DEFAULT="$ROOT/.local/alpoge-grh-v4350"; PROJECT=grh; VERSION=4.35.0; REPLAY=1; CACHE=1 ;;
+  *) echo "Unknown GRH_P0_SOURCE: $SOURCE" >&2; exit 2 ;;
+esac
+if [[ "$SOURCE" != original && "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
+  echo 'BLOCKED: original RowSrc donor imports exist only in the original author layout.' >&2
+  exit 15
+fi
 if ! command -v lake >/dev/null 2>&1; then
   echo 'BLOCKED: local pinned Lean/lake toolchain unavailable; no kernel receipt.' >&2
   exit 12
 fi
 if ! command -v python3 >/dev/null 2>&1; then
-  echo 'BLOCKED: Python 3 needed for independent axiom-log audit.' >&2
+  echo 'BLOCKED: Python 3 needed for pin and axiom audits.' >&2
   exit 13
 fi
-if [[ ! -f "$SIDECAR/RHAdmission.lean" ]]; then
-  echo 'BLOCKED: missing existing original Main admission adapter.' >&2
-  exit 14
-fi
-
-mkdir -p "$REPORT_DIR"
-# Already-owned provenance checker (fail closed on wrong source and dirty
-# checkout). Do not clone another upstream or accept stale olean identities.
-bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT"
-
-# Build ORIGINAL source module first. No newly postulated theorem, no
-# Mathlib version drift and no claim of success from mere text presence.
+CHECKOUT="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "${1:-$DEFAULT}")"
+REPORT_BASE="${GRH_P0_REPORT_DIR:-$ROOT/.local/grh-p0-admission/$SOURCE}"
+if [[ "$REPORT_BASE" != /* ]]; then REPORT_BASE="$ROOT/$REPORT_BASE"; fi
+mkdir -p "$REPORT_BASE"
+REPORT_DIR="$(mktemp -d "$REPORT_BASE/run.XXXXXXXX")"
+REPORT_DIR="$(cd "$REPORT_DIR" && pwd)"
+echo "Run logs: $REPORT_DIR"
+export GRH_P0_SOURCE="$SOURCE"
+unset ELAN_TOOLCHAIN LEAN_PATH LEAN_SRC_PATH
+bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin.log"
 (
-  cd "$CHECKOUT"
-  lake build Main 2>&1 | tee "$REPORT_DIR/original-main-build.log"
-  lake env lean "$SIDECAR/RHAdmission.lean" 2>&1 |
-    tee "$REPORT_DIR/original-admission-lean.log"
-)
+  cd "$CHECKOUT/$PROJECT"
+  lake env lean --version 2>&1 | tee "$REPORT_DIR/lean-version.log"
+  grep -Fq "version $VERSION," "$REPORT_DIR/lean-version.log" || {
+    echo 'BLOCKED: actual Lean version mismatch' >&2; exit 4;
+  }
+  if [[ "${GRH_P0_CACHE_GET:-$CACHE}" == 1 ]]; then
+    lake exe cache get 2>&1 | tee "$REPORT_DIR/cache.log"
+  fi
+  lake build Main 2>&1 | tee "$REPORT_DIR/main-build.log"
 
-# Audit the actual Lean output; #print axioms in RHAdmission.lean emits
-# each exact original target. A missing declaration/line or unexpected
-# axiom fails. Text/source-grep alone is NOT acceptance.
-python3 - "$REPORT_DIR/original-admission-lean.log" <<'PY'
-import pathlib, re, sys
-txt = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
-prefix = "DASHI.AlpogeRH."
-targets = (
-    "original_mathlib_rh",
-    "original_riemann_zero_location",
-    "original_dirichlet_nonvanishing",
-    "original_dirichlet_zeros",
-    "original_primitive_dirichlet_zeros",
-)
-allowed = {"propext", "Classical.choice", "Quot.sound"}
-for short in targets:
-    full = prefix + short
-    # Lean v4.33.1 Elab/Print.lean: printAxiomsOf logs the quoted full
-    # declaration name, then one of these two literal messages.
-    pat = (r"(?m)^(?:[^\r\n]*:\d+:\d+:[ \t]*info:[ \t]*|info:[ \t]*)?'"
-           + re.escape(full)
-           + r"' (?:depends on axioms:[ \t]*\[([^\]]*)\]|does not depend on any axioms)[ \t]*\r?$")
-    receipts = list(re.finditer(pat, txt))
-    if len(receipts) != 1:
-        sys.exit(f"BLOCKED: expected one kernel-printed axiom receipt for {full}, got {len(receipts)}")
-    axioms = {a.strip() for a in (receipts[0].group(1) or "").split(",") if a.strip()}
-    extra = axioms - allowed
-    if extra:
-        sys.exit(f"BLOCKED: unexpected axioms for {full}: {sorted(extra)}")
-    print(f"PASS actual Lean axiom receipt: {full}: {sorted(axioms)}")
-print("PASS: 5/5 original source-to-adapter statement/kernel axiom receipts")
-print("SCOPE: external Lean 4.33.1 original source; not the 4.28 root or Agda.")
+  # Check actual package commits, not only the declared manifest.
+  python3 - <<'PY' | tee "$REPORT_DIR/dependency-pins.log"
+import json, pathlib, subprocess
+manifest = json.loads(pathlib.Path("lake-manifest.json").read_text())
+base = pathlib.Path(manifest.get("packagesDir", ".lake/packages"))
+for p in manifest["packages"]:
+    if p["type"] != "git":
+        raise SystemExit("BLOCKED: unexpected non-Git package: " + p["name"])
+    path = base / p["name"]
+    def git(*args):
+        return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
+    if git("rev-parse", "HEAD") != p["rev"] or git("status", "--porcelain", "--untracked-files=no"):
+        raise SystemExit("BLOCKED: package revision/working-tree mismatch: " + p["name"])
+    if any(s[:1] == "S" or s[:1].islower() for s in git("ls-files", "-v").splitlines()):
+        raise SystemExit("BLOCKED: hidden package source paths: " + p["name"])
+    print(p["name"], p["rev"])
 PY
 
-if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
-  if [[ ! -f "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" ]]; then
-    echo 'BLOCKED: missing optional direct RowSrc donor adapter.' >&2
-    exit 15
+  if [[ "$SOURCE" != original ]]; then
+    lake env lean scripts/PrintAxioms.lean 2>&1 | tee "$REPORT_DIR/upstream-axioms.log"
+    python3 "$SIDECAR/audit_p0_axioms.py" upstream "$REPORT_DIR/upstream-axioms.log" |
+      tee "$REPORT_DIR/upstream-axiom-audit.log"
   fi
-  (
-    cd "$CHECKOUT"
+  lake env lean "$SIDECAR/RHAdmission.lean" 2>&1 | tee "$REPORT_DIR/adapter-lean.log"
+  python3 "$SIDECAR/audit_p0_axioms.py" adapter "$REPORT_DIR/adapter-lean.log" |
+    tee "$REPORT_DIR/adapter-axiom-audit.log"
+
+  if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
+    # v4.35.0 LeanChecker.lean: --fresh Main replays all imported and
+    # defined constants into a fresh kernel environment, not just Main.
+    lake env leanchecker --fresh --verbose Main 2>&1 | tee "$REPORT_DIR/fresh-kernel.log"
+  fi
+  if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
     lake env lean "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" 2>&1 |
       tee "$REPORT_DIR/directional-donor-lean.log"
-  )
-  echo 'Optional RowSrc direct consumer kernel ran; inspect its printed axioms.'
+  fi
+)
+# Detect modifications made during the build. This is still a local trusted
+# toolchain receipt, not independent checker or Agda/cross-version admission.
+bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin-after.log"
+if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
+  printf 'LOCAL SOURCE ADMISSION + FRESH KERNEL REPLAY: %s Lean %s\n' "$SOURCE" "$VERSION"
+else
+  printf 'LOCAL SOURCE BUILD + ADAPTER AXIOM AUDIT ONLY (fresh replay not requested): %s Lean %s\n' "$SOURCE" "$VERSION"
 fi
-
-printf 'P0 SOURCE-ADMISSION ACCEPTED (isolated v4.33.1): %s\n' "$CHECKOUT"
 printf 'Receipts: %s\n' "$REPORT_DIR"
-printf 'Still OPEN: compatible root proof import and Agda all-character semantic mapping.\n'
+printf 'Still separate: compatible root proof import, Agda same-object transport, independent external checker acceptance.\n'

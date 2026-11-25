@@ -13,3 +13,5 @@ import Integration.DASHITOE.KK240RoleDiscrimination
 import Integration.DASHITOE.KKSmoothCircleChiralityFork
 
 import Integration.DASHITOE.NavierStokesPeriodicBNonPromotion
+
+import Integration.DASHITOE.HopfMonsterSourceCut

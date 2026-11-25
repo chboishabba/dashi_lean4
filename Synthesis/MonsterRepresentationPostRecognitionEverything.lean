@@ -1,3 +1,4 @@
+import Synthesis.MonsterCentralProjectorSplit
 import Synthesis.MonsterActualMultiplicityCharacter
 import Synthesis.MonsterSignedEndpointComposition
 import Synthesis.MonsterVacuumHomEquivalence

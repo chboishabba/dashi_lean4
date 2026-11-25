@@ -1,3 +1,4 @@
+import Synthesis.MonsterWeightFrame
 import Synthesis.MonsterWholeCharacterModuleAdapterLive
 import Synthesis.MonsterWholeCharacterModuleAdapterLiveRegression
 import Synthesis.MonsterWholeCharacterSimpleSource

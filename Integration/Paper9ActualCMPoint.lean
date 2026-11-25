@@ -96,7 +96,7 @@ theorem gammaIdentity :
   rw [tangentRatio]
   unfold secondTangent
   field_simp [cmApart]
-  linear_combination -(4*cmPoint+6)*cmQuadratic
+  linear_combination -(4*cmPoint+2)*cmQuadratic
 
 -- q is the actual pinned level-one parameter; keep its negative phase.
 theorem cmQPhase : Periodic.qParam 1 (cmTau : ℂ) =
@@ -124,14 +124,14 @@ theorem cmQSmall : ‖Periodic.qParam 1 (cmTau : ℂ)‖ < (1/2 : ℝ)^36 := by
   calc
     Real.exp (-Real.pi*root163) < Real.exp (-36) :=
       Real.exp_lt_exp.mpr (by linarith)
-    _ = (Real.exp 1)⁻¹^36 := by
+    _ = ((Real.exp 1)⁻¹)^36 := by
       rw [Real.exp_neg,show (36 : ℝ)=(36 : ℕ)*(1 : ℝ) by norm_num,
         Real.exp_nat_mul,inv_pow]
     _ < (1/2 : ℝ)^36 := by
       apply pow_lt_pow_left₀
       · exact inv_nonneg.mpr (Real.exp_pos _).le
-      · simpa [one_div] using inv_lt_inv₀ (by norm_num : (0:ℝ)<2)
-          (Real.exp_pos 1) |>.2 hExp
+      · simpa [one_div] using (inv_lt_inv₀ (Real.exp_pos 1)
+          (by norm_num : (0:ℝ)<2)).2 hExp
       · decide
 
 theorem selectedHyperAtCM :

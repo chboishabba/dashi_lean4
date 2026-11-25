@@ -10484,4 +10484,84 @@ theorem quarticFourAtomic_kernel_is_generated_by_primitive_vector
   · linarith
   · field_simp
 
+
+/-!
+## Pointwise scaled eighth debt on the original local carrier
+
+Reuse the canonical local support and the existing expanded-window G1 estimate.
+No change to the far source or the selected witness.
+-/
+
+theorem QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt_le_scaledEighthDebt
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (k : ℝ)
+    (hscalar : ∀ a b : ℝ, |a| <= 1 → |b| <= 1 →
+      |Real.cosh a * Real.cos b - quarticSignedPoleMixedDegreeSixTaylor a b|
+        <= k * quarticSignedPoleMixedEighthEnvelope a b)
+    (n : ℕ) :
+    W.literalLocalBeyondSixthRemainderAt quarticSignedPoleCanonicalLocalRadius n
+      <= k * W.literalLocalEighthDebtAt quarticSignedPoleCanonicalLocalRadius n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+    QuarticFourSignedPolePair.literalLocalEighthDebtAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t quarticSignedPoleCanonicalLocalRadius rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · have ha := quarticSignedPole_normalizedHeight_abs_le_canonicalRadius ht rho
+      have hq : |((rho : ℂ).im-t)/(t/16)| <= quarticSignedPoleCanonicalLocalRadius := hl
+      have hrem := W.literalCompleteJointBeyondSixthRemainder_abs_le_scaled
+        (by linarith : 0 < t) k hscalar rho ha hq
+      simp only [hl, hoff, dite_true, if_true]
+      exact (le_abs_self _).trans hrem
+    · simp [hl, hoff]
+  · simp [hl]
+
+-- Keep the exact local signed fourth and sixth contributions, rather than
+-- rounding them again to the old terminal scalar cap.
+def QuarticFourSignedPolePair.literalScaledLocalBudgetAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (k : ℝ) (n : ℕ) : ℝ :=
+  - W.targetStrength / (6 * (t/16)^6) *
+      W.literalLocalFourthPhaseMomentAt quarticSignedPoleCanonicalLocalRadius n
+  + W.literalLocalSignedSixthHarmonicAt quarticSignedPoleCanonicalLocalRadius n
+  + k * W.literalLocalEighthDebtAt quarticSignedPoleCanonicalLocalRadius n
+
+theorem QuarticFourSignedPolePair.literalLocalExactAt_le_scaledLocalBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (k : ℝ)
+    (hscalar : ∀ a b : ℝ, |a| <= 1 → |b| <= 1 →
+      |Real.cosh a * Real.cos b - quarticSignedPoleMixedDegreeSixTaylor a b|
+        <= k * quarticSignedPoleMixedEighthEnvelope a b)
+    (n : ℕ) :
+    W.literalLocalExactAt quarticSignedPoleCanonicalLocalRadius n
+      <= W.literalScaledLocalBudgetAt k n := by
+  rw [W.literalLocalExactAt_eq_fourthHarmonic_add_remainder (by linarith : 0 < t)]
+  rw [W.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond]
+  rw [W.literalLocalFourthHarmonicAt_eq_phaseMoment
+    (by linarith : 0 < t) (eta:=quarticSignedPoleCanonicalLocalRadius) n]
+  unfold QuarticFourSignedPolePair.literalScaledLocalBudgetAt
+  have h := W.literalLocalBeyondSixthRemainderAt_le_scaledEighthDebt ht k hscalar n
+  linarith
+
+def QuarticFourSignedPolePair.canonicalScaledLocalBudget
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (k : ℝ) : ℝ :=
+  W.literalScaledLocalBudgetAt k (quarticSignedPoleCanonicalLocalExhaustionIndex t)
+
+theorem QuarticFourSignedPolePair.canonicalLiteralLocalExact_le_scaledBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t)
+    (k : ℝ)
+    (hscalar : ∀ a b : ℝ, |a| <= 1 → |b| <= 1 →
+      |Real.cosh a * Real.cos b - quarticSignedPoleMixedDegreeSixTaylor a b|
+        <= k * quarticSignedPoleMixedEighthEnvelope a b) :
+    W.canonicalLiteralLocalExact <= W.canonicalScaledLocalBudget k := by
+  exact W.literalLocalExactAt_le_scaledLocalBudget ht k hscalar
+    (quarticSignedPoleCanonicalLocalExhaustionIndex t)
+
+theorem QuarticFourSignedPolePair.canonicalLiteralLocalExact_le_tightBudget
+    {t : ℝ} (ht : 200 <= t) (W : QuarticFourSignedPolePair t) :
+    W.canonicalLiteralLocalExact <= W.canonicalScaledLocalBudget (375/448) :=
+  W.canonicalLiteralLocalExact_le_scaledBudget ht _
+    (fun a b ha hb => real_cosh_mul_cos_sub_mixedSixth_abs_le_eighth_tight ha hb)
+
 end Synthesis

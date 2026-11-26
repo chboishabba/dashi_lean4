@@ -379,6 +379,77 @@ theorem checkedArticleHasStructuralEvidence
     checkProjection text source projection = true :=
   receipt.checked
 
+/-- A source-observation query, not a world-claim or identity query. The
+    results retain the entire original candidate row and exact coordinates.
+    Missing NER or lexical candidates never imply absence from the article. -/
+inductive ArticleQuery where
+  | person (surface : String)
+  | properNoun (surface : String)
+  | year (surface : String)
+  | predicate (lemmaOrSurface : String)
+  | negationToken (surface : String)
+  deriving Repr
+
+def parseArticleQuery? (kind value : String) : Option ArticleQuery :=
+  if value.isEmpty then none else
+    match kind with
+    | "person" => some (.person value)
+    | "proper-noun" => some (.properNoun value)
+    | "year" => some (.year value)
+    | "predicate" => some (.predicate value)
+    | "negation-token" => some (.negationToken value)
+    | _ => none
+
+def queryRows (source projection : Json) : ArticleQuery → List Json
+  | .person _ => ((arr? projection "people_mentions").getD #[]).toList
+  | .properNoun _ => ((arr? projection "proper_noun_tokens").getD #[]).toList
+  | .year _ => ((arr? projection "literal_year_mentions").getD #[]).toList
+  | .predicate _ => ((arr? projection "event_candidates").getD #[]).toList
+  | .negationToken _ => ((arr? source "pnf_candidates").getD #[]).toList
+
+def queryMatches (q : ArticleQuery) (row : Json) : Bool :=
+  match q with
+  | .person value | .properNoun value | .year value =>
+    str? row "surface" == some value
+  | .predicate value =>
+    match (row.getObjVal? "predicate").toOption with
+    | some p => str? p "lemma" == some value || str? p "surface" == some value
+    | none => false
+  | .negationToken value =>
+    ((arr? row "dependency_rows").getD #[]).toList.any (fun token =>
+      str? token "dep" == some "neg" && str? token "text" == some value)
+
+/-- The original checker is a proof premise, not a claimed JSON flag.
+    For negation, retain the whole original sentence/dependency row so the
+    negation head and scope are not silently turned into a semantic denial. -/
+def queryCheckedArticle
+    {text : String} {source projection : Json}
+    (_receipt : CheckedArticleExtraction text source projection)
+    (q : ArticleQuery) : List Json :=
+  (queryRows source projection q).filter (queryMatches q)
+
+/-- Exact two-way membership over the observed rows, not over all possible
+    semantic readings or missing parser observations. -/
+theorem queryCheckedArticleExact
+    {text : String} {source projection : Json}
+    (receipt : CheckedArticleExtraction text source projection)
+    (q : ArticleQuery) (row : Json) :
+    row ∈ queryCheckedArticle receipt q ↔
+      row ∈ queryRows source projection q ∧ queryMatches q row = true := by
+  simp only [queryCheckedArticle, List.mem_filter]
+
+/-- Every returned row belongs to the checked source/projection and matches
+    the requested observation. Zero matches means no matching observed row,
+    not refutation or evidence that no matching world event exists. -/
+theorem checkedArticleQuerySound
+    {text : String} {source projection : Json}
+    (receipt : CheckedArticleExtraction text source projection)
+    (q : ArticleQuery) (row : Json)
+    (h : row ∈ queryCheckedArticle receipt q) :
+    checkProjection text source projection = true ∧
+      row ∈ queryRows source projection q ∧ queryMatches q row = true :=
+  ⟨receipt.checked, (queryCheckedArticleExact receipt q row).mp h⟩
+
 private def hashFile (path : String) : IO String := do
   let output ← IO.Process.output { cmd := "sha256sum", args := #[path] }
   if output.exitCode != 0 then
@@ -395,7 +466,8 @@ private def readJson (path : String) : IO Json := do
     SLR PNF rows. This provides a checkable observation claim; the additional
     DASHI SourceQueryLicence still governs semantic or occurrence questions. -/
 def verifyFiles
-    (articlePath slrRecordPath projectionPath : String) : IO Bool := do
+    (articlePath slrRecordPath projectionPath : String)
+    (query : Option (String × String) := none) : IO Bool := do
   let text ← IO.FS.readFile articlePath
   let source ← readJson slrRecordPath
   let projection ← readJson projectionPath
@@ -409,6 +481,20 @@ def verifyFiles
   if h : checkProjection text source projection = true then
     let receipt : CheckedArticleExtraction text source projection := ⟨h⟩
     let _ := checkedArticleHasStructuralEvidence receipt
+    if let some (kind, value) := query then
+      let some q := parseArticleQuery? kind value
+        | throw (IO.userError "Unsupported or empty article observation query")
+      let rows := queryCheckedArticle receipt q
+      IO.println (Json.mkObj [
+        ("schema", Json.str "jmd-checked-article-observation-query-v1"),
+        ("source_sha256", Json.str sha),
+        ("source_revision_ref", (projection.getObjVal? "source_revision_ref").toOption.getD Json.null),
+        ("kind", Json.str kind), ("value", Json.str value),
+        ("rows", Json.arr rows.toArray),
+        ("scope", Json.str "original-observed-rows-only"),
+        ("semantic_licence_paid", Json.bool false),
+        ("world_truth_paid", Json.bool false)]).compress
+      return true
     let sections := (arr? projection "sections").getD #[]
     let events := (arr? projection "event_candidates").getD #[]
     let persons := (arr? projection "people_mentions").getD #[]

@@ -341,6 +341,83 @@ def runArticleP4Check
       IO.eprintln "GWB_P4_ARTICLE_REJECTED: invalid input JSON"
       return 1
 
+/-- Real bounded article-to-property agreement. No caller-supplied
+    review flag, synthetic PKB, or historical truth promotion. -/
+def runOfficeClaimCheck
+    (articlePath slrPath projectionPath rootPath officePath outputPath : String) :
+    IO UInt32 := do
+  let ok ← Slr.ArticleProof.verifyFiles articlePath slrPath projectionPath
+  if !ok then return 1
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let rootSha ← IO.Process.output { cmd := "sha256sum", args := #[rootPath] }
+  let officeSha ← IO.Process.output { cmd := "sha256sum", args := #[officePath] }
+  let digest := (sha.stdout.splitOn " ").head!
+  if sha.exitCode != 0 || rootSha.exitCode != 0 || officeSha.exitCode != 0 ||
+      digest != "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" then
+    IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: original source or snapshot digest"
+    return 1
+  match Lean.Json.parse (← IO.FS.readFile slrPath),
+        Lean.Json.parse (← IO.FS.readFile projectionPath),
+        Lean.Json.parse (← IO.FS.readFile rootPath),
+        Lean.Json.parse (← IO.FS.readFile officePath) with
+  | .ok slr, .ok projection, .ok root, .ok office =>
+    if hRoot : Slr.GwbArticleIdentity.checkGwbRootIdentity
+          article slr projection root = true then
+      if !Slr.GwbWorldGraph.jsonEntityMatchesQid "Q207" root then
+        IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: root EntityData inventory"
+        return 1
+      let some rootRev := Slr.GwbArticleSystem.entityRevision root "Q207"
+        | IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: root revision absent"
+          return 1
+      let some officeRev := Slr.GwbArticleSystem.entityRevision office "Q11696"
+        | IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: office revision absent"
+          return 1
+      if rootRev == 0 || officeRev == 0 then return 1
+      if hClaim : Slr.GwbArticleSystem.officeClaim article = true then
+        if hLabel : Slr.GwbArticleSystem.officeLabelChecked office = true then
+          if hSupport : Slr.GwbArticleSystem.officePropertySupported root office = true then
+            let checked : Slr.GwbArticleIdentity.CheckedGwbRootIdentity
+              article slr projection root := ⟨hRoot⟩
+            let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndKB
+              checked hClaim hLabel hSupport
+            IO.FS.writeFile outputPath ((Lean.Json.mkObj [
+              ("schema", toJson ("gwb-bounded-office-claim-kb-agreement-v1" : String)),
+              ("source_revision", toJson ("enwiki-revid:1385850169" : String)),
+              ("source_sha256", toJson digest),
+              ("source_start_char", toJson (0 : Nat)),
+              ("source_end_char", toJson Slr.GwbArticleSystem.officeLead.toList.length),
+              ("source_literal", toJson Slr.GwbArticleSystem.officeLead),
+              ("subject", toJson ("Q207" : String)),
+              ("property", toJson ("P39" : String)),
+              ("object", toJson ("Q11696" : String)),
+              ("root_revision", toJson rootRev),
+              ("root_sha256", toJson ((rootSha.stdout.splitOn " ").head!)),
+              ("office_revision", toJson officeRev),
+              ("office_sha256", toJson ((officeSha.stdout.splitOn " ").head!)),
+              ("scope", toJson ("bounded-explicit-lead-rule-and-independent-kb-support" : String)),
+              ("governed_identity_paid", toJson false),
+              ("general_semantic_alignment_paid", toJson false),
+              ("qualifier_alignment_paid", toJson false),
+              ("world_truth_paid", toJson false)]).pretty ++ "\n")
+            IO.println "GWB_BOUNDED_OFFICE_CLAIM_JMD_AGREEMENT_OK"
+            return 0
+          else
+            IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: independent P39 support absent"
+            return 1
+        else
+          IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: office entity or label mismatch"
+          return 1
+      else
+        IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: exact source rule not matched"
+        return 1
+    else
+      IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: original Q207/article mismatch"
+      return 1
+  | _, _, _, _ =>
+    IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: invalid input JSON"
+    return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -361,6 +438,8 @@ def main (args : List String) : IO UInt32 := do
       return 0
   | ["article-p4-check", article, slr, projection, native, wikidata] =>
       runArticleP4Check article slr projection native wikidata
+  | ["article-office-check", article, slr, projection, root, office, output] =>
+      runOfficeClaimCheck article slr projection root office output
   | ["article-qid-check", article, slr, projection, wikidata] =>
       runArticleQidCheck article slr projection wikidata
   | ["world-graph-check", graph, cacheDir, output] =>
@@ -459,3 +538,4 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbCanonicalSource.licensedPredicateQuerySound
 #print axioms Wikidata.Slr.GwbCanonicalSource.reportingReadingInvariant
 #print axioms Wikidata.Slr.GwbCanonicalSource.checkedReportingAnswerSound
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndKB

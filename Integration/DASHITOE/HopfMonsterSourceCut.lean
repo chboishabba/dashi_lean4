@@ -332,3 +332,45 @@ theorem scalarWardResidual (q dq ddq M dM h : ℚ) :
       (ddq+3*h*dq+M*q)*dq+dM*q^2/2 := by ring
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-! BK: finite algebra of the AK normal ground-state transform and
+indicial equation.  Source: Agda #1554, original AK5 and BJ/BK roadmap.
+The scalar Sturm–Liouville operator, integration by parts and global
+weighted Fredholm argument remain classical analytic obligations, not
+consequences of this rational algebra. No kernel receipt is asserted. -/
+
+theorem normalGroundStateProductNumerator
+    (b db ddb z dz ddz : ℚ) :
+    b * ((-3*b^2*db*(db*z+b*dz)
+       -b^3*(ddb*z+2*db*dz+b*ddz)+4*b^4*z)
+       -z*(-3*b^2*db^2-b^3*ddb+4*b^4))
+       = -5*b^4*db*dz-b^5*ddz := by ring
+
+theorem normalGroundStateCoefficient (b db h : ℚ)
+    (hw : db^2=b^2-h^2) :
+    -b^4-3*b^2*db^2+4*b^4=3*h^2*b^2 := by
+  rw [hw]
+  ring
+
+theorem normalFirstIndicialRoots (p : ℚ) :
+    p*(p-2)=3 ↔ p = -1 ∨ p = 3 := by
+  constructor
+  · intro he
+    have hp : (p+1)*(p-3)=0 := by
+      calc
+        _ = p*(p-2)-3 := by ring
+        _ = 0 := by rw [he]; norm_num
+    rcases mul_eq_zero.mp hp with h | h
+    · left; linarith
+    · right; linarith
+  · rintro (rfl | rfl) <;> norm_num
+
+theorem normalWeightFiveHalvesMargin (delta : ℚ) (hd : 0 ≤ delta) :
+    (168/25 : ℚ) ≤
+      6*(16/25)*(3+(15/4)*delta-(5/4)*(1-delta)) := by
+  linarith
+
+end DASHITOE.HopfMonsterSourceCut

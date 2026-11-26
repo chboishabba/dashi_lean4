@@ -67,10 +67,15 @@ for ((i=0;i<n;i++)); do
   jq ".cases[$i].family" "$out/relational-corpus.json" > "$out/family-$i.json"
   step "family-$i-lean.log" lake env lean --run tools/RelationalObservedMeetRunner.lean "$out/family-$i.json" "$out/family-$i-proof.json"
 done
-# Actual native CLI via existing ITIR registry, not a substituted mock.
+# Unit controls plus actual native facade readback (same original DB config).
 cd "$ITIR_ROOT/itir-mcp"
 export PYTHONPATH="$ITIR_ROOT/itir-mcp/src${PYTHONPATH:+:$PYTHONPATH}"
 step itir-tests.log "${ITIR_PYTHON:-python3}" -m pytest -q tests/test_native_relational_tools.py
+cd "$SLR_ROOT"
+family_ref="$(jq -er '.cases[0].family.family_ref' "$out/relational-corpus.json")"
+step itir-native.json "${ITIR_PYTHON:-python3}" -c 'import json,sys; from itir_mcp.native_relational_tools import inspect_relational_family; print(json.dumps(inspect_relational_family({"action":"family","family_ref":sys.argv[1]})))' "$family_ref"
+jq -e --arg ref "$family_ref" '.native_receipt.family_ref == $ref and .mutates == false and .creates_semantic_authority == false' "$out/itir-native.json" >/dev/null
+cd "$root"
 # Preserve actual strict/legacy discrepancies instead of passing them as equivalent.
 jq '[.cases[] | {case_ref,purpose,legacy_expected_finding,strict_actual_finding,legacy_required_residuals_present,legacy_forbidden_residual_present}]' "$out/relational-corpus.json" > "$out/legacy-strict-delta.json"
 jq -n --arg slr "$(git -C "$SLR_ROOT" rev-parse HEAD)" --arg lean "$(git -C "$root" rev-parse HEAD)" --arg itir "$(git -C "$ITIR_ROOT" rev-parse HEAD)" --argjson families "$n" '{slr_commit:$slr,lean_commit:$lean,itir_commit:$itir,families_checked:$families,source_observation_scope_completed:true,semantic_live_coverage_paid:false,governed_l3_paid:false,status:"HOLD",outstanding:["independent semantic interpretation and exhaustive live-fibre coverage","general article-to-JMD alignment","governed L3 admission and retraction acceptance"]}' > "$out/campaign.json"

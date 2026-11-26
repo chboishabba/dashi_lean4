@@ -1,4 +1,4 @@
-import Main
+import RHAdmission
 import Problems.RiemannHypothesis.Millennium
 
 /-!
@@ -16,7 +16,7 @@ The admission runner rejects any transitive sorryAx in these endpoints.
 namespace DASHI.AlpogeRH
 
 theorem original_clay_rh : Millennium.ClayRiemannHypothesis :=
-  Millennium.ClayRiemannHypothesis.of_mathlib _root_.riemannHypothesis
+  Millennium.ClayRiemannHypothesis.of_mathlib original_mathlib_rh
 
 theorem original_clay_xi : Millennium.ClayRiemannHypothesis.Formulations.XiZeros :=
   Millennium.ClayRiemannHypothesis.xi_zeros original_clay_rh

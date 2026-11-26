@@ -67,15 +67,15 @@ PY
     python3 "$SIDECAR/audit_p0_axioms.py" upstream "$REPORT_DIR/upstream-axioms.log" |
       tee "$REPORT_DIR/upstream-axiom-audit.log"
   fi
-  lake env lean "$SIDECAR/RHAdmission.lean" 2>&1 | tee "$REPORT_DIR/adapter-lean.log"
+  # Persist the exact checked adapter in a unique per-run module directory.
+  BUILD="$REPORT_DIR/admission-olean"
+  mkdir -p "$BUILD"
+  lake env lean --root="$SIDECAR" -o "$BUILD/RHAdmission.olean" "$SIDECAR/RHAdmission.lean" 2>&1 |
+    tee "$REPORT_DIR/adapter-lean.log"
+  REPLAY_TARGET=RHAdmission
   python3 "$SIDECAR/audit_p0_axioms.py" adapter "$REPORT_DIR/adapter-lean.log" |
     tee "$REPORT_DIR/adapter-axiom-audit.log"
 
-  if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
-    # v4.35.0 LeanChecker.lean: --fresh Main replays all imported and
-    # defined constants into a fresh kernel environment, not just Main.
-    lake env leanchecker --fresh --verbose Main 2>&1 | tee "$REPORT_DIR/fresh-kernel.log"
-  fi
   if [[ "${GRH_P0_CLAY:-$REPLAY}" == 1 ]]; then
     # Consume the existing exact target vendor, not a restatement of RH.
     VENDOR="$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve())' "${GRH_P0_CLAY_VENDOR:-$ROOT/vendor/LeanMillenniumPrizeProblems}")"
@@ -91,7 +91,6 @@ PY
     [[ "$(git -C "$VENDOR" rev-parse "HEAD:$TARGET")" == "$CLAY_BLOB" ]]
     [[ "$(git hash-object --no-filters "$VENDOR/$TARGET")" == "$CLAY_BLOB" ]]
     [[ -z "$(git -C "$VENDOR" status --porcelain --untracked-files=all)" ]]
-    BUILD="$REPORT_DIR/clay-olean"
     mkdir -p "$BUILD/Problems/RiemannHypothesis"
     # Compile the unmodified upstream target in THIS Mathlib environment.
     # It has a final unused challenge sorry; the actual exported proof
@@ -103,6 +102,18 @@ PY
       tee "$REPORT_DIR/clay-admission.log"
     python3 "$SIDECAR/audit_p0_axioms.py" clay "$REPORT_DIR/clay-admission.log" |
       tee "$REPORT_DIR/clay-axiom-audit.log"
+    REPLAY_TARGET=RHClayAdmission
+  fi
+
+  if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
+    # Fresh replay of the deepest emitted endpoint includes Main and
+    # RHAdmission; with Clay enabled it also includes the exact Clay adapter.
+    # Axiom audits remain necessary: replay is not an axiom allowlist.
+    lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec leanchecker --fresh --verbose "$2"' \
+      _ "$BUILD" "$REPLAY_TARGET" 2>&1 | tee "$REPORT_DIR/fresh-kernel.log"
+    grep -Fxq "replaying $REPLAY_TARGET with --fresh" "$REPORT_DIR/fresh-kernel.log" || {
+      echo 'BLOCKED: missing exact terminal fresh-replay marker' >&2; exit 16;
+    }
   fi
 
   if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then

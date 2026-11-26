@@ -1033,6 +1033,9 @@ def run (args : List String) : IO UInt32 := do
   | "--help" :: _ => IO.println usage; return 0
   | ["gwb-article-replay", outputDir] =>
       cmdGwbArticleReplay outputDir o
+  | ["gwb-article-query", articleText, slrRecord, projection, kind, value] =>
+      let ok ← Slr.ArticleProof.verifyFiles articleText slrRecord projection (some (kind, value))
+      return if ok then 0 else 1
   | ["gwb-article-check", articleText, slrRecord, projection] =>
       let ok ← Slr.ArticleProof.verifyFiles articleText slrRecord projection
       return if ok then 0 else 1

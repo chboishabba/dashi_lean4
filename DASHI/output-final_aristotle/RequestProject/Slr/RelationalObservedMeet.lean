@@ -163,9 +163,14 @@ def decodeReceipt (j : Json) : Option (List SelectedSource × List FibreRow) := 
 
 def run (inputPath outputPath : String) : IO UInt32 := do
   let raw ← IO.FS.readFile inputPath
-  let .ok json := Json.parse raw | IO.eprintln "REL_OBSERVED_MEET_REJECTED: JSON"; return 1
+  let .ok json := Json.parse raw
+    | do
+      IO.eprintln "REL_OBSERVED_MEET_REJECTED: JSON"
+      return 1
   let some (sources, fibre) := decodeReceipt json
-    | IO.eprintln "REL_OBSERVED_MEET_REJECTED: typed source inventory"; return 1
+    | do
+      IO.eprintln "REL_OBSERVED_MEET_REJECTED: typed source inventory"
+      return 1
   if !checkInventory sources fibre then
     IO.eprintln "REL_OBSERVED_MEET_REJECTED: missing, extra or wrong incidence"
     return 1
@@ -182,6 +187,9 @@ def run (inputPath outputPath : String) : IO UInt32 := do
         IO.eprintln "REL_OBSERVED_MEET_REJECTED: common answer inconsistent"
         return 1
     else
+      if FiniteConsumer.checkConstant sources (fun source => observed source c) then
+        IO.eprintln "REL_OBSERVED_MEET_REJECTED: distinct answer missing"
+        return 1
       differenceCount := differenceCount + 1
   let sha ← IO.Process.output { cmd := "sha256sum", args := #[inputPath] }
   if sha.exitCode != 0 || (← IO.FS.readFile inputPath) != raw then

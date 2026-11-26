@@ -141,6 +141,44 @@ if [[ -n "$qid_json" ]]; then
   lake env lean --run tools/GwbProofRunner.lean article-qid-check \
     "$source_dir/article.txt" "$source_dir/slr-record.json" \
     "$source_dir/article-candidates.json" "$qid_json"
+  # Exact bounded article claim -> independent JMD P39 support.
+  office_json="${GWB_Q11696_ENTITY_JSON:-${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}/Q11696.json}"
+  if [[ -f "$office_json" ]]; then
+    mkdir -p "$root/.dashi/gwb-world"
+    office_receipt="$root/.dashi/gwb-world/office-claim-proof.json"
+    stage="$(mktemp -d "$root/.dashi/gwb-world/office-check.XXXXXX")"
+    trap 'rm -rf "$stage"' EXIT
+    office_check() {
+      lake env lean --run tools/GwbProofRunner.lean article-office-check \
+        "$source_dir/article.txt" "$source_dir/slr-record.json" \
+        "$source_dir/article-candidates.json" "$1" "$2" "$3"
+    }
+    office_check "$qid_json" "$office_json" "$stage/first.json"
+    office_check "$qid_json" "$office_json" "$stage/replay.json"
+    cmp "$stage/first.json" "$stage/replay.json"
+    if office_check "$office_json" "$qid_json" "$stage/wrong.json"; then
+      echo "ERROR: swapped root/office accepted" >&2; exit 1
+    fi
+    python3 - "$qid_json" "$stage/without-office.json" <<'PY'
+import json, sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    data = json.load(f)
+data["entities"]["Q207"]["claims"].pop("P39", None)
+with open(sys.argv[2], "w", encoding="utf-8") as f:
+    json.dump(data, f)
+PY
+    if office_check "$stage/without-office.json" "$office_json" "$stage/missing.json"; then
+      echo "ERROR: missing original P39 accepted" >&2; exit 1
+    fi
+    mv "$stage/first.json" "$office_receipt"
+    echo "GWB_BOUNDED_OFFICE_REPLAY_AND_NEGATIVE_CONTROLS_PASS"
+    rm -rf "$stage"
+    trap - EXIT
+  elif [[ -n "${GWB_Q11696_ENTITY_JSON:-}" ]]; then
+    echo "Missing requested Q11696 EntityData: $office_json" >&2; exit 2
+  else
+    echo "GWB_BOUNDED_OFFICE_NOT_RUN: supply original Q11696 EntityData"
+  fi
   # The historical P4 native Rust receipt is NOT a canonical article-semantic
   # premise. Reopen it only on the explicitly selected legacy diagnostic lane.
   if [[ "$mode" == "--legacy-rust" ]]; then

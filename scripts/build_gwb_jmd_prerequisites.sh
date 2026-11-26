@@ -2,6 +2,8 @@
 # Targeted JMD theorem dependencies required by the GWB proof handoff.
 # Build these existing, source-attributed modules ONLY; never invoke lake build wikidata.
 set -euo pipefail
+# Bound individual Lean invocations; do not bound the entire campaign.
+lake() { timeout --kill-after=5s "${ITIR_STEP_TIMEOUT:-90s}" lake "$@"; }
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"

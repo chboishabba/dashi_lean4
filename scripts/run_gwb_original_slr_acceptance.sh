@@ -3,6 +3,8 @@
 # This does not run the experimental sl-semantic-expansion crate, an NLP parser,
 # a second world-model constructor, or a JMD-based article meaning resolver.
 set -euo pipefail
+# Bound individual Lean invocations; do not bound the entire campaign.
+lake() { timeout --kill-after=5s "${ITIR_STEP_TIMEOUT:-90s}" lake "$@"; }
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 source_dir="${GWB_SOURCE_DIR:-$root/.dashi/gwb-source}"

@@ -55,6 +55,7 @@ def keyListSource (ks : List CandidateKey) : String :=
 def typedProjectionProofSource (represented refuted live : List CandidateKey) : String :=
   "import RequestProject.Slr.NumericPnfRustPortContract\n" ++
   "open Wikidata.Slr.NumericPnfRustPortContract\n" ++
+  "set_option maxRecDepth 1000000 in\n" ++
   "theorem slrTypedProjectionCertificate : liveTypedKeys " ++
     keyListSource represented ++ " " ++ keyListSource refuted ++
     " = " ++ keyListSource live ++ " := by decide\n" ++

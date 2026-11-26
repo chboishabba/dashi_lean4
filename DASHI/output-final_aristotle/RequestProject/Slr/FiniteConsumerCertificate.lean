@@ -102,6 +102,52 @@ theorem omittedLiveReadingBlocksCompleteness
   apply omitted
   simpa [hRows] using rows.complete missing stillLive
 
+/-- Consumer-local projection avoids enumerating an entire dependent product.
+The recorded coordinate domain may strictly overapproximate the admissible
+readings. Constancy on the envelope descends to every live reading provided
+the original producer supplies coverage and a query-factorisation witness. -/
+theorem projectedEnvelopeConsumerClosed
+    {Reading Coordinate Answer : Type} [DecidableEq Answer]
+    (live : Reading → Prop) (project : Reading → Coordinate)
+    (domain : List Coordinate) (evaluate : Coordinate → Answer)
+    (answer : Reading → Answer)
+    (coverage : ∀ r, live r → project r ∈ domain)
+    (factor : ∀ r, live r → answer r = evaluate (project r))
+    (checked : checkConstant domain evaluate = true) :
+    ∀ x, live x → ∀ y, live y → answer x = answer y := by
+  intro x hx y hy
+  rw [factor x hx, factor y hy]
+  exact checkConstant_sound domain evaluate checked _ (coverage x hx) _ (coverage y hy)
+
+/-- The original query licence can be inhabited without materialising the
+Cartesian product. An inhabited live fibre and the source-meaning
+correspondence are still independent necessary inputs. -/
+def licenceOfProjectedEnvelope
+    {Source Observation Reading Query Answer Coordinate : Type}
+    [DecidableEq Answer]
+    (m : DocumentQueryModel Source Observation Reading Query Answer)
+    (source : Source) (q : Query) (o : Observation)
+    (sourceEq : o = m.observe source)
+    (chosen : Reading) (chosenLive : m.live o chosen)
+    (project : Reading → Coordinate) (domain : List Coordinate)
+    (evaluate : Coordinate → Answer)
+    (coverage : ∀ r, m.live o r → project r ∈ domain)
+    (queryFactor : ∀ r, m.live o r → m.readingAnswer r q = evaluate (project r))
+    (sourceFactor : ∀ otherSource, m.observe otherSource = o →
+      m.documentAnswer otherSource q = m.readingAnswer chosen q)
+    (checked : checkConstant domain evaluate = true) :
+    SourceQueryLicence m source q where
+  observation := o
+  sameProducedObservation := sourceEq
+  chosenReading := chosen
+  chosenIsLive := chosenLive
+  consumerFactorises := sourceFactor
+  consumerClosed := by
+    intro r hr
+    exact projectedEnvelopeConsumerClosed (m.live o) project domain evaluate
+      (fun x => m.readingAnswer x q) coverage queryFactor checked
+      r hr chosen chosenLive
+
 end FiniteConsumer
 end Slr
 end Wikidata

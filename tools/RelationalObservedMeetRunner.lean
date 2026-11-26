@@ -2,6 +2,7 @@ import RequestProject.Slr.RelationalObservedMeet
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["factors", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runFactorProjection packet answer
   | ["relations", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runRecordedRelationQuery packet answer
   | [input, output] => Wikidata.Slr.RelationalObservedMeet.run input output
   | _ =>
@@ -14,3 +15,7 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.RelationalObservedMeet.differentRecordedAnswersBlockConstant
 
 #print axioms Wikidata.Slr.RelationalObservedMeet.selectedRelationExact
+
+#print axioms Wikidata.Slr.FiniteConsumer.projectedEnvelopeConsumerClosed
+#print axioms Wikidata.Slr.FiniteConsumer.licenceOfProjectedEnvelope
+#print axioms Wikidata.Slr.RelationalObservedMeet.recordedFactorConstancy

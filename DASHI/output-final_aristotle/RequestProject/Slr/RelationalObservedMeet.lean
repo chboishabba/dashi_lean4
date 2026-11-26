@@ -260,4 +260,82 @@ def runRecordedRelationQuery (packetPath answerPath : String) : IO UInt32 := do
     IO.eprintln "REL_ORIGINAL_RECORDED_QUERY_REJECTED: JSON"
     return 1
 
+/-- Recompute the native coordinate projection directly from the original
+factor alternatives; absent and explicit null are distinct. -/
+def factorOutcome (axis : String) (alternative : Json) : Json :=
+  let selected := if axis == "type_ref" || axis == "value" then obj alternative axis
+    else (obj alternative "value").bind (fun v => obj v axis)
+  Json.mkObj [("present", toJson selected.isSome), ("value", selected.getD Json.null)]
+
+def factorChoice (axis : String) (alternative : Json) : Json :=
+  Json.mkObj [("alternative_ref", (obj alternative "alternative_ref").getD Json.null),
+    ("outcome", factorOutcome axis alternative)]
+
+def checkFactorRow (axis : String) (original row : Json) : Bool := Id.run do
+  let some alternatives := rows original "alternatives" | return false
+  let some first := alternatives.head? | return false
+  let some reported := rows row "choices" | return false
+  let choices := alternatives.map (factorChoice axis)
+  let outcomes := (alternatives.map (factorOutcome axis)).eraseDups
+  let constant := FiniteConsumer.checkConstant alternatives
+    (fun a => (factorOutcome axis a).compress)
+  let separator := match alternatives.find? (fun a =>
+      (factorOutcome axis a).compress != (factorOutcome axis first).compress) with
+    | none => Json.null
+    | some other => Json.mkObj [("left", factorChoice axis first), ("right", factorChoice axis other)]
+  return (["factor_ref","factor_type","closure_state","residuals"] : List String).all
+      (fun k => (obj original k).isSome && obj original k == obj row k) &&
+    obj original "metadata" == obj row "source_metadata" &&
+    obj original "constraints" == obj row "embedded_constraints" &&
+    alternatives.all (fun a => (str a "alternative_ref").isSome) &&
+    choices == reported && rows row "outcomes" == some outcomes &&
+    obj row "represented_separator" == some separator &&
+    (row.getObjValAs? Bool "recorded_product_constant").toOption == some constant &&
+    (row.getObjValAs? Bool "admissible_separator_proven").toOption == some false
+
+def checkFactorProjection (native receipt : Json) : Bool := Id.run do
+  let some packet := obj native "packet" | return false
+  let some comparison := obj packet "comparison" | return false
+  let some reduction := obj comparison "reduction_projection" | return false
+  let some factors := rows reduction "factors" | return false
+  let some reported := rows receipt "rows" | return false
+  let some axis := str receipt "consumer_axis" | return false
+  return str native "schema" == some "slr-reopened-original-relation-packet-v1" &&
+    str receipt "schema" == some "slr.recorded-factor-consumer.v1" &&
+    (["type_ref","referential_type","role","value"] : List String).contains axis &&
+    (["numeric_run_ref","document_ref","snapshot_ref","packet_sha256"] : List String).all
+      (fun k => (str native k).isSome && str native k == str receipt k) &&
+    (["source_revision_ref","parser_run_ref"] : List String).all
+      (fun k => (str comparison k).isSome && str comparison k == str receipt k) &&
+    nat receipt "factor_count" == some factors.length &&
+    factors.length == reported.length &&
+    (factors.zip reported).all (fun pair => checkFactorRow axis pair.1 pair.2) &&
+    (["missing_original_tags","prefix_uncovered_nonwhitespace"] : List String).all
+      (fun k => (obj packet k).isSome && obj packet k == obj receipt k) &&
+    (["semantic_coverage_paid","source_meaning_correspondence_paid","governed_identity_paid",
+      "level_three_paid","world_truth_paid"] : List String).all
+      (fun k => (receipt.getObjValAs? Bool k).toOption == some false) &&
+    (receipt.getObjValAs? Bool "outside_model_possible").toOption == some true
+
+theorem recordedFactorConstancy (axis : String) (alternatives : List Json)
+    (h : FiniteConsumer.checkConstant alternatives
+      (fun a => (factorOutcome axis a).compress) = true) :
+    ∀ a ∈ alternatives, ∀ b ∈ alternatives,
+      (factorOutcome axis a).compress = (factorOutcome axis b).compress :=
+  FiniteConsumer.checkConstant_sound alternatives
+    (fun a => (factorOutcome axis a).compress) h
+
+def runFactorProjection (packetPath receiptPath : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile packetPath), Json.parse (← IO.FS.readFile receiptPath) with
+  | .ok packet, .ok receipt =>
+    if checkFactorProjection packet receipt then
+      IO.println "REL_RECORDED_FACTOR_CONSUMER_CHECKED"
+      return 0
+    else
+      IO.eprintln "REL_RECORDED_FACTOR_CONSUMER_REJECTED"
+      return 1
+  | _, _ =>
+    IO.eprintln "REL_RECORDED_FACTOR_CONSUMER_REJECTED: JSON"
+    return 1
+
 end Wikidata.Slr.RelationalObservedMeet

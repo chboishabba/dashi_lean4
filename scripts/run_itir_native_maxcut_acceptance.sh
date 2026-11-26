@@ -21,7 +21,7 @@ for f in article.txt slr-record.json article-candidates.json gwb_sensiblaw_p0b_m
 done
 cd "$root"
 # Refuse stale checkout identities. Operator owns checkout changes.
-git -C "$SLR_ROOT" merge-base --is-ancestor 36e26bd27994b7096a8b422ca9af5a1bc1359b71 HEAD
+git -C "$SLR_ROOT" merge-base --is-ancestor bfd82808598b1df56adbb7110ee19acf665ec90d HEAD
 git -C "$ITIR_ROOT" merge-base --is-ancestor 0c64bcc47c06814876f8b2213569438bed30a190 HEAD
 key="$( { git rev-parse HEAD; git -C "$SLR_ROOT" rev-parse HEAD; git -C "$ITIR_ROOT" rev-parse HEAD; sha256sum "$seed"; printf '%s\n' "$ITIR_REL_CORPUS_REF" "$ITIR_REL_ACCESS_CONSTRAINT_REF"; } | sha256sum | cut -d' ' -f1)"
 out="$root/artifacts/itir-native-maxcut/$key"
@@ -39,6 +39,7 @@ cd "$SLR_ROOT"
 if [[ ! -s "$out/rust-build.done" || ! -x target/debug/sensiblaw ]]; then
   step rust-test-relational.log cargo test -p sensiblaw-pg-source-store --lib relational_family
   step rust-test-numeric.log cargo test -p sensiblaw-pg-source-store --lib numeric_pnf
+  step rust-test-factor-consumer.log cargo test -p sensiblaw-pg-source-store --lib recorded_factor_consumer_tests
   step rust-build.log cargo build -p sensiblaw-cli
   sha256sum target/debug/sensiblaw > "$out/rust-build.done"
 elif ! sha256sum -c "$out/rust-build.done" >/dev/null; then
@@ -54,6 +55,9 @@ snapshot="$(jq -er .snapshot_ref "$seed")"
 digest="$(jq -er .packet_sha256 "$seed")"
 step numeric-reopen.json "$binary" numeric-pnf-native relation-reopen "$run" "$doc" "$snapshot" "$digest"
 step numeric-query.json "$binary" numeric-pnf-native relation-query "$run" "$doc" "$snapshot" "$digest" all
+for axis in type_ref referential_type role value; do
+  step "factor-$axis.json" "$binary" numeric-pnf-native factor-consumer "$run" "$doc" "$snapshot" "$digest" "$axis"
+done
 jq -e --arg digest "$digest" '.packet_sha256 == $digest' "$out/numeric-reopen.json" >/dev/null
 step relational-corpus.json "$binary" relational-family acceptance-corpus "$ITIR_REL_CORPUS_REF" "$ITIR_REL_ACCESS_CONSTRAINT_REF"
 jq -e '.cases | length > 0 and all(.[]; .exact_native_family_reopen == true)' "$out/relational-corpus.json" >/dev/null
@@ -62,6 +66,9 @@ export ITIR_ORIGINAL_RELATION_QUERY_JSON="$out/numeric-query.json"
 # Existing owner builds/validates original source and JMD; per-tool timeouts inside it.
 cd "$root"
 bash scripts/run_gwb_maxcut_acceptance.sh --full 2>&1 | tee "$out/gwb.log"
+for axis in type_ref referential_type role value; do
+  step "factor-$axis-lean.log" lake env lean --run tools/RelationalObservedMeetRunner.lean factors "$out/numeric-reopen.json" "$out/factor-$axis.json"
+done
 n="$(jq -er '.cases | length' "$out/relational-corpus.json")"
 for ((i=0;i<n;i++)); do
   jq ".cases[$i].family" "$out/relational-corpus.json" > "$out/family-$i.json"

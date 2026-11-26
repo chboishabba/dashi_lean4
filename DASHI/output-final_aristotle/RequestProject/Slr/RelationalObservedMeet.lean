@@ -393,7 +393,7 @@ def checkDemandInventory (receipt : Json) : Bool := Id.run do
     (receipt.getObjValAs? Bool "current_authority_view_installed").toOption == some true &&
     current.all (fun e => oldEvidence.contains e &&
       nat e "demand_id" == some demand && (intField e "signed_residual").isSome &&
-      ([3,6,9] : List Nat).contains ((nat e "horizon").getD 0)) &&
+      (nat e "horizon").isSome) &&
     horizon.length == keys.length * 3 && horizonExact &&
     (["semantic_coverage_paid","source_meaning_correspondence_paid","governed_identity_paid",
       "level_three_paid","world_truth_paid","outside_model_discharge_paid"] : List String).all

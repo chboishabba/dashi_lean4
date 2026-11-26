@@ -21,7 +21,7 @@ for f in article.txt slr-record.json article-candidates.json gwb_sensiblaw_p0b_m
 done
 cd "$root"
 # Refuse stale checkout identities. Operator owns checkout changes.
-git -C "$SLR_ROOT" merge-base --is-ancestor 9fa4b886ef386e26869e3b04b821ac378b304817 HEAD
+git -C "$SLR_ROOT" merge-base --is-ancestor 16c9e5a2fe5dc2166b41dc3f569e6c85d7754128 HEAD
 git -C "$ITIR_ROOT" merge-base --is-ancestor 67dbf358efcab05883db023501bdfa60a9b73f61 HEAD
 key="$( { git rev-parse HEAD; git -C "$SLR_ROOT" rev-parse HEAD; git -C "$ITIR_ROOT" rev-parse HEAD; sha256sum "$seed"; printf '%s\n' "$ITIR_REL_CORPUS_REF" "$ITIR_REL_ACCESS_CONSTRAINT_REF"; } | sha256sum | cut -d' ' -f1)"
 out="$root/artifacts/itir-native-maxcut/$key"

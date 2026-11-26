@@ -173,6 +173,39 @@ lake env lean --run tools/GwbProofRunner.lean article-check \
   "$source_dir/article.txt" "$source_dir/slr-record.json" "$source_dir/article-candidates.json" \
   | tee "$out/article-source-proof.log"
 
+# Article-content query acceptance: compare actual Lean answers with exact
+# archived producer rows. This is a reference audit, not an NLP producer.
+# Keep the raw answers in the existing tracked source-proof log.
+check_article_query() {
+  local kind="$1" value="$2" expected="$3"
+  timeout --kill-after=5s "${SLR_NATIVE_STEP_TIMEOUT:-90s}" \
+    lake env lean --run tools/GwbProofRunner.lean article-query \
+      "$source_dir/article.txt" "$source_dir/slr-record.json" \
+      "$source_dir/article-candidates.json" "$kind" "$value" \
+      > "$tmp/article-query-$kind.log"
+  tail -n 1 "$tmp/article-query-$kind.log" > "$tmp/article-query-$kind.json"
+  jq -e --arg kind "$kind" --arg value "$value" \
+    --argjson expected "$expected" \
+    '.schema == "jmd-checked-article-observation-query-v1" and
+     .kind == $kind and .value == $value and .rows == $expected and
+     .scope == "original-observed-rows-only" and
+     .semantic_licence_paid == false and .world_truth_paid == false' \
+    "$tmp/article-query-$kind.json" >/dev/null
+  cat "$tmp/article-query-$kind.json" >> "$out/article-source-proof.log"
+}
+projection="$source_dir/article-candidates.json"
+predicate="$(jq -er '.event_candidates[0].predicate.surface' "$projection")"
+year="$(jq -er '.literal_year_mentions[0].surface' "$projection")"
+check_article_query predicate "$predicate" \
+  "$(jq -c --arg v "$predicate" '[.event_candidates[] | select(.predicate.surface == $v or .predicate.lemma == $v)]' "$projection")"
+check_article_query year "$year" \
+  "$(jq -c --arg v "$year" '[.literal_year_mentions[] | select(.surface == $v)]' "$projection")"
+check_article_query person Bush \
+  "$(jq -c '[.people_mentions[] | select(.surface == "Bush")]' "$projection")"
+check_article_query proper-noun Bush \
+  "$(jq -c '[.proper_noun_tokens[] | select(.surface == "Bush")]' "$projection")"
+echo "GWB_ARTICLE_OBSERVATION_QUERY_REFERENCE_PARITY_OK" | tee -a "$out/article-source-proof.log"
+
 # The first real-article consumer theorem: the original dependency rows
 # provide two different embedded-parent answers for an IDENTICAL flat
 # scope label. Lean checks the source graph and constructs a no-factorisation

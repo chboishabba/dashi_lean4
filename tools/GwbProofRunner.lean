@@ -392,10 +392,13 @@ def main (args : List String) : IO UInt32 := do
       runRealScopeCheck article source projection
   | ["rust-fibre-check", article, source, projection, native] =>
       runNativeFibreReceipt article source projection native
+  | ["article-query", article, source, projection, kind, value] =>
+      let ok ← Slr.ArticleProof.verifyFiles article source projection (some (kind, value))
+      return if ok then 0 else 1
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON"
+      IO.eprintln "usage: fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -449,3 +452,6 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbProductionTrace.checkedTraceSound
 #print axioms Wikidata.Slr.GwbProductionTrace.temporalQueryOriginal
+
+#print axioms Wikidata.Slr.ArticleProof.queryCheckedArticleExact
+#print axioms Wikidata.Slr.ArticleProof.checkedArticleQuerySound

@@ -184,10 +184,11 @@ check_article_query() {
       "$source_dir/article-candidates.json" "$kind" "$value" \
       > "$tmp/article-query-$kind.log"
   tail -n 1 "$tmp/article-query-$kind.log" > "$tmp/article-query-$kind.json"
+  printf '%s\n' "$expected" > "$tmp/article-query-$kind-expected.json"
   jq -e --arg kind "$kind" --arg value "$value" \
-    --argjson expected "$expected" \
+    --slurpfile expected "$tmp/article-query-$kind-expected.json" \
     '.schema == "jmd-checked-article-observation-query-v1" and
-     .kind == $kind and .value == $value and .rows == $expected and
+     .kind == $kind and .value == $value and .rows == $expected[0] and
      .scope == "original-observed-rows-only" and
      .semantic_licence_paid == false and .world_truth_paid == false' \
     "$tmp/article-query-$kind.json" >/dev/null
@@ -204,6 +205,15 @@ check_article_query person Bush \
   "$(jq -c '[.people_mentions[] | select(.surface == "Bush")]' "$projection")"
 check_article_query proper-noun Bush \
   "$(jq -c '[.proper_noun_tokens[] | select(.surface == "Bush")]' "$projection")"
+check_article_query negation-token not \
+  "$(jq -c --rawfile article "$source_dir/article.txt" '
+    [.pnf_candidates[] | . as $sentence |
+     select(any(.dependency_rows[]; . as $t |
+       $t.dep == "neg" and $t.text == "not" and
+       ($t.idx | type) == "number" and
+       ($t.head_i | type) == "number" and
+       $article[$t.idx:($t.idx + 3)] == "not" and
+       any($sentence.dependency_rows[]; .i == $t.head_i)))]' "$source_dir/slr-record.json")"
 echo "GWB_ARTICLE_OBSERVATION_QUERY_REFERENCE_PARITY_OK" | tee -a "$out/article-source-proof.log"
 
 # The first real-article consumer theorem: the original dependency rows

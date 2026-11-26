@@ -48,11 +48,31 @@ theorem predicateQuerySound (projection : Json) (surface : String) (e : Json)
 
 /-- Exact source-observation consumer. The observation is the complete
     original checked event array, not a semantic interpretation. -/
-def sourceModel : DocumentQueryModel Json Json Unit String (List Json) where
+def sourceModel : DocumentQueryModel Json Json Json String (List Json) where
   observe := id
-  live := fun _ _ => True
+  live := fun observation reading => reading = observation
   documentAnswer := predicateQuery
-  readingAnswer := fun _ _ => []
+  readingAnswer := predicateQuery
+
+/-- Source-only predicate query licence: the observation is the original
+    projection itself. No semantic completeness or reviewed identity follows. -/
+def sourcePredicateLicence (projection : Json) (surface : String) :
+    SourceQueryLicence sourceModel projection surface where
+  observation := projection
+  sameProducedObservation := rfl
+  chosenReading := projection
+  chosenIsLive := rfl
+  consumerFactorises := by
+    intro other h
+    exact congrArg (fun j => predicateQuery j surface) h
+  consumerClosed := by
+    intro reading h
+    exact congrArg (fun j => predicateQuery j surface) h
+
+theorem licensedPredicateQuerySound (projection : Json) (surface : String) :
+    sourceModel.documentAnswer projection surface = predicateQuery projection surface :=
+  slrJmdDocumentQuerySound (sourcePredicateLicence projection surface)
+    (predicateQuery projection surface) rfl
 
 /-- A source-bound evaluated query with both directions of membership.
     No arbitrary evidence proposition or external identity premise. -/
@@ -79,6 +99,7 @@ def run (articlePath sourcePath projectionPath outputPath : String) : IO UInt32 
       let surfaces := (events projection).map predicateSurface
       let queries := surfaces.eraseDups.map fun surface =>
         let answer := predicateQuery projection surface
+        let _ := licensedPredicateQuerySound projection surface
         Json.mkObj [("query", toJson surface), ("answer", toJson answer),
           ("scope", toJson ("original-predicate-surface-only" : String))]
       IO.FS.writeFile outputPath ((Json.mkObj [

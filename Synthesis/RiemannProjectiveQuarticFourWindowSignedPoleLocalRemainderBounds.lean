@@ -3515,3 +3515,82 @@ theorem literalLocalEighthPhase_eq_mixed (t eta : ℝ) (n : ℕ) :
   · simp [hl]
 
 end Synthesis
+
+
+/-!
+## Positive horizontal curvature on the original finite zero carrier
+
+For the literal unweighted atom (cosh(a*u)-1)*cos(delta*u), the second
+derivative at zero is a^2, independent of delta.  Unlike the signed W
+profile, this observer retains all centered zeros, INCLUDING SameOrd,
+and uses the original nonnegative multiplicity.  This is an exact
+finite reverse consumer, not a claim that the analytic curvature vanishes.
+-/
+
+namespace Synthesis
+
+noncomputable def centeredHorizontalCurvatureAt (t : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2
+
+theorem centeredHorizontalCurvatureAt_nonneg (t : ℝ) (n : ℕ) :
+    0 ≤ centeredHorizontalCurvatureAt t n := by
+  classical
+  unfold centeredHorizontalCurvatureAt
+  exact Finset.sum_nonneg fun rho _ =>
+    mul_nonneg (by positivity) (sq_nonneg (heightOf rho))
+
+/-- Reverse quantitative payment for each actual included zero. -/
+theorem centeredHorizontalCurvatureAt_atom_le
+    {t : ℝ} {n : ℕ} {rho : Zeros}
+    (hrho : rho ∈ centeredZeroFinset t n) :
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2
+      ≤ centeredHorizontalCurvatureAt t n := by
+  classical
+  unfold centeredHorizontalCurvatureAt
+  exact Finset.single_le_sum
+    (fun z _ => mul_nonneg (by positivity) (sq_nonneg (heightOf z))) hrho
+
+/-- Zero curvature detects every positive-multiplicity zero; no claim
+about an index assigned zero multiplicity. -/
+theorem centeredHorizontalCurvatureAt_eq_zero_iff (t : ℝ) (n : ℕ) :
+    centeredHorizontalCurvatureAt t n = 0 ↔
+      ∀ rho ∈ centeredZeroFinset t n,
+        0 < (zetaZeroConfig).mult (rho : ℂ) → heightOf rho = 0 := by
+  classical
+  constructor
+  · intro h rho hrho hm
+    have hle := centeredHorizontalCurvatureAt_atom_le hrho
+    rw [h] at hle
+    have hmR : 0 < ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by exact_mod_cast hm
+    have hz : ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2 = 0 :=
+      le_antisymm hle (mul_nonneg hmR.le (sq_nonneg (heightOf rho)))
+    have hs := (mul_eq_zero.mp hz).resolve_left hmR.ne'
+    rw [pow_two] at hs
+    rcases mul_eq_zero.mp hs with hs | hs <;> exact hs
+  · intro h
+    unfold centeredHorizontalCurvatureAt
+    apply Finset.sum_eq_zero
+    intro rho hrho
+    by_cases hm : (zetaZeroConfig).mult (rho : ℂ) = 0
+    · simp [hm]
+    · have hmpos : 0 < (zetaZeroConfig).mult (rho : ℂ) :=
+        Nat.pos_of_ne_zero hm
+      simp [h rho hrho hmpos]
+
+/-- A cofinal sequence of small upper bounds is enough: pointwise
+nonnegative curvature is squeezed by the actual finite-cloud budget.
+The covering/vanishing source theorem is separate. -/
+theorem centeredHorizontalCurvatureAt_zero_of_arbitrary_upper
+    (t : ℝ) (n : ℕ)
+    (h : ∀ eps : ℝ, 0 < eps → centeredHorizontalCurvatureAt t n ≤ eps) :
+    centeredHorizontalCurvatureAt t n = 0 := by
+  have hn := centeredHorizontalCurvatureAt_nonneg t n
+  by_contra hne
+  have hp : 0 < centeredHorizontalCurvatureAt t n :=
+    lt_of_le_of_ne hn (Ne.symm hne)
+  have hh := h (centeredHorizontalCurvatureAt t n / 2) (by linarith)
+  linarith
+
+end Synthesis

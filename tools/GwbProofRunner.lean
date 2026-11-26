@@ -161,6 +161,15 @@ def runSavedM12Check (jsonPath literalPath : String) : IO UInt32 := do
   if h : Slr.checkNativeM12Literal literal observed = true then
     let checked : Slr.CheckedNativeM12Literal literal observed := ⟨h⟩
     let _ := Slr.checkedM12AllSourceSpansExact checked
+    if (json.getObjVal? "reporting_clauses").isOk then
+      if hReport : Slr.checkNativeReportingRows json observed = true then
+        let _ := Slr.checkedNativeReportingRowsExact json observed hReport
+        IO.println "GWB_DB_M12_REPORTING_REFERENCE_PARITY_OK"
+      else
+        IO.eprintln "GWB_DB_M12_REPORTING_REFERENCE_PARITY_REJECTED"
+        return 1
+    else
+      IO.println "GWB_DB_M12_LEGACY_NO_REPORTING_PROJECTION"
     IO.println "GWB_DB_M12_LITERAL_AND_DEPENDENCY_KERNEL_OK"
     IO.println "Scope: source-bound original M12 product; no event/identity admission"
     return 0
@@ -477,7 +486,7 @@ def main (args : List String) : IO UInt32 := do
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON"
+      IO.eprintln "usage: fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON | article-office-check ARTICLE SLR_RECORD PROJECTION Q207_JSON Q11696_JSON OUTPUT"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -539,3 +548,5 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbCanonicalSource.reportingReadingInvariant
 #print axioms Wikidata.Slr.GwbCanonicalSource.checkedReportingAnswerSound
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndKB
+
+#print axioms Wikidata.Slr.checkedNativeReportingRowsExact

@@ -228,3 +228,36 @@ theorem periodFiveThreePathEGF (z : ℚ) :
     (1+2*z+z^2)^3 = (1+z)^6 := by ring
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Original six marked axis channels, now with unequal pair couplings. -/
+theorem anisotropicMassInverse (x y z m : ℚ) :
+    - (-(m+2*x+2*y+2*z))-2*x-2*y-2*z=m := by ring
+
+theorem anisotropicMassRightInverse (x y z center : ℚ) :
+    - ((-center-2*x-2*y-2*z)+2*x+2*y+2*z)=center := by ring
+
+/-- The calibrated six-direction stencil determines all its coefficients
+from the symmetric principal matrix. Positivity is a separate condition. -/
+theorem sixDirectionPrincipalInverse (x y z u v w : ℚ) :
+    (x+u+v-u-v, y+u+w-u-w, z+v+w-v-w, u,v,w) =
+      (x,y,z,u,v,w) := by
+  have hx : x+u+v-u-v=x := by ring
+  have hy : y+u+w-u-w=y := by ring
+  have hz : z+v+w-v-w=z := by ring
+  rw [hx, hy, hz]
+
+/-- Equal principal quadratic need not identify the fourth moment. -/
+theorem oppositeDiagonalSamePrincipal (x y : ℚ) :
+    (x+y)^2+(x-y)^2=2*(x^2+y^2) := by ring
+
+theorem oppositeDiagonalQuarticResidual (x y : ℚ) :
+    (x+y)^4+(x-y)^4-2*(x^4+y^4)=12*x^2*y^2 := by ring
+
+/-- Two signed shortest paths cancel. A positive diagonal can make
+the full stiffness positive without removing this cancellation. -/
+theorem signedDiamondCancellation : (1:ℚ)*1+1*(-1)=0 := by norm_num
+
+end DASHITOE.HopfMonsterSourceCut

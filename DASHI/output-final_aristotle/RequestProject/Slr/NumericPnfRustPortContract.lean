@@ -224,6 +224,25 @@ structure CandidateKey where
   id : Nat
   deriving Repr, BEq, DecidableEq
 
+instance : LawfulBEq CandidateKey where
+  rfl := by
+    intro a
+    cases a with
+    | mk kind id =>
+      change (kind == kind && id == id) = true
+      simp
+  eq_of_beq := by
+    intro a b h
+    cases a with
+    | mk ak aid =>
+      cases b with
+      | mk bk bid =>
+        change (ak == bk && aid == bid) = true at h
+        simp only [Bool.and_eq_true, beq_iff_eq] at h
+        cases h.1
+        cases h.2
+        rfl
+
 structure CandidateEvidence where
   demand : Nat
   target : CandidateKey
@@ -568,6 +587,8 @@ def checkedRefutation (demand : Nat) (candidate : CandidateKey)
 theorem checked_refutation_sound (demand : Nat) (candidate : CandidateKey)
     (e : CandidateEvidence) (h : checkedRefutation demand candidate e = true) :
     RefutedBy demand candidate e := by
+  unfold checkedRefutation at h
+  unfold RefutedBy
   exact of_decide_eq_true h
 
 def liveTypedKeys (represented refuted : List CandidateKey) : List CandidateKey :=

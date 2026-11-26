@@ -261,3 +261,32 @@ the full stiffness positive without removing this cancellation. -/
 theorem signedDiamondCancellation : (1:ℚ)*1+1*(-1)=0 := by norm_num
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- Real and imaginary polarization on the selected rational-complex
+coordinate. The imaginary sign uses conjugate-linear first argument.
+The existing Bishop complex span compiler remains the transport owner. -/
+theorem complexRealPolarization (a b c d : ℚ) :
+    ((a+c)^2+(b+d)^2)-((a-c)^2+(b-d)^2) = 4*(a*c+b*d) := by ring
+
+theorem complexImagPolarization (a b c d : ℚ) :
+    ((a-d)^2+(b+c)^2)-((a+d)^2+(b-c)^2) = -4*(a*d-b*c) := by ring
+
+/-- Coordinate kinetic density fixes the scale of the inverse metric,
+not just its cone. Algebraic scalar factor at a nondegenerate density. -/
+theorem actionDensityReopens (rho v k : ℚ) (hv : v ≠ 0) :
+    v*(-rho/v) = -rho ∧ v*(k/v) = k := by
+  constructor <;> field_simp
+
+/-- The layered flux corrector, with the effective coefficient already
+defined by the reciprocal mean. No general homogenization theorem. -/
+theorem layeredFluxMean (p a b ke : ℚ)
+    (h : ke*(p*a+(1-p)*b)=1) :
+    p*(ke*a)+(1-p)*(ke*b)=1 := by
+  calc
+    _ = ke*(p*a+(1-p)*b) := by ring
+    _ = 1 := h
+
+end DASHITOE.HopfMonsterSourceCut

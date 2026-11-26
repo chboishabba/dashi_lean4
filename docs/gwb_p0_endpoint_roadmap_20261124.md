@@ -1,5 +1,24 @@
 # GWB / SLR / SensibLaw / JMD — controlling P0 endpoint roadmap
 
+## 2026-11-26 — native focus correspondence and same-argument Level-3 integration (source-written)
+
+SLR #78 implementation: [5e7aa4c](https://github.com/chboishabba/slr/commit/5e7aa4c65f702d1dcd86af994e5af0d0e761c9e9), [490bee2](https://github.com/chboishabba/slr/commit/490bee2730414d08f28c7d02e1d66d3eb9778cc7), [4309e59](https://github.com/chboishabba/slr/commit/4309e594f0585a1aac200b27a89e364f6071eb46), [af73afb](https://github.com/chboishabba/slr/commit/af73afbd087ede976657e8973a52d0518c81d2bc). Existing production owners extended, not replaced.
+
+- Existing persisted relation reopen now joins the exact original subject factor to the stored reduction/source key, native factor revision and actual candidate alternative. Reopens all three current candidate-set builds including uncapped ordered membership, cap prefix, build/digest and candidate inverse coordinates; retains expletive separately.
+- The same read-only snapshot reopens actual demand source object, all-kind original typed state/evidence, exact represented key equality, signed horizons and observed identity classes. It checks the actual persisted numeric factor role order, token fibres, slot and support against the original relation inverse, never a rollback-only generated factor. Missing/ambiguous/mismatching rows remain unpaid; exact ordered role/support is deliberately conservative, not an independent semantic relation proof.
+- Existing current-focus owner binding now includes this correspondence and requires the SAME persisted numeric argument to have a current Level-3 derivation carrying the observed governed witness. A referee receipt alone or unrelated derivation cannot pay this gate. Existing rollback readback remains required. The binding digest changes; old referee bindings cannot satisfy the new payload. Golden CurrentFocusOwnerProof and joined_endpoint_lanes_pay_scoped_consumer remain the proof owners, not replaced by Boolean claims.
+- Existing endpoint dossier includes the correspondence and explicit unpaid blocker. Regression source includes missing, swapped, wrong role/token, multi-token inverse and unrelated Level-3 witness negatives.
+
+Disposition: **SOURCE-WRITTEN / NOT COMPILED / NOT LIVE ACCEPTED**. No new DB authority, coverage, semantic refutation, unique identity, whole-document parity or direct activation is claimed. Remaining actual evidence is the live persisted argument and its exact candidate set inverse; independent producer correspondence and 975 TAG observations (or exact consumer-relative sufficiency); semantic all-kind/outside-model coverage and current owner proof; actual same-binding governed witness/publication and inverse; independent whole-document parity and native physical work certification. An unresolved result is legitimate, not closure of these obligations. No SensibLaw implementation, no GitHub CI, no reparse or repeated direct staging requested.
+
+Use existing read-only campaign on the original numeric database, from current SLR PR checkout, with a new checkpoint (binary/source manifest changed):
+```sh
+SLR_NATIVE_RELATION_REOPEN_CHECKPOINT=.native-v8-focus-correspondence \
+  bash scripts/reopen_native_v8_relation_packet.sh native-numeric-binding-v8-endpoint.json
+```
+Optional independent reference JSON is accepted as the second argument; comparison is not producer authentication. Publish raw reopened JSON and any comparison JSON; coordinating assistant inspects actual inverse/role, typed dispositions and provenance, not operator interpretations. Do not rerun accepted source repair/staging. Existing local 90-second bounded steps and exact checkpoint manifest remain.
+
+
 ## 2026-11-26 — CONTROLLING P0 disposition: golden-first, native SLR maximum-cut
 
 **Authority and implementation constitution (supersedes conflicting historical instructions throughout this document).** DASHI Agda and DASHI Lean are the golden formal specifications; inspect actual definitions/theorem bodies, default branches and active PRs before declaring a missing construction. SLR Rust/PostgreSQL alone is the production implementation, durable persistence and execution owner. SensibLaw Python/SQL is historical prototype/donor/reference ONLY: no further implementation, migrations, runtime repair or acceptance campaign in that repository. Preserve donor attribution and original evidence coordinates; historical owner names and migration numbers describe provenance, not a current production target. PostgreSQL is the durable authority/transaction boundary, not a mandatory internal execution bus. Do not duplicate a parser, identity resolver, proof framework or generic relational execution pipeline.

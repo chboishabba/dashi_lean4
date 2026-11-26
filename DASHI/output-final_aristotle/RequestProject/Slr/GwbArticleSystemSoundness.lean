@@ -88,6 +88,53 @@ theorem checkedArticleAndRootKBPropertySound
   rw [sameQid] at kbProof
   exact ⟨hIdentity, hSource, hAnswer, kbProof⟩
 
+/- The canonical article lead is a bounded controlled-language specimen,
+not an unrestricted English-to-Wikidata translator. The exact source
+sentence explicitly attributes the office to the named article subject.
+The JMD sitelink binds that subject to Q207; independent EntityData must
+support P39/Q11696. The article's date and ordinal are NOT mapped to
+Wikidata qualifiers by this rule. -/
+
+def officeLead : String :=
+  "George Walker Bush (born July 6, 1946) is an American retired politician and businessman who served as the 43rd president of the United States from 2001 to 2009."
+
+def officeClaim (article : String) : Bool :=
+  article.startsWith officeLead
+
+private def entityRecord (json : Json) (qid : String) : Json :=
+  (((json.getObjVal? "entities").toOption.getD Json.null).getObjVal? qid).toOption.getD Json.null
+
+def entityRevision (json : Json) (qid : String) : Option Nat :=
+  ((entityRecord json qid).getObjValAs? Nat "lastrevid").toOption
+
+def officeLabelChecked (office : Json) : Bool :=
+  GwbWorldGraph.jsonEntityMatchesQid "Q11696" office &&
+  Cli.entityLabelIn (entityRecord office "Q11696") "en" ==
+    some "President of the United States"
+
+def officePKB (root office : Json) : PKB :=
+  GwbWorldGraph.pkbFromImportedEntities
+    (Cli.entitiesOfJson root ++ Cli.entitiesOfJson office)
+
+def officePropertySupported (root office : Json) : Bool :=
+  (officePKB root office).supportsB (Pid.wd "P39")
+    (Qid.wd "Q207") (Qid.wd "Q11696")
+
+/-- The source rule and independent KB support are retained as distinct
+    premises. This is an article-claim/KB agreement under the named bounded
+    rule, not general semantic identity, qualifier agreement or world truth. -/
+theorem checkedOfficeClaimAndKB
+    {article : String} {slr projection root office : Json}
+    (source : GwbArticleIdentity.CheckedGwbRootIdentity article slr projection root)
+    (claim : officeClaim article = true)
+    (label : officeLabelChecked office = true)
+    (support : officePropertySupported root office = true) :
+    GwbArticleIdentity.checkGwbRootIdentity article slr projection root = true ∧
+    officeClaim article = true ∧ officeLabelChecked office = true ∧
+    (∃ p, (p, Qid.wd "Q207", Qid.wd "Q11696") ∈ (officePKB root office).stmts ∧
+      (officePKB root office).isSubPropertyOf p (Pid.wd "P39") = true) := by
+  exact ⟨source.checked, claim, label, PKB.supportsB_iff.mp support⟩
+
 end GwbArticleSystem
 end Slr
 end Wikidata

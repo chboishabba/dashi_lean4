@@ -135,6 +135,26 @@ theorem checkedOfficeClaimAndKB
       (officePKB root office).isSubPropertyOf p (Pid.wd "P39") = true) := by
   exact ⟨source.checked, claim, label, PKB.supportsB_iff.mp support⟩
 
+/-- Extend the EXISTING exact bounded lead rule, not a generic parser.
+Its selected consumer is the office interval at year granularity. Each
+matched native statement carries its complete GUID, rank and qualifiers;
+other qualifier semantics remain outside this consumer. -/
+theorem checkedOfficeClaimAndQualifiedYears
+    {article : String} {slr projection root office statement : Json}
+    (source : GwbArticleIdentity.CheckedGwbRootIdentity article slr projection root)
+    (claim : officeClaim article = true)
+    (label : officeLabelChecked office = true)
+    (support : officePropertySupported root office = true)
+    (years : statement ∈ GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009) :
+    officeClaim article = true ∧
+    (∃ p, (p, Qid.wd "Q207", Qid.wd "Q11696") ∈ (officePKB root office).stmts ∧
+      (officePKB root office).isSubPropertyOf p (Pid.wd "P39") = true) ∧
+    statement ∈ GwbWorldGraph.originalPropertyRows root "Q207" "P39" ∧
+    GwbWorldGraph.yearIntervalStatementMatches "P39" "Q11696" 2001 2009 statement = true := by
+  have base := checkedOfficeClaimAndKB source claim label support
+  have native := (GwbWorldGraph.qualifiedYearRowsExact root "Q207" "P39" "Q11696" 2001 2009 statement).mp years
+  exact ⟨claim, base.2.2.2, native.1, native.2⟩
+
 end GwbArticleSystem
 end Slr
 end Wikidata

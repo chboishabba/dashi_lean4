@@ -144,6 +144,62 @@ theorem checkedGraphInventoryExact (graph : Json) (kb : PKB) :
       ((arr? graph "item_property_edges").getD #[]).size := by
   simp [checkGraphAgainstImportedKB]
 
+/-- A generic year-level consumer over an original Wikidata time snak.
+We reject ambiguous precision, non-Gregorian calendars, uncertain intervals
+and missing coordinates. This does not interpret prose or claim day equality. -/
+def exactGregorianYearSnak (property : String) (year : Nat) (snak : Json) : Bool :=
+  let value := ((snak.getObjVal? "datavalue").toOption.getD Json.null)
+  let time := (value.getObjVal? "value").toOption.getD Json.null
+  let calendar := str? time "calendarmodel"
+  let precision := nat? time "precision"
+  str? snak "property" == some property &&
+  str? snak "snaktype" == some "value" &&
+  str? value "type" == some "time" &&
+  (calendar == some "http://www.wikidata.org/entity/Q1985727" ||
+    calendar == some "https://www.wikidata.org/entity/Q1985727") &&
+  (match precision with | some p => decide (9 ≤ p ∧ p ≤ 14) | none => false) &&
+  nat? time "before" == some 0 && nat? time "after" == some 0 &&
+  nat? time "timezone" == some 0 &&
+  decide (1000 ≤ year ∧ year ≤ 9999) &&
+  ((str? time "time").getD "").startsWith ("+" ++ toString year ++ "-")
+
+def exactYearQualifier (property : String) (year : Nat) (statement : Json) : Bool :=
+  let qualifiers := (statement.getObjVal? "qualifiers").toOption.getD Json.null
+  match (arr? qualifiers property).map Array.toList with
+  | some [snak] => exactGregorianYearSnak property year snak
+  | _ => false
+
+/-- Do not join a start from one statement to an end from another. Both
+qualifiers are checked on the SAME original nondeprecated item statement. -/
+def yearIntervalStatementMatches (property target : String)
+    (startYear endYear : Nat) (statement : Json) : Bool :=
+  let mainsnak := (statement.getObjVal? "mainsnak").toOption.getD Json.null
+  str? mainsnak "property" == some property &&
+  Cli.statementValueId? statement == some target &&
+  (Cli.statementRank statement == "normal" || Cli.statementRank statement == "preferred") &&
+  (match str? statement "id" with | some id => !id.isEmpty | none => false) &&
+  decide (startYear ≤ endYear) &&
+  exactYearQualifier "P580" startYear statement &&
+  exactYearQualifier "P582" endYear statement
+
+def originalPropertyRows (entity : Json) (subject property : String) : List Json :=
+  let entities := (entity.getObjVal? "entities").toOption.getD Json.null
+  let record := (entities.getObjVal? subject).toOption.getD Json.null
+  let claims := (record.getObjVal? "claims").toOption.getD Json.null
+  ((arr? claims property).getD #[]).toList
+
+def qualifiedYearRows (entity : Json) (subject property target : String)
+    (startYear endYear : Nat) : List Json :=
+  (originalPropertyRows entity subject property).filter
+    (yearIntervalStatementMatches property target startYear endYear)
+
+theorem qualifiedYearRowsExact (entity : Json) (subject property target : String)
+    (startYear endYear : Nat) (statement : Json) :
+    statement ∈ qualifiedYearRows entity subject property target startYear endYear ↔
+    statement ∈ originalPropertyRows entity subject property ∧
+    yearIntervalStatementMatches property target startYear endYear statement = true := by
+  simp [qualifiedYearRows, List.mem_filter]
+
 end GwbWorldGraph
 end Slr
 end Wikidata

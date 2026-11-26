@@ -456,6 +456,12 @@ def runOfficeClaimCheck
               article slr projection root := ⟨hRoot⟩
             let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndKB
               checked hClaim hLabel hSupport
+            let qualified := Slr.GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009
+            let mut yearSupport := false
+            for statement in qualified do
+              if hYears : statement ∈ Slr.GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009 then
+                let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears checked hClaim hLabel hSupport hYears
+                yearSupport := true
             IO.FS.writeFile outputPath ((Lean.Json.mkObj [
               ("schema", toJson ("gwb-bounded-office-claim-kb-agreement-v1" : String)),
               ("source_revision", toJson ("enwiki-revid:1385850169" : String)),
@@ -471,6 +477,12 @@ def runOfficeClaimCheck
               ("office_revision", toJson officeRev),
               ("office_sha256", toJson ((officeSha.stdout.splitOn " ").head!)),
               ("scope", toJson ("bounded-explicit-lead-rule-and-independent-kb-support" : String)),
+              ("year_interval_consumer", toJson ("P580/P582 Gregorian year only" : String)),
+              ("source_start_year", toJson (2001 : Nat)),
+              ("source_end_year", toJson (2009 : Nat)),
+              ("bounded_year_interval_alignment_paid", toJson yearSupport),
+              ("matching_original_year_interval_statements", toJson qualified),
+              ("year_interval_disposition", toJson (if yearSupport then "matched" else "unresolved")),
               ("governed_identity_paid", toJson false),
               ("general_semantic_alignment_paid", toJson false),
               ("qualifier_alignment_paid", toJson false),
@@ -616,3 +628,6 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndKB
 
 #print axioms Wikidata.Slr.checkedNativeReportingRowsExact
+
+#print axioms Wikidata.Slr.GwbWorldGraph.qualifiedYearRowsExact
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears

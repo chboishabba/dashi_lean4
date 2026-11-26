@@ -276,7 +276,8 @@ def checkFactorRow (axis : String) (original row : Json) : Bool := Id.run do
   let some first := alternatives.head? | return false
   let some reported := rows row "choices" | return false
   let choices := alternatives.map (factorChoice axis)
-  let outcomes := (alternatives.map (factorOutcome axis)).eraseDups
+  let outcomes := (alternatives.map (factorOutcome axis)).foldl
+    (fun acc value => if acc.contains value then acc else acc ++ [value]) []
   let constant := FiniteConsumer.checkConstant alternatives
     (fun a => (factorOutcome axis a).compress)
   let separator := match alternatives.find? (fun a =>
@@ -336,6 +337,79 @@ def runFactorProjection (packetPath receiptPath : String) : IO UInt32 := do
       return 1
   | _, _ =>
     IO.eprintln "REL_RECORDED_FACTOR_CONSUMER_REJECTED: JSON"
+    return 1
+
+private def intField (j : Json) (k : String) : Option Int :=
+  (j.getObjValAs? Int k).toOption
+
+private def demandKey (j : Json) : Option (Nat × Nat) := do
+  pure (← nat j "target_kind", ← nat j "target_id")
+
+/-- Independent accounting on the original signed numeric demand input.
+Every represented candidate survives in the upper envelope, including a
+reported refutation. This is not a proof that the represented domain covers
+production-live semantics. -/
+def checkDemandInventory (receipt : Json) : Bool := Id.run do
+  let some universe := rows receipt "represented_universe" | return false
+  let some candidates := rows receipt "candidates" | return false
+  let some oldEvidence := rows receipt "historical_evidence" | return false
+  let some current := rows receipt "current_evidence" | return false
+  let some horizon := rows receipt "signed_horizon_tallies" | return false
+  let some demand := nat receipt "demand_id" | return false
+  let some original := obj receipt "original_demand" | return false
+  let some keys := universe.mapM demandKey | return false
+  let some actual := candidates.mapM demandKey | return false
+  let some evidenceIds := current.mapM (fun e => nat e "evidence_id") | return false
+  let candidateExact := (candidates.zip keys).all fun (c, k) =>
+    match obj c "state" with
+    | none => false
+    | some s =>
+      let currentMatch := current.any fun e =>
+        nat e "evidence_id" == nat s "admissibility_evidence_id" &&
+        (nat e "evidence_id").isSome && demandKey e == some k
+      demandKey s == some k &&
+      nat s "demand_id" == some demand &&
+      (c.getObjValAs? Bool "reported_refuted").toOption ==
+        (s.getObjValAs? Bool "refuted").toOption &&
+      (c.getObjValAs? Bool "same_candidate_current_evidence").toOption == some currentMatch &&
+      (c.getObjValAs? Bool "retained_in_conservative_envelope").toOption == some true
+  let horizonExact := keys.all fun k =>
+    ([3,6,9] : List Nat).all fun h =>
+      let evidence := current.filter fun e =>
+        demandKey e == some k && (nat e "horizon").isSome &&
+        decide ((nat e "horizon").getD 10 ≤ h)
+      let total := evidence.foldl (fun sum e => sum + (intField e "signed_residual").getD 0) (0 : Int)
+      let phase : Int := if total < 0 then -1 else if total > 0 then 1 else 0
+      match horizon.filter (fun row => demandKey row == some k && nat row "horizon" == some h) with
+      | [row] => nat row "demand_id" == some demand &&
+          nat row "evidence_count" == some evidence.length &&
+          intField row "signed_residual" == some total && intField row "phase" == some phase
+      | _ => false
+  return str receipt "schema" == some "slr.native-demand-fibre.v1" &&
+    nat original "demand_id" == some demand && decide (demand > 0) &&
+    keys == actual && decide keys.Nodup && decide evidenceIds.Nodup &&
+    universe.all (fun row => nat row "demand_id" == some demand) &&
+    candidateExact &&
+    (receipt.getObjValAs? Bool "current_authority_view_installed").toOption == some true &&
+    current.all (fun e => oldEvidence.contains e &&
+      nat e "demand_id" == some demand && (intField e "signed_residual").isSome &&
+      ([3,6,9] : List Nat).contains ((nat e "horizon").getD 0)) &&
+    horizon.length == keys.length * 3 && horizonExact &&
+    (["semantic_coverage_paid","source_meaning_correspondence_paid","governed_identity_paid",
+      "level_three_paid","world_truth_paid","outside_model_discharge_paid"] : List String).all
+      (fun k => (receipt.getObjValAs? Bool k).toOption == some false)
+
+def runDemandInventory (path : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile path) with
+  | .ok receipt =>
+    if checkDemandInventory receipt then
+      IO.println "REL_NATIVE_DEMAND_INVENTORY_CHECKED"
+      return 0
+    else
+      IO.eprintln "REL_NATIVE_DEMAND_INVENTORY_REJECTED"
+      return 1
+  | .error _ =>
+    IO.eprintln "REL_NATIVE_DEMAND_INVENTORY_REJECTED: JSON"
     return 1
 
 end Wikidata.Slr.RelationalObservedMeet

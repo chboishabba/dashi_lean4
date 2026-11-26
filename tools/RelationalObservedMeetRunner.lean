@@ -2,6 +2,7 @@ import RequestProject.Slr.RelationalObservedMeet
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["demand", receipt] => Wikidata.Slr.RelationalObservedMeet.runDemandInventory receipt
   | ["factors", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runFactorProjection packet answer
   | ["relations", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runRecordedRelationQuery packet answer
   | [input, output] => Wikidata.Slr.RelationalObservedMeet.run input output

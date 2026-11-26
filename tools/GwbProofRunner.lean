@@ -457,11 +457,10 @@ def runOfficeClaimCheck
             let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndKB
               checked hClaim hLabel hSupport
             let qualified := Slr.GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009
-            let mut yearSupport := false
-            for statement in qualified do
-              if hYears : statement ∈ Slr.GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009 then
-                let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears checked hClaim hLabel hSupport hYears
-                yearSupport := true
+            let yearSupport := !qualified.isEmpty
+            for statement in qualified.attach do
+              let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears
+                checked hClaim hLabel hSupport statement.property
             IO.FS.writeFile outputPath ((Lean.Json.mkObj [
               ("schema", toJson ("gwb-bounded-office-claim-kb-agreement-v1" : String)),
               ("source_revision", toJson ("enwiki-revid:1385850169" : String)),

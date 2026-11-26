@@ -175,8 +175,10 @@ def yearIntervalStatementMatches (property target : String)
     (startYear endYear : Nat) (statement : Json) : Bool :=
   let mainsnak := (statement.getObjVal? "mainsnak").toOption.getD Json.null
   str? mainsnak "property" == some property &&
+  str? mainsnak "snaktype" == some "value" &&
   Cli.statementValueId? statement == some target &&
-  (Cli.statementRank statement == "normal" || Cli.statementRank statement == "preferred") &&
+  (str? statement "rank" == some "normal" || str? statement "rank" == some "preferred") &&
+  Cli.statementRank statement != "deprecated" &&
   (match str? statement "id" with | some id => !id.isEmpty | none => false) &&
   decide (startYear ≤ endYear) &&
   exactYearQualifier "P580" startYear statement &&

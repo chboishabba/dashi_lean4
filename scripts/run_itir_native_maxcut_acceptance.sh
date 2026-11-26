@@ -21,8 +21,8 @@ for f in article.txt slr-record.json article-candidates.json gwb_sensiblaw_p0b_m
 done
 cd "$root"
 # Refuse stale checkout identities. Operator owns checkout changes.
-git -C "$SLR_ROOT" merge-base --is-ancestor bfd82808598b1df56adbb7110ee19acf665ec90d HEAD
-git -C "$ITIR_ROOT" merge-base --is-ancestor 0c64bcc47c06814876f8b2213569438bed30a190 HEAD
+git -C "$SLR_ROOT" merge-base --is-ancestor 9fa4b886ef386e26869e3b04b821ac378b304817 HEAD
+git -C "$ITIR_ROOT" merge-base --is-ancestor 67dbf358efcab05883db023501bdfa60a9b73f61 HEAD
 key="$( { git rev-parse HEAD; git -C "$SLR_ROOT" rev-parse HEAD; git -C "$ITIR_ROOT" rev-parse HEAD; sha256sum "$seed"; printf '%s\n' "$ITIR_REL_CORPUS_REF" "$ITIR_REL_ACCESS_CONSTRAINT_REF"; } | sha256sum | cut -d' ' -f1)"
 out="$root/artifacts/itir-native-maxcut/$key"
 mkdir -p "$out"
@@ -58,6 +58,14 @@ step numeric-query.json "$binary" numeric-pnf-native relation-query "$run" "$doc
 for axis in type_ref referential_type role value; do
   step "factor-$axis.json" "$binary" numeric-pnf-native factor-consumer "$run" "$doc" "$snapshot" "$digest" "$axis"
 done
+# The existing endpoint receipt supplies the actual demand coordinate;
+# no hard-coded substitute and no new candidate enumeration.
+demand_seed="${ITIR_ORIGINAL_DEMAND_SEED:-$SLR_ROOT/artifacts/gwb/v8-typed-relation-carriers.json}"
+if [[ -s "$demand_seed" ]]; then
+  demand="$(jq -er --arg run "$run" '.passes[-1] | select(.numeric_run_ref==$run) | .demand_id' "$demand_seed")"
+  source_sha="$(jq -er '.packet.comparison.source_sha256' "$out/numeric-reopen.json")"
+  step demand-fibre.json "$binary" numeric-pnf-native demand-fibre "$run" "$doc" "$source_sha" "$demand"
+fi
 jq -e --arg digest "$digest" '.packet_sha256 == $digest' "$out/numeric-reopen.json" >/dev/null
 step relational-corpus.json "$binary" relational-family acceptance-corpus "$ITIR_REL_CORPUS_REF" "$ITIR_REL_ACCESS_CONSTRAINT_REF"
 jq -e '.cases | length > 0 and all(.[]; .exact_native_family_reopen == true)' "$out/relational-corpus.json" >/dev/null
@@ -69,6 +77,9 @@ bash scripts/run_gwb_maxcut_acceptance.sh --full 2>&1 | tee "$out/gwb.log"
 for axis in type_ref referential_type role value; do
   step "factor-$axis-lean.log" lake env lean --run tools/RelationalObservedMeetRunner.lean factors "$out/numeric-reopen.json" "$out/factor-$axis.json"
 done
+if [[ -s "$out/demand-fibre.json" ]]; then
+  step demand-fibre-lean.log lake env lean --run tools/RelationalObservedMeetRunner.lean demand "$out/demand-fibre.json"
+fi
 n="$(jq -er '.cases | length' "$out/relational-corpus.json")"
 for ((i=0;i<n;i++)); do
   jq ".cases[$i].family" "$out/relational-corpus.json" > "$out/family-$i.json"

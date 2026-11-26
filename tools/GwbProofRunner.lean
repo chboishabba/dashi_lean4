@@ -224,6 +224,12 @@ def runWorldGraphCheck
   let nodes := (graph.getObjValAs? (Array Lean.Json) "nodes").toOption.getD #[]
   let mut entities : List Cli.Entity := []
   let mut snapshots : Array Lean.Json := #[]
+  let mut sourceRecords : List (String × Lean.Json) := []
+  let graphSha ← IO.Process.output { cmd := "sha256sum", args := #[graphPath] }
+  if graphSha.exitCode != 0 || (← IO.FS.readFile graphPath) != text then
+    IO.eprintln "GWB_WORLD_GRAPH_REJECTED: source graph digest/readback"
+    return 1
+  let graphDigest := (graphSha.stdout.splitOn " ").head!
   for node in nodes do
     let some qid := (node.getObjValAs? String "node_id").toOption
       | IO.eprintln "GWB_WORLD_GRAPH_REJECTED: missing QID"
@@ -241,24 +247,84 @@ def runWorldGraphCheck
     let data := (parsed.getObjVal? "entities").toOption.getD Lean.Json.null
     let record := (data.getObjVal? qid).toOption.getD Lean.Json.null
     let revision := (record.getObjValAs? Nat "lastrevid").toOption.getD 0
-    snapshots := snapshots.push (Lean.Json.mkObj [
+    let path := Cli.cachePath (System.FilePath.mk cacheDir) qid
+    let sha ← IO.Process.output { cmd := "sha256sum", args := #[path.toString] }
+    if sha.exitCode != 0 || (← IO.FS.readFile path) != raw then
+      IO.eprintln s!"GWB_WORLD_GRAPH_REJECTED: snapshot digest/readback {qid}"
+      return 1
+    let snapshot := Lean.Json.mkObj [
       ("qid", toJson qid),
       ("wikidata_lastrevid", toJson revision),
-      ("cache_path", toJson ((Cli.cachePath (System.FilePath.mk cacheDir) qid).toString))
-    ])
+      ("revision_available", toJson (revision != 0)),
+      ("source_sha256", toJson ((sha.stdout.splitOn " ").head!)),
+      ("cache_path", toJson path.toString),
+      ("original_candidate_node", node)
+    ]
+    snapshots := snapshots.push snapshot
+    sourceRecords := (qid, record) :: sourceRecords
   let pkb := Slr.GwbWorldGraph.pkbFromImportedEntities entities
   let inventory := Slr.GwbWorldGraph.checkGraphAgainstImportedKB graph pkb
   let mut supported : Nat := 0
   let mut unresolved : Array Lean.Json := #[]
+  let mut edgeReceipts : Array Lean.Json := #[]
+  let mut originalStatementContextCount : Nat := 0
   for (edge, proof?) in inventory do
+    let source := (edge.getObjValAs? String "source").toOption.getD ""
+    let property := (edge.getObjValAs? String "property_id").toOption.getD ""
+    let target := (edge.getObjValAs? String "target").toOption.getD ""
+    let record := (sourceRecords.lookup source).getD Lean.Json.null
+    let claims := (record.getObjVal? "claims").toOption.getD Lean.Json.null
+    let rows := (claims.getObjValAs? (Array Lean.Json) property).toOption.getD #[]
+    -- Reuse the original JMD JSON import's value/rank rules. Preserve the
+    -- whole native statement (GUID, rank, main snak, qualifiers, references)
+    -- and its ordinal, including deprecated matches as excluded evidence.
+    let mut context : Array Lean.Json := #[]
+    let mut admitted : Nat := 0
+    let mut ordinal : Nat := 0
+    for row in rows do
+      if Cli.statementValueId? row == some target then
+        let imported := Cli.statementRank row != "deprecated"
+        if imported then admitted := admitted + 1
+        context := context.push (Lean.Json.mkObj [
+          ("property_statement_ordinal", toJson ordinal),
+          ("jmd_imported_item_statement", toJson imported),
+          ("original_statement", row)])
+      ordinal := ordinal + 1
+    let jmdSupported := proof?.isSome
     match proof? with
     | some proof =>
         let _ := Slr.GwbWorldGraph.checkedWorldPropertySound proof
         supported := supported + 1
+        -- This PKB constructor has no extra subproperty edges. Refuse to
+        -- publish a positive property result without its raw import inverse.
+        if admitted == 0 then
+          IO.eprintln "GWB_WORLD_GRAPH_REJECTED: supported edge has no original nondeprecated item statement"
+          return 1
     | none => unresolved := unresolved.push edge
+    originalStatementContextCount := originalStatementContextCount + context.size
+    let snapshot := (snapshots.toList.find? fun s =>
+      (s.getObjValAs? String "qid").toOption == some source).getD Lean.Json.null
+    edgeReceipts := edgeReceipts.push (Lean.Json.mkObj [
+      ("source_edge_ordinal", toJson edgeReceipts.size),
+      ("original_candidate_edge", edge),
+      ("source_snapshot", snapshot),
+      ("jmd_property_supported", toJson jmdSupported),
+      ("direct_imported_statement_count", toJson admitted),
+      ("matching_original_statement_contexts", Lean.Json.arr context),
+      ("qualifier_alignment_paid", toJson false),
+      ("world_truth_paid", toJson false)
+    ])
+  if edgeReceipts.size != inventory.size || supported + unresolved.size != inventory.size then
+    IO.eprintln "GWB_WORLD_GRAPH_REJECTED: edge inventory accounting"
+    return 1
   let summary := Lean.Json.mkObj [
     ("schema", toJson ("gwb-jmd-world-graph-property-verification-v1" : String)),
     ("source_graph_schema", toJson ("slr-wikimedia-world-follow-v1" : String)),
+    ("source_graph_sha256", toJson graphDigest),
+    ("edge_receipts", Lean.Json.arr edgeReceipts),
+    ("matching_original_statement_context_count", toJson originalStatementContextCount),
+    ("all_edge_ordinals_retained", toJson true),
+    ("qualifier_alignment_paid", toJson false),
     ("nodes_reimported", toJson nodes.size),
     ("source_candidate_edges", toJson inventory.size),
     ("jmd_kb_property_proofs", toJson supported),

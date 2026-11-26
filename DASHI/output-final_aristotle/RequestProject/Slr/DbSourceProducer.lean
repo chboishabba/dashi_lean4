@@ -202,8 +202,8 @@ def checkNativeReportingRows (j : Json) (observation : DbM12Observation) : Bool 
 
 theorem checkedNativeReportingRowsExact (j : Json) (observation : DbM12Observation)
     (h : checkNativeReportingRows j observation = true) :
-    (j.getObjValAs? (Array Json) "reporting_clauses").toOption ==
-      some (nativeReportingRows observation.tokens) = true := h
+    ((j.getObjValAs? (Array Json) "reporting_clauses").toOption ==
+      some (nativeReportingRows observation.tokens)) = true := h
 
 /-- Directly calls SLR's checked M12 compiler, never the TSV adapter.
     The literal file is checked against parser-product identity and

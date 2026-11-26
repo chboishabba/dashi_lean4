@@ -1908,3 +1908,7 @@ made in this work; Q23505 and Q207 remain unjoined.
 ## 2026-11-26 — relational family observed meet
 
 SLR #79 emits the original selected observation inventory, including typed predicate/role/type/context coordinates and exact incidence transpose. New `RequestProject.Slr.RelationalObservedMeet` independently reconstructs those rows and checks that every coordinate is accounted for with exact present/not-recorded membership, no extra/duplicate coordinate or selector. Its common query uses the existing FiniteConsumerCertificate; mixed recorded answers obstruct constancy. `tools/RelationalObservedMeetRunner.lean` emits digest-bound source-only checker receipts. Source implementation pending kernel/runtime verification. This does not discharge production live-reading completeness, semantic factorisation, qualifier alignment or governed identity. Do not replace the existing JMD prover or S29 owner.
+
+## 2026-11-27 native relation query
+
+SLR #79 original numeric relation query uses exact persisted packet. Lean `selectedRelationExact` proves membership in the selected recorded relation filter; the executable validates the ordered answer inventory from the reopened packet. Independent Python acceptance recomputes the original typed canonical digest, role/atom/token and factor/constraint inverses and type inventory; missing-row and forged-admission controls. Both checks are integrated into `run_gwb_maxcut_acceptance.sh` when original native input refs are supplied. No all-live semantic or governed identity claim. Kernel and native acceptance pending.

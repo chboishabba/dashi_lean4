@@ -209,4 +209,55 @@ def run (inputPath outputPath : String) : IO UInt32 := do
   IO.println s!"REL_OBSERVED_MEET_CHECKED sources={sources.length} common={commonCount} different={differenceCount}"
   return 0
 
+/-- Query all original recorded relations or one exact relation type.
+    No semantic entailment is inferred from a missing recorded row. -/
+def selectedRelation (kind : String) (row : Json) : Bool :=
+  kind == "all" || str row "type" == some kind
+
+def selectRelations (kind : String) (original : List Json) : List Json :=
+  original.filter (selectedRelation kind)
+
+theorem selectedRelationExact (kind : String) (original : List Json) (row : Json) :
+    row ∈ selectRelations kind original ↔
+      row ∈ original ∧ selectedRelation kind row = true := by
+  simp [selectRelations, List.mem_filter]
+
+/-- The exact source inventory and result are kept separate from all-live
+    completeness. The original packet is independently reopened by SLR. -/
+def checkRecordedRelationQuery (reopened answer : Json) : Bool := Id.run do
+  let some packet := obj reopened "packet" | return false
+  let some comparison := obj packet "comparison" | return false
+  let some bundle := obj comparison "bundle" | return false
+  let some original := rows bundle "relations" | return false
+  let some returned := rows answer "answers" | return false
+  let some kind := str answer "query_relation_type" | return false
+  let actual := returned.map (fun row => obj row "original_relation")
+  let expected := (selectRelations kind original).map some
+  return str reopened "schema" == some "slr-reopened-original-relation-packet-v1" &&
+    str answer "schema" == some "slr.original-relation-query.v1" &&
+    nonblank kind &&
+    (["numeric_run_ref","document_ref","snapshot_ref","packet_sha256"] : List String).all
+      (fun k => (str reopened k).isSome && str reopened k == str answer k) &&
+    nat answer "recorded_relation_count" == some original.length &&
+    nat answer "answer_count" == some returned.length &&
+    actual == expected &&
+    (answer.getObjValAs? Bool "all_live_semantic_readings_covered").toOption == some false &&
+    (answer.getObjValAs? Bool "governed_identity_paid").toOption == some false &&
+    (answer.getObjValAs? Bool "level_three_paid").toOption == some false &&
+    (answer.getObjValAs? Bool "world_truth_paid").toOption == some false
+
+def runRecordedRelationQuery (packetPath answerPath : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile packetPath), Json.parse (← IO.FS.readFile answerPath) with
+  | .ok packet, .ok answer =>
+    if h : checkRecordedRelationQuery packet answer = true then
+      let _ := h
+      IO.println "REL_ORIGINAL_RECORDED_QUERY_CHECKED"
+      return 0
+    else
+      IO.eprintln "REL_ORIGINAL_RECORDED_QUERY_REJECTED"
+      return 1
+  | _, _ =>
+    IO.eprintln "REL_ORIGINAL_RECORDED_QUERY_REJECTED: JSON"
+    return 1
+
 end Wikidata.Slr.RelationalObservedMeet

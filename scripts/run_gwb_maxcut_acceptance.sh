@@ -47,6 +47,7 @@ compile_slr Proof
 compile_slr DbSourceProducer
 compile_slr GwbProductionTrace
 compile_slr FiniteConsumerCertificate
+compile_slr RelationalObservedMeet
 compile_slr GwbProofComposition
 compile_slr GwbWorldGraphProof
 compile_slr GwbHyperfabricTransport
@@ -55,6 +56,25 @@ compile_slr GwbP4SourceLicence
 compile_slr GwbP4ArticleEndToEnd
 compile_slr GwbP5P10ExactWeld
 lake env lean tools/GwbProofRunner.lean
+lake env lean tools/RelationalObservedMeetRunner.lean
+# Additional exact original SLR receipt checks, without a new parser.
+if [[ -n "${ITIR_RELATIONAL_FAMILY_JSON:-}" ]]; then
+  mkdir -p "$root/artifacts/itir-native-maxcut"
+  timeout 90s lake env lean --run tools/RelationalObservedMeetRunner.lean \
+    "$ITIR_RELATIONAL_FAMILY_JSON" "$root/artifacts/itir-native-maxcut/observed-meet.json"
+fi
+if [[ -n "${ITIR_ORIGINAL_RELATION_PACKET_JSON:-}" || -n "${ITIR_ORIGINAL_RELATION_QUERY_JSON:-}" ]]; then
+  [[ -s "${ITIR_ORIGINAL_RELATION_PACKET_JSON:-}" && -s "${ITIR_ORIGINAL_RELATION_QUERY_JSON:-}" ]] || {
+    echo "Both original native relation packet and query receipt required" >&2; exit 2;
+  }
+  mkdir -p "$root/artifacts/itir-native-maxcut"
+  timeout 90s python3 tools/check_original_relation_query.py \
+    "$ITIR_ORIGINAL_RELATION_PACKET_JSON" "$ITIR_ORIGINAL_RELATION_QUERY_JSON" \
+    > "$root/artifacts/itir-native-maxcut/original-relation-reference.json"
+  timeout 90s lake env lean --run tools/RelationalObservedMeetRunner.lean relations \
+    "$ITIR_ORIGINAL_RELATION_PACKET_JSON" "$ITIR_ORIGINAL_RELATION_QUERY_JSON" \
+    | tee "$root/artifacts/itir-native-maxcut/original-relation-lean.log"
+fi
 lake env lean --run tools/GwbProofRunner.lean composition
 # Historical P4 SourceQueryLicence is a theorem over the experimental
 # Rust observation; it is not an original SLR semantic licence.

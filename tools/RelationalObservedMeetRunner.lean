@@ -2,6 +2,7 @@ import RequestProject.Slr.RelationalObservedMeet
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["relations", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runRecordedRelationQuery packet answer
   | [input, output] => Wikidata.Slr.RelationalObservedMeet.run input output
   | _ =>
     IO.eprintln "usage: RelationalObservedMeetRunner INPUT_NATIVE_FAMILY_JSON OUTPUT"
@@ -11,3 +12,5 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.RelationalObservedMeet.commonObservedSound
 #print axioms Wikidata.Slr.RelationalObservedMeet.checkedCommonConsumerConstant
 #print axioms Wikidata.Slr.RelationalObservedMeet.differentRecordedAnswersBlockConstant
+
+#print axioms Wikidata.Slr.RelationalObservedMeet.selectedRelationExact

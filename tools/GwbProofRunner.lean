@@ -455,3 +455,5 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.ArticleProof.queryCheckedArticleExact
 #print axioms Wikidata.Slr.ArticleProof.checkedArticleQuerySound
+
+#print axioms Wikidata.Slr.GwbCanonicalSource.licensedPredicateQuerySound

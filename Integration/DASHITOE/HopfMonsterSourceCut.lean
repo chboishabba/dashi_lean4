@@ -290,3 +290,45 @@ theorem layeredFluxMean (p a b ke : ℚ)
     _ = 1 := h
 
 end DASHITOE.HopfMonsterSourceCut
+
+
+namespace DASHITOE.HopfMonsterSourceCut
+
+/-- The original selected ABL numerator certificate excludes zero.
+It must not be used as the nonnegative Hilbert norm predicate. -/
+theorem originalABLZeroExcluded :
+    ¬ ∃ e : ℚ, 0 = 1 + e ∧ 0 ≤ e := by
+  rintro ⟨e, he, hn⟩
+  linarith
+
+theorem normalizedMatrixQuadraticNonnegative (a b c d : ℚ) :
+    0 ≤ (a^2+b^2+c^2+d^2)/2 := by positivity
+
+/-- In four dimensions trace of the density tangent, written in the
+metric frame, is 4*(tr E)/2-tr E = tr E. -/
+theorem fourDensityTrace (trE : ℚ) :
+    4*(trE/2)-trE=trE := by ring
+
+/-- The action variation coefficient at fixed physical scalar mass.
+x is the gradient contraction, m the mass contribution,
+t the trace of the metric tangent and y the mixed gradient contraction.
+This is the scalar algebra of the full matrix variation, not a native
+continuum derivative or an Einstein solution. -/
+theorem fixedMassDensityStress (v x m t y : ℚ) :
+    -(v*t*x/2-v*y+m*v*t/2)/2 =
+      v*(y-(x+m)*t/2)/2 := by ring
+
+/-- Source mass held fixed requires delta V = m² delta v. Changing
+the coordinate potential independently retains this extra residual. -/
+theorem independentPotentialVariationResidual (v x m t y dV : ℚ) :
+    -(v*t*x/2-v*y+dV)/2 -
+      v*(y-(x+m)*t/2)/2 = -(dV-m*v*t/2)/2 := by ring
+
+/-- Homogeneous variable-mass scalar Ward residual in a flat FLRW chart.
+dρ = q' q'' + M q q' + M' q²/2. The scalar field residual is
+q''+3 h q'+M q. -/
+theorem scalarWardResidual (q dq ddq M dM h : ℚ) :
+    dq*ddq+M*q*dq+dM*q^2/2+3*h*dq^2 =
+      (ddq+3*h*dq+M*q)*dq+dM*q^2/2 := by ring
+
+end DASHITOE.HopfMonsterSourceCut

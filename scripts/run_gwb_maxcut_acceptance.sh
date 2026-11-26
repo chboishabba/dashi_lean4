@@ -156,9 +156,10 @@ if [[ -n "$qid_json" ]]; then
     office_check "$qid_json" "$office_json" "$stage/first.json"
     office_check "$qid_json" "$office_json" "$stage/replay.json"
     cmp "$stage/first.json" "$stage/replay.json"
-    if office_check "$office_json" "$qid_json" "$stage/wrong.json"; then
+    if office_check "$office_json" "$qid_json" "$stage/wrong.json" > "$stage/wrong.log" 2>&1; then
       echo "ERROR: swapped root/office accepted" >&2; exit 1
     fi
+    grep -q "GWB_OFFICE_CLAIM_REJECTED: original Q207/article mismatch" "$stage/wrong.log"
     python3 - "$qid_json" "$stage/without-office.json" <<'PY'
 import json, sys
 with open(sys.argv[1], encoding="utf-8") as f:
@@ -167,9 +168,10 @@ data["entities"]["Q207"]["claims"].pop("P39", None)
 with open(sys.argv[2], "w", encoding="utf-8") as f:
     json.dump(data, f)
 PY
-    if office_check "$stage/without-office.json" "$office_json" "$stage/missing.json"; then
+    if office_check "$stage/without-office.json" "$office_json" "$stage/missing.json" > "$stage/missing.log" 2>&1; then
       echo "ERROR: missing original P39 accepted" >&2; exit 1
     fi
+    grep -q "GWB_OFFICE_CLAIM_REJECTED: independent P39 support absent" "$stage/missing.log"
     mv "$stage/first.json" "$office_receipt"
     echo "GWB_BOUNDED_OFFICE_REPLAY_AND_NEGATIVE_CONTROLS_PASS"
     rm -rf "$stage"

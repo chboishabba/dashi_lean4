@@ -407,7 +407,7 @@ def queryRows (source projection : Json) : ArticleQuery → List Json
   | .predicate _ => ((arr? projection "event_candidates").getD #[]).toList
   | .negationToken _ => ((arr? source "pnf_candidates").getD #[]).toList
 
-def queryMatches (q : ArticleQuery) (row : Json) : Bool :=
+def queryMatches (text : String) (q : ArticleQuery) (row : Json) : Bool :=
   match q with
   | .person value | .properNoun value | .year value =>
     str? row "surface" == some value
@@ -416,8 +416,15 @@ def queryMatches (q : ArticleQuery) (row : Json) : Bool :=
     | some p => str? p "lemma" == some value || str? p "surface" == some value
     | none => false
   | .negationToken value =>
-    ((arr? row "dependency_rows").getD #[]).toList.any (fun token =>
-      str? token "dep" == some "neg" && str? token "text" == some value)
+    let tokens := ((arr? row "dependency_rows").getD #[]).toList
+    tokens.any (fun token =>
+      match nat? token "idx", nat? token "head_i" with
+      | some start, some head =>
+        str? token "dep" == some "neg" && str? token "text" == some value &&
+        decide (start + value.toList.length ≤ text.toList.length) &&
+        substring text start (start + value.toList.length) == value &&
+        tokens.any (fun parent => nat? parent "i" == some head)
+      | _, _ => false)
 
 /-- The original checker is a proof premise, not a claimed JSON flag.
     For negation, retain the whole original sentence/dependency row so the
@@ -426,7 +433,7 @@ def queryCheckedArticle
     {text : String} {source projection : Json}
     (_receipt : CheckedArticleExtraction text source projection)
     (q : ArticleQuery) : List Json :=
-  (queryRows source projection q).filter (queryMatches q)
+  (queryRows source projection q).filter (queryMatches text q)
 
 /-- Exact two-way membership over the observed rows, not over all possible
     semantic readings or missing parser observations. -/
@@ -435,7 +442,7 @@ theorem queryCheckedArticleExact
     (receipt : CheckedArticleExtraction text source projection)
     (q : ArticleQuery) (row : Json) :
     row ∈ queryCheckedArticle receipt q ↔
-      row ∈ queryRows source projection q ∧ queryMatches q row = true := by
+      row ∈ queryRows source projection q ∧ queryMatches text q row = true := by
   simp only [queryCheckedArticle, List.mem_filter]
 
 /-- Every returned row belongs to the checked source/projection and matches
@@ -447,7 +454,7 @@ theorem checkedArticleQuerySound
     (q : ArticleQuery) (row : Json)
     (h : row ∈ queryCheckedArticle receipt q) :
     checkProjection text source projection = true ∧
-      row ∈ queryRows source projection q ∧ queryMatches q row = true :=
+      row ∈ queryRows source projection q ∧ queryMatches text q row = true :=
   ⟨receipt.checked, (queryCheckedArticleExact receipt q row).mp h⟩
 
 private def hashFile (path : String) : IO String := do

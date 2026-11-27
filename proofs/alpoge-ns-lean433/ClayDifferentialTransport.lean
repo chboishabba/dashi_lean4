@@ -1,5 +1,7 @@
 import ClaySpec
 
+set_option autoImplicit true
+
 /-!
 Cross-toolchain extract of the existing DASHI Mathlib-only differential
 transport, ExternalClayNS/Gap.lean blob d19d04e4e8db66cf4128d1a063ea6a8b588538df.

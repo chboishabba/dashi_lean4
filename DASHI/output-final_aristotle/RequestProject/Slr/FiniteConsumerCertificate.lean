@@ -148,6 +148,57 @@ def licenceOfProjectedEnvelope
       (fun x => m.readingAnswer x q) coverage queryFactor checked
       r hr chosen chosenLive
 
+
+/-- Reverse-solve a nonconstant projected fibre to concrete coordinates.
+    This is an envelope obstruction, not necessarily a live-reading
+    counterexample until both coordinates have live preimages. -/
+theorem projectedEnvelopeDisagreement
+    {Coordinate Answer : Type} [DecidableEq Answer]
+    (domain : List Coordinate) (evaluate : Coordinate → Answer)
+    (failed : checkConstant domain evaluate = false) :
+    ∃ x ∈ domain, ∃ y ∈ domain, evaluate x ≠ evaluate y := by
+  classical
+  by_contra h
+  have all : ∀ x ∈ domain, ∀ y ∈ domain, evaluate x = evaluate y := by
+    intro x hx y hy
+    by_contra neq
+    exact h ⟨x, hx, y, hy, neq⟩
+  have ok : checkConstant domain evaluate = true := by
+    simpa only [checkConstant, List.all_eq_true, decide_eq_true_eq] using all
+  rw [ok] at failed
+  contradiction
+
+/-- Exact live preimages turn an envelope disagreement into a genuine
+    consumer non-descent witness, not merely a resource-pruning residual. -/
+theorem projectedLiveDisagreementBlocksLicence
+    {S O R Q A C : Type}
+    {m : DocumentQueryModel S O R Q A}
+    {s : S} {q : Q}
+    (project : R → C) (evaluate : C → A)
+    (factor : ∀ r, m.live (m.observe s) r →
+      m.readingAnswer r q = evaluate (project r))
+    (x y : R) (hx : m.live (m.observe s) x)
+    (hy : m.live (m.observe s) y)
+    (different : evaluate (project x) ≠ evaluate (project y)) :
+    ¬ Nonempty (SourceQueryLicence m s q) := by
+  apply incompatibleLiveReadingsBlockQueryLicence x y hx hy
+  rw [factor x hx, factor y hy]
+  exact different
+
+/-- Compose two coordinate projections without materialising the original
+    Cartesian reading space. This supplies the forward/reverse descent
+    weld for successive actor, role, time and scope projections. -/
+theorem composedEnvelopeConsumerClosed
+    {R C D A : Type} [DecidableEq A]
+    (live : R → Prop) (project : R → C) (reduce : C → D)
+    (domain : List D) (evaluate : D → A) (answer : R → A)
+    (coverage : ∀ r, live r → reduce (project r) ∈ domain)
+    (factor : ∀ r, live r → answer r = evaluate (reduce (project r)))
+    (checked : checkConstant domain evaluate = true) :
+    ∀ x, live x → ∀ y, live y → answer x = answer y :=
+  projectedEnvelopeConsumerClosed live (fun r => reduce (project r))
+    domain evaluate answer coverage factor checked
+
 end FiniteConsumer
 end Slr
 end Wikidata

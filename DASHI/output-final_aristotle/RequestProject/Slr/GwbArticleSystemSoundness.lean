@@ -155,6 +155,114 @@ theorem checkedOfficeClaimAndQualifiedYears
   have native := (GwbWorldGraph.qualifiedYearRowsExact root "Q207" "P39" "Q11696" 2001 2009 statement).mp years
   exact ⟨claim, base.2.2.2, native.1, native.2⟩
 
+/-- Bounded interpretation of exact archived clauses. The semantic unit is
+the explicit attributed proposition, not a claim of historical occurrence.
+A surname is source-local here; only the independent root lead rule maps Q207.
+No closed-world conclusion follows from a missing clause. -/
+structure AttributedClause where
+  actor : String
+  predicate : String
+  object : String
+  capacity : String
+  scope : String
+  year : Option Nat
+  deriving Repr, DecidableEq
+
+def clauseJson (c : AttributedClause) : Json :=
+  Json.mkObj [("actor", toJson c.actor), ("predicate", toJson c.predicate),
+    ("object", toJson c.object), ("capacity", toJson c.capacity),
+    ("scope", toJson c.scope), ("year", toJson c.year)]
+
+inductive ArchivedClauseRule where
+  | governor | suspension | taxStatements
+  deriving Repr, DecidableEq
+
+def ruleLiteral : ArchivedClauseRule → String
+  | .governor => "As governor , Bush sponsored tort reform legislation, increased funding for education, set higher standards for schools, and reformed the criminal justice system."
+  | .suspension => "In 1972, Bush was suspended from flying for failure to take a scheduled physical exam."
+  | .taxStatements => "Federal Reserve chairman Alan Greenspan warned of a recession and Bush stated that a tax cut would stimulate the economy and create jobs."
+
+def ruleSpan : ArchivedClauseRule → Nat × Nat
+  | .governor => (879, 1041)
+  | .suspension => (6810, 6896)
+  | .taxStatements => (18644, 18781)
+
+def ruleClaims : ArchivedClauseRule → List AttributedClause
+  | .governor =>
+    [⟨"Bush", "sponsor", "tort reform legislation", "governor", "asserted", none⟩,
+     ⟨"Bush", "increase", "funding for education", "governor", "asserted", none⟩,
+     ⟨"Bush", "set", "higher standards for schools", "governor", "asserted", none⟩,
+     ⟨"Bush", "reform", "criminal justice system", "governor", "asserted", none⟩]
+  | .suspension =>
+    [⟨"Bush", "be suspended", "from flying", "", "patient; agent unspecified", some 1972⟩]
+  | .taxStatements =>
+    [⟨"Alan Greenspan", "warn", "of a recession", "Federal Reserve chairman", "asserted reporting act", none⟩,
+     ⟨"Bush", "state", "tax cut would stimulate the economy and create jobs", "", "asserted reporting act", none⟩,
+     ⟨"tax cut", "stimulate", "economy", "", "reported prediction by Bush", none⟩,
+     ⟨"tax cut", "create", "jobs", "", "reported prediction by Bush", none⟩]
+
+def archivedClauseMatches (article : String) (rule : ArchivedClauseRule) : Bool :=
+  let (a, b) := ruleSpan rule
+  decide (b ≤ article.toList.length) &&
+  String.ofList ((article.toList.drop a).take (b-a)) == ruleLiteral rule
+
+/-- This model interprets only the explicitly specified controlled clauses.
+Other readings may differ on any unrelated information, including the
+world identity of the surname. A nonmatching rule has no positive answer. -/
+def archivedClauseAnswer (article : String) (rule : ArchivedClauseRule) :
+    Option (List AttributedClause) :=
+  if archivedClauseMatches article rule then some (ruleClaims rule) else none
+
+structure ArchivedClauseReading where
+  original : String
+  otherInterpretation : Json
+
+def archivedClauseModel : DocumentQueryModel String String ArchivedClauseReading
+    ArchivedClauseRule (Option (List AttributedClause)) where
+  observe := id
+  live := fun o r => r.original = o
+  documentAnswer := archivedClauseAnswer
+  readingAnswer := fun r => archivedClauseAnswer r.original
+
+def archivedClauseLicence (article : String) (rule : ArchivedClauseRule) :
+    SourceQueryLicence archivedClauseModel article rule where
+  observation := article
+  sameProducedObservation := rfl
+  chosenReading := ⟨article, Json.null⟩
+  chosenIsLive := rfl
+  consumerFactorises := by
+    intro s h
+    exact congrArg (fun t => archivedClauseAnswer t rule) h
+  consumerClosed := by
+    intro reading h
+    exact congrArg (fun t => archivedClauseAnswer t rule) h
+
+theorem checkedArchivedClauseSound
+    {article : String} {slr projection root : Json}
+    (source : GwbArticleIdentity.CheckedGwbRootIdentity article slr projection root)
+    (rule : ArchivedClauseRule)
+    (matched : archivedClauseMatches article rule = true) :
+    GwbArticleIdentity.checkGwbRootIdentity article slr projection root = true ∧
+      archivedClauseModel.documentAnswer article rule = some (ruleClaims rule) := by
+  refine ⟨source.checked, slrJmdDocumentQuerySound (archivedClauseLicence article rule) _ ?_⟩
+  change archivedClauseAnswer article rule = some (ruleClaims rule)
+  simp [archivedClauseAnswer, matched]
+
+/-- A passive patient and reported prediction cannot be promoted by these
+bounded rules into an asserted action by the named subject. -/
+def assertedAction (actor : String) (c : AttributedClause) : Bool :=
+  c.actor == actor && (c.scope == "asserted" || c.scope == "asserted reporting act")
+
+theorem suspensionIsNotBushAction :
+    (ruleClaims .suspension).filter (assertedAction "Bush") = [] := by decide
+
+theorem predictionIsNotBushAction :
+    ((ruleClaims .taxStatements).filter (assertedAction "Bush")).length = 1 := by decide
+
+theorem governorCoordinatedActions :
+    ((ruleClaims .governor).filter (assertedAction "Bush")).length = 4 := by decide
+
+
 end GwbArticleSystem
 end Slr
 end Wikidata

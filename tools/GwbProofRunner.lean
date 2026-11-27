@@ -564,6 +564,53 @@ def runIndexedArticleKBCheck
     return 0
   | _, _, _ => return 1
 
+/-- Actual archived clause semantic consumer. Fail closed on changed
+source literal, root sitelink or original source checker. -/
+def runArchivedClauseCheck
+    (articlePath slrPath projectionPath rootPath outputPath : String) : IO UInt32 := do
+  let ok ← Slr.ArticleProof.verifyFiles articlePath slrPath projectionPath
+  if !ok then return 1
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let rootSha ← IO.Process.output { cmd := "sha256sum", args := #[rootPath] }
+  let digest := (sha.stdout.splitOn " ").head!
+  if sha.exitCode != 0 || rootSha.exitCode != 0 ||
+      digest != "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" then
+    return 1
+  match Json.parse (← IO.FS.readFile slrPath), Json.parse (← IO.FS.readFile projectionPath),
+      Json.parse (← IO.FS.readFile rootPath) with
+  | .ok slr, .ok projection, .ok root =>
+    if h : Slr.GwbArticleIdentity.checkGwbRootIdentity article slr projection root = true then
+      let source : Slr.GwbArticleIdentity.CheckedGwbRootIdentity article slr projection root := ⟨h⟩
+      let some rev := Slr.GwbArticleSystem.entityRevision root "Q207" | return 1
+      if rev == 0 then return 1
+      let rules : List Slr.GwbArticleSystem.ArchivedClauseRule :=
+        [.governor, .suspension, .taxStatements]
+      let mut answers : List Json := []
+      for rule in rules do
+        if hm : Slr.GwbArticleSystem.archivedClauseMatches article rule = true then
+          let _ := Slr.GwbArticleSystem.checkedArchivedClauseSound source rule hm
+          let claims := Slr.GwbArticleSystem.ruleClaims rule
+          let span := Slr.GwbArticleSystem.ruleSpan rule
+          answers := answers ++ [Json.mkObj [
+            ("start_char", toJson span.1), ("end_char", toJson span.2),
+            ("literal", toJson (Slr.GwbArticleSystem.ruleLiteral rule)),
+            ("claims", toJson (claims.map Slr.GwbArticleSystem.clauseJson)),
+            ("bush_asserted_actions", toJson ((claims.filter
+              (Slr.GwbArticleSystem.assertedAction "Bush")).map Slr.GwbArticleSystem.clauseJson))]]
+        else return 1
+      IO.FS.writeFile outputPath ((Json.mkObj [
+        ("schema", toJson ("gwb-bounded-archived-clause-licence-v1" : String)),
+        ("source_sha256", toJson digest), ("source_revision", toJson ("enwiki-revid:1385850169" : String)),
+        ("root_revision", toJson rev), ("root_sha256", toJson ((rootSha.stdout.splitOn " ").head!)),
+        ("answers", toJson answers), ("scope", toJson ("exact controlled source clauses; local actor labels" : String)),
+        ("general_semantic_coverage_paid", toJson false), ("governed_identity_paid", toJson false),
+        ("world_truth_paid", toJson false)]).pretty ++ "\n")
+      return 0
+    else return 1
+  | _, _, _ => return 1
+
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -588,6 +635,8 @@ def main (args : List String) : IO UInt32 := do
         kind value startYear endYear output
   | ["article-p4-check", article, slr, projection, native, wikidata] =>
       runArticleP4Check article slr projection native wikidata
+  | ["article-clause-check", article, slr, projection, root, output] =>
+      runArchivedClauseCheck article slr projection root output
   | ["article-office-check", article, slr, projection, root, office, output] =>
       runOfficeClaimCheck article slr projection root office output
   | ["article-qid-check", article, slr, projection, wikidata] =>
@@ -694,3 +743,8 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbWorldGraph.qualifiedYearRowsExact
 #print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears
+
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedArchivedClauseSound
+#print axioms Wikidata.Slr.GwbArticleSystem.suspensionIsNotBushAction
+#print axioms Wikidata.Slr.GwbArticleSystem.predictionIsNotBushAction
+#print axioms Wikidata.Slr.GwbArticleSystem.governorCoordinatedActions

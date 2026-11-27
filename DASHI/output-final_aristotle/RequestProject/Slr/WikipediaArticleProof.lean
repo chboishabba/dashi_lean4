@@ -493,6 +493,31 @@ theorem indexedArticleQuerySound
   simp only [queryIndexedArticle, List.mem_filter] at h
   exact ⟨receipt.checked, h⟩
 
+
+/-- Reverse direction of the indexed observation query. Every original
+matching coordinate is recovered, including for subjects other than Q207.
+This is an observation inverse, not a semantic actor identity theorem. -/
+theorem indexedArticleQueryExact
+    {subject text : String} {source projection : Json}
+    (receipt : CheckedIndexedArticleExtraction subject text source projection)
+    (q : ArticleQuery) (row : Json) :
+    row ∈ queryIndexedArticle receipt q ↔
+      row ∈ queryRows source projection q ∧ queryMatches text q row = true := by
+  simp only [queryIndexedArticle, List.mem_filter]
+
+/-- An empty indexed query excludes a matching original observed row,
+not a possible unobserved event or an admissible semantic reading. -/
+theorem indexedEmptyQueryExact
+    {subject text : String} {source projection : Json}
+    (receipt : CheckedIndexedArticleExtraction subject text source projection)
+    (q : ArticleQuery)
+    (empty : queryIndexedArticle receipt q = []) :
+    ∀ row ∈ queryRows source projection q, queryMatches text q row ≠ true := by
+  intro row member matched
+  have h := (indexedArticleQueryExact receipt q row).mpr ⟨member, matched⟩
+  rw [empty] at h
+  exact List.not_mem_nil h
+
 private def hashFile (path : String) : IO String := do
   let output ← IO.Process.output { cmd := "sha256sum", args := #[path] }
   if output.exitCode != 0 then

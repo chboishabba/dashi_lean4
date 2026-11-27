@@ -24,8 +24,20 @@ lake build Solution
 # Verify the actual resolved mathlib checkout, not merely the lakefile text.
 test "$(git -C .lake/packages/mathlib rev-parse HEAD)" = 0df444a360eaa60ab8c11dca51a86af692955474
 git -C .lake/packages/mathlib diff --quiet HEAD --
-# Audit logs retained beside this admission source, with the exact pinned commit.
+# Rebuild the canonical Clay specification in the same kernel, rather than
+# trusting a root-toolchain olean or introducing a second statement.
+spec="$here/../../ExternalClayNS/ClaySpec.lean"
+test "$(git -C "$here/../.." hash-object "$spec")" = 4ed209d4e932f7344fa8a68fa4c97883ea018eae
+out="$here/.build/$pin"
+mkdir -p "$out"
 log="$here/admission-$pin.log"
-lake env lean "$here/UnforcedAdmission.lean" 2>&1 | tee "$log"
+lake env bash -euo pipefail -c '
+  here="$1"; out="$2"; spec="$3"
+  export LEAN_PATH="$out:$LEAN_PATH"
+  lean --root="$(dirname "$spec")" -o "$out/ClaySpec.olean" "$spec"
+  lean --root="$here" -o "$out/ClayDifferentialTransport.olean" "$here/ClayDifferentialTransport.lean"
+  lean --root="$here" -o "$out/UnforcedAdmission.olean" "$here/UnforcedAdmission.lean"
+  lean --root="$here" -o "$out/ClayUnforcedTransport.olean" "$here/ClayUnforcedTransport.lean"
+' _ "$here" "$out" "$spec" 2>&1 | tee "$log"
 python3 "$here/audit_admission_axioms.py" "$log"
-printf '%s\n' 'PASS: original conditional terminals only; certificate data and official Clay transport not admitted.'
+printf '%s\n' 'PASS: original conditional terminal and literal Clay D transport only; original fifteen-condition witness still required.'

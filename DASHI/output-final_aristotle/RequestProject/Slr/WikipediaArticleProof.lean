@@ -476,6 +476,23 @@ theorem checkedArticleQuerySound
       row ∈ queryRows source projection q ∧ queryMatches text q row = true :=
   ⟨receipt.checked, (queryCheckedArticleExact receipt q row).mp h⟩
 
+/-- Same exact original observation query, now indexed by subject. -/
+def queryIndexedArticle
+    {subject text : String} {source projection : Json}
+    (_receipt : CheckedIndexedArticleExtraction subject text source projection)
+    (q : ArticleQuery) : List Json :=
+  (queryRows source projection q).filter (queryMatches text q)
+
+theorem indexedArticleQuerySound
+    {subject text : String} {source projection : Json}
+    (receipt : CheckedIndexedArticleExtraction subject text source projection)
+    (q : ArticleQuery) (row : Json)
+    (h : row ∈ queryIndexedArticle receipt q) :
+    checkProjectionFor subject text source projection = true ∧
+    row ∈ queryRows source projection q ∧ queryMatches text q row = true := by
+  have member := (List.mem_filter.mp h)
+  exact ⟨receipt.checked, member⟩
+
 private def hashFile (path : String) : IO String := do
   let output ← IO.Process.output { cmd := "sha256sum", args := #[path] }
   if output.exitCode != 0 then

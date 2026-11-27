@@ -12,6 +12,8 @@ in the actual surface variable s. Geometric source and involution action
 on the transcendental carrier are established separately in the roadmap.
 -/
 
+open scoped BigOperators
+
 namespace DASHI.Hodge.DicksonCoupled
 
 abbrev Address := Fin 6
@@ -74,4 +76,37 @@ arbitrary sixfold is fixed by such an involution. -/
 theorem fixed_cycle_odd_character_zero (c : ℚ) (h : c = -c) : c = 0 := by
   linarith
 
+
+/-- Actual t=1 source polynomial (paper 140, Q0). -/
+def dickson7 (X a : ℚ) : ℚ :=
+  X^7-7*a*X^5+14*a^2*X^3-7*a^3*X
+
+def Q0 (a s : ℚ) : ℚ :=
+  -3*a^3-3*a^2*s-a^2+3*a*s+3*a-2*s^2+s+3
+
+theorem dickson7_laurent (a v : ℚ) (hv : v ≠ 0) :
+    dickson7 (v+a/v) a = v^7+(a/v)^7 := by
+  unfold dickson7
+  field_simp [hv] <;> ring
+
+theorem Q0_partner (a s : ℚ) :
+    Q0 a (rootPartner (-2) (-3*a^2+3*a+1) s) = Q0 a s := by
+  unfold Q0 rootPartner
+  ring
+
+/-- The second coupled incidence fixes the product of the six visible
+quadratic-root derivatives. Any odd subset of root changes moves the
+candidate to the other signed locus; it is not a stabilizer. -/
+theorem odd_flip_changes_product (d e : Address → ℚ)
+    (hd : (∏ i, d i) = 1) (he : (∏ i, e i) = -1) :
+    (∏ i, e i * d i) = -1 := by
+  rw [Finset.prod_mul_distrib, he, hd, mul_one]
+
+theorem odd_flip_leaves_positive_locus (d e : Address → ℚ)
+    (hd : (∏ i, d i) = 1) (he : (∏ i, e i) = -1) :
+    (∏ i, e i * d i) ≠ 1 := by
+  rw [odd_flip_changes_product d e hd he]
+  norm_num
+
 end DASHI.Hodge.DicksonCoupled
+

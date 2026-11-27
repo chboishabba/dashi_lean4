@@ -416,13 +416,15 @@ def electionRowMatches (subject : BushOfficeSubject) (article : String) (row : J
     let subjectLabel := match subject with | .son => "he" | .father => "Bush"
     let clause := match subject with
       | .son => start == 1141 && stop == 1377 &&
+          eventString row "event_candidate_ref" == "source-event-candidate:abfee93630a3426fc1149fd816a5237e292f813f110bd36649554dee9e59dd1b" &&
+          eventNat pred "start_char" == some 1180 && eventNat pred "end_char" == some 1188 &&
           normalized.startsWith ("In the 2000 presidential election, he defeated " ++
             "Democratic incumbent vice president Al Gore")
       | .father => normalized.startsWith ("George W. Bush defeated Al Gore " ++
           "in the 2000 election") &&
           normalized.endsWith "."
     decide (start < stop ∧ stop ≤ article.toList.length) &&
-      clause && eventString pred "lemma" == "defeat" &&
+      clause && eventString pred "lemma" == "defeat" && eventString pred "dep" == "ROOT" &&
       actors.any (fun a => eventString a "surface" == subjectLabel &&
         eventString a "dep" == "nsubj") &&
       patients.any (fun p => eventString p "surface" == "Gore" &&
@@ -481,16 +483,23 @@ theorem reciprocalElectionClaimSound
   exact ⟨slrJmdDocumentQuerySound (electionLicence a .son) _ ha,
     slrJmdDocumentQuerySound (electionLicence b .father) _ hb⟩
 
+def positiveElectionAgreement (a b : Option ElectionClaim) : Bool :=
+  match a, b with
+  | some x, some y => decide (x = y)
+  | _, _ => false
+
+theorem missingElectionNotAgreement : positiveElectionAgreement none none = false := rfl
+
 /-- Compare both directions on the existing two-source licence theorem.
     A proof of shared outcome does not identify the complete source event
     inventories, electoral-vote details or subsequent legal issues. -/
 theorem reciprocalElectionReadingsSound (a b : ElectionSource) :
-    (decide (electionModel.readingAnswer a .son = electionModel.readingAnswer b .father),
-      decide (electionModel.readingAnswer b .father = electionModel.readingAnswer a .son)) =
-    (decide (electionModel.documentAnswer a .son = electionModel.documentAnswer b .father),
-      decide (electionModel.documentAnswer b .father = electionModel.documentAnswer a .son)) :=
+    (positiveElectionAgreement (electionModel.readingAnswer a .son) (electionModel.readingAnswer b .father),
+      positiveElectionAgreement (electionModel.readingAnswer b .father) (electionModel.readingAnswer a .son)) =
+    (positiveElectionAgreement (electionModel.documentAnswer a .son) (electionModel.documentAnswer b .father),
+      positiveElectionAgreement (electionModel.documentAnswer b .father) (electionModel.documentAnswer a .son)) :=
   reciprocalLicensedComparison (electionLicence a .son) (electionLicence b .father)
-    (fun x y => decide (x = y)) (fun x y => decide (x = y)) a b rfl rfl
+    positiveElectionAgreement positiveElectionAgreement a b rfl rfl
 
 
 end GwbArticleSystem

@@ -263,6 +263,106 @@ theorem governorCoordinatedActions :
     ((ruleClaims .governor).filter (assertedAction "Bush")).length = 4 := by decide
 
 
+/-- The two offices have the same independently checked object but different
+holders and intervals. The GHWB template is a fail-closed controlled lead:
+it must be matched against the original acquired article, not assumed present. -/
+inductive BushOfficeSubject where
+  | son | father
+  deriving DecidableEq, Repr
+
+def officeSubjectQid : BushOfficeSubject → String
+  | .son => "Q207"
+  | .father => "Q23505"
+
+def officeSubjectTitle : BushOfficeSubject → String
+  | .son => "George W. Bush"
+  | .father => "George H. W. Bush"
+
+def officeSubjectYears : BushOfficeSubject → Nat × Nat
+  | .son => (2001, 2009)
+  | .father => (1989, 1993)
+
+def officeSubjectLead : BushOfficeSubject → String
+  | .son => officeLead
+  | .father => "George Herbert Walker Bush (June 12, 1924 – November 30, 2018) was an American politician and statesman who served as the 41st president of the United States from 1989 to 1993."
+
+def indexedOfficeLeadMatches (subject : BushOfficeSubject) (article : String) : Bool :=
+  article.startsWith (officeSubjectLead subject)
+
+/-- Exact controlled source interpretation. Unknown lead formats have no
+positive answer; do not extrapolate to other article claims. -/
+def indexedOfficeAnswer (article : String) (subject : BushOfficeSubject) :
+    Option (String × String × String × Nat × Nat) :=
+  if indexedOfficeLeadMatches subject article then
+    some (officeSubjectQid subject, "P39", "Q11696",
+      (officeSubjectYears subject).1, (officeSubjectYears subject).2)
+  else none
+
+def indexedOfficeModel : DocumentQueryModel String String String BushOfficeSubject
+    (Option (String × String × String × Nat × Nat)) where
+  observe := id
+  live := fun o r => r = o
+  documentAnswer := indexedOfficeAnswer
+  readingAnswer := indexedOfficeAnswer
+
+def indexedOfficeLicence (article : String) (subject : BushOfficeSubject) :
+    SourceQueryLicence indexedOfficeModel article subject where
+  observation := article
+  sameProducedObservation := rfl
+  chosenReading := article
+  chosenIsLive := rfl
+  consumerFactorises := by
+    intro s h
+    exact congrArg (fun t => indexedOfficeAnswer t subject) h
+  consumerClosed := by
+    intro reading h
+    exact congrArg (fun t => indexedOfficeAnswer t subject) h
+
+def indexedOfficeRootCheck (subject : BushOfficeSubject) (article : String)
+    (slr projection entity : Json) : Bool :=
+  let revision := (slr.getObjValAs? String "revision_ref").toOption.getD ""
+  let unit := (slr.getObjValAs? String "source_unit_ref").toOption.getD ""
+  ArticleProof.checkProjectionFor (officeSubjectQid subject) article slr projection &&
+    revision.startsWith "enwiki-revid:" &&
+    (match (revision.drop "enwiki-revid:".length).toString.toNat? with
+     | some n => decide (n > 0) && unit == ("wikipedia:en:" ++
+         (officeSubjectTitle subject).replace " " "_" ++ ":" ++ toString n)
+     | none => false) &&
+    GwbArticleIdentity.checkSitelink (officeSubjectQid subject) (officeSubjectTitle subject) entity &&
+    GwbWorldGraph.jsonEntityMatchesQid (officeSubjectQid subject) entity
+
+theorem indexedOfficeAnswerSound (subject : BushOfficeSubject) (article : String)
+    (matched : indexedOfficeLeadMatches subject article = true) :
+    indexedOfficeModel.documentAnswer article subject =
+      some (officeSubjectQid subject, "P39", "Q11696",
+        (officeSubjectYears subject).1, (officeSubjectYears subject).2) := by
+  apply slrJmdDocumentQuerySound (indexedOfficeLicence article subject)
+  change indexedOfficeAnswer article subject = _
+  simp [indexedOfficeAnswer, matched]
+
+theorem bushOfficeIntervalsDisjoint :
+    (officeSubjectYears .father).2 < (officeSubjectYears .son).1 := by decide
+
+theorem distinctBushOfficeHolders :
+    officeSubjectQid .father ≠ officeSubjectQid .son := by decide
+
+/-- Reuse original JMD qualified-year evidence on both roots, and compose the
+licensed office answers in both directions. This is a comparison of separate
+tenures in the same office, NOT direct succession or a shared event. -/
+theorem reciprocalBushOfficeSound
+    {son father : String}
+    (hs : indexedOfficeLeadMatches .son son = true)
+    (hf : indexedOfficeLeadMatches .father father = true) :
+    (indexedOfficeModel.documentAnswer son .son, indexedOfficeModel.documentAnswer father .father) =
+      (some ("Q207", "P39", "Q11696", 2001, 2009),
+       some ("Q23505", "P39", "Q11696", 1989, 1993)) ∧
+    (officeSubjectYears .father).2 < (officeSubjectYears .son).1 := by
+  constructor
+  · rw [indexedOfficeAnswerSound .son son hs, indexedOfficeAnswerSound .father father hf]
+    rfl
+  · exact bushOfficeIntervalsDisjoint
+
+
 end GwbArticleSystem
 end Slr
 end Wikidata

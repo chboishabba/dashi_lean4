@@ -9,6 +9,9 @@ EXPECTED = {
     "Breakdown.CellLayerSystem.breakdownOnSpaceAndTorus_of_cell_system_condition",
     "DASHI.AlpogeBuckmaster.from_profile",
     "DASHI.AlpogeBuckmaster.from_original_cell_condition",
+    "DASHI.AlpogeBuckmaster.solution_original",
+    "DASHI.AlpogeBuckmaster.original_torus_to_clayD",
+    "DASHI.AlpogeBuckmaster.original_cell_condition_to_clayD",
 }
 ALLOWED = {"propext", "Quot.sound", "Classical.choice"}
 PATTERN = re.compile(

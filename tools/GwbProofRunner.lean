@@ -504,6 +504,66 @@ def runOfficeClaimCheck
     IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: invalid input JSON"
     return 1
 
+/-- Independent article observation and original KB interval witnesses.
+    This is a generic indexed producer, not an automatic semantic alignment.
+    Preserve complete original rows and original statement qualifiers. -/
+def runIndexedArticleKBCheck
+    (articlePath slrPath projectionPath entityPath subject property target
+      kind value startStr endStr outputPath : String) : IO UInt32 := do
+  let some startYear := startStr.toNat? | return 2
+  let some endYear := endStr.toNat? | return 2
+  let some query := Slr.ArticleProof.parseArticleQuery? kind value | return 2
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let kbSha ← IO.Process.output { cmd := "sha256sum", args := #[entityPath] }
+  let slrSha ← IO.Process.output { cmd := "sha256sum", args := #[slrPath] }
+  let projectionSha ← IO.Process.output { cmd := "sha256sum", args := #[projectionPath] }
+  if sha.exitCode != 0 || kbSha.exitCode != 0 || slrSha.exitCode != 0 ||
+      projectionSha.exitCode != 0 then return 1
+  let digest := (sha.stdout.splitOn " ").head!
+  match Lean.Json.parse (← IO.FS.readFile slrPath),
+        Lean.Json.parse (← IO.FS.readFile projectionPath),
+        Lean.Json.parse (← IO.FS.readFile entityPath) with
+  | .ok slr, .ok projection, .ok entity =>
+    let manifestation := (slr.getObjVal? "manifestation").toOption.getD Lean.Json.null
+    if (manifestation.getObjValAs? String "source_text_sha256").toOption != some digest ||
+        (projection.getObjValAs? String "source_text_sha256").toOption != some digest then
+      return 1
+    let some checked := Slr.ArticleProof.checkedIndexedArticle? subject article slr projection
+      | return 1
+    let some revision := Slr.GwbArticleSystem.entityRevision entity subject | return 1
+    if revision == 0 || !Slr.GwbWorldGraph.jsonEntityMatchesQid subject entity then return 1
+    let rows := Slr.ArticleProof.queryIndexedArticle checked query
+    for row in rows.attach do
+      let _ := Slr.ArticleProof.indexedArticleQuerySound checked query row.val row.property
+    let qualified := Slr.GwbWorldGraph.originalQualifiedYearWitnesses
+      entity subject property target startYear endYear
+    for witness in qualified do
+      let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound witness
+      let _ := Slr.GwbWorldGraph.checkedWorldPropertySound witness.propertyProof
+    let propertySupported := (Slr.GwbWorldGraph.originalEntityPropertyProof?
+      entity subject property target).isSome
+    IO.FS.writeFile outputPath ((Lean.Json.mkObj [
+      ("schema", toJson ("jmd-indexed-independent-article-kb-v1" : String)),
+      ("source_sha256", toJson digest),
+      ("source_revision", (slr.getObjVal? "revision_ref").toOption.getD Lean.Json.null),
+      ("source_unit_ref", (slr.getObjVal? "source_unit_ref").toOption.getD Lean.Json.null),
+      ("slr_sha256", toJson ((slrSha.stdout.splitOn " ").head!)),
+      ("projection_sha256", toJson ((projectionSha.stdout.splitOn " ").head!)),
+      ("entity_sha256", toJson ((kbSha.stdout.splitOn " ").head!)),
+      ("entity_revision", toJson revision),
+      ("subject", toJson subject), ("property", toJson property), ("object", toJson target),
+      ("query_kind", toJson kind), ("query_value", toJson value),
+      ("original_observation_rows", toJson rows),
+      ("start_year", toJson startYear), ("end_year", toJson endYear),
+      ("independent_property_supported", toJson propertySupported),
+      ("original_qualified_statements", toJson (qualified.map (fun w => w.statement))),
+      ("interval_supported", toJson (!qualified.isEmpty)),
+      ("semantic_alignment_paid", toJson false), ("governed_identity_paid", toJson false),
+      ("world_truth_paid", toJson false)]).pretty ++ "\n")
+    return 0
+  | _, _, _ => return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -522,6 +582,10 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["indexed-article-kb-check", article, slr, projection, entity, subject,
+      property, target, kind, value, startYear, endYear, output] =>
+      runIndexedArticleKBCheck article slr projection entity subject property target
+        kind value startYear endYear output
   | ["article-p4-check", article, slr, projection, native, wikidata] =>
       runArticleP4Check article slr projection native wikidata
   | ["article-office-check", article, slr, projection, root, office, output] =>
@@ -563,7 +627,7 @@ def main (args : List String) : IO UInt32 := do
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON | article-office-check ARTICLE SLR_RECORD PROJECTION Q207_JSON Q11696_JSON OUTPUT"
+      IO.eprintln "usage: indexed-article-kb-check ARTICLE SLR PROJECTION ENTITY SUBJECT PROPERTY TARGET KIND VALUE START_YEAR END_YEAR OUTPUT | fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON | article-office-check ARTICLE SLR_RECORD PROJECTION Q207_JSON Q11696_JSON OUTPUT"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative

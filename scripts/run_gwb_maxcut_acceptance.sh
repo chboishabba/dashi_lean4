@@ -151,7 +151,11 @@ qid_json="${GWB_Q207_ENTITY_JSON:-}"
 if [[ -z "$qid_json" && -n "${GWB_WORLD_GRAPH_JSON:-}" ]]; then
   qid_json="${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}/Q207.json"
 fi
+if [[ -z "$qid_json" && ( -n "${GWB_Q23505_SOURCE_DIR:-}" || -n "${GWB_Q23505_ENTITY_JSON:-}" ) ]]; then
+  echo "Reciprocal proof requested without original Q207 EntityData" >&2; exit 2
+fi
 if [[ -n "$qid_json" ]]; then
+  command -v jq >/dev/null || { echo "jq required for clause receipt checks" >&2; exit 2; }
   [[ -f "$qid_json" ]] || { echo "Missing Q207 original EntityData: $qid_json" >&2; exit 2; }
   source_dir="$root/.dashi/gwb-source"
   for f in article.txt slr-record.json article-candidates.json; do

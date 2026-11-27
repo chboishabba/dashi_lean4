@@ -286,8 +286,21 @@ def officeSubjectLead : BushOfficeSubject → String
   | .son => officeLead
   | .father => "George Herbert Walker Bush (June 12, 1924 – November 30, 2018) was an American politician and statesman who served as the 41st president of the United States from 1989 to 1993."
 
+/-- Current public GHWB lead is shorter than the historical template.
+Keep both explicitly declared forms; no approximate textual match. -/
+def officeLeadVariants (subject : BushOfficeSubject) : List String :=
+  match subject with
+  | .son => [officeLead]
+  | .father =>
+    let old := officeSubjectLead .father
+    let current := old.replace "an American politician and statesman who served as " ""
+    [old, current, current.replace " – " " – "]
+
+def matchedOfficeLead? (subject : BushOfficeSubject) (article : String) : Option String :=
+  (officeLeadVariants subject).find? (fun literal => article.startsWith literal)
+
 def indexedOfficeLeadMatches (subject : BushOfficeSubject) (article : String) : Bool :=
-  article.startsWith (officeSubjectLead subject)
+  (matchedOfficeLead? subject article).isSome
 
 /-- Exact controlled source interpretation. Unknown lead formats have no
 positive answer; do not extrapolate to other article claims. -/
@@ -360,6 +373,124 @@ theorem reciprocalBushOfficeSound
   constructor
   · rw [indexedOfficeAnswerSound .son son hs, indexedOfficeAnswerSound .father father hf] <;> rfl
   · exact bushOfficeIntervalsDisjoint
+
+
+/-- A bounded shared-event key, independent of article subject. The
+    historical result is only source-attributed; neither its legitimacy nor
+    the constitutional/legal consequences are inferred. -/
+structure ElectionClaim where
+  eventKey : String
+  winner : String
+  opponentName : String
+  year : Nat
+  deriving DecidableEq, Repr
+
+def election2000 : ElectionClaim :=
+  ⟨"us-presidential-election:2000", "Q207", "Al Gore", 2000⟩
+
+private def eventNat (j : Json) (k : String) : Option Nat :=
+  (j.getObjValAs? Nat k).toOption
+
+private def eventString (j : Json) (k : String) : String :=
+  (j.getObjValAs? String k).toOption.getD ""
+
+private def eventObj (j : Json) (k : String) : Json :=
+  (j.getObjVal? k).toOption.getD Json.null
+
+private def eventArray (j : Json) (k : String) : List Json :=
+  ((j.getObjValAs? (Array Json) k).toOption.getD #[]).toList
+
+/-- Match the explicit source clause, not a generic string similarity.
+    Require the independently checked source projection and the original
+    defeat predicate with its own direct syntactic subject/object. The GWB
+    pronoun rule is restricted to the original lead's known sentence span.
+    GHWB must have an explicit named subject, never inherited article topic. -/
+def electionRowMatches (subject : BushOfficeSubject) (article : String) (row : Json) : Bool :=
+  match eventNat row "sentence_start", eventNat row "sentence_end" with
+  | some start, some stop =>
+    let literal := String.ofList ((article.toList.drop start).take (stop-start))
+    let normalized := (literal.replace " ," ",").replace " ." "."
+    let pred := eventObj row "predicate"
+    let actors := eventArray row "actors"
+    let patients := eventArray row "patients"
+    let subjectLabel := match subject with | .son => "he" | .father => "Bush"
+    let clause := match subject with
+      | .son => start == 1141 && stop == 1377 &&
+          normalized.startsWith ("In the 2000 presidential election, he defeated " ++
+            "Democratic incumbent vice president Al Gore")
+      | .father => normalized.startsWith ("George W. Bush defeated Al Gore " ++
+          "in the 2000 election") &&
+          normalized.endsWith "."
+    decide (start < stop ∧ stop ≤ article.toList.length) &&
+      clause && eventString pred "lemma" == "defeat" &&
+      actors.any (fun a => eventString a "surface" == subjectLabel &&
+        eventString a "dep" == "nsubj") &&
+      patients.any (fun p => eventString p "surface" == "Gore" &&
+        eventString p "dep" == "dobj") &&
+      (row.getObjValAs? Bool "negation_dependency_candidate").toOption == some false
+  | _, _ => false
+
+def electionRows (subject : BushOfficeSubject) (article : String) (projection : Json) : List Json :=
+  (eventArray projection "event_candidates").filter (electionRowMatches subject article)
+
+theorem electionRowsExact (subject : BushOfficeSubject) (article : String)
+    (projection row : Json) :
+    row ∈ electionRows subject article projection ↔
+      row ∈ eventArray projection "event_candidates" ∧
+        electionRowMatches subject article row = true := by
+  simp only [electionRows, List.mem_filter]
+
+/-- The query reads the exact original article/SLR projection pair.
+    Absence, multiple matching rows, or unmatched lead returns unresolved. -/
+abbrev ElectionSource := String × Json
+
+def electionAnswer (source : ElectionSource) (subject : BushOfficeSubject) :
+    Option ElectionClaim :=
+  if indexedOfficeLeadMatches subject source.1 then
+    match electionRows subject source.1 source.2 with
+    | [_] => some election2000
+    | _ => none
+  else none
+
+def electionModel : DocumentQueryModel ElectionSource ElectionSource ElectionSource
+    BushOfficeSubject (Option ElectionClaim) where
+  observe := id
+  live := fun o r => r = o
+  documentAnswer := electionAnswer
+  readingAnswer := electionAnswer
+
+def electionLicence (source : ElectionSource) (subject : BushOfficeSubject) :
+    SourceQueryLicence electionModel source subject where
+  observation := source
+  sameProducedObservation := rfl
+  chosenReading := source
+  chosenIsLive := rfl
+  consumerFactorises := by
+    intro s h
+    exact congrArg (fun x => electionAnswer x subject) h
+  consumerClosed := by
+    intro r h
+    exact congrArg (fun x => electionAnswer x subject) h
+
+theorem reciprocalElectionClaimSound
+    (a b : ElectionSource)
+    (ha : electionAnswer a .son = some election2000)
+    (hb : electionAnswer b .father = some election2000) :
+    electionModel.documentAnswer a .son = some election2000 ∧
+    electionModel.documentAnswer b .father = some election2000 := by
+  exact ⟨slrJmdDocumentQuerySound (electionLicence a .son) _ ha,
+    slrJmdDocumentQuerySound (electionLicence b .father) _ hb⟩
+
+/-- Compare both directions on the existing two-source licence theorem.
+    A proof of shared outcome does not identify the complete source event
+    inventories, electoral-vote details or subsequent legal issues. -/
+theorem reciprocalElectionReadingsSound (a b : ElectionSource) :
+    (decide (electionModel.readingAnswer a .son = electionModel.readingAnswer b .father),
+      decide (electionModel.readingAnswer b .father = electionModel.readingAnswer a .son)) =
+    (decide (electionModel.documentAnswer a .son = electionModel.documentAnswer b .father),
+      decide (electionModel.documentAnswer b .father = electionModel.documentAnswer a .son)) :=
+  reciprocalLicensedComparison (electionLicence a .son) (electionLicence b .father)
+    (fun x y => decide (x = y)) (fun x y => decide (x = y)) a b rfl rfl
 
 
 end GwbArticleSystem

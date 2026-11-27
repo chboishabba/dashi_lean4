@@ -654,19 +654,34 @@ def runReciprocalOfficeCheck
         for w in wb do
           let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
         let _ := Slr.GwbArticleSystem.reciprocalBushOfficeSound ha hb
+        let some literalA := Slr.GwbArticleSystem.matchedOfficeLead? .son a | return 1
+        let some literalB := Slr.GwbArticleSystem.matchedOfficeLead? .father b | return 1
         let row := fun (subject : Slr.GwbArticleSystem.BushOfficeSubject) (s : Json)
-            (revision : Nat) (sha : String) (statements : List Json) =>
+            (revision : Nat) (sha literal : String) (statements : List Json) =>
           Json.mkObj [("subject", toJson (Slr.GwbArticleSystem.officeSubjectQid subject)),
             ("property", toJson ("P39" : String)), ("object", toJson ("Q11696" : String)),
             ("source_revision", (s.getObjVal? "revision_ref").toOption.getD Json.null),
             ("source_sha256", toJson sha), ("entity_revision", toJson revision),
-            ("source_literal", toJson (Slr.GwbArticleSystem.officeSubjectLead subject)),
+            ("source_literal", toJson literal),
             ("source_start_char", toJson (0 : Nat)),
-            ("source_end_char", toJson (Slr.GwbArticleSystem.officeSubjectLead subject).toList.length),
+            ("source_end_char", toJson literal.toList.length),
             ("years", toJson (Slr.GwbArticleSystem.officeSubjectYears subject)),
             ("original_qualified_statements", toJson statements)]
-        let left := row .son sa ra digests[0]! (wa.map (fun w => w.statement))
-        let right := row .father sb rb digests[4]! (wb.map (fun w => w.statement))
+        let left := row .son sa ra digests[0]! literalA (wa.map (fun w => w.statement))
+        let right := row .father sb rb digests[4]! literalB (wb.map (fun w => w.statement))
+        let esA : Slr.GwbArticleSystem.ElectionSource := (a, pa)
+        let esB : Slr.GwbArticleSystem.ElectionSource := (b, pb)
+        let rowsA := Slr.GwbArticleSystem.electionRows .son a pa
+        let rowsB := Slr.GwbArticleSystem.electionRows .father b pb
+        let sharedElection := decide (Slr.GwbArticleSystem.electionAnswer esA .son =
+          some Slr.GwbArticleSystem.election2000 ∧
+          Slr.GwbArticleSystem.electionAnswer esB .father =
+          some Slr.GwbArticleSystem.election2000)
+        if hA : Slr.GwbArticleSystem.electionAnswer esA .son = some Slr.GwbArticleSystem.election2000 then
+          if hB : Slr.GwbArticleSystem.electionAnswer esB .father = some Slr.GwbArticleSystem.election2000 then
+            let _ := Slr.GwbArticleSystem.reciprocalElectionClaimSound esA esB hA hB
+            let _ := Slr.GwbArticleSystem.reciprocalElectionReadingsSound esA esB
+            pure ()
         IO.FS.writeFile outputPath ((Json.mkObj [
           ("schema", toJson ("jmd-bounded-reciprocal-office-v1" : String)),
           ("son", left), ("father", right), ("input_sha256_in_argument_order", toJson digests),
@@ -675,7 +690,11 @@ def runReciprocalOfficeCheck
           ("backward", toJson ("father tenure before son tenure" : String)),
           ("same_office", toJson true), ("distinct_holders", toJson true),
           ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
-          ("shared_event_identity_paid", toJson false), ("general_semantic_coverage_paid", toJson false),
+          ("shared_event_identity_paid", toJson false),
+          ("bounded_shared_election_outcome_paid", toJson sharedElection),
+          ("election_son_rows", toJson rowsA), ("election_father_rows", toJson rowsB),
+          ("election_claim", if sharedElection then Json.mkObj [("event_key", toJson ("us-presidential-election:2000" : String)), ("winner", toJson ("Q207" : String)), ("opponent", toJson ("Al Gore" : String)), ("year", toJson (2000 : Nat))] else Json.null),
+          ("general_semantic_coverage_paid", toJson false),
           ("world_truth_paid", toJson false)]).pretty ++ "\n")
         return 0
       else
@@ -827,3 +846,7 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbArticleSystem.reciprocalBushOfficeSound
 #print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeAnswerSound
+
+#print axioms Wikidata.Slr.GwbArticleSystem.electionRowsExact
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionClaimSound
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionReadingsSound

@@ -4,6 +4,7 @@ def main (args : List String) : IO UInt32 := do
   match args with
   | ["demand", receipt] => Wikidata.Slr.RelationalObservedMeet.runDemandInventory receipt
   | ["factors", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runFactorProjection packet answer
+  | ["participant", family, answer] => Wikidata.Slr.RelationalObservedMeet.runParticipantQuery family answer
   | ["relations", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runRecordedRelationQuery packet answer
   | [input, output] => Wikidata.Slr.RelationalObservedMeet.run input output
   | _ =>
@@ -20,3 +21,5 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.FiniteConsumer.projectedEnvelopeConsumerClosed
 #print axioms Wikidata.Slr.FiniteConsumer.licenceOfProjectedEnvelope
 #print axioms Wikidata.Slr.RelationalObservedMeet.recordedFactorConstancy
+
+#print axioms Wikidata.Slr.RelationalObservedMeet.participantCoordinatesExact

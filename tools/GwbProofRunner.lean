@@ -611,6 +611,80 @@ def runArchivedClauseCheck
   | _, _, _ => return 1
 
 
+/-- Independently reopen the two original article/EntityData inputs.
+The controlled lead rule must actually match; no fallback to assumed dates. -/
+def runReciprocalOfficeCheck
+    (sonArticle sonSlr sonProjection sonRoot fatherArticle fatherSlr
+      fatherProjection fatherRoot officePath outputPath : String) : IO UInt32 := do
+  let a ← IO.FS.readFile sonArticle
+  let b ← IO.FS.readFile fatherArticle
+  let paths := [sonArticle, sonSlr, sonProjection, sonRoot,
+    fatherArticle, fatherSlr, fatherProjection, fatherRoot, officePath]
+  let mut digests : List String := []
+  for p in paths do
+    let out ← IO.Process.output { cmd := "sha256sum", args := #[p] }
+    if out.exitCode != 0 then return 1
+    digests := digests ++ [(out.stdout.splitOn " ").head!]
+  match Json.parse (← IO.FS.readFile sonSlr), Json.parse (← IO.FS.readFile sonProjection),
+      Json.parse (← IO.FS.readFile sonRoot), Json.parse (← IO.FS.readFile fatherSlr),
+      Json.parse (← IO.FS.readFile fatherProjection), Json.parse (← IO.FS.readFile fatherRoot),
+      Json.parse (← IO.FS.readFile officePath) with
+  | .ok sa, .ok pa, .ok ea, .ok sb, .ok pb, .ok eb, .ok office =>
+    let manifestA := (sa.getObjVal? "manifestation").toOption.getD Json.null
+    let manifestB := (sb.getObjVal? "manifestation").toOption.getD Json.null
+    if (manifestA.getObjValAs? String "source_text_sha256").toOption != some digests[0]! ||
+       (pa.getObjValAs? String "source_text_sha256").toOption != some digests[0]! ||
+       (manifestB.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
+       (pb.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
+       digests[0]! == digests[4]! then return 1
+    if !Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea ||
+       !Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb ||
+       !Slr.GwbArticleSystem.officeLabelChecked office then return 1
+    let some ra := Slr.GwbArticleSystem.entityRevision ea "Q207" | return 1
+    let some rb := Slr.GwbArticleSystem.entityRevision eb "Q23505" | return 1
+    let some ro := Slr.GwbArticleSystem.entityRevision office "Q11696" | return 1
+    if ra == 0 || rb == 0 || ro == 0 then return 1
+    if ha : Slr.GwbArticleSystem.indexedOfficeLeadMatches .son a = true then
+      if hb : Slr.GwbArticleSystem.indexedOfficeLeadMatches .father b = true then
+        let wa := Slr.GwbWorldGraph.originalQualifiedYearWitnesses ea "Q207" "P39" "Q11696" 2001 2009
+        let wb := Slr.GwbWorldGraph.originalQualifiedYearWitnesses eb "Q23505" "P39" "Q11696" 1989 1993
+        if wa.isEmpty || wb.isEmpty then return 1
+        for w in wa do
+          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        for w in wb do
+          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        let _ := Slr.GwbArticleSystem.reciprocalBushOfficeSound ha hb
+        let row := fun (subject : Slr.GwbArticleSystem.BushOfficeSubject) (s : Json)
+            (revision : Nat) (sha : String) (statements : List Json) =>
+          Json.mkObj [("subject", toJson (Slr.GwbArticleSystem.officeSubjectQid subject)),
+            ("property", toJson ("P39" : String)), ("object", toJson ("Q11696" : String)),
+            ("source_revision", (s.getObjVal? "revision_ref").toOption.getD Json.null),
+            ("source_sha256", toJson sha), ("entity_revision", toJson revision),
+            ("source_literal", toJson (Slr.GwbArticleSystem.officeSubjectLead subject)),
+            ("source_start_char", toJson (0 : Nat)),
+            ("source_end_char", toJson (Slr.GwbArticleSystem.officeSubjectLead subject).toList.length),
+            ("years", toJson (Slr.GwbArticleSystem.officeSubjectYears subject)),
+            ("original_qualified_statements", toJson statements)]
+        let left := row .son sa ra digests[0]! (wa.map (fun w => w.statement))
+        let right := row .father sb rb digests[4]! (wb.map (fun w => w.statement))
+        IO.FS.writeFile outputPath ((Json.mkObj [
+          ("schema", toJson ("jmd-bounded-reciprocal-office-v1" : String)),
+          ("son", left), ("father", right), ("input_sha256_in_argument_order", toJson digests),
+          ("office_entity_revision", toJson ro),
+          ("forward", toJson ("son tenure after father tenure" : String)),
+          ("backward", toJson ("father tenure before son tenure" : String)),
+          ("same_office", toJson true), ("distinct_holders", toJson true),
+          ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
+          ("shared_event_identity_paid", toJson false), ("general_semantic_coverage_paid", toJson false),
+          ("world_truth_paid", toJson false)]).pretty ++ "\n")
+        return 0
+      else
+        IO.eprintln "GHWB exact controlled lead did not match; no semantic answer"
+        return 1
+    else return 1
+  | _, _, _, _, _, _, _ => return 1
+
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -635,6 +709,8 @@ def main (args : List String) : IO UInt32 := do
         kind value startYear endYear output
   | ["article-p4-check", article, slr, projection, native, wikidata] =>
       runArticleP4Check article slr projection native wikidata
+  | ["reciprocal-office-check", a, sa, pa, ea, b, sb, pb, eb, office, output] =>
+      runReciprocalOfficeCheck a sa pa ea b sb pb eb office output
   | ["article-clause-check", article, slr, projection, root, output] =>
       runArchivedClauseCheck article slr projection root output
   | ["article-office-check", article, slr, projection, root, office, output] =>
@@ -748,3 +824,6 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.GwbArticleSystem.suspensionIsNotBushAction
 #print axioms Wikidata.Slr.GwbArticleSystem.predictionIsNotBushAction
 #print axioms Wikidata.Slr.GwbArticleSystem.governorCoordinatedActions
+
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalBushOfficeSound
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeAnswerSound

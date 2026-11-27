@@ -462,4 +462,56 @@ def runParticipantQuery (familyPath answerPath : String) : IO UInt32 := do
       return 1
   | _, _ => return 1
 
+
+/-- Select the original directional comparisons without reversing a licence. -/
+def selectDirectional (left right : String) (pairs : List Json) : List Json :=
+  pairs.filter fun p =>
+    str p "left_selector_ref" == some left &&
+    str p "right_selector_ref" == some right
+
+theorem selectDirectionalExact (left right : String) (pairs : List Json) (p : Json) :
+    p ∈ selectDirectional left right pairs ↔
+      p ∈ pairs ∧ (str p "left_selector_ref" == some left &&
+        str p "right_selector_ref" == some right) = true := by
+  simp only [selectDirectional, List.mem_filter]
+
+/-- Check the reciprocal consumer against the original selected family.
+This checks the exact projection, not independent semantic authority. -/
+def checkReciprocalQuery (family answer : Json) : Bool := Id.run do
+  let some (sources, fibre) := decodeReceipt family | return false
+  let some projection := obj family "projection" | return false
+  let some originals := rows projection "sources" | return false
+  let some pairs := rows projection "directed_comparisons" | return false
+  let some a := obj answer "left" | return false
+  let some b := obj answer "right" | return false
+  let some left := str a "selector_ref" | return false
+  let some right := str b "selector_ref" | return false
+  let some ao := obj a "observation" | return false
+  let some bo := obj b "observation" | return false
+  let some ap := obj ao "polarity" | return false
+  let some bp := obj bo "polarity" | return false
+  let [f] := selectDirectional left right pairs | return false
+  let [r] := selectDirectional right left pairs | return false
+  return checkInventory sources fibre && left != right &&
+    originals.contains a && originals.contains b &&
+    str answer "schema" == some "slr.recorded-reciprocal-query.v1" &&
+    (str family "family_ref").isSome && str family "family_ref" == str answer "family_ref" &&
+    (str projection "consumer_ref").isSome &&
+    str projection "consumer_ref" == str answer "consumer_ref" &&
+    obj answer "forward" == some f && obj answer "backward" == some r &&
+    rows answer "source_polarity_pair" == some [ap, bp] &&
+    (["all_live_semantic_readings_covered", "semantic_equivalence_paid", "world_truth_paid"] : List String).all
+      (fun k => (answer.getObjValAs? Bool k).toOption == some false)
+
+def runReciprocalQuery (familyPath answerPath : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile familyPath), Json.parse (← IO.FS.readFile answerPath) with
+  | .ok family, .ok answer =>
+    if checkReciprocalQuery family answer then
+      IO.println "REL_RECORDED_RECIPROCAL_QUERY_CHECKED"
+      return 0
+    else
+      IO.eprintln "REL_RECORDED_RECIPROCAL_QUERY_REJECTED"
+      return 1
+  | _, _ => return 1
+
 end Wikidata.Slr.RelationalObservedMeet

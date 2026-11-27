@@ -2,6 +2,7 @@ import RequestProject.Slr.RelationalObservedMeet
 
 def main (args : List String) : IO UInt32 := do
   match args with
+  | ["historical-focus", receipt] => Wikidata.Slr.RelationalObservedMeet.runHistoricalFocus receipt
   | ["demand", receipt] => Wikidata.Slr.RelationalObservedMeet.runDemandInventory receipt
   | ["factors", packet, answer] => Wikidata.Slr.RelationalObservedMeet.runFactorProjection packet answer
   | ["reciprocal", family, answer] => Wikidata.Slr.RelationalObservedMeet.runReciprocalQuery family answer
@@ -26,3 +27,7 @@ def main (args : List String) : IO UInt32 := do
 #print axioms Wikidata.Slr.RelationalObservedMeet.participantCoordinatesExact
 
 #print axioms Wikidata.Slr.RelationalObservedMeet.selectDirectionalExact
+
+#print axioms Wikidata.Slr.RelationalObservedMeet.historicalFocusRetainsKey
+#print axioms Wikidata.Slr.RelationalObservedMeet.historicalFocusRetainsOutside
+#print axioms Wikidata.Slr.RelationalObservedMeet.historicalFocusConsumerClosed

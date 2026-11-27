@@ -358,8 +358,7 @@ theorem reciprocalBushOfficeSound
        some ("Q23505", "P39", "Q11696", 1989, 1993)) ∧
     (officeSubjectYears .father).2 < (officeSubjectYears .son).1 := by
   constructor
-  · rw [indexedOfficeAnswerSound .son son hs, indexedOfficeAnswerSound .father father hf]
-    rfl
+  · rw [indexedOfficeAnswerSound .son son hs, indexedOfficeAnswerSound .father father hf] <;> rfl
   · exact bushOfficeIntervalsDisjoint
 
 

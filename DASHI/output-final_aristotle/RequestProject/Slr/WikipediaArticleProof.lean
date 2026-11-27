@@ -314,7 +314,7 @@ def articleSectionCoverageExact (text : String) (sections : Array Json) : Bool :
 
 /-- A source-verification success never implies that an extracted event
     occurred: it certifies the relation to source/parser observations only. -/
-def checkProjection (text : String) (source projection : Json) : Bool :=
+def checkProjectionFor (subject text : String) (source projection : Json) : Bool :=
   match arr? source "pnf_candidates",
         arr? projection "sections",
         arr? projection "event_candidates",
@@ -331,7 +331,11 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       let nerPresent := rawNamed.isSome
       str? source "schema" == some "slr-source-unit-pnf-record-v1" &&
       str? projection "schema" == some "slr-jmd-wikipedia-article-candidates-v1" &&
-      str? projection "wikidata_item_qid" == some "Q207" &&
+      !subject.isEmpty &&
+      str? projection "wikidata_item_qid" == some subject &&
+      (match str? source "source_unit_ref", str? source "revision_ref" with
+       | some unit, some revision => !unit.isEmpty && !revision.isEmpty
+       | _, _ => false) &&
       str? source "source_unit_ref" == str? projection "source_unit_ref" &&
       str? source "revision_ref" == str? projection "source_revision_ref" &&
       bool? projection "ner_observations_present" == some nerPresent &&
@@ -367,6 +371,21 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
       timeline.toList.all (validateTimeline text original events) &&
       order.toList.all (validateTextOrder events)
   | _, _, _, _, _, _, _, _, _ => false
+
+/-- Preserve the original GWB ABI as a specialization. -/
+def checkProjection (text : String) (source projection : Json) : Bool :=
+  checkProjectionFor "Q207" text source projection
+
+structure CheckedIndexedArticleExtraction
+    (subject text : String) (source projection : Json) where
+  checked : checkProjectionFor subject text source projection = true
+
+def checkedIndexedArticle?
+    (subject text : String) (source projection : Json) :
+    Option (CheckedIndexedArticleExtraction subject text source projection) :=
+  if h : checkProjectionFor subject text source projection = true then
+    some ⟨h⟩
+  else none
 
 /-- This exact-source certificate is obtained only after checking the
     literal article, SLR original parser rows and projected evidence. -/

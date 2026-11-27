@@ -514,4 +514,38 @@ def runReciprocalQuery (familyPath answerPath : String) : IO UInt32 := do
       return 1
   | _, _ => return 1
 
+
+/-- Exact role slots include order, role and singleton source token.
+    Multi-token object support is not an exact inverse of one source atom. -/
+structure NumericRoleSlot where
+  ordinal : Nat
+  role : String
+  tokens : List Nat
+  deriving DecidableEq, Repr
+
+def expectedNumericRoleSlots (roles : List (String × Nat)) : List NumericRoleSlot :=
+  roles.zipIdx |>.map (fun (r, i) => ⟨i, r.1, [r.2]⟩)
+
+def exactNumericRoleSlots (roles : List (String × Nat))
+    (actual : List NumericRoleSlot) : Bool :=
+  decide (actual = expectedNumericRoleSlots roles)
+
+theorem exactNumericRoleSlotsSound (roles : List (String × Nat))
+    (actual : List NumericRoleSlot)
+    (h : exactNumericRoleSlots roles actual = true) :
+    actual = expectedNumericRoleSlots roles := by
+  simpa [exactNumericRoleSlots] using h
+
+/-- The repaired candidate is structurally exact without erasing the old
+    candidate or paying semantic identity. Two exact candidates are a debt. -/
+def uniqueExactNumericCarrier (roles : List (String × Nat))
+    (carriers : List (List NumericRoleSlot)) : Bool :=
+  (carriers.filter (exactNumericRoleSlots roles)).length == 1
+
+theorem historicalCarrierRepairExact (roles : List (String × Nat))
+    (old : List NumericRoleSlot)
+    (bad : exactNumericRoleSlots roles old = false) :
+    uniqueExactNumericCarrier roles [old, expectedNumericRoleSlots roles] = true := by
+  simp [uniqueExactNumericCarrier, bad, exactNumericRoleSlots]
+
 end Wikidata.Slr.RelationalObservedMeet

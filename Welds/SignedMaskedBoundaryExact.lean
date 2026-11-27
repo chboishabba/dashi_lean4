@@ -55,15 +55,13 @@ theorem chooseExact {P Q : State → Prop} {a b : Option (Entry State)}
         hz.elim (ha.2.2 z) (fun hq => False.elim (hb z hq))⟩
     | some y =>
       by_cases h : x.cost ≤ y.cost
-      · simpa only [choose, if_pos h, Exact] using
-          (show P x.witness ∨ Q x.witness from Or.inl ha.1,
-           ha.2.1, fun z (hz : P z ∨ Q z) =>
-            hz.elim (ha.2.2 z) (fun hq => le_trans h (hb.2.2 z hq)))
+      · simp only [choose, if_pos h, Exact]
+        exact ⟨Or.inl ha.1, ha.2.1, fun z hz =>
+          hz.elim (ha.2.2 z) (fun hq => le_trans h (hb.2.2 z hq))⟩
       · have h' : y.cost ≤ x.cost := by omega
-        simpa only [choose, if_neg h, Exact] using
-          (show P y.witness ∨ Q y.witness from Or.inr hb.1,
-           hb.2.1, fun z (hz : P z ∨ Q z) =>
-            hz.elim (fun hp => le_trans h' (ha.2.2 z hp)) (hb.2.2 z))
+        simp only [choose, if_neg h, Exact]
+        exact ⟨Or.inr hb.1, hb.2.1, fun z hz =>
+          hz.elim (fun hp => le_trans h' (ha.2.2 z hp)) (hb.2.2 z)⟩
 
 /-- For one fixed shared label, compatible optimal child witnesses give an
     optimal parent. The caller must prove the affine gluing law, not assume

@@ -412,4 +412,54 @@ def runDemandInventory (path : String) : IO UInt32 := do
     IO.eprintln "REL_NATIVE_DEMAND_INVENTORY_REJECTED: JSON"
     return 1
 
+
+/-- Exact recorded participant inverse, reusing the decoded source inventory.
+    This does not resolve names or assert that grammatical roles are agents. -/
+def participantCoordinates (s : SelectedSource) (filler : String) : List Coordinate :=
+  s.coordinates.filter fun c => c.axis == "role" && c.valueRef == filler
+
+theorem participantCoordinatesExact (s : SelectedSource) (filler : String)
+    (c : Coordinate) :
+    c ∈ participantCoordinates s filler ↔
+      c ∈ s.coordinates ∧ (c.axis == "role" && c.valueRef == filler) = true := by
+  simp only [participantCoordinates, List.mem_filter]
+
+private def encodeParticipant (s : SelectedSource) (p c : Coordinate) : Json :=
+  Json.mkObj [("selector_ref", toJson s.selectorRef),
+    ("observation_ref", toJson s.observationRef),
+    ("revision_ref", toJson s.revisionRef),
+    ("predicate_candidate_ref", toJson p.valueRef),
+    ("coordinate", Json.mkObj [("axis", toJson c.axis), ("slot", toJson c.slot),
+      ("occurrence", toJson c.occurrence), ("value_ref", toJson c.valueRef)])]
+
+def checkParticipantQuery (family answer : Json) : Bool := Id.run do
+  let some (sources, fibre) := decodeReceipt family | return false
+  let some projection := obj family "projection" | return false
+  let some filler := str answer "filler_ref" | return false
+  let some actual := rows answer "answers" | return false
+  let expected := sources.flatMap fun s =>
+    match s.coordinates.find? (fun c => c.axis == "predicate") with
+    | none => []
+    | some p => (participantCoordinates s filler).map (encodeParticipant s p)
+  return checkInventory sources fibre && nonblank filler &&
+    str answer "schema" == some "slr.recorded-participant-query.v1" &&
+    (str family "family_ref").isSome && str family "family_ref" == str answer "family_ref" &&
+    (str projection "consumer_ref").isSome &&
+    str projection "consumer_ref" == str answer "consumer_ref" &&
+    nat answer "selected_source_count" == some sources.length &&
+    actual == expected &&
+    (["all_live_semantic_readings_covered", "governed_identity_paid", "world_truth_paid"] : List String).all
+      (fun k => (answer.getObjValAs? Bool k).toOption == some false)
+
+def runParticipantQuery (familyPath answerPath : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile familyPath), Json.parse (← IO.FS.readFile answerPath) with
+  | .ok family, .ok answer =>
+    if checkParticipantQuery family answer then
+      IO.println "REL_RECORDED_PARTICIPANT_QUERY_CHECKED"
+      return 0
+    else
+      IO.eprintln "REL_RECORDED_PARTICIPANT_QUERY_REJECTED"
+      return 1
+  | _, _ => return 1
+
 end Wikidata.Slr.RelationalObservedMeet

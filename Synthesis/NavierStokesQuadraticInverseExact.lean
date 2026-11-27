@@ -79,9 +79,11 @@ theorem nsQuadraticCorrectionRoot
   have hnorm : ‖h‖ ≤ r := by simpa [S, Metric.mem_closedBall, dist_eq_norm] using hh
   have hfix' : T h = h := hfix
   have hres : A (F (u+h)) = 0 := by
-    rw [hexpand, ← hfix']
-    dsimp [T]
-    abel
+    rw [hexpand]
+    have he : h = - A (F u) - B h h := hfix'.symm
+    calc
+      A (F u) + h + B h h = h - (- A (F u) - B h h) := by abel
+      _ = 0 := sub_eq_zero.mpr he
   refine ⟨u+h, ?_, hinj (by simpa using hres), ?_⟩
   · intro hz
     have he : h = -u := by

@@ -9,10 +9,10 @@ noncomputable section
 
 theorem nsWeightedYoung (x y l : ℝ) (hl : 0 < l) :
     2*x*y ≤ l*x^2+y^2/l := by
-  apply (le_div_iff₀ hl).mp
   have he : l*x^2+y^2/l = (l^2*x^2+y^2)/l := by
     field_simp
-  rw [he, div_mul_cancel₀ _ hl.ne']
+  rw [he]
+  apply (le_div_iff₀ hl).2
   nlinarith only [sq_nonneg (l*x-y)]
 
 /-- The three signed contractions in stretchFormWith are kept distinct.

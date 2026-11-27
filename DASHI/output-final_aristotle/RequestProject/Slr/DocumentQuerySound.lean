@@ -187,5 +187,44 @@ theorem semanticClosurePreservedByRefinement
   exact closed o x y (refines o x hx) (refines o y hy)
 
 
+/-- Independent source licences compose without requiring a global unique
+reading. The comparison is a consumer of the two independently licensed
+answers, not a new identity or source-independence witness. -/
+theorem bilateralLicensedComparison
+    {S O R Q A T P U V B C : Type}
+    {left : DocumentQueryModel S O R Q A}
+    {right : DocumentQueryModel T P U V B}
+    {s : S} {t : T} {q : Q} {v : V}
+    (l : SourceQueryLicence left s q)
+    (r : SourceQueryLicence right t v)
+    (compare : A → B → C)
+    (x : R) (y : U)
+    (hx : left.live l.observation x)
+    (hy : right.live r.observation y) :
+    compare (left.readingAnswer x q) (right.readingAnswer y v) =
+      compare (left.documentAnswer s q) (right.documentAnswer t v) := by
+  rw [← slrJmdDocumentQuerySoundForAnyLiveReading l x hx _ rfl,
+      ← slrJmdDocumentQuerySoundForAnyLiveReading r y hy _ rfl]
+
+/-- Bidirectionality is a second evaluation with the argument order swapped,
+not an assumption that a directional semantic licence is symmetric. -/
+theorem reciprocalLicensedComparison
+    {S O R Q A T P U V B C D : Type}
+    {left : DocumentQueryModel S O R Q A}
+    {right : DocumentQueryModel T P U V B}
+    {s : S} {t : T} {q : Q} {v : V}
+    (l : SourceQueryLicence left s q)
+    (r : SourceQueryLicence right t v)
+    (forward : A → B → C) (backward : B → A → D)
+    (x : R) (y : U)
+    (hx : left.live l.observation x)
+    (hy : right.live r.observation y) :
+    (forward (left.readingAnswer x q) (right.readingAnswer y v),
+      backward (right.readingAnswer y v) (left.readingAnswer x q)) =
+    (forward (left.documentAnswer s q) (right.documentAnswer t v),
+      backward (right.documentAnswer t v) (left.documentAnswer s q)) := by
+  rw [← slrJmdDocumentQuerySoundForAnyLiveReading l x hx _ rfl,
+      ← slrJmdDocumentQuerySoundForAnyLiveReading r y hy _ rfl]
+
 end Slr
 end Wikidata

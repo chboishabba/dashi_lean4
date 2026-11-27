@@ -162,6 +162,49 @@ theorem checkedM12AllSourceSpansExact
     (receipt : CheckedNativeM12Literal literal observation) :
     checkNativeM12Literal literal observation = true := receipt.checked
 
+/-- Independently reconstruct the bounded reporting projection using the
+    original M12 token ordinals. Absence of a sign is not a truth licence. -/
+def nativeReportingRows (tokens : Array Json) : Array Json := Id.run do
+  let neg := fun head => tokens.filterMap fun t =>
+    if nat? t "head_ordinal" == some head && field? t "dependency" == some "neg"
+    then nat? t "ordinal" else none
+  let mut result := #[]
+  for r in tokens do
+    if field? r "pos" == some "VERB" &&
+        ["state", "claim", "say", "assert", "deny", "report"].contains
+          ((field? r "lemma").getD "") then
+      if let some ri := nat? r "ordinal" then
+        for c in tokens do
+          if field? c "pos" == some "VERB" &&
+              nat? c "head_ordinal" == some ri &&
+              field? c "dependency" == some "ccomp" then
+            if let some ci := nat? c "ordinal" then
+              let contents := #[(ci, "ccomp")] ++ (tokens.filterMap fun t =>
+                if field? t "pos" == some "VERB" &&
+                    nat? t "head_ordinal" == some ci &&
+                    field? t "dependency" == some "conj" then
+                  (nat? t "ordinal").map (fun ti => (ti, "ccomp/conj"))
+                else none)
+              for (ti, attachment) in contents do
+                result := result.push (Json.mkObj [
+                  ("report_ordinal", toJson ri),
+                  ("complement_ordinal", toJson ci),
+                  ("content_ordinal", toJson ti),
+                  ("attachment", toJson attachment),
+                  ("report_negation_ordinals", toJson (neg ri)),
+                  ("complement_negation_ordinals", toJson (neg ci)),
+                  ("content_negation_ordinals", toJson (neg ti))])
+  return result
+
+def checkNativeReportingRows (j : Json) (observation : DbM12Observation) : Bool :=
+  (j.getObjValAs? (Array Json) "reporting_clauses").toOption ==
+    some (nativeReportingRows observation.tokens)
+
+theorem checkedNativeReportingRowsExact (j : Json) (observation : DbM12Observation)
+    (h : checkNativeReportingRows j observation = true) :
+    ((j.getObjValAs? (Array Json) "reporting_clauses").toOption ==
+      some (nativeReportingRows observation.tokens)) = true := h
+
 /-- Directly calls SLR's checked M12 compiler, never the TSV adapter.
     The literal file is checked against parser-product identity and
     token-head-entity source coverage by the existing SLR compiler. -/
@@ -206,7 +249,11 @@ def callSlrDbM12
   if h : checkNativeM12Literal literal observation = true then
     let receipt : CheckedNativeM12Literal literal observation := ⟨h⟩
     let _ := checkedM12AllSourceSpansExact receipt
-    return observation
+    if hReport : checkNativeReportingRows j observation = true then
+      let _ := checkedNativeReportingRowsExact j observation hReport
+      return observation
+    else
+      throw (IO.userError "Native M12 reporting projection missing or mismatched")
   else
     throw (IO.userError "Lean rejected incomplete or forged M12 literal/token/head/role coordinates")
 

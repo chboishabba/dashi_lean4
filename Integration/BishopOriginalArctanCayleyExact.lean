@@ -1,4 +1,4 @@
-import Integration.BishopRound11ImaginaryProductSemanticReflection
+import Integration.BishopImaginaryProductSemanticReflection
 import Integration.BishopVendoredMachinPiSemantics
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.Complex.Trigonometric
@@ -20,11 +20,11 @@ setoid exponential/atan-to-Cayley acceptance is STILL a separate
 golden proof obligation. No Lean kernel receipt is claimed.
 -/
 
-namespace Integration.BishopRound11OriginalArctanCayleyExact
+namespace Integration.BishopOriginalArctanCayleyExact
 
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredMachinPiSemantics
-open Integration.BishopRound11MachinSourceBinding
+open Integration.BishopMachinSourceBinding
 
 noncomputable section
 
@@ -73,7 +73,7 @@ theorem realArctanExponentialCayley (x : ℝ) :
 through its proven source-series semantics: x = 1/5. -/
 theorem originalBishopAtanOneFifthCayley
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     Complex.exp (((2 * eval B.atanOneFifth : ℝ) : ℂ) * Complex.I) =
       ((1 : ℂ) + (((1 / 5 : ℝ) : ℂ) * Complex.I)) /
       ((1 : ℂ) - (((1 / 5 : ℝ) : ℂ) * Complex.I)) := by
@@ -84,7 +84,7 @@ theorem originalBishopAtanOneFifthCayley
 through its proven source-series semantics: x = 1/239. -/
 theorem originalBishopAtanOneTwoHundredThirtyNinthCayley
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     Complex.exp
       (((2 * eval B.atanOneTwoHundredThirtyNinth : ℝ) : ℂ) * Complex.I) =
       ((1 : ℂ) + (((1 / 239 : ℝ) : ℂ) * Complex.I)) /
@@ -94,4 +94,4 @@ theorem originalBishopAtanOneTwoHundredThirtyNinthCayley
 
 end
 
-end Integration.BishopRound11OriginalArctanCayleyExact
+end Integration.BishopOriginalArctanCayleyExact

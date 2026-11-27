@@ -228,6 +228,32 @@ theorem p9AlignmentRetainsIndependentChecks
     GwbTypedFibre.typedRowsRemainSourceBound source,
     GwbWorldGraph.checkedWorldPropertySound property⟩
 
+/-- Generic P9: the same licensed article query must actually return the
+    independently supported proposition. A shared QID alone cannot supply
+    this equality. The article model and its coverage remain the existing
+    SourceQueryLicence obligations, not a new interpretation engine. -/
+theorem indexedArticleKBAlignmentSound
+    {subject article : String} {slr projection : Json}
+    (source : ArticleProof.CheckedIndexedArticleExtraction subject article slr projection)
+    {Observation Reading Query : Type}
+    (model : DocumentQueryModel (String × Json × Json) Observation Reading Query
+      (Pid × Qid × Qid))
+    (query : Query)
+    (licence : SourceQueryLicence model (article, slr, projection) query)
+    (property : GwbWorldGraph.CheckedWorldProperty)
+    (sameSubject : property.subject = Qid.wd subject)
+    (alignment : model.readingAnswer licence.chosenReading query =
+      (property.property, property.subject, property.object)) :
+    ArticleProof.checkProjectionFor subject article slr projection = true ∧
+    property.subject = Qid.wd subject ∧
+    model.documentAnswer (article, slr, projection) query =
+      (property.property, property.subject, property.object) ∧
+    (∃ p, (p, property.subject, property.object) ∈ property.pkb.stmts ∧
+      property.pkb.isSubPropertyOf p property.property = true) := by
+  exact ⟨source.checked, sameSubject,
+    slrJmdDocumentQuerySound licence _ alignment,
+    GwbWorldGraph.checkedWorldPropertySound property⟩
+
 end GwbP5P10
 end Slr
 end Wikidata

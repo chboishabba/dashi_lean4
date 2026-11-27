@@ -1,6 +1,6 @@
-import Integration.BishopRound11MachinBindingManifest
-import Integration.BishopRound11MachinCanonicalBinding
-import Integration.MoonshineEisensteinRound11RouteB
+import Integration.BishopMachinBindingManifest
+import Integration.BishopMachinCanonicalBinding
+import Integration.MoonshineEisensteinRouteB
 
 /-!
 # Typed recognition boundary for the Round11/Machin route-B replay
@@ -15,19 +15,19 @@ Cross-pollination rule used here:
 
 The mathematical target is already unique up to the Bishop setoid. Therefore a
 future genuine Agda replay/importer only needs to provide an inhabitant of the
-exact `Round11MachinSourceBinding` fields. Existing uniqueness then forces that
+exact `MachinSourceBinding` fields. Existing uniqueness then forces that
 binding into the canonical Lean equivalence class and all route-B transport
 theorems compile automatically.
 
 This file deliberately does not manufacture such a replay witness.
 -/
 
-namespace Integration.BishopRound11MachinRecognition
+namespace Integration.BishopMachinRecognition
 
-open Integration.BishopRound11MachinBindingManifest
-open Integration.BishopRound11MachinSourceBinding
-open Integration.BishopRound11MachinCanonicalBinding
-open Integration.MoonshineEisensteinRound11RouteB
+open Integration.BishopMachinBindingManifest
+open Integration.BishopMachinSourceBinding
+open Integration.BishopMachinCanonicalBinding
+open Integration.MoonshineEisensteinRouteB
 
 noncomputable section
 
@@ -45,7 +45,7 @@ inductive ClaimOrigin
 def bishopRepresentationOrigin : ClaimOrigin :=
   .vendoredExternalDependency
 
-def round11MachinSourceReceiptOrigin : ClaimOrigin :=
+def machinSourceReceiptOrigin : ClaimOrigin :=
   .agdaFormalReconstruction
 
 def canonicalLeanBindingOrigin : ClaimOrigin :=
@@ -92,23 +92,23 @@ theorem current_manifest_is_not_cross_prover_replay :
 as a genuine replay observation. This module never invents that proposition's
 inhabitant. -/
 structure CrossProverBindingRecognition
-    (ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop) where
-  binding : Round11MachinSourceBinding Arithmetic
+    (ReplayObserved : MachinSourceBinding Arithmetic → Prop) where
+  binding : MachinSourceBinding Arithmetic
   replayObserved : ReplayObserved binding
 
 /-- Recognition compiler: once a genuine imported binding exists, no further
 same-object theorem is required. The existing convergence-uniqueness theorem
 forces it into the canonical Bishop-setoid class. -/
 def recognize
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
-    (B : Round11MachinSourceBinding Arithmetic)
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
+    (B : MachinSourceBinding Arithmetic)
     (hReplay : ReplayObserved B) :
     CrossProverBindingRecognition ReplayObserved where
   binding := B
   replayObserved := hReplay
 
 def canonicalAgreement
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved) :
     BindingSetoidAgreement R.binding :=
   everyBinding_agrees_setoid R.binding
@@ -117,7 +117,7 @@ def canonicalAgreement
 than name/hash agreement: each imported convergence-selected value is forced
 to the canonical value up to Bishop equivalence. -/
 theorem recognized_exp_preserves_setoid_class
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved)
     (x : Integration.BishopVendoredRealEvaluation.RegularRatReal) :
     Integration.BishopVendoredRealEvaluation.Equiv
@@ -126,7 +126,7 @@ theorem recognized_exp_preserves_setoid_class
   (canonicalAgreement R).exp x
 
 theorem recognized_sin_preserves_setoid_class
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved)
     (x : Integration.BishopVendoredRealEvaluation.RegularRatReal) :
     Integration.BishopVendoredRealEvaluation.Equiv
@@ -135,7 +135,7 @@ theorem recognized_sin_preserves_setoid_class
   (canonicalAgreement R).sin x
 
 theorem recognized_cos_preserves_setoid_class
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved)
     (x : Integration.BishopVendoredRealEvaluation.RegularRatReal) :
     Integration.BishopVendoredRealEvaluation.Equiv
@@ -144,7 +144,7 @@ theorem recognized_cos_preserves_setoid_class
   (canonicalAgreement R).cos x
 
 theorem recognized_atan_fifth_preserves_setoid_class
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved) :
     Integration.BishopVendoredRealEvaluation.Equiv
       R.binding.atanOneFifth
@@ -152,7 +152,7 @@ theorem recognized_atan_fifth_preserves_setoid_class
   (canonicalAgreement R).atanOneFifth
 
 theorem recognized_atan_239_preserves_setoid_class
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved) :
     Integration.BishopVendoredRealEvaluation.Equiv
       R.binding.atanOneTwoHundredThirtyNinth
@@ -162,15 +162,15 @@ theorem recognized_atan_239_preserves_setoid_class
 /-- A genuinely recognized source binding immediately produces the already
 proved primitive real extraction. -/
 def recognizedPrimitiveExtraction
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved) :=
-  Integration.BishopRound11MachinSourceBinding.primitiveExtractionDirect
+  Integration.BishopMachinSourceBinding.primitiveExtractionDirect
     Arithmetic R.binding
 
 /-- Likewise the complete source q/E4/E6/Delta compiler is available for the
 recognized binding without any new analytic hypothesis. -/
 theorem recognized_mapped_normalized_delta_tendsto
-    {ReplayObserved : Round11MachinSourceBinding Arithmetic → Prop}
+    {ReplayObserved : MachinSourceBinding Arithmetic → Prop}
     (R : CrossProverBindingRecognition ReplayObserved)
     (τs : RouteComplex Arithmetic R.binding)
     (τ : ℍ)
@@ -201,4 +201,4 @@ def recognitionBoundary : RecognitionBoundary where
 
 end
 
-end Integration.BishopRound11MachinRecognition
+end Integration.BishopMachinRecognition

@@ -2,6 +2,8 @@
 # Proof-first GWB/JMD/SLR maximum-cut acceptance.
 # No TAR, reparse, new ontology, or fabricated semantic licences.
 set -euo pipefail
+# Bound individual Lean invocations; do not bound the entire campaign.
+lake() { timeout --kill-after=5s "${ITIR_STEP_TIMEOUT:-90s}" lake "$@"; }
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
@@ -47,6 +49,7 @@ compile_slr Proof
 compile_slr DbSourceProducer
 compile_slr GwbProductionTrace
 compile_slr FiniteConsumerCertificate
+compile_slr RelationalObservedMeet
 compile_slr GwbProofComposition
 compile_slr GwbWorldGraphProof
 compile_slr GwbHyperfabricTransport
@@ -55,6 +58,25 @@ compile_slr GwbP4SourceLicence
 compile_slr GwbP4ArticleEndToEnd
 compile_slr GwbP5P10ExactWeld
 lake env lean tools/GwbProofRunner.lean
+lake env lean tools/RelationalObservedMeetRunner.lean
+# Additional exact original SLR receipt checks, without a new parser.
+if [[ -n "${ITIR_RELATIONAL_FAMILY_JSON:-}" ]]; then
+  mkdir -p "$root/artifacts/itir-native-maxcut"
+  timeout 90s lake env lean --run tools/RelationalObservedMeetRunner.lean \
+    "$ITIR_RELATIONAL_FAMILY_JSON" "$root/artifacts/itir-native-maxcut/observed-meet.json"
+fi
+if [[ -n "${ITIR_ORIGINAL_RELATION_PACKET_JSON:-}" || -n "${ITIR_ORIGINAL_RELATION_QUERY_JSON:-}" ]]; then
+  [[ -s "${ITIR_ORIGINAL_RELATION_PACKET_JSON:-}" && -s "${ITIR_ORIGINAL_RELATION_QUERY_JSON:-}" ]] || {
+    echo "Both original native relation packet and query receipt required" >&2; exit 2;
+  }
+  mkdir -p "$root/artifacts/itir-native-maxcut"
+  timeout 90s python3 tools/check_original_relation_query.py \
+    "$ITIR_ORIGINAL_RELATION_PACKET_JSON" "$ITIR_ORIGINAL_RELATION_QUERY_JSON" \
+    > "$root/artifacts/itir-native-maxcut/original-relation-reference.json"
+  timeout 90s lake env lean --run tools/RelationalObservedMeetRunner.lean relations \
+    "$ITIR_ORIGINAL_RELATION_PACKET_JSON" "$ITIR_ORIGINAL_RELATION_QUERY_JSON" \
+    | tee "$root/artifacts/itir-native-maxcut/original-relation-lean.log"
+fi
 lake env lean --run tools/GwbProofRunner.lean composition
 # Historical P4 SourceQueryLicence is a theorem over the experimental
 # Rust observation; it is not an original SLR semantic licence.
@@ -129,7 +151,11 @@ qid_json="${GWB_Q207_ENTITY_JSON:-}"
 if [[ -z "$qid_json" && -n "${GWB_WORLD_GRAPH_JSON:-}" ]]; then
   qid_json="${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}/Q207.json"
 fi
+if [[ -z "$qid_json" && ( -n "${GWB_Q23505_SOURCE_DIR:-}" || -n "${GWB_Q23505_ENTITY_JSON:-}" ) ]]; then
+  echo "Reciprocal proof requested without original Q207 EntityData" >&2; exit 2
+fi
 if [[ -n "$qid_json" ]]; then
+  command -v jq >/dev/null || { echo "jq required for clause receipt checks" >&2; exit 2; }
   [[ -f "$qid_json" ]] || { echo "Missing Q207 original EntityData: $qid_json" >&2; exit 2; }
   source_dir="$root/.dashi/gwb-source"
   for f in article.txt slr-record.json article-candidates.json; do
@@ -141,6 +167,107 @@ if [[ -n "$qid_json" ]]; then
   lake env lean --run tools/GwbProofRunner.lean article-qid-check \
     "$source_dir/article.txt" "$source_dir/slr-record.json" \
     "$source_dir/article-candidates.json" "$qid_json"
+  # Exact bounded article claim -> independent JMD P39 support.
+  office_json="${GWB_Q11696_ENTITY_JSON:-${GWB_JMD_ENTITY_CACHE:-$root/.dashi/gwb-world/jmd-entity-cache}/Q11696.json}"
+  if [[ -f "$office_json" ]]; then
+    mkdir -p "$root/.dashi/gwb-world"
+    office_receipt="$root/.dashi/gwb-world/office-claim-proof.json"
+    stage="$(mktemp -d "$root/.dashi/gwb-world/office-check.XXXXXX")"
+    trap 'rm -rf "$stage"' EXIT
+    office_check() {
+      lake env lean --run tools/GwbProofRunner.lean article-office-check \
+        "$source_dir/article.txt" "$source_dir/slr-record.json" \
+        "$source_dir/article-candidates.json" "$1" "$2" "$3"
+    }
+    office_check "$qid_json" "$office_json" "$stage/first.json"
+    office_check "$qid_json" "$office_json" "$stage/replay.json"
+    cmp "$stage/first.json" "$stage/replay.json"
+    if office_check "$office_json" "$qid_json" "$stage/wrong.json" > "$stage/wrong.log" 2>&1; then
+      echo "ERROR: swapped root/office accepted" >&2; exit 1
+    fi
+    grep -q "GWB_OFFICE_CLAIM_REJECTED: original Q207/article mismatch" "$stage/wrong.log"
+    python3 - "$qid_json" "$stage/without-office.json" <<'PY'
+import json, sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    data = json.load(f)
+data["entities"]["Q207"]["claims"].pop("P39", None)
+with open(sys.argv[2], "w", encoding="utf-8") as f:
+    json.dump(data, f)
+PY
+    if office_check "$stage/without-office.json" "$office_json" "$stage/missing.json" > "$stage/missing.log" 2>&1; then
+      echo "ERROR: missing original P39 accepted" >&2; exit 1
+    fi
+    grep -q "GWB_OFFICE_CLAIM_REJECTED: independent P39 support absent" "$stage/missing.log"
+    mv "$stage/first.json" "$office_receipt"
+    echo "GWB_BOUNDED_OFFICE_REPLAY_AND_NEGATIVE_CONTROLS_PASS"
+    rm -rf "$stage"
+    trap - EXIT
+  elif [[ -n "${GWB_Q11696_ENTITY_JSON:-}" ]]; then
+    echo "Missing requested Q11696 EntityData: $office_json" >&2; exit 2
+  else
+    echo "GWB_BOUNDED_OFFICE_NOT_RUN: supply original Q11696 EntityData"
+  fi
+  # Source-scoped semantic witnesses; do not confuse with all-live English
+  # interpretation. Receipts live alongside the other tracked proof work.
+  reciprocal_out="$root/artifacts/gwb-reciprocal-proof"
+  mkdir -p "$reciprocal_out"
+  clause_stage="$(mktemp -d "$root/.dashi/gwb-clause-check.XXXXXX")"
+  trap 'rm -rf "$clause_stage"' EXIT
+  clause_check() {
+    lake env lean --run tools/GwbProofRunner.lean article-clause-check \
+      "$source_dir/article.txt" "$source_dir/slr-record.json" \
+      "$source_dir/article-candidates.json" "$qid_json" "$1"
+  }
+  clause_check "$clause_stage/first.json"
+  clause_check "$clause_stage/replay.json"
+  cmp "$clause_stage/first.json" "$clause_stage/replay.json"
+  jq -e '.answers | length == 3 and
+    (.[0].bush_asserted_actions | length == 4) and
+    (.[1].bush_asserted_actions | length == 0) and
+    (.[2].bush_asserted_actions | length == 1)' "$clause_stage/first.json" >/dev/null
+  mv "$clause_stage/first.json" "$reciprocal_out/gwb-archived-clauses.json"
+  rm -rf "$clause_stage"
+  trap - EXIT
+
+  # Both original article triples must already be supplied by the existing
+  # SLR source producer. No synthetic GHWB rows or new parser.
+  if [[ -n "${GWB_Q23505_SOURCE_DIR:-}" || -n "${GWB_Q23505_ENTITY_JSON:-}" ]]; then
+    father_dir="${GWB_Q23505_SOURCE_DIR:-}"
+    father_json="${GWB_Q23505_ENTITY_JSON:-}"
+    [[ -d "$father_dir" && -s "$father_json" && -s "$office_json" ]] || {
+      echo "Both original GHWB source directory and pinned EntityData, plus Q11696, required" >&2; exit 2;
+    }
+    for f in article.txt slr-record.json article-candidates.json; do
+      [[ -s "$father_dir/$f" ]] || { echo "Missing GHWB original $f" >&2; exit 2; }
+    done
+    stage="$(mktemp -d "$root/.dashi/gwb-reciprocal-check.XXXXXX")"
+    trap 'rm -rf "$stage"' EXIT
+    reciprocal_check() {
+      lake env lean --run tools/GwbProofRunner.lean reciprocal-office-check \
+        "$source_dir/article.txt" "$source_dir/slr-record.json" \
+        "$source_dir/article-candidates.json" "$qid_json" \
+        "$father_dir/article.txt" "$father_dir/slr-record.json" \
+        "$father_dir/article-candidates.json" "$1" "$office_json" "$2"
+    }
+    reciprocal_check "$father_json" "$stage/first.json"
+    reciprocal_check "$father_json" "$stage/replay.json"
+    cmp "$stage/first.json" "$stage/replay.json"
+    if reciprocal_check "$qid_json" "$stage/swapped.json" > "$stage/swapped.log" 2>&1; then
+      echo "ERROR: wrong GHWB root accepted" >&2; exit 1
+    fi
+    jq -e '.same_office and .distinct_holders and .disjoint_year_intervals and
+       (.direct_succession_paid == false) and (.world_truth_paid == false) and
+       (.general_semantic_coverage_paid == false)' "$stage/first.json" >/dev/null
+    mv "$stage/first.json" "$reciprocal_out/reciprocal-office-election.json"
+    # Preserve the raw result even if the bounded event rule is unmatched.
+    if ! jq -e '.bounded_shared_election_outcome_paid == true' \
+      "$reciprocal_out/reciprocal-office-election.json" >/dev/null; then
+      echo "RECIPROCAL_ELECTION_UNRESOLVED: original event rule not matched in both articles" >&2
+      exit 3
+    fi
+    rm -rf "$stage"
+    trap - EXIT
+  fi
   # The historical P4 native Rust receipt is NOT a canonical article-semantic
   # premise. Reopen it only on the explicitly selected legacy diagnostic lane.
   if [[ "$mode" == "--legacy-rust" ]]; then

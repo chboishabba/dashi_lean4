@@ -1,0 +1,572 @@
+{
+  "authority": "REVIEW_PREPARATION_ONLY",
+  "candidate_count_bounded_parser_observations": 27,
+  "candidate_set_ref": "native-antecedent-bounded-frontier:sha256:9ed84e1cce2b9f0a96b7ca138e6dd2ad920da934facb62480ba85e7bc908e63b",
+  "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+  "external_qid_paid": false,
+  "focus": {
+    "candidate_ref": "candidate-pnf-db:parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63:document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693:1:4534:4536",
+    "end_char": 4536,
+    "mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693",
+    "start_char": 4534,
+    "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+    "surface": "he"
+  },
+  "identity_admission_paid": false,
+  "nominees": [
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Bush",
+      "morphology": null,
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:e9927deb47d707b54fd2374882f3686c1392bda3d3cfd492d4a11d9e65bc9d8a",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:entity:0",
+      "parser_pos_or_label": "PERSON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4061,
+        4065
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Bush",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:e4222365dd0fe91706d11eaf2a9a6b3859e09885f8ff42e411521ef8fdac3f13",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:token:2",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4061,
+        4065
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "president",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:71de9595d3685d2a5c236a3a9457f6da6665e7594728898124ece0d30c6a7286",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:token:10",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4100,
+        4109
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "community",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:49068bca23b3b4f01ab3cd40807b9836e9af1b205c27168af3a2fc3784ed8d00",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:token:13",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4117,
+        4126
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Rotary",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:0912f3e9d844425273ca46ac0b8552022377a18ac5e7cb169f5eb1753f494859",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:token:15",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4129,
+        4135
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Club",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:57f09f1df1871ffda923ccb37f7739491ce2d8262ef54c382ecdcbcc908499e1",
+      "original_statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3",
+      "parser_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:token:16",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4136,
+        4140
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "This",
+      "morphology": "{\"Number\":\"Sing\",\"PronType\":\"Dem\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:d08e24b852abf24f0227d5250ab50860c89fa42ed0a256640802392ddd04353f",
+      "original_statement_ref": "statement:sha256:ca338435533c2af28cf552fbc365ac522350aac1c5115f14fac1c871acb5b4c4",
+      "parser_observation_ref": "sha256:cd7171b0e09e14566bd6c27aa6dd973ec591ae7438f5be32a158a45ce89f7ef6:token:0",
+      "parser_pos_or_label": "PRON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:20:4144-4192",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4144,
+        4148
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "us",
+      "morphology": "{\"Case\":\"Acc\",\"Number\":\"Plur\",\"Person\":\"1\",\"PronType\":\"Prs\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:8884abcbee7e1a885a41695fe760d57f0c9daf94df1f6001266fd0763d641b35",
+      "original_statement_ref": "statement:sha256:ca338435533c2af28cf552fbc365ac522350aac1c5115f14fac1c871acb5b4c4",
+      "parser_observation_ref": "sha256:cd7171b0e09e14566bd6c27aa6dd973ec591ae7438f5be32a158a45ce89f7ef6:token:3",
+      "parser_pos_or_label": "PRON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:20:4144-4192",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4160,
+        4162
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "puzzles",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:b4ba0dbac65996745896236ac561cb3beface2464dfa221496efafac8e224c82",
+      "original_statement_ref": "statement:sha256:ca338435533c2af28cf552fbc365ac522350aac1c5115f14fac1c871acb5b4c4",
+      "parser_observation_ref": "sha256:cd7171b0e09e14566bd6c27aa6dd973ec591ae7438f5be32a158a45ce89f7ef6:token:10",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:20:4144-4192",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4184,
+        4191
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "First",
+      "morphology": null,
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:a8daba6cfc923d25ce9a340ed44ab65c3797be73e667d4fc3b1803370abf4259",
+      "original_statement_ref": "statement:sha256:6e56193d6f5e8d604517ff46cf6ac5f5047e11cc41da9a470c48c92f91ceeadf",
+      "parser_observation_ref": "sha256:8644277facfde015a1fa6a2e1936e1c7e5f04c32dd340e37b22fc946d011ba88:entity:0",
+      "parser_pos_or_label": "ORDINAL",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:21:4195-4286",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4195,
+        4200
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "fellow",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:bb345d72b4869a1e701bb5c09c8d875781e78c5a7fa0ec310c5c21f826b85429",
+      "original_statement_ref": "statement:sha256:6e56193d6f5e8d604517ff46cf6ac5f5047e11cc41da9a470c48c92f91ceeadf",
+      "parser_observation_ref": "sha256:8644277facfde015a1fa6a2e1936e1c7e5f04c32dd340e37b22fc946d011ba88:token:6",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:21:4195-4286",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4223,
+        4229
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "politician",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:8da40869a1e8cd009543a660480dd10ca768fb87b40bf10601b3f87c07062942",
+      "original_statement_ref": "statement:sha256:6e56193d6f5e8d604517ff46cf6ac5f5047e11cc41da9a470c48c92f91ceeadf",
+      "parser_observation_ref": "sha256:8644277facfde015a1fa6a2e1936e1c7e5f04c32dd340e37b22fc946d011ba88:token:16",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:21:4195-4286",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4275,
+        4285
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "It",
+      "morphology": "{\"Case\":\"Nom\",\"Gender\":\"Neut\",\"Number\":\"Sing\",\"Person\":\"3\",\"PronType\":\"Prs\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:7f97cb075caf57afa7cb40e9522a028c2340f9e5d14d4fde4de2070873dd3a48",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:0",
+      "parser_pos_or_label": "PRON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4287,
+        4289
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Bush",
+      "morphology": null,
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:366514bec27e4ec4029a753dca28145b54356d9c9be9b32147a691a3ae9f52eb",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:entity:0",
+      "parser_pos_or_label": "PERSON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4310,
+        4314
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Bush",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:3fd598d9e1ce6a2150cadfd6f96408611d1ea6c2a50abfdaf7db1e74389bdd2a",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:4",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4310,
+        4314
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "abilities",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:72ecbbb8592812a37da30ca59c807f1307d0fabe33b4ed621359b6ef2cfb82c6",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:6",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4317,
+        4326
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "people",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:85c93e8724a36683ad65771e1443efe8fcc029446559c545a0591bf9a4203b0f",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:9",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4338,
+        4344
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "level",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:d0b0e1751322254dc3be393677e49d1b1942682d0ec7325f757e713a39839b88",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:16",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4368,
+        4373
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "which",
+      "morphology": "{}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:1158e2ee696f2cc9cc7349e54c9b97e5b5868104847f16245aa67ebd5437295a",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:18",
+      "parser_pos_or_label": "PRON",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4375,
+        4380
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "evidence",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:b658893a9ac6033ca9e473dc9a180bd4ceb75bf353ecd42306cebdc32acf08af",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:22",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4399,
+        4407
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "capitals",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:c475d571b875c26d5b3a65ccfbc152ad97757adf4c9e2dcba5f9864f45caf64f",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:25",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4419,
+        4427
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Capitol",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:2789db3dad26a59e5ed11da25119be8e075f8f42613bf464ecc50e38b8b52323",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:28",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4435,
+        4442
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Capitol \nHill",
+      "morphology": null,
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:a3b4985c88d1e3c7a743d81070611f1bbe4210284c603d8c4fdb5a14491d7cf5",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:entity:1",
+      "parser_pos_or_label": "ORG",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4435,
+        4448
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "Hill",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:30155803127e8fb5fc3f6f14ee32552eccec6310df022c74854d5cfd09e2649a",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:30",
+      "parser_pos_or_label": "PROPN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4444,
+        4448
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "abilities",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:49719ad6ec896694684db46dd6a585aac558e0e0634ed25870f7889b6f53dda1",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:36",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4476,
+        4485
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "level",
+      "morphology": "{\"Number\":\"Sing\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:ceb4d307cc23f892468e5d0c4e8fec70fd63bd49cd0e2d7d724021c7e5d4646a",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:39",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4493,
+        4498
+      ]
+    },
+    {
+      "accessibility_witness_ref": null,
+      "exclusion_witness_refs": [],
+      "literal_surface": "politics",
+      "morphology": "{\"Number\":\"Plur\"}",
+      "morphology_compatibility": "UNASSESSED",
+      "nomination_ref": "native-parser-nomination:sha256:8bc3c0d91bc102ac2441e2788d425604634b45d6bd79dd46bca81183e072d11b",
+      "original_statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+      "parser_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:token:43",
+      "parser_pos_or_label": "NOUN",
+      "quotation_scope": "UNASSESSED",
+      "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+      "reviewer_disposition": "UNREVIEWED",
+      "source_span": [
+        4514,
+        4522
+      ]
+    }
+  ],
+  "review_complete": false,
+  "review_item_ref": "review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+  "reviewer_ref": null,
+  "s29_accepted_command_ref": null,
+  "schema": "slr-original-book-antecedent-review-worksheet-v1",
+  "selected_C410_nomination": {
+    "end_char": 4314,
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+    "start_char": 4310,
+    "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044",
+    "surface": "Bush"
+  },
+  "semantic_fibre_exhaustiveness": "NOT_PROVEN",
+  "semantic_resolution_receipt_ref": null,
+  "source_local_named_topic_policy_inference": {
+    "canonical_content_sha256": "7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "complete_all_live_referents_proven": false,
+    "derivation_ref": "source-local-topic-inference:sha256:a8bd023c0a57fe9537b2856139bb7ed113d20d40f0a392214e39daca44309fb8",
+    "distinct_named_person_groups": 1,
+    "distinct_supporting_original_sentences": 2,
+    "external_qid_paid": false,
+    "focus_mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+    "focus_span": [
+      4534,
+      4536
+    ],
+    "focus_surface": "he",
+    "governed_source_local_admission_paid": false,
+    "historical_claim_truth_paid": false,
+    "named_person_groups": [
+      "bush"
+    ],
+    "named_person_observation_count": 2,
+    "original_document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "original_source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+    "parser_run_ref": "parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63",
+    "policy_ref": "slr:policy:source-local-repeated-person-topic:v1",
+    "raw_parser_observation_count": 27,
+    "reason": "unique repeatedly named PERSON across original scope; no competing PERSON or quote boundary",
+    "requires_human_s29_to_form_policy_inference": false,
+    "review_item_ref": "review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1",
+    "s29_status_at_derivation": "Pending",
+    "schema": "slr-native-named-topic-inference-v1",
+    "source_local_answer": "Bush",
+    "source_local_inference_derived": true,
+    "status": "DERIVED_SOURCE_LOCAL_NAMED_TOPIC",
+    "supporting_person_mentions": [
+      {
+        "end_char": 4065,
+        "name": "Bush",
+        "original_observation_ref": "sha256:5385ea75ff4468f65b3274834954fe5d010f61821877ac8ff4df6b59e7e2d4ba:entity:0",
+        "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:19:4053-4141",
+        "start_char": 4061,
+        "statement_ref": "statement:sha256:84ecb4111a9da5478bc68cf839cbef7c78fddf059c837c14fa631c07d71845f3"
+      },
+      {
+        "end_char": 4314,
+        "name": "Bush",
+        "original_observation_ref": "sha256:4b5fbbefd66e9547ca643877e96c30781e9f4b055fbd53959e0ed510a890ff01:entity:0",
+        "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:22:4287-4523",
+        "start_char": 4310,
+        "statement_ref": "statement:sha256:d76efa1fe5cdba8a1667110721d87f7ddea97de74e7ab83238fb8c2820824044"
+      }
+    ]
+  },
+  "source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+  "typed_resolution_policy_ref": null
+}

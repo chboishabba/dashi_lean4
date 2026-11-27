@@ -1,0 +1,33 @@
+{
+  "schema": "gwb-native-independent-source-work-crosscheck-v1",
+  "authority": "candidate_only",
+  "native": {
+    "source_revision_ref": "source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00",
+    "document_ref": "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30",
+    "statement_ref": "statement:sha256:ba4bc65fd422ec59f357adaedb3b325328d259ca550745d44805f4e068d3e99f",
+    "region_ref": "document-region:source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00:sentence:23:4526-4693",
+    "focus_mention_ref": "entity-mention:sha256:5e6c1ef9bb3dc5e2200cf212ab1c582f1f4e532932a7b0ecdd2d3468270172d1",
+    "focus_start_char": 4534,
+    "focus_end_char": 4536
+  },
+  "independent_timeline": {
+    "repository": "chboishabba/SensibLaw",
+    "path": "demo/ingest/gwb/corpus_v1/wiki_timeline_gwb_corpus_v1.json",
+    "git_blob_sha1": "73b1b6cd5fc6f86bd6c70c64b1482fdc19e60c14",
+    "matching_event_id": "ev:0049",
+    "prior_same_work_event_id": "ev:0045",
+    "source_work_title": "41: Inside the Presidency of George H. W. Bush (2014)",
+    "source_path_original": "/home/c/Documents/code/ITIR-suite/SensibLaw/demo/ingest/gwb/Bush, George_Bush, George H._Nelson, Michael_Perry, Barbara Ann - 41 - Inside the Presidency of George H. W. Bush (2014, Cornell University Press, in association with the University of Virginia's Miller Center) - libgen.li.pdf",
+    "shared_source_path": true
+  },
+  "comparison": {
+    "rule": "whitespace-folded canonical native region is prefix of independent timeline event excerpt",
+    "native_folded_length": 166,
+    "exact_native_manifestation_equality": "NOT_PROVED",
+    "reviewed_antecedent": "NOT_PROVED",
+    "external_person_qid": "NOT_PROVED",
+    "candidate_person_qid": "Q23505",
+    "q207_source_is_separate": true,
+    "world_truth_promoted": false
+  }
+}

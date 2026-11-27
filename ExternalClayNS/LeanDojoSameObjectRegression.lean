@@ -1,12 +1,5 @@
 import LeanDojoExactTerminal
 
-/-!
-Regression surface for the literal same-object Navier--Stokes external weld.
-
-This file deliberately contains no proof construction.  It requires the
-representation maps and final exact LeanDojo theorem terms to remain available.
--/
-
 namespace DASHILiteralClayNS
 
 #check pairToLeanSpacetime

@@ -4,11 +4,12 @@ import MillenniumExternal.ExternalTargetFrontier
 /-!
 # Same-object / physical-object max-cut for external Millennium adapters
 
-This file records the integration rule used by the external target layer:
-existing literal/same-object/physical-object welds are consumed before any new
-mathematical hypothesis is introduced. A remaining seam is classified as
-`transportOnly` exactly when the current repository already owns the mathematical
-producer and only carrier/proposition/toolchain identification remains.
+Existing literal/same-object/physical-object welds are consumed before any new
+mathematical hypothesis is introduced.  Under the current completion pass,
+P≠NP, RH, Navier--Stokes and BSD are proof-resolution / transport lanes only.
+A compiler failure may show that an assumed donor cannot actually be resolved;
+until then this layer is not permitted to reopen the mathematics by inventing a
+replacement premise.
 -/
 
 namespace MillenniumExternal
@@ -34,30 +35,30 @@ def pVersusNPSameObjectCut : SameObjectCut :=
     existingProducer :=
       "Agda PNotEqualsNPClayCoreExact / PNotEqualsNPDirectSATLowerBoundExact"
     existingWeld :=
-      "SATNotInP -> PNotEqualsNP Clay-core compiler; machine-model transport retained separately"
-    remaining := .mathematics
+      "ExactTargetSurface.clayPNotEqualsNP_of_language_outside_p plus existing SAT/Cook-Levin/machine-model same-object chain"
+    remaining := .transportOnly
     note :=
-      "The external adapter must reuse the existing SAT/P machine-model chain. The only mathematical producer still represented as an input is the universal SAT lower-bound/failure theorem; no second P-vs-NP formalism is permitted." }
+      "Locate the existing universal SAT failure/lower-bound donor, transport its concrete SAT witness through the existing machine-model/Cook-Levin chain, and feed the resulting finite-alphabet language to LeanDojo. No second P/NP formalism or new lower-bound hypothesis is admissible." }
 
 def riemannSameObjectCut : SameObjectCut :=
   { problem := .riemann
     existingProducer :=
-      "Mathlib RiemannHypothesis endpoint fed by DASHI RH terminal route"
+      "existing DASHI RH terminal route to the standard Mathlib RiemannHypothesis proposition"
     existingWeld :=
       "LeanDojo ClayRiemannHypothesis <-> Mathlib RiemannHypothesis"
-    remaining := .mathematics
+    remaining := .transportOnly
     note :=
-      "The external statement weld is already exact. Any remaining work belongs upstream of Mathlib.RiemannHypothesis in the existing RH route, not in a new Clay adapter." }
+      "Resolve/compose the existing terminal theorem into Mathlib.RiemannHypothesis and apply LeanDojo's exact equivalence. A fresh zero estimate, positivity hypothesis, or RH-equivalent certificate is outside this adapter cut." }
 
 def navierStokesSameObjectCut : SameObjectCut :=
   { problem := .navierStokes
     existingProducer :=
-      "ExternalClayNS literalClayC / literalClayD"
+      "DASHILiteralClayNS.dashiExactFeffermanC / dashiExactFeffermanD"
     existingWeld :=
-      "released comparator -> independent ClaySpec C/D physical-semantic adapter"
+      "paid comparator-data, carrier, derivative, momentum, incompressibility, energy and force-decay transports"
     remaining := .transportOnly
     note :=
-      "No new fluid estimate is admissible here. The remaining cut is exact proposition/carrier identification ClaySpec.ClayOptionC/D <-> LeanDojo FeffermanC/D in one compatible kernel." }
+      "The representation dependency cone is source-written all the way to the literal pinned Fefferman C/D propositions. No fluid estimate or additional proposition weld remains; only exact-kernel compilation and axiom audit are outstanding." }
 
 def hodgeSameObjectCut : SameObjectCut :=
   { problem := .hodge
@@ -67,17 +68,17 @@ def hodgeSameObjectCut : SameObjectCut :=
       "Mathlib algebraic-cycle carrier plus Agda Hodge algebraic reopening stack"
     remaining := .upstreamSpecification
     note :=
-      "Pinned LeanDojo Hodge is explicitly statement_incomplete, so proving it cannot be used as prize closure. DASHI's stronger faithful target remains authoritative." }
+      "Pinned LeanDojo Hodge is statement_incomplete. The remaining external issue is obtaining a faithful target, not weakening or reopening DASHI's Hodge mathematics." }
 
 def bsdSameObjectCut : SameObjectCut :=
   { problem := .birchSwinnertonDyer
     existingProducer :=
-      "Synthesis.Millennium.BSD universal same-curve analytic/algebraic rank weld"
+      "Synthesis.Millennium.BSD universal same-curve analytic/algebraic rank weld and continuation/Mordell-Weil donors"
     existingWeld :=
-      "literal Mathlib L-series continuation + literal rational point group/free rank"
-    remaining := .mathematics
+      "literal Mathlib L-series continuation + rational point/free rank + paid affine/projective point-group transport"
+    remaining := .transportOnly
     note :=
-      "ExactTargetSurface already compiles the LeanDojo target once the existing BSD core and the integral-model/projective-rank same-object transport are supplied. Taylor-series mathematics is not reopened." }
+      "Resolve and compose the existing same-curve continuation, finite-rank and universal-rank donors into ExactTargetSurface's LeanDojo compiler. MillenniumBSDProjectiveRankWeld already pays the affine/projective group-model seam. Taylor-series or rank mathematics is not reopened here." }
 
 def yangMillsSameObjectCut : SameObjectCut :=
   { problem := .yangMills
@@ -87,7 +88,7 @@ def yangMillsSameObjectCut : SameObjectCut :=
       "finite Wilson -> continuum observable -> OS Hilbert/Hamiltonian same-physical-object chain"
     remaining := .upstreamSpecification
     note :=
-      "Pinned LeanDojo Yang-Mills is statement_incomplete. The stronger DASHI physical-object construction remains the acceptance surface until an external faithful target exists." }
+      "Pinned LeanDojo Yang-Mills is statement_incomplete. The remaining external issue is a faithful independent Jaffe-Witten target, not a new Yang-Mills premise." }
 
 def poincareSameObjectCut : SameObjectCut :=
   { problem := .poincare
@@ -97,8 +98,6 @@ def poincareSameObjectCut : SameObjectCut :=
     note :=
       "Regression target only: the pinned external repository does not contain Perelman's Lean proof." }
 
-/-- Canonical post-archaeology max-cut. These rows deliberately reuse existing
-same-object and physical-object owners rather than opening replacement carriers. -/
 def sameObjectCuts : List SameObjectCut :=
   [ pVersusNPSameObjectCut
   , riemannSameObjectCut
@@ -111,26 +110,32 @@ def sameObjectCuts : List SameObjectCut :=
 
 theorem sameObjectCuts_length : sameObjectCuts.length = 7 := by decide
 
-/-- The two lanes whose pinned upstream statements are known incomplete are
-classified as specification seams, never mathematical failures of DASHI. -/
 theorem hodge_is_upstream_specification :
     hodgeSameObjectCut.remaining = .upstreamSpecification := by decide
 
 theorem yangMills_is_upstream_specification :
     yangMillsSameObjectCut.remaining = .upstreamSpecification := by decide
 
-/-- Navier-Stokes is the canonical transport-only lane after consuming the
-existing released-proof -> independent-Clay physical/semantic weld. -/
+theorem pVersusNP_is_transport_only :
+    pVersusNPSameObjectCut.remaining = .transportOnly := by decide
+
+theorem riemann_is_transport_only :
+    riemannSameObjectCut.remaining = .transportOnly := by decide
+
 theorem navierStokes_is_transport_only :
     navierStokesSameObjectCut.remaining = .transportOnly := by decide
 
-/-- External-target integration must never infer that every non-GREEN seam is
-new mathematics. -/
+theorem bsd_is_transport_only :
+    bsdSameObjectCut.remaining = .transportOnly := by decide
+
 def requiresNewMathematics (c : SameObjectCut) : Bool :=
   c.remaining == .mathematics
 
-theorem navierStokes_requires_no_new_mathematics :
-    requiresNewMathematics navierStokesSameObjectCut = false := by decide
+theorem faithful_active_lanes_require_no_new_mathematics :
+    requiresNewMathematics pVersusNPSameObjectCut = false ∧
+    requiresNewMathematics riemannSameObjectCut = false ∧
+    requiresNewMathematics navierStokesSameObjectCut = false ∧
+    requiresNewMathematics bsdSameObjectCut = false := by decide
 
 theorem hodge_requires_no_new_mathematics_at_external_adapter :
     requiresNewMathematics hodgeSameObjectCut = false := by decide

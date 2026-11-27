@@ -66,7 +66,7 @@ import AgdaMirror.SignatureDerivation
 import AgdaMirror.PhysicsConformance
 import AgdaMirror.QuotientSetoidSurface
 import AgdaMirror.AuthorityBoundary
-import AgdaMirror.WetteConstructiveFoundations
+import AgdaMirror.Cognition.PNF.RelationDeltaReconciliation
 import AgdaMirror.SeaMeInItPhysicalSuitClosure
 import AgdaMirror.SeaMeInItAdaptiveSuitClosure
 import AgdaMirror.IntersectionalNonFactorability

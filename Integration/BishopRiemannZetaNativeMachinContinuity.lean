@@ -1,5 +1,4 @@
-import Integration.BishopImaginaryProductSemanticReflection
-import Integration.BishopOriginalArctanCayleyExact
+import Integration.BishopRound11ImaginaryProductSemanticReflection
 import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
@@ -34,8 +33,8 @@ open scoped Topology BigOperators
 
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
-open Integration.BishopMachinSourceBinding
-open Integration.BishopImaginaryProductSemanticReflection
+open Integration.BishopRound11MachinSourceBinding
+open Integration.BishopRound11ImaginaryProductSemanticReflection
 
 noncomputable section
 
@@ -63,7 +62,7 @@ theorem originalDirichletTerm_eq_cpow (n : ℕ) (s : ℂ) :
   rw [one_div, Complex.cpow_def_of_ne_zero hn s, ← Complex.exp_neg]
   unfold originalDirichletTerm
   congr 1
-  rw [← Complex.natCast_log]
+  rw [Complex.natCast_log]
   ring
 
 /-- The genuine complex series, not an abstract zeta-like function. -/
@@ -81,30 +80,6 @@ theorem originalDirichletValue_eq_riemannZeta (s : ℂ)
   intro n
   simpa only [Nat.cast_add, Nat.cast_one] using
     originalDirichletTerm_eq_cpow n s
-
-/-- Continuity of the ACTUAL infinite Dirichlet sum, not merely
-one coefficient. It follows from the already proved equality with
-the independently selected Mathlib Riemann zeta on the entire open
-half-plane. This is stronger than continuity only at Machin pi,
-though the constructive native Agda uniform-limit transport is still
-independently owed. -/
-theorem originalDirichletValue_continuousAt
-    (s : ℂ) (hs : 1 < s.re) :
-    ContinuousAt originalDirichletValue s := by
-  have hsne : s ≠ 1 := by
-    intro h
-    subst s
-    norm_num at hs
-  have hopen : IsOpen {z : ℂ | 1 < z.re} :=
-    isOpen_lt continuous_const Complex.continuous_re
-  have hregion : {z : ℂ | 1 < z.re} ∈ 𝓝 s :=
-    hopen.mem_nhds hs
-  have hsame : originalDirichletValue =ᶠ[𝓝 s] riemannZeta := by
-    filter_upwards [hregion] with z hz
-    exact originalDirichletValue_eq_riemannZeta z hz
-  exact ContinuousAt.congr_of_eventuallyEq
-    (differentiableAt_riemannZeta hsne).continuousAt
-    hsame
 
 private theorem realPiGreaterOne : (1 : ℝ) < Real.pi :=
   lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) Real.two_le_pi
@@ -139,14 +114,14 @@ theorem completedRiemannZeta_continuousAtMachinPi :
 the same evaluated point as the actual Riemann/completed zeta target. -/
 theorem sourceMachinPi_realArgument
     (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A) :
+    (B : Round11MachinSourceBinding A) :
     ((eval (sourceMachinPi A B) : ℝ) : ℂ) = (Real.pi : ℂ) := by
   rw [sourceMachinPiEvaluatesToClassicalPi]
 
 /-- Exact selected-source, not merely a name-aligned zeta evaluation. -/
 theorem originalDirichletAtBishopSourcePi
     (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A) :
+    (B : Round11MachinSourceBinding A) :
     originalDirichletValue
         (((eval (sourceMachinPi A B) : ℝ) : ℂ)) =
       riemannZeta

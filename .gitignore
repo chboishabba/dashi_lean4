@@ -15,9 +15,5 @@ outputs/aristotle_mirror_waves_v4/
 outputs/aristotle_mirror_waves_v5/
 .autonomous-orchestrator/aristotle/
 
-# Original GWB parser/P0b source fixture: local only, not proof result
-/.dashi/gwb-source/
-/.dashi/.gwb-source-stage.*/
-/.dashi/.gwb-lean-stage.*/
-/.dashi/.gwb-proof-run.*/
-/.dashi/gwb-slr-observation-target/
+# Source-only external RH fork checkout; never commit its 175187 proof files
+/.local/alpoge-rh-v4331/

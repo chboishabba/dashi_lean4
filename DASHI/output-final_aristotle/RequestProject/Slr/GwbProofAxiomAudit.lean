@@ -1,11 +1,10 @@
-import RequestProject.Slr.GwbConsumerFibreProof
-
 /-!
 GWB source relative query theorem audit.
 Lean's kernel reports the exact axioms used by these concrete proofs.
 propext / Quot.sound / classical.choice can occur in ordinary Lean logic;
 "sorryAx" or unchecked user axioms are forbidden.
 -/
+import RequestProject.Slr.GwbConsumerFibreProof
 
 #check Wikidata.Slr.GwbConsumer.fibreJoinIdempotent
 #check Wikidata.Slr.GwbConsumer.fibreJoinCommutative

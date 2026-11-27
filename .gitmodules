@@ -1,6 +1,3 @@
-[submodule "vendor/LeanMillenniumPrizeProblems"]
-	path = vendor/LeanMillenniumPrizeProblems
-	url = https://github.com/lean-dojo/LeanMillenniumPrizeProblems.git
-[submodule "vendor/openai-math-src"]
-	path = vendor/openai-math-src
-	url = https://github.com/openai/math.git
+[submodule "vendor/JordanAlgebra"]
+	path = vendor/JordanAlgebra
+	url = https://github.com/Cobord/JordanAlgebra.git

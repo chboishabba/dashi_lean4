@@ -122,8 +122,8 @@ private def exactDirectRoleProjection
     acceptance requirement, not a generated semantic ontology. -/
 private def selectedOriginalPredicate (raw : Json) : Bool :=
   str? raw "pos" == some "VERB" &&
-  List.contains ["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"]
-    ((str? raw "dep").getD "")
+  (["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"]
+    .contains ((str? raw "dep").getD ""))
 
 private def expectedOriginalPredicateCount (original : Array Json) : Nat :=
   original.foldl (fun acc sentence =>

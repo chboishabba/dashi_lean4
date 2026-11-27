@@ -1,6 +1,5 @@
 import Integration.ScopedVerifierArtifact
 import Integration.ScopedVerifierEvaluationProtocol
-import Integration.ScopedVerifierConsumerSufficiency
 
 namespace Integration.GAISArchitectureComparison
 
@@ -36,13 +35,12 @@ structure GAISComparisonBoundary where
   concreteValidatorInterfacePresent : Bool
   artifactTransitionMappingPresent : Bool
   artifactFutureSufficiencySurfacePresent : Bool
-  consumerRelativeAdequacySurfacePresent : Bool
   matchedEvaluationProtocolPresent : Bool
   universalTruthOracleAccepted : Bool
   empiricalHeadToHeadStillRequired : Bool
   deriving DecidableEq, Repr
 
 def canonicalGAISComparisonBoundary : GAISComparisonBoundary :=
-  ⟨true, false, true, true, true, true, true, true, false, true⟩
+  ⟨true, false, true, true, true, true, true, false, true⟩
 
 end Integration.GAISArchitectureComparison

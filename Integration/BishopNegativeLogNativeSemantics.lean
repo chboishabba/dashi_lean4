@@ -1,4 +1,4 @@
-import Integration.BishopMachinSourceBinding
+import Integration.BishopRound11MachinSourceBinding
 import Integration.BishopVendoredCompletionEquivalence
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic
@@ -21,7 +21,7 @@ Bishop setoid equality, the original source series then satisfies
 exp_B(L((n+1)/(n+2))) ~ (n+2), *when the original concrete Bishop
 source convergence witness is connected*.
 
-The imported `MachinSourceBinding` provides the very same
+The imported `Round11MachinSourceBinding` provides the very same
 source exponential convergence data, not an independent exponential.
 
 IMPORTANT: This is a Lean mirror proof and cannot automatically
@@ -34,7 +34,7 @@ Murray (2022); pinned Viktor Csimma Bishop library; Mathlib and
 the original DASHI source theorem owners.
 -/
 
-namespace Integration.BishopNegativeLogNativeSemantics
+namespace Integration.BishopNegativeLogNativeRound11Semantics
 
 open Filter
 open scoped Topology BigOperators
@@ -43,7 +43,7 @@ open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
 open Integration.BishopVendoredExponentialSemantics
 open Integration.BishopVendoredCompletionEquivalence
-open Integration.BishopMachinSourceBinding
+open Integration.BishopRound11MachinSourceBinding
 
 noncomputable section
 
@@ -58,7 +58,8 @@ theorem eval_negativeLogTerm (A : VendoredArithmeticMirror)
     eval (negativeLogTerm A x n) =
       (eval x) ^ (n + 1) / ((n + 1 : ℕ) : ℝ) := by
   rw [negativeLogTerm, A.eval_mul, eval_sourcePow, eval_rational]
-  norm_cast <;> ring
+  norm_cast
+  ring
 
 /-- Finite prefixes use the vendored resampled Bishop real addition. -/
 def negativeLogPartial (A : VendoredArithmeticMirror)
@@ -139,7 +140,9 @@ theorem eval_nativeNatLog_successor (A : VendoredArithmeticMirror)
   have hsub :
       1 - (((n + 1 : ℕ) : ℝ) / ((n + 2 : ℕ) : ℝ)) =
         (((n + 2 : ℕ) : ℝ))⁻¹ := by
-    field_simp [ne_of_gt hden] <;> push_cast <;> ring
+    field_simp [ne_of_gt hden]
+    push_cast
+    ring
   rw [hsub, Real.log_inv] at hlog
   linarith
 
@@ -148,7 +151,7 @@ into the vendored Bishop SETOID (not raw sequence equality).
 The n=0 log(1)=0 case is already proved on the Agda side. -/
 theorem originalNatLog_successor_exp_inverse
     (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
+    (B : Round11MachinSourceBinding A)
     (L : NativeNegativeLogSourceConvergence A)
     (n : ℕ) :
     Equiv
@@ -160,183 +163,6 @@ theorem originalNatLog_successor_exp_inverse
   rw [Real.exp_log (by positivity : (0 : ℝ) < (((n + 2 : ℕ) : ℝ)))]
   norm_cast
 
-
-/-!
-## K04d-PAYMENT: remove the free native-log source convergence input
-
-The original Bishop negative-log coefficients are already constructed in
-`negativeLogTerm`. The vendored Bishop convergence bridge reconstructs
-a quantitative Bishop limit directly from a Mathlib-summed series.
-This `canonicalNegativeLog` is a **representative of that same series**,
-not a new arbitrary logarithm authority.
-
-For an actual original Agda `sourceNegativeLogValue`, its own proof of
-convergence to these coefficients suffices to show equality of Bishop
-setoid classes; no identification is silently presumed.
--/
-
-/-- Canonical Bishop representative of the literal negative-log sum.
-This replaces the previously free source convergence record by a
-constructively specified completion representative. -/
-def canonicalNegativeLog (x : RegularRatReal) : RegularRatReal :=
-  encode (-Real.log (1 - eval x))
-
-/-- Actual SOURCE finite sums converge to that representative using
-the original pinned Bishop quantitative convergence predicate. -/
-theorem canonicalNegativeLog_converges
-    (A : VendoredArithmeticMirror)
-    (x : RegularRatReal)
-    (hzero : 0 < eval x)
-    (hone : eval x < 1) :
-    BishopConvergesTo A
-      (negativeLogPartial A x) (canonicalNegativeLog x) := by
-  apply bishopConvergesTo_of_eval_tendsto A
-  rw [canonicalNegativeLog, eval_encode]
-  have hx : |eval x| < 1 :=
-    abs_lt.mpr ⟨by linarith, hone⟩
-  simpa only [eval_negativeLogPartial] using
-    (Real.hasSum_pow_div_log_of_abs_lt_one hx).tendsto_sum_nat
-
-/-- The previously abstract convergence package now has a *concrete*
-source-coefficient inhabitant, with no added analytic inverse law. -/
-def canonicalNativeNegativeLogSourceConvergence
-    (A : VendoredArithmeticMirror) :
-    NativeNegativeLogSourceConvergence A where
-  negativeLog := canonicalNegativeLog
-  convergence := canonicalNegativeLog_converges A
-
-/-- Exact Nat-positive-successor inverse with NO free log-convergence
-witness, on the canonical original-series Bishop representative. -/
-theorem canonicalNatSuccessorExpInverse
-    (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
-    (n : ℕ) :
-    Equiv
-      (B.expB (canonicalNegativeLog (rational (natLogArgument n))))
-      (rational (((n + 2 : ℕ) : ℚ))) :=
-  originalNatLog_successor_exp_inverse
-    A B (canonicalNativeNegativeLogSourceConvergence A) n
-
-/-- Every OTHER original Bishop limit of the literal SAME coefficients
-is setoid-equal to the canonical source representative. -/
-theorem anyOriginalNegativeLogLimit_equiv_canonical
-    (A : VendoredArithmeticMirror)
-    (x sourceLimit : RegularRatReal)
-    (hzero : 0 < eval x)
-    (hone : eval x < 1)
-    (sourceConverges :
-      BishopConvergesTo A (negativeLogPartial A x) sourceLimit) :
-    Equiv sourceLimit (canonicalNegativeLog x) := by
-  apply eval_eq_iff_equiv.mp
-  exact tendsto_nhds_unique
-    (eval_tendsto_of_bishopConvergesTo A sourceConverges)
-    (eval_tendsto_of_bishopConvergesTo A
-      (canonicalNegativeLog_converges A x hzero hone))
-
-/-- The K04d LOG inverse works for ANY actually constructed source
-series limit, including the original Bishop `Sequence.lim` value,
-without supplying a free logarithm-inverse or free log-convergence
-record. The source limit carries only its already-owned convergence
-proof, as in the original Agda module. -/
-theorem anyOriginalNatSuccessorExpInverse
-    (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
-    (n : ℕ)
-    (sourceLimit : RegularRatReal)
-    (sourceConverges :
-      BishopConvergesTo A
-        (negativeLogPartial A (rational (natLogArgument n)))
-        sourceLimit) :
-    Equiv
-      (B.expB sourceLimit)
-      (rational (((n + 2 : ℕ) : ℚ))) := by
-  obtain ⟨hzero, hone⟩ := natLogArgument_bounds n
-  have hsame :=
-    anyOriginalNegativeLogLimit_equiv_canonical A
-      (rational (natLogArgument n)) sourceLimit
-      hzero hone sourceConverges
-  apply eval_eq_iff_equiv.mp
-  have hc := eval_respects_equiv hsame
-  have hmain := eval_respects_equiv
-    (canonicalNatSuccessorExpInverse A B n)
-  rw [eval_exp_eq_real_exp A (expMirror A B) sourceLimit, hc]
-  rw [← eval_exp_eq_real_exp A (expMirror A B)
-      (canonicalNegativeLog (rational (natLogArgument n)))]
-  exact hmain
-
-
-/-!
-## General K04d negative-log exponential inverse, same source terms
-
-This is not limited to Nat successor arguments. For every original
-Bishop-real x with 0 < eval x < 1, and the original negative-log
-literal series limit L(x), exp_B(-L(x)) ~ 1-x. The complex/real
-completion evaluator is faithful to the selected Bishop setoid.
-The native Agda source owner still requires Agda-kernel acceptance.
--/
-
-/-- The full original source-series K04d inverse at any positive
-unit-ball input; no free logarithm axiom, no new expB definition. -/
-theorem originalNegativeLogExpInverse
-    (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
-    (L : NativeNegativeLogSourceConvergence A)
-    (x : RegularRatReal)
-    (hzero : 0 < eval x)
-    (hone : eval x < 1) :
-    Equiv
-      (B.expB (A.neg (L.negativeLog x)))
-      (A.add A.one (A.neg x)) := by
-  apply eval_eq_iff_equiv.mp
-  rw [eval_exp_eq_real_exp A (expMirror A B),
-      A.eval_neg,
-      eval_nativeNegativeLog_eq_classical A L x hzero hone,
-      A.eval_add, A.eval_one, A.eval_neg]
-  have hpositive : 0 < 1 - eval x := by linarith
-  simpa [sub_eq_add_neg] using (Real.exp_log hpositive)
-
-/-- No auxiliary source-convergence input: the original literal
-Bishop coefficient series constructs its canonical limit itself. -/
-theorem canonicalNegativeLogExpInverse
-    (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
-    (x : RegularRatReal)
-    (hzero : 0 < eval x)
-    (hone : eval x < 1) :
-    Equiv
-      (B.expB (A.neg (canonicalNegativeLog x)))
-      (A.add A.one (A.neg x)) :=
-  originalNegativeLogExpInverse A B
-    (canonicalNativeNegativeLogSourceConvergence A)
-    x hzero hone
-
-/-- Any original Bishop Sequence.lim value of the SAME native
-coefficients satisfies exp_B(-L(x)) ~ 1-x by its own source
-convergence, not by substituting the canonical limit definition. -/
-theorem anyOriginalNegativeLogExpInverse
-    (A : VendoredArithmeticMirror)
-    (B : MachinSourceBinding A)
-    (x sourceLimit : RegularRatReal)
-    (hzero : 0 < eval x)
-    (hone : eval x < 1)
-    (sourceConverges :
-      BishopConvergesTo A (negativeLogPartial A x) sourceLimit) :
-    Equiv
-      (B.expB (A.neg sourceLimit))
-      (A.add A.one (A.neg x)) := by
-  apply eval_eq_iff_equiv.mp
-  rw [eval_exp_eq_real_exp A (expMirror A B),
-      A.eval_neg, A.eval_add, A.eval_one, A.eval_neg]
-  have sameValue := eval_respects_equiv
-    (anyOriginalNegativeLogLimit_equiv_canonical A x
-      sourceLimit hzero hone sourceConverges)
-  rw [sameValue,
-      eval_nativeNegativeLog_eq_classical A
-        (canonicalNativeNegativeLogSourceConvergence A) x hzero hone]
-  have hpositive : 0 < 1 - eval x := by linarith
-  simpa [sub_eq_add_neg] using (Real.exp_log hpositive)
-
-
 end
 
-end Integration.BishopNegativeLogNativeSemantics
+end Integration.BishopNegativeLogNativeRound11Semantics

@@ -16,6 +16,10 @@ example :
   SelectedAtlasTerminalMaxCut.source_gtps_short_time_formula_paid
 
 example :
+    SelectedAtlasTerminalMaxCut.canonicalBoundary.sourceUnitaryFamilyMetricFormulaPaid = true :=
+  SelectedAtlasTerminalMaxCut.source_unitary_family_metric_formula_paid
+
+example :
     SelectedAtlasTerminalMaxCut.canonicalBoundary.nestedMarginalCoherencePaid = false :=
   SelectedAtlasTerminalMaxCut.nested_marginal_coherence_open
 

@@ -13,8 +13,6 @@ structure MatchedSystemPair where
   sameToolAccess : Bool
   sameContextBudget : Bool
   sameComputeAccounting : Bool
-  sameDeclaredConsumers : Bool
-  sameValidatorScope : Bool
   deriving Repr
 
 structure ComparativeMeasurements where
@@ -42,14 +40,12 @@ structure EvaluationBoundary where
   architectureImpliesEmpiricalWin : Bool
   zeroTrialCountAcceptedAsPerformance : Bool
   unmatchedBaselineAccepted : Bool
-  consumerMismatchAccepted : Bool
-  validatorScopeMismatchAccepted : Bool
   coverageSeparatedFromAccuracy : Bool
   abstentionSeparatedFromRefutation : Bool
   runtimeCostReportedSeparately : Bool
   deriving DecidableEq, Repr
 
 def canonicalEvaluationBoundary : EvaluationBoundary :=
-  ⟨false, false, false, false, false, true, true, true⟩
+  ⟨false, false, false, true, true, true⟩
 
 end Integration.ScopedVerifierEvaluationProtocol

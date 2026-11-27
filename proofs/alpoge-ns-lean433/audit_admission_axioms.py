@@ -15,7 +15,8 @@ EXPECTED = {
 }
 ALLOWED = {"propext", "Quot.sound", "Classical.choice"}
 PATTERN = re.compile(
-    r"(?m)^'([^']+)' (?:depends on axioms: \[([^\]]*)\]|does not depend on any axioms)\s*$"
+    r"(?m)^(?:[^\r\n]*:\d+:\d+:[ \t]*info:[ \t]*|info:[ \t]*)?'([^']+)' "
+    r"(?:depends on axioms:[ \t]*\[([^\]]*)\]|does not depend on any axioms)[ \t]*\r?$"
 )
 
 def audit(log):
@@ -25,7 +26,10 @@ def audit(log):
     for name, body in PATTERN.findall(log):
         if name not in EXPECTED or name in seen:
             raise ValueError(f"unexpected or duplicate declaration: {name}")
-        axioms = {item.strip() for item in body.split(",") if item.strip()}
+        items = [] if not body else [item.strip() for item in body.split(",")]
+        if body and (not all(items) or len(set(items)) != len(items)):
+            raise ValueError(f"{name}: malformed axiom list")
+        axioms = set(items)
         if not axioms <= ALLOWED:
             raise ValueError(f"{name}: unexpected axioms {axioms - ALLOWED}")
         seen[name] = axioms
@@ -38,6 +42,8 @@ def self_test():
     audit(good)
     empty = "\n".join(f"'{n}' does not depend on any axioms" for n in sorted(EXPECTED))
     audit(empty)
+    audit("\n".join("Proof.lean:12:3: info: " + line if line.startswith("\'") else line for line in good.splitlines()))
+    audit(good.replace("\n", "\r\n"))
     controls = [
         "", good + "\n" + good, good.replace("propext", "evil"),
         good.replace("Quot.sound", "sorryAx"), good + "\nerror: failure",
@@ -51,7 +57,7 @@ def self_test():
         except ValueError:
             continue
         raise RuntimeError("accepted malformed evidence")
-    print("10/10 axiom parser controls PASS")
+    print("14/14 axiom parser controls PASS")
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--self-test"]:

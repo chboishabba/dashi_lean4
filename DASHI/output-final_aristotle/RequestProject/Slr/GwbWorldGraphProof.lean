@@ -202,6 +202,46 @@ theorem qualifiedYearRowsExact (entity : Json) (subject property target : String
     yearIntervalStatementMatches property target startYear endYear statement = true := by
   simp [qualifiedYearRows, List.mem_filter]
 
+/-- Construct the JMD property proof directly from the independently
+    reopened original EntityData, not from an SLR candidate triple. -/
+def originalEntityPropertyProof? (entity : Json)
+    (subject property target : String) : Option CheckedWorldProperty := do
+  if !jsonEntityMatchesQid subject entity then none else
+    let kb := pkbFromImportedEntities (Cli.entitiesOfJson entity)
+    let p := Pid.wd property
+    let s := Qid.wd subject
+    let o := Qid.wd target
+    if h : kb.supportsB p s o = true then
+      some ⟨kb, p, s, o, h⟩
+    else none
+
+/-- The qualified producer retains the full native statement JSON. The
+    independent property proof and the same-row time check are separate
+    requirements. Unsupported qualifiers do not become negative facts. -/
+structure OriginalQualifiedYearWitness (entity : Json)
+    (subject property target : String) (startYear endYear : Nat) where
+  statement : Json
+  originalMatch : statement ∈ qualifiedYearRows entity subject property target startYear endYear
+  propertyProof : CheckedWorldProperty
+  independentlyImported :
+    originalEntityPropertyProof? entity subject property target = some propertyProof
+
+def originalQualifiedYearWitnesses (entity : Json)
+    (subject property target : String) (startYear endYear : Nat) :
+    List (OriginalQualifiedYearWitness entity subject property target startYear endYear) :=
+  match h : originalEntityPropertyProof? entity subject property target with
+  | none => []
+  | some proof =>
+    (qualifiedYearRows entity subject property target startYear endYear).attach.map
+      (fun row => ⟨row.val, row.property, proof, h⟩)
+
+theorem originalQualifiedYearWitnessSound
+    {entity : Json} {subject property target : String} {startYear endYear : Nat}
+    (w : OriginalQualifiedYearWitness entity subject property target startYear endYear) :
+    w.statement ∈ originalPropertyRows entity subject property ∧
+    yearIntervalStatementMatches property target startYear endYear w.statement = true :=
+  (qualifiedYearRowsExact entity subject property target startYear endYear w.statement).mp w.originalMatch
+
 end GwbWorldGraph
 end Slr
 end Wikidata

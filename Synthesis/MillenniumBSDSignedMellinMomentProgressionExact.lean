@@ -111,4 +111,37 @@ theorem next_moment_pos {a b m0 mj mj1 : ℝ} (ha : 0 < a) (hb : 0 < b)
   have hp' : 0 < h a b n * mj1 := by linarith
   exact pos_of_mul_pos_left hp' hh.le
 
+
+/-- The actual B-M7s outward Mellin interval gives a strict comparison
+on the circle |z| = 7/50000000. The tail bound comes from the original
+coefficient majorant 2/(c*t)^2, with c > 1/80. This is the arithmetic
+input to Rouché, not a native complex zero-count theorem. -/
+def centralDiskRadius : ℝ := 7 / 50000000
+
+theorem centralDiskMarginExact :
+    (13 / 10^12 : ℝ) +
+      25600 * centralDiskRadius^4 / (1 - centralDiskRadius^2) <
+      (8270793387711404 / 10^12 : ℝ) * centralDiskRadius^2 / 12 := by
+  norm_num [centralDiskRadius]
+
+theorem centralDiskBoundaryDominance (m1 m2 tail : ℝ)
+    (h1 : |m1| ≤ 13 / 10^12)
+    (h2 : 8270793387711404 / 10^12 ≤ m2)
+    (htail : tail ≤ 25600 * centralDiskRadius^4 / (1 - centralDiskRadius^2)) :
+    |m1| + tail < m2 * centralDiskRadius^2 / 12 := by
+  calc
+    |m1| + tail ≤ (13 / 10^12 : ℝ) +
+        25600 * centralDiskRadius^4 / (1 - centralDiskRadius^2) :=
+      add_le_add h1 htail
+    _ < (8270793387711404 / 10^12 : ℝ) * centralDiskRadius^2 / 12 :=
+      centralDiskMarginExact
+    _ ≤ m2 * centralDiskRadius^2 / 12 := by
+      exact div_le_div_of_nonneg_right
+        (mul_le_mul_of_nonneg_right h2 (sq_nonneg _)) (by norm_num)
+
+theorem centralDiskSquaredRootError :
+    12 * (25600 * centralDiskRadius^4 / (1 - centralDiskRadius^2)) /
+        (8270793387711404 / 10^12 : ℝ) < 2 / 10^26 := by
+  norm_num [centralDiskRadius]
+
 end DASHI.BSD.SignedCrossing

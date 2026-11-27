@@ -23,11 +23,12 @@ def audit(log):
     if re.search(r"(?im)\berror:|declaration uses 'sorry'|\bsorryAx\b", log):
         raise ValueError("Lean error or sorry evidence")
     seen = {}
-    for name, body in PATTERN.findall(log):
+    for match in PATTERN.finditer(log):
+        name, body = match.groups()
         if name not in EXPECTED or name in seen:
             raise ValueError(f"unexpected or duplicate declaration: {name}")
-        items = [] if not body else [item.strip() for item in body.split(",")]
-        if body and (not all(items) or len(set(items)) != len(items)):
+        items = [] if body is None else [item.strip() for item in body.split(",")]
+        if body is not None and (not all(items) or len(set(items)) != len(items)):
             raise ValueError(f"{name}: malformed axiom list")
         axioms = set(items)
         if not axioms <= ALLOWED:
@@ -50,6 +51,8 @@ def self_test():
         good.replace("depends on axioms:", "unknown format"),
         good + "\nwarning: declaration uses 'sorry'",
         good + "\n'Unrelated' depends on axioms: []",
+        good.replace("propext", "propext, propext"),
+        good.replace("propext", "propext,"),
     ]
     for bad in controls:
         try:

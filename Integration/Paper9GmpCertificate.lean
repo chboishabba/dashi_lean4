@@ -44,8 +44,9 @@ theorem foldFrom (a : RawPrefix) (xs : List ℕ) :
   induction xs generalizing a with
   | nil => simp [fold,emptyRight]
   | cons n xs ih =>
-    simp only [List.foldl_cons,fold]
-    rw [ih,ih,emptyLeft,joinAssoc]
+    change xs.foldl (fun u i => join u (leafTriple i)) (join a (leafTriple n)) =
+      join a (xs.foldl (fun u i => join u (leafTriple i)) (join empty (leafTriple n)))
+    rw [ih (join a (leafTriple n)),ih (join empty (leafTriple n)),emptyLeft,joinAssoc]
 
 theorem foldAppend (xs ys : List ℕ) :
     fold (xs++ys) = join (fold xs) (fold ys) := by
@@ -141,11 +142,11 @@ theorem reducedSound (l r : RawPrefix) (g rq : ℕ) (lp : ℤ)
   · unfold productValue
     rw [ep,eq]
     push_cast
-    field_simp [hg',hq']
+    field_simp [hg',hq'] <;> ring
   · unfold sumValue
     rw [et,eq]
     push_cast
-    field_simp [hg',hq']
+    field_simp [hg',hq'] <;> ring
 
 theorem equivalentTrans {a b c : RawPrefix} (h : Equivalent a b) (k : Equivalent b c) :
     Equivalent a c := ⟨h.1,k.2.1,h.2.2.1.trans k.2.2.1,h.2.2.2.trans k.2.2.2⟩

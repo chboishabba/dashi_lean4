@@ -490,8 +490,8 @@ theorem indexedArticleQuerySound
     (h : row ∈ queryIndexedArticle receipt q) :
     checkProjectionFor subject text source projection = true ∧
     row ∈ queryRows source projection q ∧ queryMatches text q row = true := by
-  have member := (List.mem_filter.mp h)
-  exact ⟨receipt.checked, member⟩
+  simp only [queryIndexedArticle, List.mem_filter] at h
+  exact ⟨receipt.checked, h⟩
 
 private def hashFile (path : String) : IO String := do
   let output ← IO.Process.output { cmd := "sha256sum", args := #[path] }

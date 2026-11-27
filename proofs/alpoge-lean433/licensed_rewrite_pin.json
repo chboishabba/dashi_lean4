@@ -49,6 +49,27 @@
       }
     }
   },
-  "authority": "upstream-reported checks; local kernel and cross-kernel admission not yet performed",
-  "attribution": "Proof Levent Alpöge with Claude; rewriting Anthropic collaborators with Claude; Copyright 2026 Anthropic, PBC."
+  "authority": "Independent MIT and Waterloo compact-edition checks completed at exact revision; DASHI local kernel and cross-kernel admission not yet performed",
+  "attribution": "Proof Levent Alpöge with Claude; rewriting Anthropic collaborators with Claude; Copyright 2026 Anthropic, PBC.",
+  "independent_verification": {
+    "mit": {
+      "url": "https://math.mit.edu/~drew/shortgrh/",
+      "as_of_utc": "2026-11-26T20:46:00Z",
+      "compact_modules": 794,
+      "readable_modules": 803,
+      "compact_paranoid_comparator_passes": 2,
+      "readable_paranoid_comparator_passes": 1,
+      "allowed_axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "archive_sha256": "9138cf2f5862e64f823ed676e8d37333c0717e1a13cd8f74f6b735ab2d1ba57c"
+    },
+    "waterloo": {
+      "url": "https://mrubinst.github.io/grh-lean-compact-check/",
+      "as_of_utc": "2026-11-26T05:36:00Z",
+      "compact_modules_replayed": 794
+    }
+  }
 }

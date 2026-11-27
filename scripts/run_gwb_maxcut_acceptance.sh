@@ -203,6 +203,67 @@ PY
   else
     echo "GWB_BOUNDED_OFFICE_NOT_RUN: supply original Q11696 EntityData"
   fi
+  # Source-scoped semantic witnesses; do not confuse with all-live English
+  # interpretation. Receipts live alongside the other tracked proof work.
+  reciprocal_out="$root/artifacts/gwb-reciprocal-proof"
+  mkdir -p "$reciprocal_out"
+  clause_stage="$(mktemp -d "$root/.dashi/gwb-clause-check.XXXXXX")"
+  trap 'rm -rf "$clause_stage"' EXIT
+  clause_check() {
+    lake env lean --run tools/GwbProofRunner.lean article-clause-check \
+      "$source_dir/article.txt" "$source_dir/slr-record.json" \
+      "$source_dir/article-candidates.json" "$qid_json" "$1"
+  }
+  clause_check "$clause_stage/first.json"
+  clause_check "$clause_stage/replay.json"
+  cmp "$clause_stage/first.json" "$clause_stage/replay.json"
+  jq -e '.answers | length == 3 and
+    (.[0].bush_asserted_actions | length == 4) and
+    (.[1].bush_asserted_actions | length == 0) and
+    (.[2].bush_asserted_actions | length == 1)' "$clause_stage/first.json" >/dev/null
+  mv "$clause_stage/first.json" "$reciprocal_out/gwb-archived-clauses.json"
+  rm -rf "$clause_stage"
+  trap - EXIT
+
+  # Both original article triples must already be supplied by the existing
+  # SLR source producer. No synthetic GHWB rows or new parser.
+  if [[ -n "${GWB_Q23505_SOURCE_DIR:-}" || -n "${GWB_Q23505_ENTITY_JSON:-}" ]]; then
+    father_dir="${GWB_Q23505_SOURCE_DIR:-}"
+    father_json="${GWB_Q23505_ENTITY_JSON:-}"
+    [[ -d "$father_dir" && -s "$father_json" && -s "$office_json" ]] || {
+      echo "Both original GHWB source directory and pinned EntityData, plus Q11696, required" >&2; exit 2;
+    }
+    for f in article.txt slr-record.json article-candidates.json; do
+      [[ -s "$father_dir/$f" ]] || { echo "Missing GHWB original $f" >&2; exit 2; }
+    done
+    stage="$(mktemp -d "$root/.dashi/gwb-reciprocal-check.XXXXXX")"
+    trap 'rm -rf "$stage"' EXIT
+    reciprocal_check() {
+      lake env lean --run tools/GwbProofRunner.lean reciprocal-office-check \
+        "$source_dir/article.txt" "$source_dir/slr-record.json" \
+        "$source_dir/article-candidates.json" "$qid_json" \
+        "$father_dir/article.txt" "$father_dir/slr-record.json" \
+        "$father_dir/article-candidates.json" "$1" "$office_json" "$2"
+    }
+    reciprocal_check "$father_json" "$stage/first.json"
+    reciprocal_check "$father_json" "$stage/replay.json"
+    cmp "$stage/first.json" "$stage/replay.json"
+    if reciprocal_check "$qid_json" "$stage/swapped.json" > "$stage/swapped.log" 2>&1; then
+      echo "ERROR: wrong GHWB root accepted" >&2; exit 1
+    fi
+    jq -e '.same_office and .distinct_holders and .disjoint_year_intervals and
+       (.direct_succession_paid == false) and (.world_truth_paid == false) and
+       (.general_semantic_coverage_paid == false)' "$stage/first.json" >/dev/null
+    mv "$stage/first.json" "$reciprocal_out/reciprocal-office-election.json"
+    # Preserve the raw result even if the bounded event rule is unmatched.
+    if ! jq -e '.bounded_shared_election_outcome_paid == true' \
+      "$reciprocal_out/reciprocal-office-election.json" >/dev/null; then
+      echo "RECIPROCAL_ELECTION_UNRESOLVED: original event rule not matched in both articles" >&2
+      exit 3
+    fi
+    rm -rf "$stage"
+    trap - EXIT
+  fi
   # The historical P4 native Rust receipt is NOT a canonical article-semantic
   # premise. Reopen it only on the explicitly selected legacy diagnostic lane.
   if [[ "$mode" == "--legacy-rust" ]]; then

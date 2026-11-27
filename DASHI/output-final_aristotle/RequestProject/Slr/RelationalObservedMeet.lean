@@ -548,4 +548,94 @@ theorem historicalCarrierRepairExact (roles : List (String × Nat))
     uniqueExactNumericCarrier roles [old, expectedNumericRoleSlots roles] = true := by
   simp [uniqueExactNumericCarrier, bad, exactNumericRoleSlots]
 
+
+/-- Historical focus readback: retain every represented key, all three signed
+horizons, and an explicit outside-model point. No reported state is a licence. -/
+def historicalFocusDomain (keys : List (Nat × Nat)) (outside : Bool) :
+    List (Option (Nat × Nat)) :=
+  keys.map some ++ (if outside then [none] else [])
+
+theorem historicalFocusRetainsKey (keys : List (Nat × Nat)) (outside : Bool)
+    (k : Nat × Nat) (hk : k ∈ keys) :
+    some k ∈ historicalFocusDomain keys outside := by
+  simp [historicalFocusDomain, hk]
+
+theorem historicalFocusRetainsOutside (keys : List (Nat × Nat)) :
+    none ∈ historicalFocusDomain keys true := by
+  simp [historicalFocusDomain]
+
+/-- Exact recorded domain check, not a claim of all-live semantic coverage.
+The historical schema predates the current-authority demand inventory. -/
+def checkHistoricalFocus (receipt : Json) : Bool := Id.run do
+  let some readback := obj receipt "focus_relation_readback" | return false
+  let some focus := obj readback "focus_correspondence" | return false
+  let some [subject] := rows focus "subjects" | return false
+  let some [matched] := rows subject "matches" | return false
+  let some [demand] := rows matched "numeric_demands" | return false
+  let some candidates := rows demand "typed_candidate_rows" | return false
+  let some signed := rows demand "raw_signed_horizon_observations" | return false
+  let some keys := candidates.mapM demandKey | return false
+  let some projection := obj demand "observed_class_projection_not_coverage" | return false
+  let some unresolved := rows projection "unresolved_keys" | return false
+  let some unresolvedKeys := unresolved.mapM (fun row =>
+    (row.getArr?).toOption.bind fun a =>
+      if a.size == 2 then do
+        let k ← a[0]!.getNat?.toOption
+        let v ← a[1]!.getNat?.toOption
+        pure (k,v)
+      else none) | return false
+  let horizonsExact := keys.all fun k =>
+    ([3,6,9] : List Nat).all fun h =>
+      match signed.filter (fun row => demandKey row == some k && nat row "horizon" == some h) with
+      | [row] =>
+        match intField row "signed_residual" with
+        | some total =>
+          intField row "phase" == some (if total < 0 then -1 else if total > 0 then 1 else 0)
+        | none => false
+      | _ => false
+  return str receipt "schema" == some "slr-native-binding-campaign-v2" &&
+    str readback "schema" == some "slr-reopened-original-relation-packet-v1" &&
+    str readback "document_ref" == some "document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30" &&
+    str readback "packet_sha256" == some "b48b875c72a98eeac24d5835c4baef28d6d7944deb0acf55cb076ec216df7828" &&
+    str subject "atom_id" == some "a392" && nat subject "token_id" == some 558748 &&
+    nat matched "role_ordinal" == some 1 && nat demand "demand_id" == some 22165 &&
+    nat demand "source_object_id" == some 72766 &&
+    keys.length == 548 && decide keys.Nodup &&
+    unresolvedKeys.length == keys.length && decide unresolvedKeys.Nodup &&
+    keys.all (fun k => unresolvedKeys.contains k) &&
+    signed.length == keys.length * 3 && horizonsExact &&
+    candidates.all (fun row =>
+      (row.getObjValAs? Bool "active").toOption == some false &&
+      (row.getObjValAs? Bool "refuted").toOption == some false &&
+      (row.getObjValAs? Bool "execution_residual").toOption == some true) &&
+    (demand.getObjValAs? Bool "outside_model_possible").toOption == some true &&
+    (demand.getObjValAs? Bool "represented_keys_exact").toOption == some true &&
+    (["typed_coverage_paid","governed_identity_paid","current_snapshot_certified"] : List String).all
+      (fun k => (readback.getObjValAs? Bool k).toOption == some false)
+
+/-- A query must factor even through the outside-model point. The caller
+supplies coverage and source meaning; the historical inventory cannot pay them. -/
+theorem historicalFocusConsumerClosed
+    {R A : Type} [DecidableEq A]
+    (live : R → Prop) (project : R → Option (Nat × Nat))
+    (keys : List (Nat × Nat)) (evaluate : Option (Nat × Nat) → A)
+    (answer : R → A)
+    (coverage : ∀ r, live r → project r ∈ historicalFocusDomain keys true)
+    (factor : ∀ r, live r → answer r = evaluate (project r))
+    (checked : FiniteConsumer.checkConstant (historicalFocusDomain keys true) evaluate = true) :
+    ∀ x, live x → ∀ y, live y → answer x = answer y :=
+  FiniteConsumer.projectedEnvelopeConsumerClosed live project
+    (historicalFocusDomain keys true) evaluate answer coverage factor checked
+
+def runHistoricalFocus (path : String) : IO UInt32 := do
+  match Json.parse (← IO.FS.readFile path) with
+  | .ok receipt =>
+    if checkHistoricalFocus receipt then
+      IO.println "REL_HISTORICAL_FOCUS_INVENTORY_CHECKED; semantic coverage and identity HOLD"
+      return 0
+    else
+      IO.eprintln "REL_HISTORICAL_FOCUS_INVENTORY_REJECTED"
+      return 1
+  | .error _ => return 1
+
 end Wikidata.Slr.RelationalObservedMeet

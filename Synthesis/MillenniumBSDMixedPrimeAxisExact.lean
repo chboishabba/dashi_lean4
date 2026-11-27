@@ -15,18 +15,19 @@ theorem axis_numerator_factor (a u p ap : ℂ)
     (h : a^2 - ap*a + p = 0) (hu : u ≠ 0) :
     a*(ap-u-u⁻¹)-(p-1) = (a-u)*(a-u⁻¹) := by
   have hh : u*u⁻¹ = 1 := mul_inv_cancel₀ hu
-  linear_combination -h + hh
+  linear_combination -h - hh
 
 theorem normalized_axis_factor (a u p ap : ℂ)
     (h : a^2 - ap*a + p = 0) (ha : a ≠ 0) (hu : u ≠ 0) :
     a⁻¹*(ap-u-u⁻¹-(p-1)*a⁻¹) =
       (1-a⁻¹*u)*(1-a⁻¹*u⁻¹) := by
-  have hn := axis_numerator_factor a u p ap h hu
-  have he : a^2 * (a⁻¹*(ap-u-u⁻¹-(p-1)*a⁻¹)) =
-      a^2 * ((1-a⁻¹*u)*(1-a⁻¹*u⁻¹)) := by
-    field_simp [ha, hu] at hn ⊢
-    linear_combination a^2 * hn
-  exact mul_left_cancel₀ (pow_ne_zero 2 ha) he
+  calc
+    a⁻¹*(ap-u-u⁻¹-(p-1)*a⁻¹) =
+        a⁻¹*a⁻¹*(a*(ap-u-u⁻¹)-(p-1)) := by
+          field_simp [ha, hu] <;> ring
+    _ = (1-a⁻¹*u)*(1-a⁻¹*u⁻¹) := by
+          rw [axis_numerator_factor a u p ap h hu]
+          field_simp [ha, hu] <;> ring
 
 /-- A unit-modulus character value cannot equal an ordinary root of
 complex norm greater than one. The inverse character is retained. -/

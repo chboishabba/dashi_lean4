@@ -108,5 +108,65 @@ theorem odd_flip_leaves_positive_locus (d e : Address → ℚ)
   rw [odd_flip_changes_product d e hd he]
   norm_num
 
+
+/-- The actual cleared Q0 discriminant, with both original addresses.
+The constant coefficient in the seventh-degree variable is not the
+leading coefficient of its reciprocal. -/
+def Q0Discriminant (a y : ℚ) : ℚ :=
+  (-3*a^2+3*a+1)^2 +
+    8*(-3*a^3-a^2+3*a+3-y-a^7/y)
+
+theorem Q0Discriminant_cleared (a y : ℚ) (hy : y ≠ 0) :
+    y * Q0Discriminant a y =
+      -8*a^7 + y*(9*a^4-42*a^3-5*a^2+30*a+25) - 8*y^2 := by
+  unfold Q0Discriminant
+  field_simp [hy] <;> ring
+
+/-- The reciprocal polynomial at a simple zero of the second
+discriminant has Eisenstein shape after division by its leading
+unit. The local DVR supplies g, the prime ideal, and the simple-zero
+constant condition. No Chow-class nonvanishing is inferred. -/
+theorem reciprocal_degree_seven_eisenstein
+    {R : Type*} [CommRing R] [IsDomain R]
+    (I : Ideal R) (hI : I.IsPrime) (g : R) (p : Polynomial R)
+    (hg : g ∈ I)
+    (hdeg : (Polynomial.C g * p).degree < 7)
+    (hconst : g * p.coeff 0 ∉ I ^ 2) :
+    Irreducible ((Polynomial.X : Polynomial R)^7 + Polynomial.C g * p) := by
+  let q : Polynomial R := Polynomial.X^7 + Polynomial.C g * p
+  have hm : q.Monic := Polynomial.monic_X_pow_add hdeg
+  have hd : q.degree = 7 := by
+    unfold q
+    rw [Polynomial.degree_add_eq_left_of_degree_lt (by
+      simpa using hdeg), Polynomial.degree_X_pow]
+    norm_num
+  apply Polynomial.irreducible_of_eisenstein_criterion hI
+  · change q.leadingCoeff ∉ I
+    rw [hm.leadingCoeff]
+    intro h
+    exact hI.ne_top (Ideal.eq_top_iff_one.mpr h)
+  · intro n hn
+    change q.coeff n ∈ I
+    have hn7 : n < 7 := by
+      change (n : WithBot ℕ) < q.degree at hn
+      rw [hd] at hn
+      exact_mod_cast hn
+    have hne : n ≠ 7 := Nat.ne_of_lt hn7
+    simpa [q, Polynomial.coeff_add, Polynomial.coeff_X_pow,
+      Polynomial.coeff_C_mul, hne, Ne.symm hne, mul_comm] using
+        I.mul_mem_left (p.coeff n) hg
+  · change 0 < q.degree
+    rw [hd]
+    norm_num
+  · change q.coeff 0 ∉ I ^ 2
+    simpa [q, Polynomial.coeff_add, Polynomial.coeff_X_pow,
+      Polynomial.coeff_C_mul] using hconst
+  · exact hm.isPrimitive
+
+/-- A valuation of seven cannot be the valuation of a square. -/
+theorem seventh_order_not_square_valuation :
+    ¬ ∃ n : ℤ, 2*n = 7 := by
+  omega
+
 end DASHI.Hodge.DicksonCoupled
 

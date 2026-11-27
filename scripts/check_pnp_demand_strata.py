@@ -102,7 +102,7 @@ class Ledger:
     def _record(self,H,caps,why,B):
         # Only called after a sound exact consumer or replayed donor returns empty.
         B.pay('demand_cache_record',1+len(H)+len(caps));self.empty.append((H,caps,why))
-    def probe(self,H,caps,B,leaf_cap=8,seam_cap=8,cell_cap=128):
+    def probe(self,H,caps,B,leaf_cap=8,seam_cap=8,cell_cap=128,character_degree=-1):
         H,caps=self._demand(H,caps)
         if H is None:return 'EMPTY',0,None
         cells=self.remaining(H,caps,B,cell_cap)
@@ -111,7 +111,30 @@ class Ledger:
         total=0;y=None;unknown=False
         for Q in cells:
             ans=bounded_fold(self.n,self.R,Q,caps,B,leaf_cap,seam_cap)
-            if ans is None:unknown=True;continue
+            if ans is None:
+                if character_degree>=0:
+                    from check_pnp_capacity_character import (mass_interval,reopen_positive,
+                        discover_certificate,verify_certificate)
+                    # Use the same local allowance and original scope; never treat
+                    # an incomplete positive mass observation as an exact count.
+                    # A forest refusal must not starve the character consumer.
+                    # Reserve disjoint portions of the current allowance.
+                    try:
+                        A=Allowance(B,max(0,B.left//2))
+                        I=mass_interval(self.n,self.R,Q,caps,A)
+                        w=reopen_positive(self.n,self.R,Q,caps,I,A)
+                        if w is not None:
+                            total+=I[0];y=w if y is None else y;unknown=True;continue
+                    except ProbeLimit:pass
+                    try:
+                        A=Allowance(B,max(0,B.left))
+                        cert=discover_certificate(self.n,self.R,Q,caps,A,character_degree)
+                        if cert is not None:
+                            if not verify_certificate(self.n,self.R,Q,caps,cert,A):
+                                raise AssertionError('invalid capacity certificate')
+                            self._record(Q,caps,cert,A);continue
+                    except ProbeLimit:pass
+                unknown=True;continue
             c,w=ans
             if c==0:self._record(Q,caps,'exact_separator_fold',B)
             else:total+=c;y=w if y is None else y
@@ -126,6 +149,24 @@ class Ledger:
 def conditioned_cut_rank(U,V,L):
     """Dimension of the new seam after quotienting by demand-normal span L."""
     return len(span(U+L))+len(span(V+L))-len(span(U+V+L))-len(span(L))
+
+
+def conditioned_cut_defect(U,V,L):
+    """Removed and introduced shared normal dimensions, separately."""
+    L=span(L);U=span(U);V=span(V)
+    shared=len(U)+len(V)-len(span(U+V))
+    iu=len(U)+len(L)-len(span(U+L))
+    iv=len(V)+len(L)-len(span(V+L))
+    iuv=len(span(U+V))+len(L)-len(span(U+V+L))
+    # dim(U intersect V intersect L) from explicit normal intersection.
+    from check_pnp_normal_boundary_join import intersection
+    n=max((a.bit_length() for a in U+V+L),default=0)
+    removed=len(intersection(n,intersection(n,U,V),L))
+    created=iuv-iu-iv+removed
+    assert created>=0
+    new=shared-removed+created
+    assert new==conditioned_cut_rank(U,V,L)
+    return new,removed,created
 
 
 def choose_normal(n,R,H,B):
@@ -145,11 +186,12 @@ def choose_normal(n,R,H,B):
         if mask!=full:cuts.append((space(mask),space(full^mask)))
         if A is not None:todo.extend((A,C))
     def score(s):
-        w=[]
+        w=[];created=0
         for U,W in cuts:
             B.pay('demand_cut_score',1+d*(1+len(U)+len(W))**2)
-            w.append(conditioned_cut_rank(U,W,(s,)))
-        return max(w,default=0),sum(w),s
+            rank,removed,added=conditioned_cut_defect(U,W,(s,))
+            w.append(rank);created+=added
+        return max(w,default=0),sum(w),created,s
     s=min(best or (1,),key=score)
     piv={a.bit_length()-1 for a,b in H};free=[i for i in range(n) if i not in piv]
     return sum(1<<free[i] for i in bits(s))
@@ -197,7 +239,7 @@ def solve_cover(n,R,P,B,leaf_cap=8,seam_cap=8,nodes=32,probe_cap=1000000,
                 H=Q
             except ProbeLimit:pass
         try:
-            status,c,y=L.probe(H,caps,Allowance(B,probe_cap),leaf_cap,seam_cap,cell_cap)
+            status,c,y=L.probe(H,caps,Allowance(B,probe_cap),leaf_cap,seam_cap,cell_cap,character_degree)
             if y is not None:return y,True
             if status=='EMPTY':continue
         except ProbeLimit:pass
@@ -207,17 +249,29 @@ def solve_cover(n,R,P,B,leaf_cap=8,seam_cap=8,nodes=32,probe_cap=1000000,
             y=chart(n,H)[0];B.pay('demand_terminal_verify',1+sum(r.bit_count() for r in R))
             if all((r&y).bit_count()==1 for r in R):return y,True
             L._record(H,caps,'singleton_verify',B);continue
-        for b in (1,0):
+        order=(1,0)
+        if character_degree>=0:
+            from check_pnp_capacity_character import signed_interval,preferred_child,reopen_positive
+            try:
+                A=Allowance(B,probe_cap)
+                Q,I,D=signed_interval(n,R,H,caps,a,A)
+                b=preferred_child(I,D)
+                if b is not None:
+                    y=reopen_positive(n,R,Q[b],caps,I[b],A)
+                    if y is not None:return y,True
+                    order=(1-b,b)
+            except ProbeLimit:pass
+        for b in order:
             Q=canon(H+((a,b),));assert Q is not None and len(Q)==len(H)+1;pending.append(Q)
         B.pay('demand_split_children',2)
     return None,not pending and not unresolved
 
 
-def rooted_probe(L,x,e,H,B,leaf_cap=8,seam_cap=8,cell_cap=128):
+def rooted_probe(L,x,e,H,B,leaf_cap=8,seam_cap=8,cell_cap=128,character_degree=-1):
     """Strict root in absolute candidate coordinates; cache reusable cap implications."""
     assert 0<=e<len(L.R) and satisfies(x,L.P,())
     caps=[(r&x).bit_count() for r in L.R];caps[e]-=2
-    status,c,y=L.probe(H,tuple(caps),B,leaf_cap,seam_cap,cell_cap)
+    status,c,y=L.probe(H,tuple(caps),B,leaf_cap,seam_cap,cell_cap,character_degree)
     if y is not None:
         q=tuple((r&x).bit_count()-(r&y).bit_count() for r in L.R)
         assert all(a>=0 and a%2==0 for a in q) and q[e]>=2

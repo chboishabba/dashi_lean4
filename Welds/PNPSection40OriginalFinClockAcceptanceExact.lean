@@ -1,0 +1,11 @@
+/-!
+Section40 original F3 anchored Boolean consumer:
+a true paired input observation split occurs at an index Fin k,
+strictly before terminal time; zero-clock counterfeit splits
+are ruled out. NO sharing-stable unrestricted SAT lower bound.
+-/
+import Welds.PNPOriginalAnchoredFinClockObservationReceiptExact
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_visible_has_finite_clock_observation_witness
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_no_zero_clock_visible_witness
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_visible_has_finite_clock_observation_witness
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_no_zero_clock_visible_witness

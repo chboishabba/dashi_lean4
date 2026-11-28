@@ -177,6 +177,47 @@ theorem boundedEnergy_original {u : Velocity} (h : BoundedEnergy u) :
   rw [← ofReal_integral_eq_lintegral_ofReal hi hnn]
   exact ENNReal.ofReal_le_ofReal hlt.le
 
+
+/-- The original extended-real uniform bound is also sufficient for the
+literal Clay energy clause on the same smooth velocity. Strict inequality
+is recovered by increasing the common bound by one, not by changing u. -/
+theorem originalEnergy_to_boundedEnergy {u : Velocity}
+    (hs : TrustBoundarySmoothOn u)
+    (h : ∃ C : ℝ, ∀ t ≥ 0,
+      (∫⁻ x, ENNReal.ofReal (‖timeFirst u t x‖ ^ 2)) ≤ ENNReal.ofReal C) :
+    BoundedEnergy u := by
+  obtain ⟨C,hC⟩ := h
+  refine ⟨max C 0 + 1,fun t ht => ?_⟩
+  have hc : Continuous (fun x : R3 => u (x,t)) :=
+    (smooth_space_slice hs ht).continuous
+  have hsq : Continuous (fun x : R3 => ‖u (x,t)‖ ^ 2) := hc.norm.pow 2
+  have hle : (∫⁻ x : R3, ENNReal.ofReal (‖u (x,t)‖ ^ 2)) ≤
+      ENNReal.ofReal (max C 0) :=
+    (hC t ht).trans (ENNReal.ofReal_le_ofReal (le_max_left _ _))
+  have hfinite : (∫⁻ x : R3, ENNReal.ofReal (‖u (x,t)‖ ^ 2)) < ⊤ :=
+    lt_of_le_of_lt hle ENNReal.ofReal_lt_top
+  have hi : Integrable (fun x : R3 => ‖u (x,t)‖ ^ 2) volume := by
+    refine ⟨hsq.aestronglyMeasurable, ?_⟩
+    rw [hasFiniteIntegral_iff_norm]
+    simpa [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)] using hfinite
+  have hlp : MemLp (fun x : R3 => u (x,t)) 2 volume := by
+    apply (integrable_norm_rpow_iff hc.aestronglyMeasurable
+      (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)).mp
+    simpa using hi
+  refine ⟨hlp, ?_⟩
+  have hnn : 0 ≤ᵐ[volume] (fun x : R3 => ‖u (x,t)‖ ^ 2) :=
+    Filter.Eventually.of_forall (fun x => sq_nonneg _)
+  have he := integral_eq_lintegral_of_nonneg_ae hnn hi.aestronglyMeasurable
+  have hreal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hle
+  rw [ENNReal.toReal_ofReal (le_max_right C 0)] at hreal
+  rw [he]
+  linarith
+
+theorem sameVelocityEnergy_iff {u : Velocity} (hs : TrustBoundarySmoothOn u) :
+    BoundedEnergy u ↔ ∃ C : ℝ, ∀ t ≥ 0,
+      (∫⁻ x, ENNReal.ofReal (‖timeFirst u t x‖ ^ 2)) ≤ ENNReal.ofReal C :=
+  ⟨boundedEnergy_original, originalEnergy_to_boundedEnergy hs⟩
+
 /-- Direct whole-space source admission: compactly supported actual initial
 data and zero force satisfy the frozen Clay C specification. -/
 theorem original_space_to_clayC (h : Breakdown.BreakdownOnSpace) : ClayOptionC := by
@@ -227,6 +268,7 @@ theorem original_extended_certificate_to_clayC (h : Breakdown.ExtendedCertificat
     ClayOptionC :=
   original_space_to_clayC (Breakdown.extended_certificate_breakdown_on_space h)
 
+#print axioms DASHI.AlpogeBuckmaster.sameVelocityEnergy_iff
 #print axioms DASHI.AlpogeBuckmaster.original_profile_to_clayCD
 #print axioms DASHI.AlpogeBuckmaster.original_weak_profile_to_clayC
 #print axioms DASHI.AlpogeBuckmaster.original_certificate_to_clayC

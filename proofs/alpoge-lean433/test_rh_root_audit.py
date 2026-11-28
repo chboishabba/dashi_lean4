@@ -12,8 +12,10 @@ for targets in (a.UPSTREAM,a.ADAPTER,a.CLAY,a.ROOT,a.XI):
         try: a.audit(txt,targets)
         except ValueError: checks+=1;continue
         raise RuntimeError('bad evidence accepted')
-    if targets==a.ROOT:
-        Path('root-fixture.log').write_text(good)
-        subprocess.run([sys.executable,'audit_p0_axioms.py','root','root-fixture.log'],check=True)
+    if targets in (a.ROOT,a.XI):
+        mode='root' if targets==a.ROOT else 'xi'
+        path=mode+'-fixture.log'
+        Path(path).write_text(good)
+        subprocess.run([sys.executable,'audit_p0_axioms.py',mode,path],check=True)
         checks+=1
 print(f'{checks}/{checks} parser fixtures PASS')

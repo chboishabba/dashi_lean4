@@ -54,5 +54,57 @@ theorem actual_divergence_preserved (N : ℕ) (ν T : ℝ)
   exact (mul_eq_zero.mp h).resolve_left (by
     exact_mod_cast (Real.exp_ne_zero (ν*massSq k*T)))
 
+/-- Integrate the actual tail bound against the existing original energy
+FTC. This is uniform in the cutoff for bounded initial energy, but
+only an integrated L² tail, not a critical L∞_t bound. -/
+theorem actual_integrated_tail_budget (N : ℕ) (ν R T : ℝ)
+    (hν : 0<ν) (hR : 0<R) (hT : 0≤T)
+    (U : Vec3 → ℝ → CVec3)
+    (hc : ∀ k i,Continuous (fun t=>U k t i))
+    (hODE : ∀ t ∈ Set.uIcc 0 T,∀ k i,HasDerivAt (fun s=>U k s i)
+      (-((ν*massSq k:ℝ):ℂ)*U k t i+galerkinForce N U k t i) t)
+    (htrans : ∀ t ∈ Set.uIcc 0 T,∀ k,outputDot (embedMode k) (U (embedMode k) t)=0)
+    (hreal : ∀ t ∈ Set.uIcc 0 T,∀ k i,U (embedMode (-k)) t i=star (U (embedMode k) t i))
+    (hmean : ∀ t ∈ Set.uIcc 0 T,U (embedMode 0) t=0) :
+    2*ν*R^2*(∫ t in 0..T,
+      ∑ k ∈ (outputModes N).filter (fun k=>R^2≤massSq (embedMode k)),
+        realHermitian (U (embedMode k) t) (U (embedMode k) t))≤
+      periodicEnergy N U 0 := by
+  let tail := fun t : ℝ =>
+    ∑ k ∈ (outputModes N).filter (fun k=>R^2≤massSq (embedMode k)),
+      realHermitian (U (embedMode k) t) (U (embedMode k) t)
+  have ht : Continuous tail := by
+    unfold tail
+    apply continuous_finset_sum
+    intro k _
+    unfold realHermitian
+    simp only [Fin.sum_univ_three]
+    fun_prop
+  have hd : Continuous (periodicDissipation N U) := by
+    unfold periodicDissipation
+    apply continuous_finset_sum
+    intro k _
+    apply Continuous.const_mul
+    unfold realHermitian
+    simp only [Fin.sum_univ_three]
+    fun_prop
+  have hi := intervalIntegral.integral_mono_on hT
+    ((ht.const_mul (R^2)).intervalIntegrable 0 T) (hd.intervalIntegrable 0 T)
+    (fun t _ => periodic_tail_energy_le N U t R hR)
+  rw [intervalIntegral.integral_const_mul] at hi
+  have he := periodic_energy_FTC N ν U T hc hODE htrans hreal hmean
+  have hn : 0≤periodicEnergy N U T := by
+    unfold periodicEnergy
+    apply Finset.sum_nonneg
+    intro k _
+    unfold realHermitian
+    apply Finset.sum_nonneg
+    intro i _
+    positivity
+  have hh := mul_le_mul_of_nonneg_left hi (show 0≤2*ν by positivity)
+  change 2*ν*R^2*(∫ t in 0..T,tail t)≤_
+  linarith [show 2*ν*(R^2*(∫ t in 0..T,tail t))=
+    2*ν*R^2*(∫ t in 0..T,tail t) by ring]
+
 end
 end DASHI.NavierStokes.PhysicalMixed

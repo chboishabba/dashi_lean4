@@ -71,11 +71,11 @@ theorem signedRowRead (y : ℂ) (n : ℕ) :
 
 -- Deterministic triangular recursion, not 43 independent choices.
 def rows : ℕ → YPoly
-  | n => signedRow n - ∑ k ∈ Finset.range n,
-      rows k * C (pivot (jPoly 1722) 42 n k)
+  | n => signedRow n - ∑ k ∈ (Finset.range n).attach,
+      rows k.val * C (pivot (jPoly 1722) 42 n k.val)
 termination_by n
 decreasing_by
-  exact Finset.mem_range.mp (by assumption)
+  exact Finset.mem_range.mp k.property
 
 theorem rowsRead (y : ℂ) (n : ℕ) (hn : n≤42) :
     (rows n).eval y=sliceC y n := by
@@ -85,12 +85,14 @@ theorem rowsRead (y : ℂ) (n : ℕ) (hn : n≤42) :
     rw [Polynomial.coeff_sub,columnQCoeff _ _ _ _ hn,Finset.sum_range_succ,
       pivotOne _ (jPolyZero 1722),mul_one] at h
     rw [rows,Polynomial.eval_sub,Polynomial.eval_sum,signedRowRead]
-    have hs : (∑ k ∈ Finset.range n, (rows k * C (pivot (jPoly 1722) 42 n k)).eval y)=
+    have hs : (∑ k ∈ (Finset.range n).attach,
+        (rows k.val * C (pivot (jPoly 1722) 42 n k.val)).eval y)=
       ∑ k ∈ Finset.range n, sliceC y k*pivot (jPoly 1722) 42 n k := by
+      rw [← Finset.sum_attach (s := Finset.range n)]
       apply Finset.sum_congr rfl
       intro k hk
-      have hkn := Finset.mem_range.mp hk
-      simp [ih k hkn (by omega)]
+      have hkn := Finset.mem_range.mp k.property
+      simp [ih k.val hkn (by omega)]
     rw [hs]
     linear_combination h
 
@@ -127,15 +129,24 @@ theorem signedNodeUnique (p q : YPoly) (hdeg : (p-q).natDegree<42)
     intro i j hij
     apply Fin.ext
     dsimp [node] at hij
-    split_ifs at hij with hi hj hj
-    · exact_mod_cast (add_right_cancel hij)
-    · have he := congrArg Complex.re hij
+    by_cases hi : i.val<21 <;> by_cases hj : j.val<21
+    · simp only [hi,hj,if_true] at hij
+      have he : (i.val : ℂ)=(j.val : ℂ) := add_right_cancel hij
+      exact_mod_cast he
+    · simp only [hi,hj,if_true,if_false] at hij
+      have he := congrArg Complex.re hij
       simp at he
-      positivity
-    · have he := congrArg Complex.re hij
+      have hp : (0:ℝ)<(i.val:ℝ)+1 := by positivity
+      have hn : (0:ℝ)≤((j.val-20:ℕ):ℝ) := by positivity
+      linarith
+    · simp only [hi,hj,if_true,if_false] at hij
+      have he := congrArg Complex.re hij
       simp at he
-      positivity
-    · have he : i.val-20=j.val-20 := by exact_mod_cast neg_inj.mp hij
+      have hp : (0:ℝ)<(j.val:ℝ)+1 := by positivity
+      have hn : (0:ℝ)≤((i.val-20:ℕ):ℝ) := by positivity
+      linarith
+    · simp only [hi,hj,if_false,neg_inj] at hij
+      have he : i.val-20=j.val-20 := by exact_mod_cast hij
       omega
   have hz (i : Fin 42) : (p-q).eval (node i)=0 := by
     rw [Polynomial.eval_sub,sub_eq_zero]

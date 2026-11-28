@@ -1,0 +1,12 @@
+import YangMills.LiteralSU2BoundaryAveragedCrossingRP
+
+namespace RequestProject.YangMills
+
+example : LiteralSU2BoundaryAveragedCrossingRPExact :=
+  literal_su2_boundary_averaged_crossing_rp
+
+example : LiteralSU2BoundaryGaugeProjectionRPExact :=
+  literal_su2_boundary_gauge_projection_rp_of_averaged_crossing_rp
+    literal_su2_boundary_averaged_crossing_rp
+
+end RequestProject.YangMills

@@ -1,3 +1,24 @@
+## 28 November — whole-space C and periodic D source-local admission
+
+ClayUnforcedTransport.lean now also consumes the original BreakdownOnSpace:
+smooth compact support is propagated through every coordinate derivative,
+the weighted derivative is continuous with compact support, giving the
+literal rapid-decay condition; the actual MemLp square norm integral is
+transported to the original nonnegative extended-real energy bound.
+The same physical velocity, pressure, zero force and viscosity are used.
+original_space_to_clayC and original_cell_condition_to_clayC complement
+the existing D theorems. Source-written, not kernel accepted.
+
+The runner isolates logs and oleans in a unique per-run directory and
+checks ten terminal axiom declarations (not eight). The byte-matched
+parser blob 76b29c56f0dcb8411117fd3da715081201ac3d23 passes 14/14
+synthetic controls in both normal and -O modes. Original upstream
+certificate and verifier remain missing as of 28 Nov, so this route
+is conditional on the original CellSystemCondition. OpenAI forced
+C/D source route remains independent. No CI or local native kernel.
+
+---
+
 # Original unforced Navier–Stokes admission
 
 Pinned upstream: https://github.com/tristanbuckmaster/navier-stokes/tree/ad53419de079eb8f95f60313473374624a348546

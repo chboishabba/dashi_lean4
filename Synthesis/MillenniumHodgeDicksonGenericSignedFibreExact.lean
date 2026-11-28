@@ -56,7 +56,7 @@ theorem field_root_iff (a y s : F) :
   · intro h
     linear_combination he - 8*h
   · intro h
-    linear_combination (1/8 : F)*h - (1/8 : F)*he
+    linear_combination (1/8 : F)*he - (1/8 : F)*h
 
 def actualRootFibreEquiv (a y : Address → F) (δ : F) :
     ActualRootFibre a y δ ≃ SignedFibre (fun i => deltaField (a i) (y i)) δ where

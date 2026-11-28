@@ -10,7 +10,7 @@ and the conditional continuation proof. No universal NS theorem.
 -/
 namespace DASHI.NavierStokes.AB
 open MeasureTheory
-open scoped Interval
+
 
 theorem critical_time_exists
     (E D X : ℝ → ℝ) (ν T K E₀ L : ℝ)
@@ -31,9 +31,10 @@ theorem critical_time_exists
       _ ≤ K*E t*D t := hinterp t ht
       _ ≤ (K*E₀)*D t :=
         mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hE t ht) hK) (hnD t ht)
+  have hconst : IntervalIntegrable (fun _ : ℝ => L^4) volume 0 T :=
+    continuous_const.intervalIntegrable _ _
   have hi := intervalIntegral.integral_mono_on hT.le
-    (intervalIntegrable_const (c := L^4))
-    (hD.const_mul (K*E₀)) hpoint
+    hconst (hD.const_mul (K*E₀)) hpoint
   rw [intervalIntegral.integral_const_mul] at hi
   simp only [intervalIntegral.integral_const, sub_zero, smul_eq_mul] at hi
   have h₁ := mul_le_mul_of_nonneg_left hi (show 0 ≤ 2*ν by positivity)
@@ -94,5 +95,39 @@ theorem signed_helicity_budget (ν hp hm hp₀ hm₀ dp dm : ℝ)
     (hbal : hp-hm+2*ν*(dp-dm)=hp₀-hm₀) :
     hp+hm+2*ν*(dp+dm)=hp₀-hm₀+2*hm+4*ν*dm := by
   linarith
+
+
+/-- A proof-producing scalar bound for the same reference error on
+either Euclidean or periodic Fourier carriers. No minimum nonzero
+wave number is required. E=X^{-1}, G=X^0, H=X^1 are nonnegative
+norms of the actual error; Cauchy gives G^2 ≤ E H.
+The paired Leray estimate supplies the displayed physical input. -/
+theorem reference_rate_no_spectral_gap
+    (E G H V ν q β δ rate residual : ℝ)
+    (hE : 0 ≤ E) (hG : 0 ≤ G) (hH : 0 ≤ H)
+    (hV : 0 ≤ V) (hβ : 0 < β)
+    (hCauchy : G^2 ≤ E*H) (hEcap : E ≤ q)
+    (hreserve : β+δ ≤ ν-q/2)
+    (hRate : rate+(ν-E/2)*H ≤ V*G+residual) :
+    rate+δ*H ≤ (V^2/(4*β))*E+residual := by
+  have hYoung : V*G ≤ β*H+V^2/(4*β)*E := by
+    by_cases hz : E=0
+    · have hg : G=0 := by rw [hz,zero_mul] at hCauchy; nlinarith [sq_nonneg G]
+      rw [hz,hg,mul_zero,mul_zero,add_zero]
+      exact mul_nonneg hβ.le hH
+    · have hEp : 0 < E := lt_of_le_of_ne hE (Ne.symm hz)
+      have hsq := sq_nonneg (2*β*G-V*E)
+      have hmul := mul_le_mul_of_nonneg_left hCauchy (show 0 ≤ 4*β^2 by positivity)
+      have haux : 0 ≤ 4*β^2*E*H-4*β*V*E*G+V^2*E^2 := by
+        nlinarith only [hsq,hmul]
+      have hp : 0 < 4*β*E := by positivity
+      apply (le_of_mul_le_mul_left ?_ hp)
+      calc
+        (4*β*E)*(V*G) ≤ 4*β^2*E*H+V^2*E^2 := by linarith only [haux]
+        _ = (4*β*E)*(β*H+V^2/(4*β)*E) := by
+          field_simp [ne_of_gt hβ] <;> ring
+  have hr := mul_le_mul_of_nonneg_right
+    (show β+δ ≤ ν-E/2 by linarith) hH
+  linarith only [hRate,hYoung,hr]
 
 end DASHI.NavierStokes.AB

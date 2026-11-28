@@ -45,7 +45,8 @@ verify_local_source() {
       proofs/alpoge-lean433/audit_p0_axioms.py \
       proofs/alpoge-lean433/RHAdmission.lean \
       proofs/alpoge-lean433/RHClayAdmission.lean \
-      MillenniumExternal/AlpogeRHBoundaryExact.lean; do
+      MillenniumExternal/AlpogeRHBoundaryExact.lean \
+      MillenniumExternal/AlpogeRHUniversalXiZetaBidiExact.lean; do
     want="$(git -C "$ROOT" rev-parse "$DASHI_HEAD:$path")"
     got="$(git hash-object --no-filters "$ROOT/$path")"
     [[ "$want" == "$got" ]] || {
@@ -133,6 +134,12 @@ PY
       _ "$BUILD" "$ROOT_ADAPTER" "$ROOT" 2>&1 | tee "$REPORT_DIR/root-boundary.log"
     python3 "$SIDECAR/audit_p0_axioms.py" root "$REPORT_DIR/root-boundary.log" |
       tee "$REPORT_DIR/root-boundary-axioms.log"
+    XI_ADAPTER="$ROOT/MillenniumExternal/AlpogeRHUniversalXiZetaBidiExact.lean"
+    XI_BLOB="$(git -C "$ROOT" rev-parse HEAD:MillenniumExternal/AlpogeRHUniversalXiZetaBidiExact.lean)"
+    [[ "$(git hash-object --no-filters "$XI_ADAPTER")" == "$XI_BLOB" ]]
+    lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$3" -o "$1/MillenniumExternal/AlpogeRHUniversalXiZetaBidiExact.olean" "$2"' \
+      _ "$BUILD" "$XI_ADAPTER" "$ROOT" 2>&1 | tee "$REPORT_DIR/xi-bidi.log"
+    python3 "$SIDECAR/audit_p0_axioms.py" xi "$REPORT_DIR/xi-bidi.log" | tee "$REPORT_DIR/xi-bidi-axioms.log"
     lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$3" -o "$1/RHClayAdmission.olean" "$2"' \
       _ "$BUILD" "$SIDECAR/RHClayAdmission.lean" "$SIDECAR" 2>&1 |
       tee "$REPORT_DIR/clay-admission.log"

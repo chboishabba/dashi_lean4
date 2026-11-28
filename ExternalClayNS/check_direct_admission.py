@@ -54,6 +54,8 @@ def local_source():
     head=git(ROOT,"rev-parse","HEAD")
     files=git(ROOT,"ls-files","--",".").splitlines()
     tracked=set(files)
+    if any(s[:1]=="S" or s[:1].islower() for s in git(ROOT,"ls-files","-v","--",".").splitlines()):
+        raise ValueError("hidden tracked admission inputs")
     for f in files:
         if (f.endswith((".lean",".py",".toml")) or f=="lean-toolchain") and not (ROOT/f).is_file():
             raise ValueError(f"deleted admission input: {f}")
@@ -85,6 +87,7 @@ def packages():
     base=ROOT/manifest.get("packagesDir",".lake/packages")
     heads={}
     for p in manifest["packages"]:
+        if p["name"] in heads:raise ValueError("duplicate dependency "+p["name"])
         if p["type"]!="git":raise ValueError("unexpected non-git package "+p["name"])
         heads[p["name"]]=clean(base/p["name"],p["rev"])
     if heads.get("NavierStokesAndEuler")!=PIN:raise ValueError("upstream pin mismatch")

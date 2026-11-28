@@ -123,5 +123,46 @@ theorem residualGermToCusp (n : ℕ) (f : UpperHalfPlane → ℂ)
   filter_upwards [he,tTendsto.eventually hh] with τ a b
   exact a.trans b
 
+-- Whole Hecke geometry from TWO actual ramified normalized finite germs.
+-- The global modular rigidity (invariantZero) and original cusp removal
+-- have ALREADY been proved in Paper9HeckePoleRemoval. This theorem
+-- combines them and isolates precisely the new coefficient/analytic
+-- producer `Rem` on each original normalized residual.
+-- No freely chosen complex meromorphic substitute, no cusp-only
+-- inference, and no asserted fixed j equality.
+theorem bothActualHeckeIdentitiesFromRamifiedGerms
+    (P : Polynomial ℂ) (K : ℂ)
+    (diagUnit diagPacket sliceUnit slicePacket : ℂ → ℂ)
+    (hd : Rem 3363 diagUnit diagPacket)
+    (hs : Rem 1723 sliceUnit slicePacket)
+    (hdiag : ∀ᶠ τ in UpperHalfPlane.atImInfty,
+      tParam τ^3362 * diagonalResidual P τ =
+        diagUnit (tParam τ) - diagPacket (tParam τ))
+    (hslice : ∀ᶠ τ in UpperHalfPlane.atImInfty,
+      tParam τ^1722 * sliceResidual K P τ =
+        sliceUnit (tParam τ) - slicePacket (tParam τ)) :
+    (∀ τ, actualProduct τ (j τ) = P.eval (j τ)) ∧
+    (∀ τ, actualProduct τ K = P.eval (j τ)) := by
+  have hzD : IsZeroAtImInfty (diagonalResidual P) :=
+    residualGermToCusp 3362 (diagonalResidual P)
+      diagUnit diagPacket hd hdiag
+  have hzS : IsZeroAtImInfty (sliceResidual K P) :=
+    residualGermToCusp 1722 (sliceResidual K P)
+      sliceUnit slicePacket hs hslice
+  exact ⟨diagonalIdentity P hzD, sliceIdentity K P hzS⟩
+
+theorem actualCMPolynomialRootFromRamifiedGerms
+    (P : Polynomial ℂ)
+    (diagUnit diagPacket : ℂ → ℂ)
+    (hd : Rem 3363 diagUnit diagPacket)
+    (hdiag : ∀ᶠ τ in UpperHalfPlane.atImInfty,
+      tParam τ^3362 * diagonalResidual P τ =
+        diagUnit (tParam τ) - diagPacket (tParam τ)) :
+    P.eval (j Integration.Paper9ActualCMPoint.cmTau) = 0 := by
+  have hz : IsZeroAtImInfty (diagonalResidual P) :=
+    residualGermToCusp 3362 (diagonalResidual P)
+      diagUnit diagPacket hd hdiag
+  exact actualCMDiagonalRoot P hz
+
 end
 end Integration.Paper9HeckeFiniteRemainder

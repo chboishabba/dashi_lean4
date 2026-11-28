@@ -158,15 +158,17 @@ theorem projectedEnvelopeDisagreement
     (failed : checkConstant domain evaluate = false) :
     ∃ x ∈ domain, ∃ y ∈ domain, evaluate x ≠ evaluate y := by
   classical
-  by_contra h
-  have all : ∀ x ∈ domain, ∀ y ∈ domain, evaluate x = evaluate y := by
-    intro x hx y hy
-    by_contra neq
-    exact h ⟨x, hx, y, hy, neq⟩
-  have ok : checkConstant domain evaluate = true := by
-    simpa only [checkConstant, List.all_eq_true, decide_eq_true_eq] using all
-  rw [ok] at failed
-  contradiction
+  by_cases hex : ∃ x ∈ domain, ∃ y ∈ domain, evaluate x ≠ evaluate y
+  · exact hex
+  · have all : ∀ x ∈ domain, ∀ y ∈ domain, evaluate x = evaluate y := by
+      intro x hx y hy
+      by_cases heq : evaluate x = evaluate y
+      · exact heq
+      · exact (hex ⟨x, hx, y, hy, heq⟩).elim
+    have ok : checkConstant domain evaluate = true := by
+      simpa only [checkConstant, List.all_eq_true, decide_eq_true_eq] using all
+    rw [ok] at failed
+    exact failed.elim
 
 /-- Exact live preimages turn an envelope disagreement into a genuine
     consumer non-descent witness, not merely a resource-pruning residual. -/

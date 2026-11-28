@@ -45,6 +45,7 @@ verify_local_source() {
       proofs/alpoge-lean433/audit_p0_axioms.py \
       proofs/alpoge-lean433/RHAdmission.lean \
       proofs/alpoge-lean433/RHClayAdmission.lean \
+      scripts/vendor_millennium_targets.sh \
       MillenniumExternal/AlpogeRHBoundaryExact.lean \
       MillenniumExternal/AlpogeRHUniversalXiZetaBidiExact.lean; do
     want="$(git -C "$ROOT" rev-parse "$DASHI_HEAD:$path")"
@@ -119,11 +120,18 @@ PY
     CLAY_TREE=b7c2004c0e8cb192d3dc7d740551a2de04068b61
     CLAY_BLOB=26356e8fecc91562eb2af2564e852e1b33c63005
     TARGET=Problems/RiemannHypothesis/Millennium.lean
+    verify_clay_vendor() {
     [[ "$(git -C "$VENDOR" rev-parse HEAD)" == "$CLAY_PIN" ]]
     [[ "$(git -C "$VENDOR" rev-parse 'HEAD^{tree}')" == "$CLAY_TREE" ]]
     [[ "$(git -C "$VENDOR" rev-parse "HEAD:$TARGET")" == "$CLAY_BLOB" ]]
     [[ "$(git hash-object --no-filters "$VENDOR/$TARGET")" == "$CLAY_BLOB" ]]
     [[ -z "$(git -C "$VENDOR" status --porcelain --untracked-files=all)" ]]
+      if git -C "$VENDOR" ls-files -v | grep -Eq '^([S]|[a-z])'; then
+        echo 'BLOCKED: hidden vendor tracked source' >&2; return 1
+      fi
+      printf '%s %s %s\n' "$CLAY_PIN" "$CLAY_TREE" "$CLAY_BLOB"
+    }
+    verify_clay_vendor | tee "$REPORT_DIR/clay-vendor-before.log"
     mkdir -p "$BUILD/Problems/RiemannHypothesis"
     # Compile the unmodified upstream target in THIS Mathlib environment.
     # It has a final unused challenge sorry; the actual exported proof
@@ -168,6 +176,10 @@ PY
   if [[ "${GRH_P0_CHECK_DIRECTIONAL:-0}" == 1 ]]; then
     lake env lean "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" 2>&1 |
       tee "$REPORT_DIR/directional-donor-lean.log"
+  fi
+  if [[ "${GRH_P0_CLAY:-$REPLAY}" == 1 ]]; then
+    verify_clay_vendor | tee "$REPORT_DIR/clay-vendor-after.log"
+    cmp "$REPORT_DIR/clay-vendor-before.log" "$REPORT_DIR/clay-vendor-after.log"
   fi
   verify_dependency_pins | tee "$REPORT_DIR/dependency-pins-after.log"
   cmp "$REPORT_DIR/dependency-pins.log" "$REPORT_DIR/dependency-pins-after.log"

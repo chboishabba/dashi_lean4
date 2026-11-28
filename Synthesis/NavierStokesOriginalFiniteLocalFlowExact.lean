@@ -92,6 +92,33 @@ theorem finite_local_solution (N : ℕ) (ν : ℝ) (x₀ : FiniteState N) :
   refine ⟨x,hx,ε,hε,?_⟩
   simpa using hd
 
+/-- Pointwise derivative transport; uses the original force even outside
+the finite support. Reusable by the physical local-flow consumer. -/
+theorem zeroExtend_ODE_of_derivative (N : ℕ) (ν : ℝ)
+    (x : ℝ → FiniteState N) (t : ℝ)
+    (hd : HasDerivAt x (finiteForce N ν (x t)) t) (k : Vec3) (i : Fin 3) :
+    HasDerivAt (fun s=>zeroExtend (x s) k i)
+      (-((ν*massSq k:ℝ):ℂ)*zeroExtend (x t) k i+
+       galerkinForce N (fun k s=>zeroExtend (x s) k) k t i) t := by
+  classical
+  let U := fun k s=>zeroExtend (x s) k
+  change HasDerivAt (fun s=>U k s i)
+    (-((ν*massSq k:ℝ):ℂ)*U k t i+galerkinForce N U k t i) t
+  by_cases hk : k∈(outputModes N).image embedMode
+  · obtain ⟨p,hp,rfl⟩ := Finset.mem_image.mp hk
+    let a : Mode N := ⟨p,hp⟩
+    have hcoord : HasDerivAt (fun s=>x s a i) (finiteForce N ν (x t) a i) t :=
+      ((ContinuousLinearMap.proj (R:=ℝ) i).hasFDerivAt.comp_hasDerivAt
+        ((ContinuousLinearMap.proj (R:=ℝ) a).hasFDerivAt.comp_hasDerivAt hd))
+    simpa [U,finiteForce,a,zeroExtend_at,galerkinForce] using hcoord
+  · have hz : ∀ s,U k s i=0 := by
+      intro s
+      simp [U,zeroExtend_outside _ _ hk]
+    have hf : galerkinForce N U k t i=0 := by simp [galerkinForce,hk]
+    simp only [hz,hf,mul_zero,add_zero]
+    exact hasDerivAt_const t 0
+
+
 /-- The local finite ODE is the original force on the real-frequency
 zero extension, not just an abstract ODE with an assigned RHS. -/
 theorem local_solution_zero_extension (N : ℕ) (ν : ℝ) (x₀ : FiniteState N) :
@@ -103,20 +130,7 @@ theorem local_solution_zero_extension (N : ℕ) (ν : ℝ) (x₀ : FiniteState N
   obtain ⟨x,hx,ε,hε,hd⟩ := finite_local_solution N ν x₀
   let U := fun k t=>zeroExtend (x t) k
   refine ⟨U,fun k=>by simp [U,hx],fun t k hk=>zeroExtend_outside _ _ hk,ε,hε,?_⟩
-  intro t ht k i
-  by_cases hk : k∈(outputModes N).image embedMode
-  · obtain ⟨p,hp,rfl⟩ := Finset.mem_image.mp hk
-    let a : Mode N := ⟨p,hp⟩
-    have hcoord : HasDerivAt (fun s=>x s a i) (finiteForce N ν (x t) a i) t :=
-      ((ContinuousLinearMap.proj (R:=ℝ) i).hasFDerivAt.comp_hasDerivAt
-        ((ContinuousLinearMap.proj (R:=ℝ) a).hasFDerivAt.comp_hasDerivAt (hd t ht)))
-    simpa [U,finiteForce,a,zeroExtend_at,galerkinForce] using hcoord
-  · have hz : ∀ s,U k s i=0 := by
-      intro s
-      simp [U,zeroExtend_outside _ _ hk]
-    have hf : galerkinForce N U k t i=0 := by simp [galerkinForce,hk]
-    simp only [hz,hf,mul_zero,add_zero]
-    exact hasDerivAt_const t 0
+  exact fun t ht k i=>zeroExtend_ODE_of_derivative N ν x t (hd t ht) k i
 
 end
 end DASHI.NavierStokes.PhysicalMixed

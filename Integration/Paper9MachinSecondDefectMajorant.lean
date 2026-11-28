@@ -96,4 +96,44 @@ theorem coefficientCount (n : ℕ) :
     push_cast
     ring
 
+
+-- Literal original K04d-LOG zero-step and second-step power quotient
+-- recurrences at equal endpoints. These are the rational shadow of
+-- the SAME native Bishop sourcePowerSecondQuotient, not a new analytic
+-- function. The half-radius substitution will pay the final source
+-- value identification.
+def rawPowerZero (n : ℕ) (r : ℚ) : ℚ :=
+  Nat.rec (0 : ℚ) (fun k acc => acc*r+r^k) n
+
+def rawPowerSecond (n : ℕ) (r : ℚ) : ℚ :=
+  Nat.rec (0 : ℚ) (fun k acc => acc*r+rawPowerZero k r) n
+
+theorem rawPowerZero_succ (n : ℕ) (r : ℚ) :
+    rawPowerZero (n+1) r = (n+1 : ℕ)*r^n := by
+  induction n with
+  | zero => simp [rawPowerZero]
+  | succ n ih =>
+    change rawPowerZero (n+1) r*r+r^(n+1) =
+      ((n+1)+1:ℕ)*r^(n+1)
+    rw [ih, pow_succ]
+    push_cast
+    ring
+
+theorem rawPowerSecond_succ_succ (n : ℕ) (r : ℚ) :
+    rawPowerSecond (n+2) r =
+      (((n+2:ℕ):ℚ)*((n+1:ℕ):ℚ)/2)*r^n := by
+  induction n with
+  | zero => norm_num [rawPowerSecond, rawPowerZero]
+  | succ n ih =>
+    change rawPowerSecond (n+2) r*r+rawPowerZero (n+2) r =
+      (((n+3:ℕ):ℚ)*((n+2:ℕ):ℚ)/2)*r^(n+1)
+    rw [ih, rawPowerZero_succ (n+1)]
+    push_cast
+    rw [pow_succ]
+    ring
+
+-- The coefficient count and closedBudget above are exact rational
+-- finite theorems. To transfer these to the original Bishop radius
+-- sum, use the already-owned Nat/odd reciprocal embedding and
+-- bishopHalf=_⋆(1/2). Do not invent a new rational-valued atan.
 end Integration.Paper9MachinSecondDefectMajorant

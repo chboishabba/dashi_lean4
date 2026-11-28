@@ -1,0 +1,6 @@
+/-! Section 26 original Q0 geometric root-fibre torsor replay. -/
+import Synthesis.MillenniumHodgeDicksonOriginalGenericQ0TorsorRealizationExact
+#check DASHI.Hodge.DicksonCoupled.actual_original_generic_Q0_torsor_realized
+#check DASHI.Hodge.DicksonCoupled.actual_original_Q0_root_unique_even_deck
+#print axioms DASHI.Hodge.DicksonCoupled.actual_original_generic_Q0_torsor_realized
+#print axioms DASHI.Hodge.DicksonCoupled.actual_original_Q0_root_unique_even_deck

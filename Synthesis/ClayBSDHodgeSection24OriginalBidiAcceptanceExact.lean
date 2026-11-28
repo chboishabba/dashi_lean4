@@ -1,0 +1,12 @@
+/-! Original number-field coset and nonreduced generated chart kernels. -/
+import Synthesis.MillenniumBSDNumberFieldSelmerCosetBidiExact
+import Synthesis.MillenniumHodgeDicksonGeneratedChartKernelBidiExact
+
+#check BSDCohomology.numberFieldKummerSelmer_sameCoset
+#check BSDCohomology.numberFieldSelmerSha_zero_iff_globalKummer
+#check DASHI.Hodge.DicksonCoupled.original_generated_chart_equality_iff
+#check DASHI.Hodge.DicksonCoupled.original_generated_chart_kernel_iff
+
+#print axioms BSDCohomology.numberFieldKummerSelmer_sameCoset
+#print axioms BSDCohomology.numberFieldSelmerSha_zero_iff_globalKummer
+#print axioms DASHI.Hodge.DicksonCoupled.original_generated_chart_kernel_iff

@@ -156,3 +156,62 @@ theorem lane_pass_bound (n w b p : Nat) (schedule : Nat → Bool)
   exact (not_le_of_gt (twoPow_lt (b*w*(2*p)) n (by omega))) h
 
 end PNPAlternatingState
+
+
+namespace PNPGuardedTranslation
+
+-- For the actual two-repetition probe, only positive shifted guard
+-- thresholds on nonnegative valuations can matter.
+theorem guard_two_stable {ι : Type*} (v v' D G : ι → ℤ)
+    (nn : ∀ i, 0 ≤ v i) (nn' : ∀ i, 0 ≤ v' i)
+    (same : ∀ i, 0 < G i-min 0 (D i) → v i=v' i)
+    (j : Nat) (hj : j<2) :
+    (∀ i, G i ≤ v i+(j:ℤ)*D i) ↔
+    (∀ i, G i ≤ v' i+(j:ℤ)*D i) := by
+  have trivialGuard : ∀ i, ¬ 0 < G i-min 0 (D i) →
+      G i ≤ (j:ℤ)*D i := by
+    intro i h
+    have hmin : G i ≤ min 0 (D i) := by omega
+    have hcases : j=0 ∨ j=1 := by omega
+    rcases hcases with h0 | h1
+    · subst j
+      simp only [Nat.cast_zero,zero_mul]
+      exact hmin.trans (min_le_left _ _)
+    · subst j
+      simp only [Nat.cast_one,one_mul]
+      exact hmin.trans (min_le_right _ _)
+  constructor
+  · intro h i
+    by_cases hi : 0 < G i-min 0 (D i)
+    · rw [← same i hi]; exact h i
+    · have hb := trivialGuard i hi
+      linarith [nn' i]
+  · intro h i
+    by_cases hi : 0 < G i-min 0 (D i)
+    · rw [same i hi]; exact h i
+    · have hb := trivialGuard i hi
+      linarith [nn i]
+
+theorem cooldown_two_stable {ι : Type*} (v v' D G : ι → ℤ)
+    (H : List (ι → ℤ)) (nn : ∀ i, 0 ≤ v i) (nn' : ∀ i, 0 ≤ v' i)
+    (sameG : ∀ i, 0 < G i-min 0 (D i) → v i=v' i)
+    (sameH : ∀ g ∈ H, ∀ i, 0 < g i-min 0 (D i) → v i=v' i) :
+    repeatOK v D G H 2 ↔ repeatOK v' D G H 2 := by
+  constructor
+  · intro h j hj
+    obtain ⟨g,hh⟩ := h j hj
+    exact ⟨(guard_two_stable v v' D G nn nn' sameG j hj).mp g,
+      fun a ha a' => hh a ha ((guard_two_stable v v' D a nn nn' (sameH a ha) j hj).mpr a')⟩
+  · intro h j hj
+    obtain ⟨g,hh⟩ := h j hj
+    exact ⟨(guard_two_stable v v' D G nn nn' sameG j hj).mpr g,
+      fun a ha a' => hh a ha ((guard_two_stable v v' D a nn nn' (sameH a ha) j hj).mp a')⟩
+
+-- Admission only pays a particular charged prefix. Later unsuccessful
+-- discovery can still cost work, so no global no-regression theorem.
+theorem admission_prefix (unchanged overhead lower literal : Nat)
+    (paid : overhead ≤ lower) (bound : lower ≤ literal) :
+    unchanged+overhead ≤ unchanged+literal :=
+  Nat.add_le_add_left (paid.trans bound) unchanged
+
+end PNPGuardedTranslation

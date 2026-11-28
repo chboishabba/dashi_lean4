@@ -155,9 +155,75 @@ def actionLicence
     chosen chosenLive actionCoordinate domain (actionAt actor) covers
     (fun r h => (factor r h).trans (actionFactors actor r)) sourceFactor checked
 
+
+/-- Compare independent *licensed* answers to the SAME declared typed query.
+    none = unavailable/unlicensed answer; some zero = recorded no support
+    under the licensed query scope. Neither means a negative assertion.
+    This is a consumer of the original licences, not a translation checker. -/
+def viewProofDelta (left right : Option Support) : Option (Support × Support) :=
+  match left, right with
+  | some l, some r =>
+    some (⟨l.positive && !r.positive, l.negative && !r.negative⟩,
+          ⟨r.positive && !l.positive, r.negative && !l.negative⟩)
+  | _, _ => none
+
+theorem viewDeltaReciprocal (left right : Option Support) :
+    viewProofDelta right left = (viewProofDelta left right).map Prod.swap := by
+  cases left <;> cases right <;> rfl
+
+theorem missingViewIsNotProofAgreement :
+    viewProofDelta none none = none := rfl
+
+theorem sameSupportPreservesBothProofSigns (s : Support) :
+    viewProofDelta (some s) (some s) = some (support .zero, support .zero) := by
+  cases s with
+  | mk p n => cases p <;> cases n <;> rfl
+
+theorem positiveToNegativeRetainsBothDeltas :
+    viewProofDelta (some (support .positive)) (some (support .negative)) =
+      some (support .positive, support .negative) := rfl
+
+/-- Source-licensed directional preservation/difference. Both models must
+    already interpret the identical typed query coordinate; that source
+    correspondence must be produced independently, never inferred from
+    QID, translated labels, constructor shape, or role overlap. -/
+theorem reciprocalLicensedViewProofDelta
+    {S O R T P U Q : Type}
+    {left : DocumentQueryModel S O R Q (Option Support)}
+    {right : DocumentQueryModel T P U Q (Option Support)}
+    {s : S} {t : T} {q : Q}
+    (l : SourceQueryLicence left s q) (r : SourceQueryLicence right t q)
+    (x : R) (y : U) (hx : left.live l.observation x)
+    (hy : right.live r.observation y) :
+    (viewProofDelta (left.readingAnswer x q) (right.readingAnswer y q),
+      viewProofDelta (right.readingAnswer y q) (left.readingAnswer x q)) =
+    (viewProofDelta (left.documentAnswer s q) (right.documentAnswer t q),
+      viewProofDelta (right.documentAnswer t q) (left.documentAnswer s q)) :=
+  reciprocalLicensedComparison l r viewProofDelta viewProofDelta x y hx hy
+
+/-- Full proof preservation in both signed channels, not mere absence of
+    known contradictions. Requires two positive source licences and equal
+    checked support; a missing view cannot inhabit this endpoint. -/
+theorem licensedViewsPreserveBothSigns
+    {S O R T P U Q : Type}
+    {left : DocumentQueryModel S O R Q (Option Support)}
+    {right : DocumentQueryModel T P U Q (Option Support)}
+    {s : S} {t : T} {q : Q}
+    (l : SourceQueryLicence left s q) (r : SourceQueryLicence right t q)
+    (a : Support)
+    (hl : left.readingAnswer l.chosenReading q = some a)
+    (hr : right.readingAnswer r.chosenReading q = some a) :
+    viewProofDelta (left.documentAnswer s q) (right.documentAnswer t q) =
+      some (support .zero, support .zero) := by
+  rw [slrJmdDocumentQuerySound l _ hl, slrJmdDocumentQuerySound r _ hr]
+  exact sameSupportPreservesBothProofSigns a
+
 end Wikidata.Slr.WorldSemanticFibre
 
 #print axioms Wikidata.Slr.WorldSemanticFibre.actionClosed
 #print axioms Wikidata.Slr.WorldSemanticFibre.actionDiscriminator
 #print axioms Wikidata.Slr.WorldSemanticFibre.reciprocalComparison
 #print axioms Wikidata.Slr.WorldSemanticFibre.actionLicence
+
+#print axioms Wikidata.Slr.WorldSemanticFibre.reciprocalLicensedViewProofDelta
+#print axioms Wikidata.Slr.WorldSemanticFibre.licensedViewsPreserveBothSigns

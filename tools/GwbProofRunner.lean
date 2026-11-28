@@ -659,6 +659,9 @@ def runReciprocalOfficeCheck
               let _ := Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement .father hRootB hb w
             let _ := Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison
               hRootA hRootB ha hb witnessA witnessB
+            let _ := Slr.GwbArticleSystem.exactOfficeIntervalCompressionSound .son hRootA ha witnessA
+            let _ := Slr.GwbArticleSystem.exactOfficeIntervalCompressionSound .father hRootB hb witnessB
+            let _ := Slr.GwbArticleSystem.officeOnlyCompressionLosesHolder
             pure ()
           else return 1
         else return 1
@@ -699,6 +702,9 @@ def runReciprocalOfficeCheck
           ("backward", toJson ("father tenure before son tenure" : String)),
           ("same_office", toJson true), ("distinct_holders", toJson true),
           ("bounded_article_kb_interval_weld_checked", toJson true),
+          ("exact_interval_consumer_compression_checked", toJson true),
+          ("office_only_holder_compression_obstructed", toJson true),
+          ("context_compression_scope", toJson ("exact original holder/property/object/year tuple; not a common pair query" : String)),
           ("weld_theorem", toJson ("Wikidata.Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison" : String)),
           ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
           ("shared_event_identity_paid", toJson false),

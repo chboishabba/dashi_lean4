@@ -123,7 +123,7 @@ theorem general_affine_doubling_onto [IsAlgClosed F] :
   | some x y hP =>
     obtain ⟨m,hm⟩ := IsAlgClosed.exists_root (slopeQuartic W x y)
       (slopeQuartic_degree_ne_zero W x y)
-    obtain ⟨Q,hQ⟩ := half_of_slope_root W x y m hm
+    obtain ⟨Q,hQ⟩ := half_of_slope_root W x y m hP hm
     exact ⟨Q,by simpa [two_nsmul] using hQ⟩
 
 theorem general_geometric_doubling_onto {K : Type*} [Field K] [CharZero K]

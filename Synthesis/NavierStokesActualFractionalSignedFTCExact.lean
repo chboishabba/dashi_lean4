@@ -139,5 +139,50 @@ theorem quarter_energy_fourth_le (N : ℕ) (U : Vec3 → ℝ → CVec3) (t : ℝ
     _ ≤ A^2*(A*D) := hAC
     _ = _ := by ring
 
+/-- The previous FTC has no additional continuity premise on the
+actual finite flow: all source polynomials are continuous on its
+physical interval. Attach the quarter-weight, not a free scalar T. -/
+theorem actual_quarter_signed_FTC (N : ℕ) (ν T a : ℝ) (hT : 0≤T) (ha : a<0)
+    (x : ℝ → FiniteState N)
+    (hd : DASHI.NavierStokes.RealContinuation.SolvesOn (finiteForce N ν) x (Ioi a)) :
+    let U := fun k t=>zeroExtend (x t) k
+    fractionalEnergy N quarterWeight U T^2-fractionalEnergy N quarterWeight U 0^2 =
+      2*(∫ t in 0..T,fractionalEnergy N quarterWeight U t*fractionalTransfer N quarterWeight U t)-
+      4*ν*(∫ t in 0..T,fractionalEnergy N quarterWeight U t*fractionalDissipation N quarterWeight U t) := by
+  let U := fun k t=>zeroExtend (x t) k
+  have ho (t : ℝ) (ht : t∈uIcc 0 T) (k : Vec3) (i : Fin 3) :
+      HasDerivAt (fun s=>U k s i)
+        (-((ν*massSq k:ℝ):ℂ)*U k t i+galerkinForce N U k t i) t := by
+    have h0 : 0≤t := by rw [uIcc_of_le hT] at ht; exact ht.1
+    exact zeroExtend_ODE_of_derivative N ν x t (hd t (ha.trans_le h0)) k i
+  have hc (k : Vec3) (i : Fin 3) : ContinuousOn (fun t=>U k t i) (uIcc 0 T) :=
+    fun t ht=>(ho t ht k i).continuousAt.continuousWithinAt
+  apply fractional_energy_square_FTC N ν T quarterWeight U ho
+  · unfold fractionalTransfer
+    apply ContinuousOn.const_mul
+    apply continuousOn_finset_sum
+    intro k hk
+    apply ContinuousOn.const_mul
+    unfold realHermitian
+    have hF (i : Fin 3) : ContinuousOn (fun t=>galerkinForce N U (embedMode k) t i) (uIcc 0 T) := by
+      rw [show (fun t=>galerkinForce N U (embedMode k) t i)=
+        (fun t=>∑ p ∈ orderedFibre N k,
+          orderedRHS (embedMode k) (embedMode p.2) (U (embedMode p.1) t) (U (embedMode p.2) t) i) by
+          funext t; exact galerkinForce_eq_orderedFibre N U k hk t i]
+      apply continuousOn_finset_sum
+      intro p _
+      unfold orderedRHS lerayVector outputDot
+      simp only [Fin.sum_univ_three]
+      fun_prop
+    simp only [Fin.sum_univ_three]
+    fun_prop
+  · unfold fractionalDissipation
+    apply continuousOn_finset_sum
+    intro k _
+    apply ContinuousOn.const_mul
+    unfold realHermitian
+    simp only [Fin.sum_univ_three]
+    fun_prop
+
 end
 end DASHI.NavierStokes.PhysicalMixed

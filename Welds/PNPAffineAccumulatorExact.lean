@@ -92,4 +92,15 @@ theorem interval_excludes {d : Nat} (p : ℚ) (row : Fin d → ℚ)
   intro hv
   rcases outside with h0|h1 <;> rcases hv with e|e <;> linarith [h.1,h.2]
 
+-- The actual pruning test permits an interval lying strictly
+-- between 0 and 1: neither original bit is attainable there.
+theorem interval_excludes_bits {d : Nat} (p : ℚ) (row : Fin d → ℚ)
+    (T : Finset (Fin d)) (u : Fin d → Bool)
+    (outside : ∀ b : ℚ, legal b → ¬ (p+(∑ k∈T,min 0 (row k))≤b ∧
+      b≤p+(∑ k∈T,max 0 (row k)))) :
+    ¬ legal (p+∑ k∈T,row k*emb ℚ (u k)) := by
+  intro h
+  have bounds := future_bounds row T u
+  exact outside _ h ⟨add_le_add_left bounds.1 p,add_le_add_left bounds.2 p⟩
+
 end PNPAffineAccumulator

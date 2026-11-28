@@ -26,6 +26,38 @@ def checkRoot (qid title article : String) (source projection entity : Json) : B
        ("wikipedia:en:" ++ title.replace " " "_" ++ ":" ++ toString n)
    | none => false)
 
+/-- Edition-aware original source check. The language code names a Wikipedia
+edition, not a semantic language or a translation licence. Simple is a peer
+edition. Abstract Wikipedia has a different constructor ABI and must not
+enter this prose checker. Existing JMD extraction checker remains the owner. -/
+def checkEditionRoot (edition qid title article : String)
+    (source projection entity : Json) : Bool :=
+  let site := edition.replace "-" "_" ++ "wiki"
+  let prefix := site ++ "-revid:"
+  let revision := str source "revision_ref"
+  let e := ((entity.getObjVal? "entities").toOption.getD Json.null
+    |>.getObjVal? qid).toOption.getD Json.null
+  let link := ((e.getObjVal? "sitelinks").toOption.getD Json.null
+    |>.getObjVal? site).toOption.getD Json.null
+  let manifest := (source.getObjVal? "manifestation").toOption.getD Json.null
+  !edition.isEmpty && edition != "abstract" &&
+  edition.toList.all (fun c => decide ('a' ≤ c ∧ c ≤ 'z') || c == '-') &&
+  !title.isEmpty &&
+  Wikidata.Slr.ArticleProof.checkProjectionFor qid article source projection &&
+  Wikidata.Slr.GwbWorldGraph.jsonEntityMatchesQid qid entity &&
+  str link "site" == site && str link "title" == title &&
+  (str manifest "language" == edition ||
+    (edition == "simple" && str manifest "language" == "en")) &&
+  revision.startsWith prefix &&
+  (match (revision.drop prefix.length).toString.toNat? with
+   | some n => decide (n > 0) && str source "source_unit_ref" ==
+       ("wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":" ++ toString n)
+   | none => false)
+
+structure CheckedEditionRoot (edition qid title article : String)
+    (source projection entity : Json) where
+  checked : checkEditionRoot edition qid title article source projection entity = true
+
 structure CheckedRoot (qid title article : String) (source projection entity : Json) where
   checked : checkRoot qid title article source projection entity = true
 

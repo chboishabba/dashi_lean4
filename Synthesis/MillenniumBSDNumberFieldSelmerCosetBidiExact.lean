@@ -43,8 +43,8 @@ theorem numberFieldSelmerSha_zero_iff_globalKummer
       (general_geometric_doubling_onto W)
       (fun v => general_geometric_doubling_onto (localCurve W v))).ker ↔ _
   rw [numberField_selmerToSha_kernel W]
-  change z ∈ (numberFieldKummerToSelmer W).range ↔ _
-  exact AddSubgroup.mem_range
+  change (∃ P : BasePoint W, numberFieldKummerToSelmer W P = z) ↔ _
+  rfl
 
 end
 end BSDCohomology

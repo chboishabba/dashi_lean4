@@ -9,7 +9,7 @@ an admission receipt. This script DOES NOT prove RH by itself.
 Usage with an actual checked-out external original source:
  python scripts/check_alpoge_rh_original_native_admission.py \\
    --external-root /path/to/pinned/external \\
-   --main-sha256 <sha256-of-original-Main.lean> \\
+   --main-sha256 <sha256-of-original-Main.lean> \\\n   --expected-git-head <40-hex-original-source-commit> \\
    --tree-manifest /path/to/original-source-sha256.json \\
    --lean-version v4.33.1 --lake /path/to/lake
 
@@ -45,12 +45,24 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--external-root", required=True, type=Path)
     p.add_argument("--main-sha256", required=True)
+    p.add_argument("--expected-git-head", required=True,
+                   help="Immutable external original source Git commit SHA")
     p.add_argument("--tree-manifest", required=True, type=Path,
                    help="SHA256 JSON map of every original .lean/config source file")
     p.add_argument("--lean-version", default=REQUIRED_VERSION)
     p.add_argument("--lake", default="lake")
     a = p.parse_args()
     root = a.external_root.resolve()
+    if not re.fullmatch("[0-9a-f]{40}", a.expected_git_head):
+        print("FAIL: immutable original external Git HEAD pin missing/malformed")
+        return 2
+    head = run(["git", "rev-parse", "HEAD"], root)
+    status = run(["git", "status", "--porcelain"], root)
+    if (head.returncode or status.returncode
+            or head.stdout.strip() != a.expected_git_head
+            or status.stdout.strip()):
+        print("FAIL: unpinned or dirty external original Git checkout")
+        return 2
     src = root / "Main.lean"
     if not src.is_file() or not (root / "lakefile.toml").is_file() and not (root / "lakefile.lean").is_file():
         print("FAIL: original Main or Lake project missing")
@@ -148,6 +160,7 @@ def main() -> int:
         print("FAIL: unexpected transitive axioms", sorted(unexpected))
         return 2
     print("NATIVE ORIGINAL RH ADMISSION SOURCE/AXIOM AUDIT PASS")
+    print("Pinned original external Git HEAD", a.expected_git_head)
     print("Pinned Main sha256", digest)
     print("Trusted axiom dependencies:", sorted(actual))
     return 0

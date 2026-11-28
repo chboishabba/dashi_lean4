@@ -59,7 +59,7 @@ verify_local_source() {
 }
 verify_local_source | tee "$REPORT_DIR/dashi-source-before.log"
 export GRH_P0_SOURCE="$SOURCE"
-unset ELAN_TOOLCHAIN LEAN_PATH LEAN_SRC_PATH
+unset ELAN_TOOLCHAIN LEAN_PATH LEAN_SRC_PATH LEAN_SYSROOT LEAN_CC
 bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin.log"
 (
   cd "$CHECKOUT/$PROJECT"
@@ -126,7 +126,7 @@ PY
     [[ "$(git -C "$VENDOR" rev-parse "HEAD:$TARGET")" == "$CLAY_BLOB" ]]
     [[ "$(git hash-object --no-filters "$VENDOR/$TARGET")" == "$CLAY_BLOB" ]]
     [[ -z "$(git -C "$VENDOR" status --porcelain --untracked-files=all)" ]]
-      if git -C "$VENDOR" ls-files -v | grep -Eq '^([S]|[a-z])'; then
+      if git -C "$VENDOR" ls-files -v | grep -E '^([S]|[a-z])' >/dev/null; then
         echo 'BLOCKED: hidden vendor tracked source' >&2; return 1
       fi
       printf '%s %s %s\n' "$CLAY_PIN" "$CLAY_TREE" "$CLAY_BLOB"

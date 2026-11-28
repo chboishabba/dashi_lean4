@@ -1,4 +1,5 @@
 import Welds.PNPResidualGeometryBridgeExact
+import Welds.PNPEpochChargeExact
 
 namespace PNPResidualGeometryBridge
 
@@ -49,5 +50,33 @@ theorem actual_read_consumer_iff {n : ℕ} {S Y : Type*}
   · intro h y hy hr
     by_contra hd
     exact (read_agreement_iff_no_hit x y R).mp hr (h y hy hd)
+
+/-- Instantiate the support criterion on the actual adaptive run owner,
+with the footprint of ONE original epoch and the original start state. -/
+theorem actual_epoch_support_hit {n : ℕ} {S Y : Type*}
+    (ask : S → Option (Fin n × (Bool → S)))
+    (prefix : (Fin n → Bool) → S) (consumer : S → Y)
+    (x y : Fin n → Bool) (k : ℕ) (h : prefix x=prefix y)
+    (hd : consumer (PNPSameRunReadFootprint.run ask x k (prefix x)).1 ≠
+      consumer (PNPSameRunReadFootprint.run ask y k (prefix y)).1) :
+    ∃ i ∈ (PNPSameRunReadFootprint.run ask x k (prefix x)).2,
+      i∈differenceSupport x y := by
+  classical
+  have hn : (PNPSameRunReadFootprint.run ask x k (prefix x)).1 ≠
+      (PNPSameRunReadFootprint.run ask y k (prefix y)).1 :=
+    fun e=>hd (congrArg consumer e)
+  exact PNPEpochCharge.separated_epoch ask prefix x y k h hn
+
+/-- The exact original epoch observation is sufficient on its own read
+footprint, including arbitrary shared state and adaptive query choice. -/
+theorem actual_epoch_consumer_factor {n : ℕ} {S Y : Type*}
+    (ask : S → Option (Fin n × (Bool → S)))
+    (prefix : (Fin n → Bool) → S) (consumer : S → Y)
+    (x y : Fin n → Bool) (k : ℕ) (h : prefix x=prefix y)
+    (hr : ∀ i∈(PNPSameRunReadFootprint.run ask x k (prefix x)).2,x i=y i) :
+    consumer (PNPSameRunReadFootprint.run ask x k (prefix x)).1 =
+      consumer (PNPSameRunReadFootprint.run ask y k (prefix y)).1 := by
+  exact congrArg (fun p : S × List (Fin n)=>consumer p.1)
+    (PNPEpochCharge.survives_epoch ask prefix x y k h hr)
 
 end PNPResidualGeometryBridge

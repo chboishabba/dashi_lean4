@@ -26,6 +26,8 @@ CLAY = tuple("DASHI.AlpogeRH." + x for x in (
     "original_clay_mathlib_roundtrip",
 ))
 ROOT = tuple("MillenniumExternal.AlpogeRH." + x for x in (
+    "originalXiZetaZeroEquiv",
+    "originalXiParameter_im",
     "clay_of_admitted_mathlib",
     "mathlib_of_clay",
     "clay_iff_mathlib",

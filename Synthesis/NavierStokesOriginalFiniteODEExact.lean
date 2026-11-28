@@ -2,6 +2,7 @@ import Synthesis.NavierStokesOriginalRealitySymmetryExact
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.Star
+import Mathlib.Analysis.Calculus.Deriv.Pi
 
 /-! Finite original signed cube as a real Banach-space ODE. No
 continuum or uniform critical-norm claim. All input addresses, including
@@ -9,6 +10,7 @@ zero, remain in the same cutoffModes carrier. -/
 namespace DASHI.NavierStokes.PhysicalMixed
 open DASHI.NavierStokes.EuclideanMidpoint
 open scoped BigOperators
+open Classical
 noncomputable section
 
 abbrev CutIndex (N : ℕ) := {k : Lattice // k ∈ cutoffModes N}
@@ -64,8 +66,8 @@ theorem cut_local_exists (N : ℕ) (ν : ℝ) (u₀ : CutState N) :
     ∃ U : ℝ → CutState N, U 0=u₀ ∧
       ∃ ε>0, ∀ t∈Set.Ioo (-ε) ε,
         HasDerivAt U (cutRHS N ν (U t)) t := by
-  simpa using (cutRHS_contDiff N ν).contDiffAt
-    (x:=u₀) |>.exists_forall_mem_closedBall_exists_eq_forall_mem_Ioo_hasDerivAt₀ (0:ℝ)
+  have hc : ContDiffAt ℝ 1 (cutRHS N ν) u₀ := (cutRHS_contDiff N ν).contDiffAt
+  simpa using hc.exists_forall_mem_closedBall_exists_eq_forall_mem_Ioo_hasDerivAt₀ (0:ℝ)
 
 /-- Finite state trajectory is an original modal solution after zero
 extension, including modes outside the retained cube. -/
@@ -110,6 +112,88 @@ theorem cut_rhs_lipschitz_on_ball (N : ℕ) (ν : ℝ)
     ∃ K : NNReal, LipschitzOnWith K (cutRHS N ν) (Metric.closedBall c R) :=
   (cutRHS_contDiff N ν).contDiffOn.exists_lipschitzOnWith
     (by norm_num) (convex_closedBall c R) (isCompact_closedBall c R)
+
+/-- The negated index belongs to exactly the same original signed cube. -/
+def cutNeg (N : ℕ) (p : CutIndex N) : CutIndex N :=
+  ⟨-p.1,cutoff_neg N p.1 p.2⟩
+
+def cutReflect (N : ℕ) (u : CutState N) : CutState N :=
+  fun p i=>star (u (cutNeg N p) i)
+
+theorem cutExtend_reflect (N : ℕ) (u : CutState N) (k : Vec3) :
+    cutExtend N (cutReflect N u) k =
+      fun i=>star (cutExtend N u (-k) i) := by
+  classical
+  by_cases hk : ∃ p : CutIndex N, embedMode p.1=k
+  · obtain ⟨p,rfl⟩ := hk
+    rw [cutExtend_at,← embedMode_neg p.1]
+    change cutReflect N u p=fun i=>star (cutExtend N u (embedMode (cutNeg N p).1) i)
+    rw [cutExtend_at]
+    rfl
+  · have hn : ¬ ∃ p : CutIndex N, embedMode p.1= -k := by
+      rintro ⟨p,hp⟩
+      apply hk
+      exact ⟨cutNeg N p,by change embedMode (-p.1)=k; rw [embedMode_neg,hp,neg_neg]⟩
+    simp [cutExtend,hk,hn]
+
+/-- Reflect the finite state trajectory itself, on the same Banach
+carrier. Modal reflection and finite-coordinate derivative are paid
+by the previously derived literal modal force. -/
+theorem cut_reflect_derivative (N : ℕ) (ν : ℝ)
+    (U : ℝ → CutState N) (t : ℝ)
+    (hd : HasDerivAt U (cutRHS N ν (U t)) t) :
+    HasDerivAt (fun s=>cutReflect N (U s))
+      (cutRHS N ν (cutReflect N (U t))) t := by
+  apply hasDerivAt_pi.mpr
+  intro p
+  apply hasDerivAt_pi.mpr
+  intro i
+  have h := reflected_modal_derivative N ν
+    (fun k s=>cutExtend N (U s) k) t
+    (fun k i=>cut_trajectory_modal N ν U t hd k i)
+    (embedMode p.1) i
+  have he (k : Vec3) (s : ℝ) :
+      realReflect (fun k s=>cutExtend N (U s) k) k s=
+        cutExtend N (cutReflect N (U s)) k := by
+    rw [cutExtend_reflect]
+    rfl
+  simp_rw [he] at h
+  simpa [cutRHS,cutExtend_at,galerkinForce] using h
+
+/-- Actual finite-state uniqueness on a common closed ball containing
+both trajectories. The constant is produced by the original field,
+not an assumed Lipschitz bound. -/
+theorem cut_unique_on_ball (N : ℕ) (ν T : ℝ)
+    (U V : ℝ → CutState N) (c : CutState N) (R : ℝ)
+    (hU : ContinuousOn U (Set.Icc 0 T)) (hV : ContinuousOn V (Set.Icc 0 T))
+    (dU : ∀ t∈Set.Ico 0 T,HasDerivAt U (cutRHS N ν (U t)) t)
+    (dV : ∀ t∈Set.Ico 0 T,HasDerivAt V (cutRHS N ν (V t)) t)
+    (bU : ∀ t∈Set.Ico 0 T,U t∈Metric.closedBall c R)
+    (bV : ∀ t∈Set.Ico 0 T,V t∈Metric.closedBall c R)
+    (h0 : U 0=V 0) : Set.EqOn U V (Set.Icc 0 T) := by
+  obtain ⟨K,hK⟩ := cut_rhs_lipschitz_on_ball N ν c R
+  exact ODE_solution_unique_of_mem_Icc_right
+    (v:=fun _=>cutRHS N ν) (s:=fun _=>Metric.closedBall c R) (K:=K)
+    (fun _ _=>hK) hU (fun t ht=>(dU t ht).hasDerivWithinAt) bU
+    hV (fun t ht=>(dV t ht).hasDerivWithinAt) bV h0
+
+/-- Reality preservation now follows from actual finite uniqueness.
+Boundedness on a common finite closed ball is explicit; no claim of
+a cutoff-uniform radius or critical-time ceiling. -/
+theorem cut_reality_on_ball (N : ℕ) (ν T : ℝ)
+    (U : ℝ → CutState N) (c : CutState N) (R : ℝ)
+    (hU : ContinuousOn U (Set.Icc 0 T))
+    (dU : ∀ t∈Set.Ico 0 T,HasDerivAt U (cutRHS N ν (U t)) t)
+    (bU : ∀ t∈Set.Ico 0 T,U t∈Metric.closedBall c R)
+    (bV : ∀ t∈Set.Ico 0 T,cutReflect N (U t)∈Metric.closedBall c R)
+    (h0 : U 0=cutReflect N (U 0)) :
+    ∀ t∈Set.Icc 0 T,U t=cutReflect N (U t) := by
+  have hc : Continuous (cutReflect N) := by
+    unfold cutReflect
+    fun_prop
+  exact cut_unique_on_ball N ν T U (fun s=>cutReflect N (U s)) c R hU
+    (hc.comp_continuousOn hU) dU
+    (fun t ht=>cut_reflect_derivative N ν U t (dU t ht)) bU bV h0
 
 end
 end DASHI.NavierStokes.PhysicalMixed

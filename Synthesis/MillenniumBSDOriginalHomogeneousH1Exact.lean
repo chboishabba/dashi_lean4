@@ -206,3 +206,57 @@ theorem incomingDifferential_normalized
 
 end
 end DASHI.BSD.OriginalH1
+
+
+namespace BSDCohomology
+open WeierstrassCurve DASHI.BSD.OriginalH1
+noncomputable section
+universe u
+variable {K : Type u} [Field K]
+variable (W : WeierstrassCurve K) [W.IsElliptic]
+
+local instance : TopologicalSpace (GeometricPoint W) := ⊥
+local instance : DiscreteTopology (GeometricPoint W) := discreteTopology_bot _
+local instance : TopologicalSpace (EllipticTwoTorsion W) := ⊥
+local instance : DiscreteTopology (EllipticTwoTorsion W) := discreteTopology_bot _
+
+/-- Exact original geometric point coefficient H1 consumer. -/
+def originalPointH1Class
+    (c : Field.absoluteGaloisGroup K → GeometricPoint W)
+    (hc : Continuous c) (hcross : IsPointCrossed W c) :
+    EllipticPointH1 W :=
+  actualClass (geometricPointTopRep W) ⟨c,hc⟩ hcross
+
+/-- Continuity of the actual torsion Kummer cocycle, even for a
+nontrivial Galois action. Its inclusion is the continuous point difference. -/
+theorem originalKummerCocycle_continuous
+    {P : GeometricPoint W} (hP : IsGaloisFixedPoint W P)
+    (Q : GeometricHalfData W P) :
+    Continuous (kummerCocycleValue W hP Q) := by
+  rw [continuous_def]
+  intro s hs
+  let t : Set (GeometricPoint W) := {v | ∃ h : v ∈ EllipticTwoTorsion W,
+    (⟨v,h⟩ : EllipticTwoTorsion W) ∈ s}
+  have ht : IsOpen t := isOpen_discrete t
+  have he : kummerCocycleValue W hP Q ⁻¹' s =
+      kummerDifference W Q.half ⁻¹' t := by
+    ext σ
+    constructor
+    · intro hσ
+      exact ⟨(kummerCocycleValue W hP Q σ).2,hσ⟩
+    · rintro ⟨hm,hs'⟩
+      exact hs'
+  rw [he]
+  exact ht.preimage (originalKummerDifference_continuous W Q.half)
+
+/-- Direct Kummer class in the ORIGINAL generic E[2] continuous H1
+object, not through the selected square-class equivalence. -/
+def originalKummerH1Class
+    {P : GeometricPoint W} (hP : IsGaloisFixedPoint W P)
+    (Q : GeometricHalfData W P) : EllipticTwoTorsionH1 W :=
+  actualClass (ellipticTwoTorsionTopRep W)
+    ⟨kummerCocycleValue W hP Q,originalKummerCocycle_continuous W hP Q⟩
+    (kummerCocycleValue_mul W hP Q)
+
+end
+end BSDCohomology

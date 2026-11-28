@@ -33,4 +33,37 @@ theorem secant_quotient (x y z p q r w₁ w₂ w₃ : ℝ)
     _ = (z-x)*(q*(w₂-w₁-(w₃-w₁)*(y-x)/(z-x))) := by
       field_simp [h] <;> ring
 
+
+
+/-- Exact phase-complete cubic interaction telescope on the original
+complex-coefficient carrier. It does NOT discard relative triad phase. -/
+theorem complex_cubic_telescope (a b c A B C : ℂ) :
+    a*b*star c - A*B*star C =
+      (a-A)*b*star c + A*(b-B)*star c + A*B*star (c-C) := by
+  simp only [star_sub]
+  ring
+
+/-- Certified absolute residual on an actual cubic interaction.
+No assumptions of phase independence or helical-sector preservation. -/
+theorem complex_cubic_error_bound (a b c A B C : ℂ) :
+    ‖a*b*star c - A*B*star C‖ ≤
+      ‖a-A‖*‖b‖*‖c‖ +
+      ‖A‖*‖b-B‖*‖c‖ +
+      ‖A‖*‖B‖*‖c-C‖ := by
+  rw [complex_cubic_telescope]
+  calc
+    ‖(a-A)*b*star c + A*(b-B)*star c + A*B*star (c-C)‖
+        ≤ ‖(a-A)*b*star c + A*(b-B)*star c‖ +
+          ‖A*B*star (c-C)‖ := norm_add_le _ _
+    _ ≤ (‖(a-A)*b*star c‖ + ‖A*(b-B)*star c‖) +
+          ‖A*B*star (c-C)‖ := add_le_add_right (norm_add_le _ _) _
+    _ = ‖a-A‖*‖b‖*‖c‖ + ‖A‖*‖b-B‖*‖c‖ +
+          ‖A‖*‖B‖*‖c-C‖ := by simp [norm_mul, mul_assoc]
+
+/-- The same exact trilinear source reverses under phase inversion at
+one mode: squared norms are unchanged, while real transfer changes sign. -/
+theorem complex_cubic_phase_flip (a b c : ℂ) :
+    a*b*star (-c) = -(a*b*star c) := by
+  simp [mul_assoc]
+
 end DASHI.NavierStokes.SignedSpectral

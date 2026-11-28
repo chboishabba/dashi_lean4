@@ -18,13 +18,12 @@ def cyclotomicMiddleBlock {F : Type*} [Field F] (theta a b : F) :
 theorem cyclotomic_middle_norm_relation {F : Type*} [Field F] (theta : F)
     (ht : theta^3+theta^2-2*theta-1=0) :
     theta^2+(1-theta-theta^2)^2*(2-theta)=4 := by
-  linear_combination (-theta^2+theta+3)*ht
+  linear_combination (-theta^2+theta+2)*ht
 
 theorem cyclotomicMiddleBlock_trace {F : Type*} [Field F] [CharZero F]
     (theta a b : F) :
     (cyclotomicMiddleBlock theta a b).trace = theta := by
-  simp [cyclotomicMiddleBlock,Matrix.trace,Fin.sum_univ_two]
-  ring
+  simp [cyclotomicMiddleBlock,Matrix.trace,Fin.sum_univ_two] <;> ring
 
 theorem cyclotomicMiddleBlock_det {F : Type*} [Field F] [CharZero F]
     (theta a b : F) (ht : theta^3+theta^2-2*theta-1=0)
@@ -32,7 +31,8 @@ theorem cyclotomicMiddleBlock_det {F : Type*} [Field F] [CharZero F]
     (cyclotomicMiddleBlock theta a b).det = 1 := by
   have h := cyclotomic_middle_norm_relation theta ht
   rw [Matrix.det_fin_two]
-  simp [cyclotomicMiddleBlock]
+  change theta/2*(theta/2) -
+      (-(1-theta-theta^2)*b/2)*((1-theta-theta^2)*a/2) = 1
   have he : theta/2*(theta/2) -
       (-(1-theta-theta^2)*b/2)*((1-theta-theta^2)*a/2) =
       (theta^2+(1-theta-theta^2)^2*(a*b))/4 := by ring
@@ -51,7 +51,7 @@ theorem cyclotomicMiddleBlock_quad {F : Type*} [Field F] [CharZero F]
   fin_cases i <;> fin_cases j <;>
     simp [cyclotomicMiddleBlock,Matrix.mul_apply,Fin.sum_univ_two,
       Matrix.one_apply] <;>
-    first | ring | linear_combination -h/4 - ((1-theta-theta^2)^2/4)*hab
+    first | ring | linear_combination (-1/4)*h - ((1-theta-theta^2)^2/4)*hab
 
 /-- If the original F-action and a realization of the nonsplit J are
 available, the matrix lift is its explicit rational linear combination.

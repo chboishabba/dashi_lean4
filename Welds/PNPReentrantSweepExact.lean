@@ -39,7 +39,7 @@ theorem sentinel_raw {Q A : Nat} {table : Nat → Nat → Option Instruction}
   induction s generalizing l with
   | done q =>
     exact ⟨hq,by simpa [after] using hl,0,by rw [before_nil]; rfl⟩
-  | step i rule right rest ih =>
+  | @step q p bs i rule right rest ih =>
     have legalRule := legal _ 0 i hq hA rule
     have hleft : ∀ d∈i.write::l,d<A := by
       intro d hd
@@ -47,15 +47,15 @@ theorem sentinel_raw {Q A : Nat} {table : Nat → Nat → Option Instruction}
       · simpa [e] using legalRule.2
       · exact hl d e
     obtain ⟨hp,hleft',n,tail⟩ := ih legalRule.1 (i.write::l) hleft
-    have ha : (before l (i.write::_) a rs).scanned=0 := by
+    have ha : (before l (i.write::bs) a rs).scanned=0 := by
       simp [before,fromWords,List.replicate_succ]
-    obtain ⟨m,head⟩ := raw_step_bisim Q A _ table
-      (before l (i.write::_) a rs) hA hq (by rw [ha]; exact hA)
+    obtain ⟨m,head⟩ := raw_step_bisim Q A q table
+      (before l (i.write::bs) a rs) hA hq (by rw [ha]; exact hA)
       (by simpa [before,fromWords] using hl)
       (fun j hj => (legal _ _ j hq (by rw [ha]; exact hA) hj).1)
     have head' : run (compile Q A table) m
-      ⟨mainTag (.q _),dataOf (max 2 A) (before l (i.write::_) a rs)⟩ =
-      some ⟨mainTag (.q i.target),dataOf (max 2 A) (before (i.write::l) _ a rs)⟩ := by
+      ⟨mainTag (.q q),dataOf (max 2 A) (before l (i.write::bs) a rs)⟩ =
+      some ⟨mainTag (.q i.target),dataOf (max 2 A) (before (i.write::l) bs a rs)⟩ := by
       simpa [sourceResult,ha,rule,right,before_right] using head
     refine ⟨hp,?_,m+n,?_⟩
     · simpa [after_cons] using hleft'

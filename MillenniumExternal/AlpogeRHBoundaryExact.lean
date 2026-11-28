@@ -36,6 +36,33 @@ theorem clay_iff_mathlib :
     Millennium.ClayRiemannHypothesis ↔ _root_.RiemannHypothesis :=
   ⟨mathlib_of_clay, clay_of_admitted_mathlib⟩
 
+
+/-- The actual pole-cancelled xi zero and nontrivial zeta zero
+carriers, with the ORIGINAL inverse coordinate functions. No zero
+count or critical-strip sampling is used. -/
+def originalXiZetaZeroEquiv :
+    {t : ℂ // Millennium.xi t = 0} ≃
+      {s : ℂ // Millennium.IsNontrivialZero s} where
+  toFun t := ⟨Millennium.xi_argument t.1,
+    Millennium.ClayRiemannHypothesis.Support.XiZetaZeroCorrespondence.holds.1
+      t.1 t.2⟩
+  invFun s := ⟨Millennium.zeta_zero_parameter s.1,
+    Millennium.ClayRiemannHypothesis.Support.XiZetaZeroCorrespondence.holds.2
+      s.1 s.2⟩
+  left_inv t := Subtype.ext
+    (Millennium.zeta_zero_parameter.comp_xi_argument t.1)
+  right_inv s := Subtype.ext
+    (Millennium.xi_argument.comp_zeta_zero_parameter s.1)
+
+/-- Signed horizontal coordinate before any critical-line assumption.
+The sign is not discarded by squaring or taking a norm. -/
+theorem originalXiParameter_im (s : ℂ) :
+    (Millennium.zeta_zero_parameter s).im = -(s.re - 1/2) := by
+  simp [Millennium.zeta_zero_parameter, Complex.mul_im, Complex.sub_re]
+  <;> ring
+
+#print axioms originalXiZetaZeroEquiv
+#print axioms originalXiParameter_im
 #print axioms clay_of_admitted_mathlib
 #print axioms mathlib_of_clay
 #print axioms clay_iff_mathlib

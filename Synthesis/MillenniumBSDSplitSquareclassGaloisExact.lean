@@ -51,6 +51,22 @@ theorem rootSign_product_one (σ : F ≃+* F) (r : Fin 3 → F)
   rw [Finset.prod_div_distrib,← map_prod,h,div_self]
   exact Finset.prod_ne_zero_iff.mpr (fun i _=>hr i)
 
+/-- Actual product of the three tangent roots. The sign is minus
+the doubled ordinate for the source line through the negative
+doubled point. The residual factor is the original cubic equation. -/
+theorem tangent_root_product (a b u Y : F) (hy : Y≠0)
+    (hc : Y^2=u*(u+a)*(u+b)) :
+    let m := shiftedSlope a b u Y
+    let x := m^2-a-b-2*u
+    let y := -Y-m*(x-u)
+    rootZero a b u Y*rootA a b u Y*rootB a b u Y= -y := by
+  dsimp
+  unfold rootZero rootA rootB shiftedSlope
+  field_simp [hy]
+  ring_nf at hc ⊢
+  linear_combination (-8*Y^2+4*a^2*b+8*a^2*u+4*a*b^2+20*a*b*u+
+    28*a*u^2+8*b^2*u+28*b*u^2+28*u^3)*hc
+
 /-- On a rational doubled point the product condition forces even
 signs. The values are the actual three tangent roots and therefore
 the square-class character of the literal x-T coordinate. -/

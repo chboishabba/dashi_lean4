@@ -190,4 +190,49 @@ theorem middleStar_field_polynomial {F : Type*} [Field F] (theta j : F)
       (j^2+2)^3+(j^2+2)^2-2*(j^2+2)-1 := by ring
     _ = 0 := by rw [hj]; convert ht using 1 <;> ring
 
+
+/-- The original nonsplit star field is the seventh cyclotomic field.
+This is a signed algebraic scalar identity on the commuting F[J] action;
+it does not manufacture an algebraic correspondence on the generic K3. -/
+def middleCyclotomicLift {F : Type*} [Field F] (theta j : F) : F :=
+  (theta+(1-theta-theta^2)*j)/2
+
+theorem middleCyclotomicLift_quad {F : Type*} [Field F] [CharZero F]
+    (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    (middleCyclotomicLift theta j)^2-
+      theta*middleCyclotomicLift theta j+1=0 := by
+  unfold middleCyclotomicLift
+  linear_combination ((theta^2+theta-1)^2/4)*(sub_eq_zero.mpr hj) +
+    ((theta-2)*(theta+1)/4)*ht
+
+theorem middleCyclotomicLift_recovers_star {F : Type*} [Field F] [CharZero F]
+    (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    (middleCyclotomicLift theta j)^4-(middleCyclotomicLift theta j)^3=j := by
+  let r := middleCyclotomicLift theta j
+  have hq : r^2-theta*r+1=0 := middleCyclotomicLift_quad theta j ht hj
+  have hrem : 2*r+theta^2*(-2*r-1)+theta+1-j=0 := by
+    dsimp [r,middleCyclotomicLift]
+    linear_combination (j*theta-1)*ht
+  change r^4-r^3=j
+  linear_combination (r^2+r*(theta-1)+theta^2-theta-1)*hq+r*ht+hrem
+
+theorem middleCyclotomicLift_phi7 {F : Type*} [Field F] [CharZero F]
+    (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    let r := middleCyclotomicLift theta j
+    r^6+r^5+r^4+r^3+r^2+r+1=0 := by
+  dsimp only
+  let r := middleCyclotomicLift theta j
+  have hq : r^2-theta*r+1=0 := middleCyclotomicLift_quad theta j ht hj
+  change r^6+r^5+r^4+r^3+r^2+r+1=0
+  linear_combination
+    (r^4+r^3*(theta+1)+r^2*(theta^2+theta)+
+      r*(theta^3+theta^2-theta)+theta^4+theta^3-2*theta^2-theta+1)*hq+
+    (r*theta^2-r-theta)*ht
+
 end DASHI.Hodge.CubicCM

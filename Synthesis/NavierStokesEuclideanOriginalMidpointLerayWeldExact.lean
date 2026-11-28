@@ -57,7 +57,7 @@ theorem physical_midpoint_mass_identity (η ξ : Fin 3 → ℝ) :
       exact Finset.sum_congr rfl (fun i _ => hi i)
     _ = (∑ i : Fin 3, ξ i ^ 2)/2 +
         2*(∑ i : Fin 3, (η i-ξ i/2)^2) := by
-      simp only [Finset.sum_add_distrib, ← Finset.mul_sum]
+      simp only [Finset.sum_add_distrib, Finset.sum_div, ← Finset.mul_sum]
       ring
 
 /-- Viscosity is the SAME actual positive physical ν on both inputs. -/

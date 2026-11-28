@@ -97,11 +97,20 @@ def run():
     if f"version {VERSION}," not in v:raise ValueError("actual Lean version mismatch")
     cmd("build.log","lake","build")
     # Force elaboration of this source; cached build alone gives no axiom receipt.
-    log=cmd("direct.log","lake","env","lean","SubmissionAudit.lean")
+    build=report/"admission-olean";build.mkdir()
+    log=cmd("direct.log","lake","env","lean",f"--root={ROOT}","-o",str(build/"SubmissionAudit.olean"),"SubmissionAudit.lean")
     result=audit(log)
+    # A successful source elaboration and clean axiom log are not a
+    # fresh kernel replay. Fail closed if the pinned toolchain cannot
+    # replay the isolated terminal and all of its dependencies.
+    fresh=cmd("fresh-kernel.log","lake","env","bash","-c",
+              'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec leanchecker --fresh --verbose SubmissionAudit',
+              "_",str(build))
+    if "replaying SubmissionAudit with --fresh" not in fresh.splitlines():
+        raise ValueError("missing exact terminal fresh-replay marker")
     if before!=local_source() or deps!=packages():raise ValueError("source drift during run")
-    (report/"receipt.json").write_text(json.dumps(dict(source=before,packages=deps,axioms=result),indent=2))
-    print("PASS direct C/D pinned native admission",report)
+    (report/"receipt.json").write_text(json.dumps(dict(source=before,packages=deps,axioms=result,fresh_replay="SubmissionAudit"),indent=2))
+    print("PASS direct C/D pinned native admission + fresh replay",report)
     print("Independent physical/manuscript verification remains separate.")
 
 if __name__=="__main__":

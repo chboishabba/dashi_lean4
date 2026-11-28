@@ -35,10 +35,10 @@ def checkEditionRoot (edition qid title article : String)
   let site := edition.replace "-" "_" ++ "wiki"
   let prefix := site ++ "-revid:"
   let revision := str source "revision_ref"
-  let e := ((entity.getObjVal? "entities").toOption.getD Json.null
-    |>.getObjVal? qid).toOption.getD Json.null
-  let link := ((e.getObjVal? "sitelinks").toOption.getD Json.null
-    |>.getObjVal? site).toOption.getD Json.null
+  let entities := (entity.getObjVal? "entities").toOption.getD Json.null
+  let e := (entities.getObjVal? qid).toOption.getD Json.null
+  let links := (e.getObjVal? "sitelinks").toOption.getD Json.null
+  let link := (links.getObjVal? site).toOption.getD Json.null
   let manifest := (source.getObjVal? "manifestation").toOption.getD Json.null
   !edition.isEmpty && edition != "abstract" &&
   edition.toList.all (fun c => decide ('a' ≤ c ∧ c ≤ 'z') || c == '-') &&

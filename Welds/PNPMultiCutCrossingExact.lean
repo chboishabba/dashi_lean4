@@ -122,3 +122,51 @@ theorem same_run_lower {A C M : Type*} [Fintype A] [Fintype C] [Fintype M]
 -- case in the SINGLE-HEAD local tape model. Arbitrary DAG/RAM or
 -- binary-exponent stack macros do not satisfy the unit-cut charge.
 end PNPMultiCutCrossing
+
+
+namespace PNPMultiCutCrossing
+
+-- Actual distinct-cut charge: a unit head step yields either no
+-- crossing or ONE cut coordinate. This is not a graph edge count
+-- inferred from input/output dependence.
+def crossingEvent (p q : ℤ) : Option ℤ :=
+  if q=p+1 then some p else if p=q+1 then some q else none
+
+theorem stay_event (p : ℤ) : crossingEvent p p = none := by
+  simp [crossingEvent]; omega
+
+theorem right_event (p : ℤ) : crossingEvent p (p+1) = some p := by
+  simp [crossingEvent]
+
+theorem left_event (p : ℤ) : crossingEvent p (p-1) = some (p-1) := by
+  have h : p-1≠p+1 := by omega
+  have h' : p=p-1+1 := by omega
+  simp [crossingEvent,h,h']
+
+def cutCount (c : ℤ) : List (Option ℤ) → Nat
+  | [] => 0
+  | e::es => (if e=some c then 1 else 0)+cutCount c es
+
+theorem one_event (C : Finset ℤ) (e : Option ℤ) :
+    (∑ c ∈ C, if e=some c then (1:Nat) else 0) ≤ 1 := by
+  classical
+  cases e with
+  | none => simp
+  | some a =>
+    simp only [Option.some.injEq]
+    rw [Finset.sum_ite_eq']
+    split <;> omega
+
+theorem disjoint_cut_charge (C : Finset ℤ) (events : List (Option ℤ)) :
+    (∑ c ∈ C, cutCount c events) ≤ events.length := by
+  induction events with
+  | nil => simp [cutCount]
+  | cons e es ih =>
+    simp only [cutCount,List.length_cons,Finset.sum_add_distrib]
+    have h := one_event C e
+    omega
+
+-- Composition with the earlier simultaneous transcript bound requires
+-- the actual physical trace to supply these events (one per step) and
+-- its local crossing protocol to reconstruct the observed transcript.
+end PNPMultiCutCrossing

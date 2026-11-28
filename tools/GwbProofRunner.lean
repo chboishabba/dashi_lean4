@@ -1,3 +1,4 @@
+import RequestProject.Slr.IndexedWorldFibreInspection
 import RequestProject.Slr.GwbProductionTrace
 import RequestProject.Slr.GwbCanonicalSourceProof
 import RequestProject.Slr.GwbRelationTransport
@@ -704,6 +705,43 @@ def runReciprocalOfficeCheck
   | _, _, _, _, _, _, _ => return 1
 
 
+/-- Generic revision-pinned source inventory. Check original article bytes
+and independent EntityData before emitting the recorded fibre. -/
+def runIndexedWorldFibre (qid title articlePath slrPath projectionPath entityPath
+    outputPath : String) (properties : List String) : IO UInt32 := do
+  let article ← IO.FS.readFile articlePath
+  let paths := [articlePath, slrPath, projectionPath, entityPath]
+  let mut hashes : List String := []
+  for p in paths do
+    let out ← IO.Process.output { cmd := "sha256sum", args := #[p] }
+    if out.exitCode != 0 then return 1
+    hashes := hashes ++ [(out.stdout.splitOn " ").head!]
+  match Json.parse (← IO.FS.readFile slrPath), Json.parse (← IO.FS.readFile projectionPath),
+      Json.parse (← IO.FS.readFile entityPath) with
+  | .ok source, .ok projection, .ok entity =>
+    let manifest := (source.getObjVal? "manifestation").toOption.getD Json.null
+    if (manifest.getObjValAs? String "source_text_sha256").toOption != some hashes[0]! ||
+       (projection.getObjValAs? String "source_text_sha256").toOption != some hashes[0]! then
+      return 1
+    let some revision := Slr.GwbArticleSystem.entityRevision entity qid | return 1
+    if revision == 0 then return 1
+    if h : Slr.IndexedWorldFibreInspection.checkRoot qid title article source projection entity = true then
+      let _checked : Slr.IndexedWorldFibreInspection.CheckedRoot qid title article source projection entity := ⟨h⟩
+      let inventory := Slr.IndexedWorldFibreInspection.inventory qid title source projection entity properties
+      IO.FS.writeFile outputPath ((Json.mkObj [
+        ("schema", toJson ("slr.jmd-indexed-world-fibre-receipt.v1" : String)),
+        ("source_sha256", toJson hashes[0]!),
+        ("original_slr_sha256", toJson hashes[1]!),
+        ("projection_sha256", toJson hashes[2]!),
+        ("entity_sha256", toJson hashes[3]!),
+        ("entity_revision", toJson revision), ("inventory", inventory),
+        ("source_observation_checked", toJson true),
+        ("cross_source_alignment_paid", toJson false),
+        ("world_truth_paid", toJson false)]).pretty ++ "\n")
+      return 0
+    else return 1
+  | _, _, _ => return 1
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -730,6 +768,8 @@ def main (args : List String) : IO UInt32 := do
       runArticleP4Check article slr projection native wikidata
   | ["reciprocal-office-check", a, sa, pa, ea, b, sb, pb, eb, office, output] =>
       runReciprocalOfficeCheck a sa pa ea b sb pb eb office output
+  | "indexed-world-fibre" :: qid :: title :: article :: slr :: projection :: entity :: output :: properties =>
+      runIndexedWorldFibre qid title article slr projection entity output properties
   | ["article-clause-check", article, slr, projection, root, output] =>
       runArchivedClauseCheck article slr projection root output
   | ["article-office-check", article, slr, projection, root, office, output] =>

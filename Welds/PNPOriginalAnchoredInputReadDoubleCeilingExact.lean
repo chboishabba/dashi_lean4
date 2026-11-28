@@ -46,7 +46,10 @@ theorem original_anchored_input_read_double_ceiling
   have hk := original_anchored_packed_residual_fuel_payment
     A B ask accept prefix observe x k C obligations direction weight
     hprefix haccept hlegal hkernel hvisible hcapacity
-  rw [Nat.mul_min_left]
-  exact le_min (by simpa [Nat.mul_comm] using hn) hk
+  rcases le_total n k with hnk | hkn
+  · rw [min_eq_left hnk]
+    simpa [Nat.mul_comm] using hn
+  · rw [min_eq_right hkn]
+    exact hk
 
 end PNPOriginalResidualFutureReadWeld

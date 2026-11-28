@@ -54,7 +54,7 @@ theorem weighted_young_amplitudes (u v : CVec3) (ε : ℝ) (he : 0<ε) :
   rw [sub_sq, mul_pow,amplitude_sq,amplitude_sq] at h
   have hh : (phaseMass u/ε+ε*phaseMass v)/2* (2*ε) =
       phaseMass u+ε^2*phaseMass v := by field_simp [he.ne'] <;> ring
-  apply le_of_mul_le_mul_right (b:=2*ε) _ (by positivity)
+  apply (mul_le_mul_right₀ (show 0<2*ε by positivity)).mp
   rw [hh]
   nlinarith only [h]
 

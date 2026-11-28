@@ -196,5 +196,28 @@ theorem rationalKummerQuotient_injective
   rw [map_add,map_neg,h,neg_add_cancel]
 
 
+/-- The H1 term of the original Kummer sequence is exact after descent:
+the kernel of the actual inclusion is the image of the genuine rational
+quotient E(K)/2E(K). The statement uses the ORIGINAL cohomology maps; no
+finite square-class stand-in. Local completion naturality is a separate cut. -/
+theorem originalKummerExactAtH1
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q))
+    (x : EllipticTwoTorsionH1 W) :
+    originalInclusionH1 W x = 0 ↔
+      x ∈ (rationalKummerQuotientHom W hs).range := by
+  rw [originalInclusionH1_zero_iff_rationalKummer W hs x]
+  constructor
+  · rintro ⟨P,hP⟩
+    refine ⟨QuotientAddGroup.mk P, ?_⟩
+    change rationalKummerClass W hs P = x
+    exact hP
+  · rintro ⟨q,hq⟩
+    induction q using Quotient.inductionOn' with
+    | _ P =>
+      refine ⟨P, ?_⟩
+      change rationalKummerClass W hs P = x at hq
+      exact hq
+
+
 end
 end BSDCohomology

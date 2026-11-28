@@ -25,16 +25,14 @@ theorem rotation_fold_monic (a x : R) :
     (X^2-C x*X+C a : R[X]).Monic := by
   have h : (X^2-C x*X+C a : R[X]) = X^2 + (C (-x)*X+C a) := by ring
   rw [h]
-  exact (Polynomial.monic_X_pow 2).add_of_left
-    (lt_of_le_of_lt (Polynomial.natDegree_add_le _ _)
-      (by
-        have h₁ : (C (-x)*X : R[X]).natDegree≤1 := by
-          calc
-            _ ≤ (C (-x) : R[X]).natDegree+(X : R[X]).natDegree :=
-              Polynomial.natDegree_mul_le
-            _ = 1 := by simp
-        have h₂ : (C a : R[X]).natDegree≤1 := by simp
-        exact lt_of_le_of_lt (max_le h₁ h₂) (by decide)))
+  apply Polynomial.monic_X_pow_add
+  apply lt_of_le_of_lt (Polynomial.degree_add_le _ _)
+  have h₁ : (C (-x)*X : R[X]).degree≤1 := by
+    calc
+      _ ≤ (C (-x) : R[X]).degree+(X : R[X]).degree := Polynomial.degree_mul_le
+      _ ≤ 0+1 := add_le_add Polynomial.degree_C_le Polynomial.degree_X_le
+      _ = 1 := by simp
+  exact lt_of_le_of_lt (max_le h₁ (Polynomial.degree_C_le.trans (by norm_num))) (by norm_num)
 
 theorem rotation_fold_integral (a x : R) (v : A)
     (h : v^2-algebraMap R A x*v+algebraMap R A a=0) :

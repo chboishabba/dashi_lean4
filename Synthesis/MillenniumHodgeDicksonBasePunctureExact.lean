@@ -50,15 +50,16 @@ theorem actualChartDenominator_nonzero_iff {F : Type*} [Field F]
     (p : ActualCoupledFoldAlgebra →+* F) :
     p chartDenominator≠0 ↔
       p (algebraMap CoupledSurfaceBase ActualCoupledFoldAlgebra baseChartDenominator)≠0 := by
-  rw [← actualChartDenominator_square,map_pow,pow_ne_zero_iff (by decide : (2:ℕ)≠0)]
+  rw [← actualChartDenominator_square,map_pow,pow_two]
+  exact ⟨fun h=>mul_ne_zero h h,fun h hn=>h (by rw [hn,zero_mul])⟩
 
 /-- At the ring level the same unit test includes nonreduced fibres. -/
 theorem actualChartDenominator_unit_iff {R : Type*} [CommRing R]
     (p : ActualCoupledFoldAlgebra →+* R) :
     IsUnit (p chartDenominator) ↔
       IsUnit (p (algebraMap CoupledSurfaceBase ActualCoupledFoldAlgebra baseChartDenominator)) := by
-  rw [← actualChartDenominator_square,map_pow,pow_two,isUnit_mul]
-  simp
+  rw [← actualChartDenominator_square,map_pow,pow_two]
+  exact ⟨fun h=>h.mul h,fun h=>isUnit_of_mul_isUnit_left h⟩
 
 end
 end DASHI.Hodge.DicksonCoupled

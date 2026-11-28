@@ -10,6 +10,7 @@ Usage with an actual checked-out external original source:
  python scripts/check_alpoge_rh_original_native_admission.py \\
    --external-root /path/to/pinned/external \\
    --main-sha256 <sha256-of-original-Main.lean> \\
+   --tree-manifest /path/to/original-source-sha256.json \\
    --lean-version v4.33.1 --lake /path/to/lake
 
 It compares the actual Main bytes to the required hash, checks the

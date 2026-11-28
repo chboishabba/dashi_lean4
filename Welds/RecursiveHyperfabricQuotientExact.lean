@@ -12,7 +12,7 @@ structure Step (X K Y : Type*) (f : X → Y) (g : K → Y) where
   consumerClosed : ∀ x, g (contract x) = f x
 
 def Step.id (X Y : Type*) (f : X → Y) : Step X X Y f f :=
-  ⟨id,id,fun _ => rfl,fun _ => rfl⟩
+  ⟨fun x => x,fun x => x,fun _ => rfl,fun _ => rfl⟩
 
 def Step.comp {X K L Y : Type*} {f : X → Y} {g : K → Y} {h : L → Y}
     (q : Step X K Y f g) (r : Step K L Y g h) : Step X L Y f h where

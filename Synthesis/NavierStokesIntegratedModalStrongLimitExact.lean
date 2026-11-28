@@ -199,8 +199,9 @@ theorem integrated_modal_strong_limit (T B D : ℝ)
       Disjoint W S → ∑ k ∈ W,e n k≤ε := by
     intro ε hε
     obtain ⟨R,hR⟩ := exists_nat_gt (4*D/ε+1)
-    have hRpos : 0<(R:ℝ) := by nlinarith
-    have hRge : 1≤(R:ℝ) := by nlinarith
+    have hq : 0≤4*D/ε := div_nonneg (by positivity) hε.le
+    have hRpos : 0<(R:ℝ) := by linarith
+    have hRge : 1≤(R:ℝ) := by linarith
     refine ⟨cutoffModes R,fun n W hW=>?_⟩
     have hfreq (k : Lattice) (hk : k∈W) : (R:ℝ)^2≤massSq (embedMode k) := by
       have hout : k∉cutoffModes R := fun hh=>Finset.disjoint_left.mp hW hk hh
@@ -210,7 +211,7 @@ theorem integrated_modal_strong_limit (T B D : ℝ)
       have hi' : (R:ℝ)<|embedMode k i| := by
         rcases hi with h|h
         · have h' : (embedMode k i)< -(R:ℝ) := by exact_mod_cast h
-          exact (lt_abs.mpr (Or.inl (by linarith))).trans_eq rfl
+          exact lt_abs.mpr (Or.inl (by linarith))
         · exact (lt_abs.mpr (Or.inr (by exact_mod_cast h)))
       have hs : (embedMode k i)^2≤massSq (embedMode k) :=
         Finset.single_le_sum (fun j _=>sq_nonneg (embedMode k j)) (Finset.mem_univ i)
@@ -237,7 +238,7 @@ theorem integrated_modal_strong_limit (T B D : ℝ)
           (by rw [← uIcc_of_le hT] at hcU; exact hcU.intervalIntegrable)
           (by rw [← uIcc_of_le hT] at hcV; exact hcV.intervalIntegrable)] at h
       exact h
-    have hsum := Finset.sum_le_sum (fun k hk=>hint k hk)
+    have hsum := Finset.sum_le_sum (s:=W) (fun k hk=>hint k hk)
     rw [← Finset.mul_sum,← Finset.mul_sum,Finset.sum_add_distrib] at hsum
     have hbudget : (R:ℝ)^2*(∑ k ∈ W,e n k)≤4*D := by
       linarith [hIntD n W,hVD W]

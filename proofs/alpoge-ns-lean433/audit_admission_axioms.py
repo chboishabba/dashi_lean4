@@ -11,6 +11,7 @@ EXPECTED = {
     "DASHI.AlpogeBuckmaster.from_original_cell_condition",
     "DASHI.AlpogeBuckmaster.solution_original",
     "DASHI.AlpogeBuckmaster.sameVelocityEnergy_iff",
+    "DASHI.AlpogeBuckmaster.sameSolutionR3_iff",
     "DASHI.AlpogeBuckmaster.original_profile_to_clayCD",
     "DASHI.AlpogeBuckmaster.original_weak_profile_to_clayC",
     "DASHI.AlpogeBuckmaster.original_certificate_to_clayC",

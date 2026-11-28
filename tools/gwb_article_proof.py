@@ -467,7 +467,15 @@ def main(argv: list[str] | None = None) -> int:
                   max_source_units=1)
         manifest_row = json.loads(manifest.read_text(encoding="utf-8").splitlines()[0])
         record = json.loads(Path(manifest_row["record_path"]).read_text(encoding="utf-8"))
-    if record.get("source_unit_ref") != source_ref or record.get("revision_ref") != revision_ref:
+    # Native SLR records use the content-addressed source:wikipedia:* carrier;
+    # the historical local producer used wikipedia:en:* instead. Preserve the
+    # exact record coordinate when replaying an already persisted native row.
+    if args.slr_record and isinstance(record.get("source_unit_ref"), str):
+        source_ref = record["source_unit_ref"]
+    record_source = record.get("source_unit_ref")
+    record_revision = record.get("revision_ref")
+    native_revision = isinstance(record_revision, str) and record_revision.startswith("source-revision:")
+    if record_source != source_ref or not (record_revision == revision_ref or native_revision):
         raise ValueError("original SLR record does not match the article revision")
     record_path = args.output_dir / "slr-record.json"
     record_path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n",

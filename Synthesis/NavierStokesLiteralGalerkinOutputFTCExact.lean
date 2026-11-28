@@ -22,6 +22,37 @@ def cutoffModes (N : ℕ) : Finset Lattice :=
   Finset.univ.image (fun k : Fin 3 → Fin (2*N+1) =>
     fun i => (k i : ℤ)-(N : ℤ))
 
+theorem embedMode_injective : Function.Injective embedMode := by
+  intro p q h
+  funext i
+  have hi := congrFun h i
+  change (p i : ℝ)=(q i : ℝ) at hi
+  exact_mod_cast hi
+
+/-- The native carrier is exactly the original signed coordinate cube,
+not a ball cutoff or a distinct nonzero input enumeration. -/
+theorem mem_cutoffModes (N : ℕ) (k : Lattice) :
+    k ∈ cutoffModes N ↔ ∀ i, -(N:ℤ)≤k i ∧ k i≤(N:ℤ) := by
+  classical
+  constructor
+  · intro hk
+    obtain ⟨x,_,rfl⟩ := Finset.mem_image.mp hk
+    intro i
+    have h₁ : 0≤(x i : ℤ) := by positivity
+    have h₂ : (x i : ℤ)<(2*N+1:ℕ) := by exact_mod_cast (x i).isLt
+    constructor <;> omega
+  · intro hk
+    let x : Fin 3 → Fin (2*N+1) := fun i =>
+      ⟨(k i+(N:ℤ)).toNat,by
+        have h := hk i
+        omega⟩
+    apply Finset.mem_image.mpr
+    refine ⟨x,Finset.mem_univ _,?_⟩
+    funext i
+    have h := hk i
+    change (((k i+(N:ℤ)).toNat:ℕ):ℤ)-(N:ℤ)=k i
+    omega
+
 def outputModes (N : ℕ) : Finset Lattice := (cutoffModes N).erase 0
 
 def orderedFibre (N : ℕ) (k : Lattice) : Finset (Lattice × Lattice) :=
@@ -93,6 +124,31 @@ def galerkinForce (N : ℕ) (U : Vec3 → ℝ → CVec3)
       orderedRHS k (embedMode a.2) (U (embedMode a.1) t) (U (embedMode a.2) t) i
     else 0
   else 0
+
+theorem galerkinForce_eq_orderedFibre (N : ℕ) (U : Vec3 → ℝ → CVec3)
+    (k : Lattice) (hk : k ∈ outputModes N) (t : ℝ) (i : Fin 3) :
+    galerkinForce N U (embedMode k) t i =
+      ∑ a ∈ orderedFibre N k,
+        orderedRHS (embedMode k) (embedMode a.2)
+          (U (embedMode a.1) t) (U (embedMode a.2) t) i := by
+  classical
+  have he : embedMode k ∈ (outputModes N).image embedMode :=
+    Finset.mem_image.mpr ⟨k,hk,rfl⟩
+  have ha (p q : Lattice) : embedMode p+embedMode q=embedMode (p+q) := by
+    funext j
+    change (p j:ℝ)+(q j:ℝ)=((p j+q j:ℤ):ℝ)
+    push_cast
+    ring
+  unfold galerkinForce orderedFibre
+  simp only [if_pos he,Finset.sum_filter]
+  apply Finset.sum_congr rfl
+  intro a _
+  rw [ha]
+  by_cases h : a.1+a.2=k
+  · simp [h]
+  · have h' : embedMode (a.1+a.2)≠embedMode k :=
+      fun e=>h (embedMode_injective e)
+    simp [h,h']
 
 /-- Continuity follows from the actual finite ordered source. No assumed
 F/H interval-integrability fields are needed for a continuous modal curve. -/

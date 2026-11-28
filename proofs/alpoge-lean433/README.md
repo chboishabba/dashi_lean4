@@ -1,3 +1,35 @@
+## 28 November 2026 — same-source root semantic admission (current)
+
+The local runner now defaults to the licensed compact edition (explicit
+GRH_P0_SOURCE=original preserves the original author route).
+The existing root MillenniumExternal/AlpogeRHBoundaryExact.lean now
+imports only the pinned RH target; its three original public theorem
+names are retained. The isolated build recompiles those exact root
+source bytes in the v4.35.0 proof kernel and audits all three axioms
+receipts before RHClayAdmission consumes the root adapter. This removes
+the parallel adapter implementation from the shortest route.
+The old v4.28 root binary environment and Agda transport are still
+separate, not certified by recompilation. No native kernel here.
+
+MIT report https://math.mit.edu/~drew/shortgrh/ updated Nov27 17:27 UTC:
+all checks finished. Both editions accepted by the independent
+comparators; compact paranoid on two machines, readable on one,
+second readable stopped for memory. The explicit Schoenfeld bound
+and equivalence also accepted. External proof credit Alpöge/Claude
+and licensed rewrite authors; MIT verification independent.
+
+Local byte-matched parser c17eb864709fb08d11121b12dc0952555a295d29;
+test_rh_root_audit.py blob 0b4ca2af8852f1272541f7a39bd473ffd99b625d:
+41/41 normal and -O. Synthetic parser controls, not kernel receipts.
+
+```sh
+bash proofs/alpoge-lean433/check_original_p0_admission.sh
+# original author route (optional)
+GRH_P0_SOURCE=original GRH_P0_CLAY=1 bash proofs/alpoge-lean433/check_original_p0_admission.sh
+```
+
+---
+
 ## 22 Nov 2026 — actual author allChi → ζ RH descent pinned and checked
 
 **Original dependency, NOT RH→GRH:** at author/fork commit
@@ -517,3 +549,41 @@ No source duplication; no CI; no kernel success claimed.
 **Local DASHI integration status remains DEFERRED by explicit user choice**: separate v4.33.1 source-version test/axioms/compilation of our `RHGRHP0DirectionalSourceCut.lean`, root v4.35.0-rc3 Mathlib theorem/re-elaboration and Agda original complex/zero predicate transport have not been locally run. External acceptance is not a DASHI kernel receipt; no `sorry`/axiom fallback. Ordinary `Claim.Zeta ↔ Mathlib.RiemannHypothesis`; original `UpperTheory.EveryCharacter` is the strictly broader Dirichlet GRH P0 terminal, implying RH and all character strip results in the original source chain, not the converse.
 
 **Parallel CM special case is independent of the RH zero claim**: [main-derived Lean PR #114](https://github.com/chboishabba/dashi_lean4/pull/114) constructs source-owned (E:y²=x³+1) local CM Hecke Euler candidates, HNF fractional ideal `Psi`, bad p2/p3 factors, Ogg conditional conductor and a **conditional** `σ>3/2` absolute-convergence bridge. Its **all-prime local factor and global analytic-continuation sockets remain open**. This special weight-two infinity-type-one Hecke character is not a finite-order Dirichlet character and does not fall under the externally verified **Dirichlet** GRH scope. None of its Euler or finite SymPy tests proves RH/GRH or supplies a new `UpperTheory.EveryCharacter` proof. Retain weld-forward: reuse original strongest sources; no parallel dummy theorem.
+
+## 26 Nov 2026 — licensed compact/readable ingestion (preferred new proof-replay route)
+
+The existing original-source interface is retained, not duplicated. [lsernau/grh-lean](https://github.com/lsernau/grh-lean) at 72fead102f663d5c7a407964a13dc0cf9d977207 exposes the SAME five theorem types and byte-identical Statements.lean (1cd1bce93344065936b2b392b23306254e0785ef). Credit Levent Alpöge with Claude for the proof; Anthropic collaborators with Claude for rewriting; Copyright 2026 Anthropic, PBC; Apache-2.0. Retain original v4.33.1 fork pin unchanged. New v4.35.0 pin, Mathlib 56a005855ea17e0b0958f73ec801ae140b0a1679. Both editions' machine acceptance is upstream-reported, not a new local receipt or a human proof review.
+
+### Run locally (no CI)
+
+From the DASHI repo with this PR checked out and local elan/lake available:
+
+```bash
+GRH_P0_SOURCE=compact bash proofs/alpoge-lean433/check_original_p0_admission.sh
+```
+
+This uses the already-owned checkout and admission runner, checks the exact edition tree, 12 compact or 13 readable selected source/metadata blobs plus root license/README, working-tree bytes and actual dependency revisions; defaults to `lake exe cache get`, `lake build Main`, upstream five-theorem axiom log, shared adapter five-theorem + two actual Dirichlet horizontal consumer log, and fresh terminal-module `leanchecker --fresh --verbose` (fresh replay of all imported and defined constants, checked against Lean v4.35.0 LeanChecker.lean; not a separate implementation of the Lean kernel). New editions also default to direct exact Clay admission as described below. Unique per-run receipt directories; source pin checked again without changing HEAD after build. Local git clone may need network; no source redistribution.
+
+Source selector `GRH_P0_SOURCE=original` (default, original 4.33.1) or `readable` (4.35.0; same checkout, separate Lake project). `GRH_P0_CACHE_GET=0` skips cache fetch, `GRH_P0_FRESH_REPLAY=0` skips fresh replay and reports only build/adapter audit; `GRH_P0_CLAY=0` isolates upstream/adapter check from Clay re-elaboration. Original-only optional RowSrc consumer remains available, rejected for incompatible new module layouts. All are explicit local work; no automatic migration of DASHI root 4.28.0 or import of incompatible oleans.
+
+### Shortest same-kernel Clay handoff
+
+The existing `MillenniumExternal/ExactTargetSurface.lean` and `AlpogeRHBoundaryExact.lean` use the upstream exact `Millennium.ClayRiemannHypothesis.of_mathlib` and `.mathlib` constructors. The same pinned upstream LeanDojo target (603053dc267cf3efe422f438eb78098c0ececd6f, tree b7c2004c0e8cb192d3dc7d740551a2de04068b61, Problems/RiemannHypothesis/Millennium.lean blob 26356e8fecc91562eb2af2564e852e1b33c63005) imports only Mathlib. It already owns exact entire-xi zero correspondence and `.xi_zeros`. No new mathematical lemma is needed at this cut.
+
+New `RHClayAdmission.lean` consumes these owners directly and preserves the original theorem and xi predicate: Main.riemannHypothesis -> of_mathlib -> original_clay_rh -> xi_zeros -> original_clay_xi; .mathlib gives roundtrip. The runner uses the existing vendor script if the checkout is absent, checks exact existing vendor pins and bytes, compiles that source in the same selected Mathlib kernel into the receipt directory, then elaborates the three actual proof terms and audits their transitive axioms. The upstream target has a final unused challenge sorry; never import its placeholder proof as authority. Any sorryAx in the three outputs fails. Re-elaboration on 4.35 is pending; upstream target was authored at 4.31 and might need a semantics-preserving compatibility repair. This sidecar does not migrate the root or certify Agda. No root theorem status green until actual proof receipt.
+
+### Current executed evidence
+
+Readback audit: 29/29 licensed edition tree/blob pins match actual upstream tree (not truncated), exact original Statements shared; exact Clay commit/tree/blob verified. Lean v4.35.0 Elab/Print.lean blob 70faa957b6ee67297e670474a31ec553578c7786 confirms the same quoted-name print format. Local Python 3.13.5 / Git 2.47.3: reconstructed code byte-identical to Git blobs 467e4c55 (shared parser), 268b923e (checkout), 90da57be (runner), d5823db2 (parser tests), 337d5445 (checkout tests). Python compile PASS, bash -n both scripts PASS. 27 valid + 30 invalid log fixtures PASS under normal and -O (5 upstream, 7 adapter, 3 Clay names). Actual checkout wrapper synthetic Git fixtures: 3 profile selections, 6 pin mutations rejected, dirty and hidden paths rejected, post-build changed HEAD rejected and normal pinned checkout recovered (4/4 test methods, including subtests). All three actual runner profiles fail closed locally at absent lake (exit 12), invalid source exit 2. No actual upstream checkout/build/replay, Lean/Agda executable or CI. These tests do not certify the proof.
+
+### Remaining exact cut
+
+- Source admission: local 4.35 build, fresh transitive replay, real 5+7 axiom receipts, exact same-kernel 3 Clay/xi receipts; do not require independent DASHI strict signed pole estimate to admit external proof.
+- Native root: compatibility re-elaboration/proof transfer to current 4.28 package or explicitly move a narrowly isolated root consumer to admitted toolchain. Do not mix oleans.
+- Agda: existing ExternalRHGeometricTransport, OriginalRHClayEndpointWeld still require same-object complex/actual zero and critical-line correspondence plus genuine cross-kernel proof representation. Dirichlet all-N/chi L/zero semantics distinct from finite characters/CM conductor records. No postulate or boolean receipt as proof.
+- Independent geometry: compact New.Main star_inequality / one-sided prime error, actual twisted lattice upper/lower height comparison and Landau criterion; readable theta-lift path/exchange squares are useful donors for Langlands and DASHI indexed geometry. The independent signed local/far/prime E2/E3 route is still a separate mathematical objective. All-character GRH gives actual horizontal collapse in the open strip, not a proof of the unrelated strict signed-source inequality.
+
+
+### 26 November — final-endpoint fresh replay cut
+
+The prior default fresh replay targeted only Main, then separately elaborated the adapter and Clay. It did not replay the exported DASHI proof bodies into the fresh kernel. The same runner now emits RHAdmission.olean in a unique per-run directory, and RHClayAdmission imports that module and consumes original_mathlib_rh directly. After the existing endpoint axiom audits, the single fresh replay targets RHClayAdmission (or RHAdmission when Clay is disabled), with the receipt directory prepended to LEAN_PATH. Lean v4.35.0 src/LeanChecker.lean implements --fresh by replaying all imported and defined constants from the selected module into an empty kernel; its verbose exact marker is required in addition to successful exit. Thus the target includes Main and the actual adapter proof terms, without a redundant separate Main replay. The old challenge sorry may exist in the target module but must not occur in any audited theorem dependency. This is source-written, not a native proof receipt; actual module elaboration and replay remain untested in this runtime. No cross-version or Agda authority transfer is implied.

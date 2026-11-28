@@ -375,6 +375,52 @@ theorem reciprocalBushOfficeSound
   · exact bushOfficeIntervalsDisjoint
 
 
+
+/-- Actual indexed P9 office-interval weld: the independently imported
+    qualified statement and the licensed article answer carry the SAME
+    subject/property/object/year coordinates. Neither title equality nor
+    parser observation counts suffice. The theorem is bounded to this
+    declared controlled-language consumer, not all readings of English. -/
+theorem indexedOfficeOriginalQualifiedAgreement
+    (subject : BushOfficeSubject) {article : String}
+    {slr projection entity : Json}
+    (root : indexedOfficeRootCheck subject article slr projection entity = true)
+    (matched : indexedOfficeLeadMatches subject article = true)
+    (w : GwbWorldGraph.OriginalQualifiedYearWitness entity
+      (officeSubjectQid subject) "P39" "Q11696"
+      (officeSubjectYears subject).1 (officeSubjectYears subject).2) :
+    indexedOfficeRootCheck subject article slr projection entity = true ∧
+    indexedOfficeModel.documentAnswer article subject =
+      some (officeSubjectQid subject, "P39", "Q11696",
+        (officeSubjectYears subject).1, (officeSubjectYears subject).2) ∧
+    w.statement ∈ GwbWorldGraph.originalPropertyRows entity
+      (officeSubjectQid subject) "P39" ∧
+    GwbWorldGraph.yearIntervalStatementMatches "P39" "Q11696"
+      (officeSubjectYears subject).1 (officeSubjectYears subject).2 w.statement = true := by
+  have native := GwbWorldGraph.originalQualifiedYearWitnessSound w
+  exact ⟨root, indexedOfficeAnswerSound subject article matched, native.1, native.2⟩
+
+/-- Bilateral source licences do not identify distinct holders merely
+    because both exact native statements have the same office object. -/
+theorem indexedOfficeDistinctHolderComparison
+    {son father : String} {sa pa ea sb pb eb : Json}
+    (rootA : indexedOfficeRootCheck .son son sa pa ea = true)
+    (rootB : indexedOfficeRootCheck .father father sb pb eb = true)
+    (ha : indexedOfficeLeadMatches .son son = true)
+    (hb : indexedOfficeLeadMatches .father father = true)
+    (wa : GwbWorldGraph.OriginalQualifiedYearWitness ea "Q207" "P39" "Q11696" 2001 2009)
+    (wb : GwbWorldGraph.OriginalQualifiedYearWitness eb "Q23505" "P39" "Q11696" 1989 1993) :
+    indexedOfficeModel.documentAnswer son .son ≠
+      indexedOfficeModel.documentAnswer father .father ∧
+    (officeSubjectYears .father).2 < (officeSubjectYears .son).1 ∧
+    wa.statement ∈ GwbWorldGraph.originalPropertyRows ea "Q207" "P39" ∧
+    wb.statement ∈ GwbWorldGraph.originalPropertyRows eb "Q23505" "P39" := by
+  have a := indexedOfficeOriginalQualifiedAgreement .son rootA ha wa
+  have b := indexedOfficeOriginalQualifiedAgreement .father rootB hb wb
+  refine ⟨?_, bushOfficeIntervalsDisjoint, a.2.2.1, b.2.2.1⟩
+  rw [a.2.1, b.2.1]
+  decide
+
 /-- A bounded shared-event key, independent of article subject. The
     historical result is only source-attributed; neither its legitimacy nor
     the constitutional/legal consequences are inferred. -/

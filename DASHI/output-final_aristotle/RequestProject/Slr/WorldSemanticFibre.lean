@@ -218,6 +218,35 @@ theorem licensedViewsPreserveBothSigns
   rw [slrJmdDocumentQuerySound l _ hl, slrJmdDocumentQuerySound r _ hr]
   exact sameSupportPreservesBothProofSigns a
 
+
+/-- Bidi endpoint: an available pair has no lost or gained signed proof
+    exactly when its two support channels coincide. This is deliberately
+    stricter than absence of a contradiction. -/
+theorem zeroViewDeltaIffEqualSupport (l r : Support) :
+    viewProofDelta (some l) (some r) = some (support .zero, support .zero) ↔ l = r := by
+  cases l with
+  | mk lp ln =>
+    cases r with
+    | mk rp rn =>
+      cases lp <;> cases ln <;> cases rp <;> cases rn <;> decide
+
+/-- An abstraction with a dropped positive claim is not parity even if
+    neither representation contains an explicit negative assertion. -/
+theorem omittedPositiveIsNotProofParity :
+    viewProofDelta (some (support .positive)) (some (support .zero)) ≠
+      some (support .zero, support .zero) := by decide
+
+/-- A nonconstant live fibre obstructs a licence before any comparison.
+    Reuses the original negative gate instead of treating abstention as
+    the semantic answer of a lossy representation. -/
+theorem differingLiveProofSignsBlockViewLicence
+    {S O R Q : Type} {m : DocumentQueryModel S O R Q (Option Support)}
+    {s : S} {q : Q}
+    (x y : R) (hx : m.live (m.observe s) x) (hy : m.live (m.observe s) y)
+    (different : m.readingAnswer x q ≠ m.readingAnswer y q) :
+    ¬ Nonempty (SourceQueryLicence m s q) :=
+  incompatibleLiveReadingsBlockQueryLicence x y hx hy different
+
 end Wikidata.Slr.WorldSemanticFibre
 
 #print axioms Wikidata.Slr.WorldSemanticFibre.actionClosed
@@ -227,3 +256,6 @@ end Wikidata.Slr.WorldSemanticFibre
 
 #print axioms Wikidata.Slr.WorldSemanticFibre.reciprocalLicensedViewProofDelta
 #print axioms Wikidata.Slr.WorldSemanticFibre.licensedViewsPreserveBothSigns
+
+#print axioms Wikidata.Slr.WorldSemanticFibre.zeroViewDeltaIffEqualSupport
+#print axioms Wikidata.Slr.WorldSemanticFibre.differingLiveProofSignsBlockViewLicence

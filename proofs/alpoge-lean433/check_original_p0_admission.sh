@@ -72,11 +72,15 @@ bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pi
   lake build Main 2>&1 | tee "$REPORT_DIR/main-build.log"
 
   # Check actual package commits, not only the declared manifest.
-  python3 - <<'PY' | tee "$REPORT_DIR/dependency-pins.log"
+  verify_dependency_pins() {
+  python3 - <<'PY'
 import json, pathlib, subprocess
-manifest = json.loads(pathlib.Path("lake-manifest.json").read_text())
+import hashlib
+manifest_bytes=pathlib.Path("lake-manifest.json").read_bytes()
+print("manifest sha256",hashlib.sha256(manifest_bytes).hexdigest())
+manifest = json.loads(manifest_bytes)
 base = pathlib.Path(manifest.get("packagesDir", ".lake/packages"))
-for p in manifest["packages"]:
+for p in sorted(manifest["packages"],key=lambda p:p["name"]):
     if p["type"] != "git":
         raise SystemExit("BLOCKED: unexpected non-Git package: " + p["name"])
     path = base / p["name"]
@@ -88,6 +92,8 @@ for p in manifest["packages"]:
         raise SystemExit("BLOCKED: hidden package source paths: " + p["name"])
     print(p["name"], p["rev"])
 PY
+  }
+  verify_dependency_pins | tee "$REPORT_DIR/dependency-pins.log"
 
   if [[ "$SOURCE" != original ]]; then
     lake env lean scripts/PrintAxioms.lean 2>&1 | tee "$REPORT_DIR/upstream-axioms.log"
@@ -163,6 +169,8 @@ PY
     lake env lean "$SIDECAR/RHGRHP0DirectionalSourceCut.lean" 2>&1 |
       tee "$REPORT_DIR/directional-donor-lean.log"
   fi
+  verify_dependency_pins | tee "$REPORT_DIR/dependency-pins-after.log"
+  cmp "$REPORT_DIR/dependency-pins.log" "$REPORT_DIR/dependency-pins-after.log"
 )
 # Detect modifications made during the build. This is still a local trusted
 # toolchain receipt, not independent checker or Agda/cross-version admission.

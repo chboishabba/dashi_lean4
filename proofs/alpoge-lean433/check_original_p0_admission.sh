@@ -30,6 +30,32 @@ mkdir -p "$REPORT_BASE"
 REPORT_DIR="$(mktemp -d "$REPORT_BASE/run.XXXXXXXX")"
 REPORT_DIR="$(cd "$REPORT_DIR" && pwd)"
 echo "Run logs: $REPORT_DIR"
+# Bind the local semantic source to the actual Git revision. A dirty
+# unrelated file is harmless; an altered theorem or audit input is not.
+DASHI_HEAD="$(git -C "$ROOT" rev-parse HEAD)"
+verify_local_source() {
+  [[ "$(git -C "$ROOT" rev-parse HEAD)" == "$DASHI_HEAD" ]] || {
+    echo 'BLOCKED: DASHI HEAD changed during admission' >&2; return 1;
+  }
+  local path want got
+  for path in proofs/alpoge-lean433/check_original_p0_admission.sh \
+      proofs/alpoge-lean433/checkout_fork_source.sh \
+      proofs/alpoge-lean433/fork_pin.json \
+      proofs/alpoge-lean433/licensed_rewrite_pin.json \
+      proofs/alpoge-lean433/audit_p0_axioms.py \
+      proofs/alpoge-lean433/RHAdmission.lean \
+      proofs/alpoge-lean433/RHClayAdmission.lean \
+      MillenniumExternal/AlpogeRHBoundaryExact.lean; do
+    want="$(git -C "$ROOT" rev-parse "$DASHI_HEAD:$path")"
+    got="$(git hash-object --no-filters "$ROOT/$path")"
+    [[ "$want" == "$got" ]] || {
+      echo "BLOCKED: modified local admission input: $path" >&2; return 1;
+    }
+    printf '%s %s\n' "$got" "$path"
+  done
+  printf 'DASHI source revision: %s\n' "$DASHI_HEAD"
+}
+verify_local_source | tee "$REPORT_DIR/dashi-source-before.log"
 export GRH_P0_SOURCE="$SOURCE"
 unset ELAN_TOOLCHAIN LEAN_PATH LEAN_SRC_PATH
 bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin.log"
@@ -134,6 +160,8 @@ PY
 # Detect modifications made during the build. This is still a local trusted
 # toolchain receipt, not independent checker or Agda/cross-version admission.
 GRH_P0_VERIFY_ONLY=1 bash "$SIDECAR/checkout_fork_source.sh" "$CHECKOUT" | tee "$REPORT_DIR/source-pin-after.log"
+verify_local_source | tee "$REPORT_DIR/dashi-source-after.log"
+cmp "$REPORT_DIR/dashi-source-before.log" "$REPORT_DIR/dashi-source-after.log"
 if [[ "${GRH_P0_FRESH_REPLAY:-$REPLAY}" == 1 ]]; then
   printf 'LOCAL SOURCE ADMISSION + FRESH KERNEL REPLAY: %s Lean %s\n' "$SOURCE" "$VERSION"
 else

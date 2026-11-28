@@ -94,4 +94,48 @@ theorem seed_reduction_mod13 : seed (7 : ZMod 13) = seedMod13 := by
 /-- Uniform perturbation certificate used in the three real embeddings. -/
 theorem perturbation_size : (69 / 130001 : ℚ) < 1 / 1000 := by norm_num
 
+
+/-- Multiplication by theta on (1,theta,theta²), and its actual
+rational trace Gram matrix. -/
+def thetaMultiplication : Matrix (Fin 3) (Fin 3) ℚ :=
+  !![0,0,1;1,0,2;0,1,-1]
+
+def traceGram : Matrix (Fin 3) (Fin 3) ℚ :=
+  !![3,-1,5;-1,5,-4;5,-4,13]
+
+def traceDual : Matrix (Fin 3) (Fin 3) ℚ :=
+  !![1,-1/7,-3/7;-1/7,2/7,1/7;-3/7,1/7,2/7]
+
+theorem traceGram_dual :
+    traceGram * traceDual = 1 ∧ traceDual * traceGram = 1 := by
+  constructor <;> ext i j <;> fin_cases i <;> fin_cases j <;>
+    norm_num [traceGram, traceDual, Matrix.mul_apply, Fin.sum_univ_succ]
+
+theorem thetaMultiplication_cubic :
+    thetaMultiplication ^ 3 + thetaMultiplication ^ 2 -
+      2 • thetaMultiplication - 1 = 0 := by
+  decide
+
+def pf4 {F : Type*} [CommRing F] (M : Matrix (Fin 6) (Fin 6) F)
+    (i j k l : Fin 6) : F :=
+  M i j * M k l - M i k * M j l + M i l * M j k
+
+def pf6 {F : Type*} [CommRing F] (M : Matrix (Fin 6) (Fin 6) F) : F :=
+  M 0 1 * pf4 M 2 3 4 5 -
+  M 0 2 * pf4 M 1 3 4 5 +
+  M 0 3 * pf4 M 1 2 4 5 -
+  M 0 4 * pf4 M 1 2 3 5 +
+  M 0 5 * pf4 M 1 2 3 4
+
+/-- Signed Pfaffian of the actual scaled skew numerator at the good
+prime, not the determinant of the underlying unsigned carrier. -/
+theorem scaledPfaffian_mod13 :
+    pf6 ((130001 : ZMod 13) • baseSkew (7 : ZMod 13) + perturbation) = 12 := by
+  decide
+
+theorem scaledPfaffian_mod13_ne_zero :
+    pf6 ((130001 : ZMod 13) • baseSkew (7 : ZMod 13) + perturbation) ≠ 0 := by
+  rw [scaledPfaffian_mod13]
+  decide
+
 end DASHI.Hodge.CubicCM

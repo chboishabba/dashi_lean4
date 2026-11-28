@@ -3,6 +3,8 @@
 # This does not run the experimental sl-semantic-expansion crate, an NLP parser,
 # a second world-model constructor, or a JMD-based article meaning resolver.
 set -euo pipefail
+# Bound individual Lean invocations; do not bound the entire campaign.
+lake() { timeout --kill-after=5s "${ITIR_STEP_TIMEOUT:-90s}" lake "$@"; }
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 source_dir="${GWB_SOURCE_DIR:-$root/.dashi/gwb-source}"
@@ -22,6 +24,8 @@ trap 'rm -rf "$stage"' EXIT
 
 python3 -m unittest discover -s tests -p 'test_gwb_canonical_source_boundary.py' \
   2>&1 | tee "$stage/canonical-source-regression.log"
+
+python3 -m unittest discover -s tests -p 'test_gwb_reporting_reference.py'
 
 python3 tools/gwb_canonical_slr_acceptance.py \
   --source-dir "$source_dir" --output "$stage/original-source-inventory.json" \

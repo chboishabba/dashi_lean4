@@ -1,6 +1,6 @@
 import Integration.BishopVendoredArithmeticConcrete
 import Integration.BishopVendoredCompletionEquivalence
-import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopMachinSourceBinding
 import Mathlib.Analysis.Normed.Algebra.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Series
 import Mathlib.Analysis.SpecialFunctions.Complex.Arctan
@@ -12,7 +12,7 @@ The cross-language source receipt is setoid-valued: its limits are Bishop reals
 specified by convergence, not by raw representative identity.
 
 The evaluator/encoder equivalence therefore lets us build a canonical Lean
-inhabitant of the exact Round11MachinSourceBinding shape:
+inhabitant of the exact MachinSourceBinding shape:
 
 * expB x  := encode (Real.exp (eval x));
 * sinB x  := encode (Real.sin (eval x));
@@ -30,7 +30,7 @@ This closes mathematical inhabitance of the Lean binding shape.  It does not
 claim that generated replay of the named Agda declarations has been observed.
 -/
 
-namespace Integration.BishopRound11MachinCanonicalBinding
+namespace Integration.BishopMachinCanonicalBinding
 
 open Filter
 open scoped Topology BigOperators
@@ -42,7 +42,7 @@ open Integration.BishopVendoredCompletionEquivalence
 open Integration.BishopVendoredExponentialSemantics
 open Integration.BishopVendoredTrigSemantics
 open Integration.BishopVendoredMachinPiSemantics
-open Integration.BishopRound11MachinSourceBinding
+open Integration.BishopMachinSourceBinding
 
 noncomputable section
 
@@ -167,7 +167,7 @@ theorem canonicalAtan239_converges :
     atan239_partialSums_tendsto
 
 /-- Hypothesis-free inhabitant of the exact Lean-facing source-binding shape. -/
-def canonicalBinding : Round11MachinSourceBinding Arithmetic where
+def canonicalBinding : MachinSourceBinding Arithmetic where
   expB := canonicalExp
   sinB := canonicalSin
   cosB := canonicalCos
@@ -197,7 +197,7 @@ theorem limit_equiv_of_two_convergences
 /-- Every admissible binding's exponential value is the same Bishop real as the
 canonical one, pointwise in the input. -/
 theorem exp_equiv_canonical
-    (B : Round11MachinSourceBinding Arithmetic)
+    (B : MachinSourceBinding Arithmetic)
     (x : RegularRatReal) :
     Equiv (B.expB x) (canonicalBinding.expB x) :=
   limit_equiv_of_two_convergences
@@ -205,7 +205,7 @@ theorem exp_equiv_canonical
     (canonicalBinding.expConverges x)
 
 theorem sin_equiv_canonical
-    (B : Round11MachinSourceBinding Arithmetic)
+    (B : MachinSourceBinding Arithmetic)
     (x : RegularRatReal) :
     Equiv (B.sinB x) (canonicalBinding.sinB x) :=
   limit_equiv_of_two_convergences
@@ -213,7 +213,7 @@ theorem sin_equiv_canonical
     (canonicalBinding.sinConverges x)
 
 theorem cos_equiv_canonical
-    (B : Round11MachinSourceBinding Arithmetic)
+    (B : MachinSourceBinding Arithmetic)
     (x : RegularRatReal) :
     Equiv (B.cosB x) (canonicalBinding.cosB x) :=
   limit_equiv_of_two_convergences
@@ -221,14 +221,14 @@ theorem cos_equiv_canonical
     (canonicalBinding.cosConverges x)
 
 theorem atanOneFifth_equiv_canonical
-    (B : Round11MachinSourceBinding Arithmetic) :
+    (B : MachinSourceBinding Arithmetic) :
     Equiv B.atanOneFifth canonicalBinding.atanOneFifth :=
   limit_equiv_of_two_convergences
     B.atanOneFifthConverges
     canonicalBinding.atanOneFifthConverges
 
 theorem atan239_equiv_canonical
-    (B : Round11MachinSourceBinding Arithmetic) :
+    (B : MachinSourceBinding Arithmetic) :
     Equiv B.atanOneTwoHundredThirtyNinth
       canonicalBinding.atanOneTwoHundredThirtyNinth :=
   limit_equiv_of_two_convergences
@@ -236,7 +236,7 @@ theorem atan239_equiv_canonical
     canonicalBinding.atanOneTwoHundredThirtyNinthConverges
 
 structure BindingSetoidAgreement
-    (B : Round11MachinSourceBinding Arithmetic) : Prop where
+    (B : MachinSourceBinding Arithmetic) : Prop where
   exp :
     ∀ x, Equiv (B.expB x) (canonicalBinding.expB x)
   sin :
@@ -250,7 +250,7 @@ structure BindingSetoidAgreement
       canonicalBinding.atanOneTwoHundredThirtyNinth
 
 theorem everyBinding_agrees_setoid
-    (B : Round11MachinSourceBinding Arithmetic) :
+    (B : MachinSourceBinding Arithmetic) :
     BindingSetoidAgreement B where
   exp := exp_equiv_canonical B
   sin := sin_equiv_canonical B
@@ -278,4 +278,4 @@ def boundary : Boundary where
 
 end
 
-end Integration.BishopRound11MachinCanonicalBinding
+end Integration.BishopMachinCanonicalBinding

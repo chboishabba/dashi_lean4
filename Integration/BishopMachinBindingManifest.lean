@@ -1,9 +1,9 @@
-import Integration.BishopRound11MachinSourceBinding
+import Integration.BishopMachinSourceBinding
 import Integration.BishopVendoredArithmeticConcrete
-import Integration.BishopRound11MachinConcreteBinding
-import Integration.BishopRound11MachinCanonicalBinding
-import Integration.MoonshineEisensteinRound11CanonicalRouteB
-import Integration.MoonshineEisensteinRound11RouteB
+import Integration.BishopMachinConcreteBinding
+import Integration.BishopMachinCanonicalBinding
+import Integration.MoonshineEisensteinCanonicalRouteB
+import Integration.MoonshineEisensteinRouteB
 
 /-!
 # Content-addressed Agda/Lean route-B binding manifest
@@ -28,7 +28,7 @@ proved Lean binding structures. All downstream analytic consequences then
 compile through existing route-B theorems.
 -/
 
-namespace Integration.BishopRound11MachinBindingManifest
+namespace Integration.BishopMachinBindingManifest
 
 structure SourceBlob where
   path : String
@@ -99,33 +99,33 @@ deriving Repr, DecidableEq
 
 def expBinding : SourceTheoremBinding :=
   ⟨sourceInstanceBlob.path,
-   "round11MachinExpConverges",
-   "Integration.BishopRound11MachinSourceBinding",
-   "Round11MachinSourceBinding.expConverges"⟩
+   "machinExpConverges",
+   "Integration.BishopMachinSourceBinding",
+   "MachinSourceBinding.expConverges"⟩
 
 def sineBinding : SourceTheoremBinding :=
   ⟨sourceInstanceBlob.path,
-   "round11MachinSineConverges",
-   "Integration.BishopRound11MachinSourceBinding",
-   "Round11MachinSourceBinding.sinConverges"⟩
+   "machinSineConverges",
+   "Integration.BishopMachinSourceBinding",
+   "MachinSourceBinding.sinConverges"⟩
 
 def cosineBinding : SourceTheoremBinding :=
   ⟨sourceInstanceBlob.path,
-   "round11MachinCosineConverges",
-   "Integration.BishopRound11MachinSourceBinding",
-   "Round11MachinSourceBinding.cosConverges"⟩
+   "machinCosineConverges",
+   "Integration.BishopMachinSourceBinding",
+   "MachinSourceBinding.cosConverges"⟩
 
 def atanFifthBinding : SourceTheoremBinding :=
   ⟨sourceInstanceBlob.path,
-   "round11MachinAtanOneFifthConverges",
-   "Integration.BishopRound11MachinSourceBinding",
-   "Round11MachinSourceBinding.atanOneFifthConverges"⟩
+   "machinAtanOneFifthConverges",
+   "Integration.BishopMachinSourceBinding",
+   "MachinSourceBinding.atanOneFifthConverges"⟩
 
 def atan239Binding : SourceTheoremBinding :=
   ⟨sourceInstanceBlob.path,
-   "round11MachinAtanOneTwoHundredThirtyNinthConverges",
-   "Integration.BishopRound11MachinSourceBinding",
-   "Round11MachinSourceBinding.atanOneTwoHundredThirtyNinthConverges"⟩
+   "machinAtanOneTwoHundredThirtyNinthConverges",
+   "Integration.BishopMachinSourceBinding",
+   "MachinSourceBinding.atanOneTwoHundredThirtyNinthConverges"⟩
 
 def machinPiBinding : SourceTheoremBinding :=
   ⟨machinConstructionBlob.path,
@@ -168,7 +168,7 @@ structure ManifestBoundary where
   primitiveExtractionCompilerAlreadyOwned : Bool
   endToEndEisensteinCompilerAlreadyOwned : Bool
   concretePinnedArithmeticMirrorOwned : Bool
-  round11BindingSpecializedToPinnedArithmetic : Bool
+  bindingSpecializedToPinnedArithmetic : Bool
   canonicalLeanBindingInhabited : Bool
   everyAdmissibleBindingSetoidEquivalentToCanonical : Bool
   hypothesisFreeCanonicalRouteBConstructed : Bool
@@ -189,7 +189,7 @@ def manifestBoundary : ManifestBoundary where
   primitiveExtractionCompilerAlreadyOwned := true
   endToEndEisensteinCompilerAlreadyOwned := true
   concretePinnedArithmeticMirrorOwned := true
-  round11BindingSpecializedToPinnedArithmetic := true
+  bindingSpecializedToPinnedArithmetic := true
   canonicalLeanBindingInhabited := true
   everyAdmissibleBindingSetoidEquivalentToCanonical := true
   hypothesisFreeCanonicalRouteBConstructed := true
@@ -202,4 +202,4 @@ def manifestBoundary : ManifestBoundary where
   generatedAgdaReplayObserved := false
   leanKernelReceiptObserved := false
 
-end Integration.BishopRound11MachinBindingManifest
+end Integration.BishopMachinBindingManifest

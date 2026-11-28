@@ -1,7 +1,395 @@
 # GWB → JMD → SLR → Lean/Agda automatic proof programme
-Updated: 2026-11-20 · execution branch: dashi_lean4 PR #112
 
-**Current controlling plan:** see C4.09 canonical next cut at the end of this document; earlier status tables are historical checkpoints.
+
+## 2026-11-26 — bounded article consumer and JMD property vertical cut
+
+Implementation committed, local acceptance pending. Reuse original SLR/ITIR article projection and M12 compiler, not experimental semantic expansion. `GwbCanonicalSourceProof.reportingLicence` factors the bounded reporting-dependency consumer through unchanged original source observations even when its extra interpretation coordinate varies; it does not assert complete production semantic coverage. Canonical publisher checks all six reporting-lemma answers and independently replays the actual sentence-148 stated/stimulate/create specimen. Scoped negation remains independent at report, complement and content.
+
+SLR #78 (8796320f3230) emits ordinal-based `reporting_clauses` in native checked M12. Lean `DbSourceProducer` independently reconstructs and rejects mismatch/missing data on fresh native handoffs; saved legacy receipts explicitly do not pay the new parity. Original JMD importer and `PKB.supportsB_iff` are reused in `checkedOfficeClaimAndKB`: a narrowly specified exact lead rule Q207/P39/Q11696 is checked against independently retained EntityData, with separate revision/hash, no qualifier or historical truth promotion. `article-office-check` and max-cut runner provide deterministic receipt replay and swapped-entity/missing-P39 rejection.
+
+Run `bash scripts/run_gwb_maxcut_acceptance.sh --full` on the pinned local article fixture; provide `GWB_Q207_ENTITY_JSON` and `GWB_Q11696_ENTITY_JSON` for the office test, and fresh `GWB_DB_M12_JSON` / `GWB_DB_M12_LITERAL` for M12 parity. `--strict` remains fail-closed. The canonical acceptance is not the legacy Rust diagnostic suite. No kernel/native runtime result is claimed here. Full governed identity, production live semantic fibre, reviewed event/time joins, reversible DB Level-3, automatic article elaboration across all 51 QIDs, and ITIR user stories remain unpaid; the exact controlled-language office specimen is not a general prose translator.
+
+
+## 25 November — native current-evidence authority and exact relation reference cut
+
+SLR production #78 head [6058659](https://github.com/chboishabba/slr/commit/6058659bd96c7f892fb6e96c146d3a3f0430b327); Lean golden [ce89802](https://github.com/chboishabba/dashi_lean4/commit/ce8980205fbeaee3c4f093e2562b7853f888c5a2). Reuse the Agda delta/identity owners (DeltaNativePNFDreamFlowExact, ProofRelevantIdentityFibres, IdentityEvidenceProduction) and original SensibLaw m086/m095/m110. No prototype extension. Native H3 actual transport/head-morphology/original-binding-member atoms now have revisioned current validity; withdrawal changes cumulative H3/H6/H9 evidence without fabricating semantic refutation. The durable nonmonotone authority obligation cannot disappear on empty replay; original consumer stop and derived proof/sufficiency flags are suspended until owner revalidation. Cache additionally checks canonical source file bytes. Native relation root references reconstructed using original typed canonical bytes and atom allocation; original complete bundle and role-factor identity not independently compared. v8 includes rollback-only actual H3 control and source-byte cache guard. No Rust/PG/Lean/Agda acceptance run in this environment. The existing v7 accepted baseline is unchanged. P0 semantic coverage, original stale-proof revalidation and governed focus identity remain open. Do not promote Level-3, QID or truth from candidate replay.
+
+Updated: 2026-11-24 · execution branch: dashi_lean4 PR #112
+
+**Current controlling plan:** 24 November P0 roadmap linked directly below. All older gate tables are retained historical receipts.
+
+
+**24 November 2026 controlling P0:** 
+[docs/gwb_p0_endpoint_roadmap_20261124.md](gwb_p0_endpoint_roadmap_20261124.md)
+supersedes the historical C1–C6/C4.09–C4.12/M1–M3 queues below.
+The latest operator **run-q5AjcB6o PASSED** the source-local
+`he → Bush` policy answer (two original supporting sentences),
+Lean policy check and reported 14/14 adversarial controls.
+S29 remains Pending; this is not needed for linguistic inference.
+Actual proof-relevant typed identity, Level-3, Q23505 and JMD
+property proofs remain OPEN. The newest artifacts have not been
+pushed, so this is operator-reported acceptance; do not claim
+independent artifact audit.
+
+**P0-B implementation pushed but pending local acceptance:**
+new original SLR `native_source_local_consumer.rs`
+and CLI `answer/replay`, DASHI independent consumer source-ledger
+checks, `GwbSourceLocalConsumer.lean`, and the **delta-only**
+`scripts/run_gwb_source_consumer_weld.sh` using the existing
+`run-q5AjcB6o` input. Its result cannot substitute for
+the original SensibLaw numeric-PNF typed-demand/witness/Level-3
+contracts: the next hard phase is WELD-01–05 together, not
+more C4 inspectors.
+
+---
+
+## Historical executive roadmap — 23 November 2026
+
+### 24 November 2026 P0 correction — source-local derivation is not S29 human payment
+
+The operator reports the previous formal boundary packet `run-fmUVYwIY`
+passed 7/7 source-store, 6/6 frontier, 1/1 CLI,
+30/30 ledger, 9/9 binding tests, both Lean markers and 14/14
+adversarial controls. These artifacts have not been committed,
+so this is **operator-reported** acceptance, not an independent
+repo artifact audit. The earlier published first run
+`run-PELWk2Yh` does support the exact source analysis:
+one source-matching parser run, 27 observations/25 spans, two
+distinct sentences with `Bush` PERSON mentions and **no
+competing named PERSON** before the focus `he`.
+
+Critical correction: original SLR **never chose the nearest name as
+a resolver**. C4.10 accepted an explicitly selected candidate
+source span; SLR M1 did not resolve, only listed parser
+observations. Original SensibLaw typed binding sorts accessible
+compatible factors by token distance ONLY before its 64-cap
+truncation; this can hide candidates and must not be a
+completeness witness, but does not adjudicate coreference.
+Also, SLR's existing `ResolutionAuthority` explicitly includes
+`DeterministicReviewedPolicy` alongside `HumanReview`.
+Our previous Lean and roadmap *overconstrained* all positive
+local identity to an S29 Accepted human action. That was a
+formal design error.
+
+P0 real endpoint repair is now source-written:
+**SLR `native_antecedent_review derive`** computes a
+positive, source-local named-topic interpretation from the
+original parser PERSON group, exactly checked source revision,
+original focus PRON/morphology, repeated support in distinct
+sentences, no additional named PERSON or quote barrier.
+Its versioned policy returns `Bush` when satisfied and
+returns ambiguity/incomplete if not; **S29 Pending is allowed
+for linguistic inference**. It does not turn the result into
+historical truth, Q23505, Q207 or universal semantic completeness.
+DASHI independently recomputes the PERSON-group evidence in
+Python and `GwbNamedTopicPolicy.lean`, and the revised
+joint ledger distinguishes `DETERMINISTIC_POLICY_SOURCE_LOCAL`
+from `EXPLICIT_UNRESOLVED`. A distinct governed policy
+admission remains necessary if claiming institutionally admitted
+source identity, but this is NOT an obstruction to computing
+and reporting the source-local reading. Formal
+`GwbCoreferenceFormalRepair.lean` now admits both human-S29
+and deterministic-reviewed-policy authority constructors.
+
+See `docs/gwb_named_topic_positive_semantic_path_20261124.md`
+for the real original-source argument, scope, negative controls,
+code paths and one updated local acceptance command.
+**New positive policy code is staged and not operator-tested.**
+
+After this run P0 is actual source-local policy evidence,
+owner-checked deterministic semantic admission and reversible
+consumer use, followed by independently pinned Q23505 and a
+real reviewed JMD property statement. Keep book and Q207
+Wikipedia source lanes distinct. Do not add C4.xx micro-gates,
+do not force a human S29 click for normal deterministic
+discourse interpretation and do not claim world truth from a
+coreference result.
+
+
+
+
+### Current formal repair (source-written, kernel run pending)
+
+The P0 semantic proof repair is now
+`GwbCoreferenceFormalRepair.lean`, documented in
+`docs/gwb_coreference_formal_repair_20261123.md`. It explicitly proves
+a known omitted *live* binder candidate refutes coverage,
+the current S29 Pending state cannot pay governed identity,
+and complete **typed** live scope plus reviewed actor-class
+dispositions plus **separate** semantic authority imply a unique
+local referent (not a name/span equality). It also proves consumer
+invariance, rival counterexample and Level-3 retraction preserving
+Level-1 source. All theorems are conditional on actual source/review
+premises, not fabricated from JSON. The original binder's 64-member
+cap residual is now preserved in the optional same-book crosswalk
+and verified in the joint ledger with negative tests.
+
+The original M1-M3 operator script now kernel-checks this module and
+emits `GWB_COREFERENCE_CONDITIONAL_REPAIR_KERNEL_OK` on success.
+The code is **not yet locally Lean compiled/tested** in this
+connector environment and does **not** admit a referent or QID.
+P0 positive payment remains full original exact-book typed factor
+graph, source-scope coverage, reviewed competing actors, genuine
+S29 decision and owner-checked semantic receipt. Then, and only then,
+pay the source-local consumer and reversible substitution.
+
+
+
+### 2026-11-23 accepted real M1–M3 bounded run — subsequent analysis
+
+The operator published the exact real run in commit `1a639892849db7df37fecb24a697f03a263d0472`;
+`.dashi/gwb-relation/m1-m3-maxcut/run-PELWk2Yh/`.
+Detailed assistant analysis (actual seven source sentences plus all 27
+parser nominations): `docs/gwb_m1_m3_real_run_analysis_20261123.md`.
+
+One original complete parser run matched 5/5 before/focus regions.
+**27 parser observations / 25 exact source spans**: 13 NOUN,
+6 PROPN, 4 PRON, 4 NER (2 PERSON, 1 ORG, 1 ORDINAL);
+the two `Bush` spans at 4061–4065 and 4310–4314 each occur
+in both token and PERSON-entity channels. Seven original sentences
+19–25 were inspected, but only five (19–23) were part of the
+pre-focus parser frontier. Lean emitted
+`GWB_NATIVE_FRONTIER_BOUNDARY_KERNEL_OK` and the four audited
+theorems reported no axioms.
+
+Discourse supports **Bush@19 → this amiable fellow@21 →
+Bush@22 → he@23 → him@23** as the strong candidate chain.
+The post-focus `him` is at 4630–4633, `Ronald Reagan`
+at 4637–4650, and `1980` at 4654–4658.
+Ronald Reagan is a separate source-text actor named *after*
+the focus, not a preceding antecedent candidate. Neither the
+source discussion nor book title creates a GHWB/Q23505 admission.
+
+**Unpaid in actual ledger**:
+`exact_original_typed_binding_source_crosswalk=false`,
+S29 `Pending` with zero review commands,
+`answer_kind=EXPLICIT_UNRESOLVED` and `answer_value=null`,
+source-local identity false, Q23505 false,
+Wikipedia Q207 property alignment false, full semantic reading
+coverage false. `minimum_source_field_kernel_checked_in_this_packet=false`
+means the previously accepted independent Q207 minimal check was
+not rerun in this packet, not that it failed.
+M1 source evidence accepted; M1 typed binding/review OPEN,
+M2 positive consumer OPEN, M3 property alignment OPEN.
+Do not advertise "M1–M3 completed" as end-to-end theorem closure.
+
+**Controlling P0:** run the *original typed binding* accessibility/
+morphology/reference-kind candidate construction on an exact
+full-book factor/annotation graph; use actual source role and
+discourse evidence to assemble one governed S29 review dossier
+with the Bush/fellow/he/him chain, rival exclusions and quote scope;
+then pay independently reviewed identity, reversible Level-3
+transport and a licensed consumer reading *only if* the evidence
+supports them. Otherwise retain the correctly checked unresolved
+answer. This is one substantive semantic packet, not another
+C4.xx read-only wrapper.
+
+
+
+### Implementation packet now source-written — M1/M2 consumer boundary + optional original M3
+
+**Source-written on PR #112, not yet operator-run:** the integrated
+`scripts/run_gwb_native_maxcut_packet.sh` drives real SLR
+PostgreSQL `inspect`, original parser-run discovery and exact POS/
+morph/NER source nominations, 24+ new Python fixture contracts,
+14 real-input adversarial checks, and targeted
+`GwbNativeAntecedentMaxCut.lean` source/retraction/consumer-boundary
+proofs. Original SLR PR #78 adds
+`native_antecedent_frontier.rs`, exact original five-region parser
+coverage and `native-antecedent-review runs/frontier` CLI. The
+optional original SensibLaw `compact_binding_artifacts` weld executes
+the **original** typed binder on *exact same-book* PNF+annotation
+artifacts; cannot reuse a different GWB Wikipedia/article or book
+manifestation. Additional negative tests check the factor crosswalk.
+
+One command (assuming current PR branches):
+```sh
+SLR_ROOT=/path/to/slr DATABASE_URL="$DATABASE_URL" \
+  bash scripts/run_gwb_native_maxcut_packet.sh
+```
+Optional original type producer: `SENSIBLAW_ROOT` and
+`GWB_ORIGINAL_BINDING_ARTIFACTS`; optional original Q207 P5–P10
+conditional proof lane: `GWB_RUN_WIKI_P10=1`. Every run gets a new
+project-local `.dashi/gwb-relation/m1-m3-maxcut/run-XXXXXXXX/`
+directory and preserves existing untracked data.
+
+The runner's successful **bounded result** is a real original-source
+parser candidate frontier, reviewed-identity **UNPAID** source
+answer, separate Q207 evidence lane and a review worksheet—not
+`he=Bush` or `Q23505`. Only exact source and bounded reader
+conditions are kernel checked. Full typed accessibility, an
+authorized original S29 human decision, separate admitted identity
+and Level-3 retraction, consumer-live coverage, Q23505 and reviewed
+JMD article-property alignment remain unimplemented/unpaid. Do not
+declare the programme complete on this marker. See
+`docs/gwb_native_semantic_maxcut_operator_20261123.md`.
+
+
+
+**Decision:** stop C4.xx inspection-by-inspection work. Ship **one
+source-to-checked-answer vertical slice per independent source lane**,
+using existing production owners. All dated sections below are retained
+as historical receipts, not as the controlling task queue.
+
+### Exact acceptance now paid
+
+| Cut | Evidence accepted | Still unpaid |
+| --- | --- | --- |
+| C1/C2 pinned 643-sentence Wikipedia source and source query surface | 1,468 source anchors, 760 predicate queries, targeted Lean acceptance already reported in this programme | No claim that candidate readings are all semantic interpretations |
+| C3 native M12/S28 provenance | Original parser/source/statement machinery, checked native consumers and exact coordinate audit exist; partial C3 trace compiled | Live coherent M12+S28 **same-source production batch** with reviewed ancestry, event/time source statements and negative controls; do not mix source hashes |
+| C4.09a–C4.12 book pronoun | C4.09 context read PASS; C4.10 Bush [4310,4314)→he [4534,4536) exact original Unicode geometry PASS (14/14); C4.11 source-store 4/4, CLI 1/1 and S29 PostgreSQL Pending PASS; C4.12 source-store **7/7**, CLI **1/1**, PostgreSQL inspect **PASS**, original sentences **19–25** reopened on SLR PR #78 commit `1c40100` | Reviewer judgment, accessible alternatives, typed unique antecedent proof, local identity admission/retraction |
+| P10 minimum Q207 JMD | Lean lightweight Q207 source-field check `GWB_Q207_MINIMAL_ACCEPTED` PASS; independent Q207 EntityData verified | Property/KB theorem and semantic article alignment, not simply label/sitelink equality |
+| C5/C6 consumers/formal | Original golden finite-consumer, SourceQueryLicence, JMD KB proof and formal-demand/reopen owners already exist | One *actual evaluated* licensed source answer, reviewed source ↔ KB correspondence, per-demand exact checker/payment and residual-ledger closure |
+
+The full programme is **not complete**. A Rust test, a pending S29
+item, a candidate coordinate check, a QID label test and an already
+compiled *conditional* Lean theorem are distinct, non-interchangeable
+payments.
+
+S29 persisted item (still **Pending**, no human command):
+`review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1`.
+C4.12 local inspect passed with no identity, QID, or claim-truth promotion.
+Do not repeat C4.09/C4.10/C4.11/C4.12 as outstanding diagnostics.
+
+### Critical scope correction: two distinct source lanes
+
+**Lane B (book / GHWB hypothesis)**: the native C4.10 `he` sentence
+comes from a source whose work-level match is *41: Inside the Presidency
+of George H. W. Bush* (2014), with original SLR document hash
+`7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30`.
+The exact source predecessor nominates `Bush`; the title, discourse
+and source-work evidence **suggest** George H. W. Bush/Q23505, but do
+not prove unique antecedence, exact work manifestation equivalence or
+external QID identity. The original 4+2 sentences now reopened and
+must be used for *semantic accessibility and competing referents*.
+
+**Lane W (Wikipedia / GWB Q207)**: the distinct pinned 643-sentence
+article `enwiki-revid:1385850169`, original digest
+`a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`,
+concerns George W. Bush / Q207. Its independently passing minimal
+source-field checker does not resolve the book's `he` or establish
+a cross-source assertion. Do not substitute Q207 for Q23505, and do
+not attach a GHWB theorem to the GWB article without a separately
+reviewed correspondence. Original Wikipedia, book, multi-document
+41k-sentence inventory and 51-QID world are *four evidence scopes*.
+
+### Next P0 work is one integrated **M1–M3 maximum-cut packet**, not serial micro-gates
+
+**M1. Book source-local semantic completion (SLR owns)**
+
+Use C4.12 native PostgreSQL inspect and **existing**
+SensibLaw `binding_candidate_sets.py` typed/accessibility/morphology
+semantics as the reference, rather than writing a second NLP parser
+or assuming surname proximity resolves identity. Enumerate the actual
+book discourse candidates from sentences 19–25 and relevant accessible
+region. For the focus `he`, record each candidate's exact original
+mention/span/factor refs; same document+revision; discourse access,
+quotation/speaker scope and compatibility; explicit exclusions and
+unresolved alternatives. `Bush` is an accepted *candidate span* only.
+If there is one independently justified referent, submit the **real**
+review command through original S29 and create a *separate* source-local
+antecedent/identity-resolution witness with reviewed authority,
+policy, resolver, candidate-set and accessibility refs. If the witness
+is insufficient, retain `Narrowed` or `CandidateSet`; it is a
+successful unresolved result, not licence to invent certainty.
+
+Exact S29 `Accept` is **not** semantic admission. Preserve Level-1
+source premise, separately reversible Level-3 identity substitution,
+and a retraction/replay that restores the original interpretation.
+Reopen evidence via native store; no untracked JSON assumed authority.
+Acceptance includes singular unique **positive only if evidence
+supports it**, multi-candidate ambiguity, expletive/plural,
+homonymous Bush, wrong statement/source, and forged S29 receipt.
+No fabricated reviewer action is permitted.
+
+**M2. Complete one licensed book query and one independently anchored
+world-check (SLR + DASHI + JMD).**
+
+On actual *paid* local identity (or explicit unresolved outcome),
+evaluate the concrete query **"To whom does 'he' in sentence 23
+refer?"** as a source-relative answer with exact original span,
+evidence lineage, reversible source back-reference and
+`SourceQueryLicence`/finite-consumer correctness; prove
+consumer-relative invariance over all supported compatible readings,
+or retain unresolved if it is not invariant. Avoid claiming global
+semantic completeness from finite enumeration.
+
+Separately, if source-relative identity is admitted and the document
+actor is independently identified, fetch and pin the actual GHWB
+EntityData `Q23505` revision, source/sitelink/external-authority
+witness and one JMD KB proposition. Check the original JMD property
+proof with Lean kernel; record property supported/not-supported as a
+KB-in-snapshot result, not as historical truth. Q207 is a mandatory
+negative mismatch control for this *book* pronoun. If no independent
+world identity evidence exists, keep a successful *local* answer and
+explicit `external_qid=UNPAID` residual rather than falsely closing.
+
+**M3. Independently close one Wikipedia article ↔ JMD property
+vertical slice (C3 + C5 + C6).**
+
+For the pinned 643-sentence Q207 article, bind one real source
+statement/typed PNF observation to native reviewed M12/S28
+provenance (only where actually relevant), event/time semantics where
+used, an explicitly reviewed article proposition ↔ JMD item/property
+alignment, a separately checked KB support theorem and a
+consumer-scoped answer. Require distinct source statement,
+proposition, event occurrence, temporal assertion and world-KB
+claims. Use original SLR source-bound admission, original JMD importer
+and PKB/checker and original formal demand/obligation/statement-digest
+payment **only if that demand actually exists**. An exact checker
+receipt must match its named obligation; generic "Lean passed" does not
+pay an unrelated source proposition.
+
+Perform positive/negative receipts together: wrong QID, changed
+Wikidata revision/property, mismatched article and book source
+hash, forged claim truth, wrong event/time attachment, missing
+source ancestry, nonexhaustive consumer, and source-independent
+cross-work surname match must remain rejected.
+
+### After M1–M3: one bounded batch, not 3,078 manual gate iterations
+
+Port/consume the original typed anaphor candidate and reviewed
+semantics into production SLR using the same source coordinate and
+witness contracts. Run a measured batch across the previously
+observed **29,043 mentions / 3,078 pronoun-like candidates**,
+reporting source-scoped candidate, uniquely reviewed, ambiguous,
+unresolved, reversible and externally corroborated counts. These
+are existing inventory counts, not promised production identity
+success counts. The historical 51 QIDs are a seed, not a proof of
+closed-world exhaustiveness. Reopen only actual changed evidence/
+dependent fibres through the existing SLR C6/formal bridge. Scale
+the answer certificate by **consumer-relevant completeness**, not
+"every reading of every document".
+
+### Non-goals, ownership and finish line
+
+- No further C4.xx-only exploratory tools until M1–M3 have an
+  actual positive or explicitly unresolved end-to-end receipt.
+- SLR Rust/PostgreSQL: original source/PNF/S29, candidate sets,
+  governed semantic resolutions and reversible consumption.
+- SensibLaw Python: original typed-binding/Level-3 *reference*
+  contracts, not a new native DB authority.
+- DASHI Lean/Agda: consumer-relative/source proof and executable
+  nonpromotion/negative controls; no arbitrary Prop hypothesis
+  represented as live evidence.
+- JMD meta-introspector: original EntityData import, KB property
+  proof and per-QID snapshot checks; **not** historical truth or
+  source-language reading.
+- Workflow: locally checked native Rust + PostgreSQL + pinned
+  Lean 4.28, targeted 90s/checkpointed paths, no GitHub CI,
+  TAR or archive rebuild, no automatic S29 reviewer impersonation,
+  no cleanup of unrelated untracked artifacts.
+
+**Cut closure criterion:** one real original-source pronoun answer
+(or traceable unresolved answer) with governed local review and
+consumer-relative Lean correctness; one independently checked JMD
+property answer with explicit alignment or gap; one mismatch-negative
+receipt; exact bidirectional original↔canonical coordinates and
+retraction/reopen ledger; a single reproducible joint acceptance
+manifest recording each paid and unpaid obligation. This is
+*one consumer-scope success*, **not** full historical/world completeness.
+
+---
 
 ## Acceptance objective
 
@@ -1035,3 +1423,502 @@ owner actually executes and exports a checked receipt. Keep no-TAR,
 project-directory-only, local verification, pinned Lean and no remote CI
 rules. This update is roadmap-only; no adapter, DB write, semantic
 admission, new kernel run or proof closure claimed.
+
+
+## 2026-11-23 — C4.09a source-bound carrier implementation (exact-head source audit)
+
+Implementation on PR #112:
+- `tools/gwb_native_binding_adapter.py`: read-only repeatable-read
+  capture of **one named native mention** through exact parser run,
+  source revision, original source statement, parser job, M12 batch and
+  candidate product; reopens all original region parser tokens (POS,
+  morphology, dependency head/label, absolute offsets), parser NER,
+  PNF product factors and L2 entity factors.
+- Exact checks: original region literal matches start/end coordinates,
+  mention and token surfaces/positions match that literal, monotonic
+  complete non-whitespace token coverage, local PNF factor offsets
+  return to original absolute region, unique candidate-ref rebuild,
+  dependency heads exist, all entities in source bounds, no entity
+  identity/semantic authority promotion.
+- Optional `--owner-artifacts` and `--sensiblaw-root` invoke **the
+  original** SensibLaw
+  `src.pnf.reference_binding.build_set_valued_binding_artifacts`
+  only after verifying an **externally owner-produced** graph:
+  exact same region text, same document reference, exact one-to-one
+  parser span coordinates, and owner semantic factor types. It then
+  transports the original native POS, dependency, lemma, morphology and
+  dependency-head observations into the owner token-annotation layer;
+  conflicting existing owner annotations fail closed. Original semantic
+  factors and reductions are not synthesized or rewritten. The
+  adapter does NOT manufacture semantic factor labels, pronoun
+  alternatives, identity decisions, QIDs or truth. It refuses to bind
+  if native parser_product_key is NULL (SLR #78 strict gate).
+- `tests/test_gwb_native_binding_adapter.py`: ten source-written
+  synthetic controls covering positive region/owner alignment,
+  foreign run, dependency head, entity surface, token gap, promoted
+  mention, missing strict parser product identity, wrong document,
+  shifted owner parser coordinate, unauthorised factor typing,
+  native syntax-annotation transfer and pre-existing annotation conflict.
+  This connector environment has **not** run Python tests or live DB.
+- Use explicit `--mention-ref` from the verified native audit:
+  ```sh
+  DATABASE_URL="$DATABASE_URL" python3 tools/gwb_native_binding_adapter.py \
+    --run-ref 'parser-run:sha256:56ea4c0a05c3beb97f05dfe447570c7d753f15d8b8bf76cb86145ca41f8f2d63' \
+    --revision-ref 'source-revision:sha256:8dd2afe20c7cfb36bc1372f764b7683962e6acdfac6fe0bfa47554812d4eab00' \
+    --mention-ref 'ACTUAL_NATIVE_MENTION_REF' \
+    --output .dashi/gwb-relation/native-selected-binding-carrier-v1.json
+  python3 -m unittest discover -s tests -p 'test_gwb_native_binding_adapter.py' -v
+  ```
+  Optionally add `--owner-artifacts /path/to/existing-owner-artifacts.json
+  --sensiblaw-root /path/to/SensibLaw` only after acquiring a genuinely
+  compatible original owner artifact. These are *not* synthesized by
+  this adapter.
+- **Paid at source level:** one-region read-only native carrier,
+  exact coordinate validation, native syntax-annotation transport,
+  optional invocation wiring and fail-closed contract controls.
+- **Unpaid:** local Python tests, live DB one-mention capture, original
+  owner-produced semantic-factor correspondence, positive
+  `build_set_valued_binding_artifacts` candidate output on the same
+  original source, `resolved_unique` witness/admission, external QID
+  and JMD Lean proof. The presence of an optional call does not
+  establish these outcomes. No legacy identity benchmark/second parser
+  is used. No TAR/CI/schema mutation was requested or made.
+- Next maximum cut: local synthetic checks -> native one-mention read
+  -> real same-region SensibLaw semantic artifacts and binder call ->
+  original admitted document identity -> independently sourced QID ->
+  JMD property proof. On NULL parser_product_key, preserve explicit
+  unresolved legacy record rather than fabricate a product key.
+
+
+## 2026-11-23 — C4.09a native capture accepted; dual-gate outcome
+
+**Operator acceptance at `774a52c5b95fe2b6c1364260e8dffd3e60c175cc`.**
+The twelve `tests/test_gwb_native_binding_adapter.py` contract tests
+passed locally (12/12). A genuine, read-only native
+`tools/gwb_native_binding_adapter.py` capture passed exact
+source/parser/factor checks, committed as
+`.dashi/gwb-relation/native-he-binding-carrier-v1.json`.
+The source is the **native** document
+`document:sha256:7ff2ec8ffe6243871ad682e7d7060fe3b84025fb15dbe229154d7aa7f6a72b30`,
+revision A `8dd2afe2…`, region sentence 23,
+absolute 4526–4693, focus `he` 4534–4536,
+31 parser tokens, two NER rows, and a non-null parser product key.
+Observed sentence begins "Perhaps he was not really all that
+outstandingly successful" and mentions Ronald Reagan and the vice
+presidency. **It is not an admitted antecedent or Q207 witness.**
+The carrier retains `binding_admission=NOT_TESTED`,
+`external_qid=NOT_TESTED` and no authority promotion.
+
+The operator independently checked Q207 EntityData ID, label
+`George W. Bush`, enwiki sitelink `George W. Bush`,
+and pinned article digest
+`a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233`.
+This is a **separate article-source and external-identity check**,
+not evidence that the native `he` is Q207 or even refers to the
+same article/revision. Q207 is George W. Bush; distinguish
+Q23505 George H. W. Bush. Exact cross-source identity needs
+reviewed original semantic evidence.
+
+### C4.09 gate table, controlling
+
+| Gate | Status on 2026-11-23 | Next source-required payment |
+|---|---|---|
+| C4.09a.1 adapter contract | **12/12 operator PASS** | Preserve negative controls and source provenance |
+| C4.09a.2 native carrier | **Original live capture PASS** | Preserve exact run, revision, parser product and absolute source offsets |
+| C4.09a.3 original-owner binder | **BLOCKED (owner graph absent)** | Reuse native SLR semantic reductions; materialize matching SensibLaw owner-produced factors, graph and annotation layer, then call `build_set_valued_binding_artifacts` |
+| C4.09b / P5 admitted identity | **NOT TESTED** | Original `resolved_unique` demand, admitted witness and reversible Level-3 substitution; do not infer from a lone nearby person |
+| C4.09c article/QID source check | **Independent Q207 checks PASS (operator)** | Preserve exact Q207 revision/hash and original article source; reject root-topic-to-mention inference |
+| C4.09c cross-source mention → QID | **OPEN** | Evidence linking admitted local referent to independently pinned QID with right-person and ambiguity controls |
+| P6–P9 | **OPEN** | Same-object M12/S28 review, semantic event/time/property alignment |
+| P10 Lean | **NO KERNEL MARKER** | Reuse cached JMD prerequisites, compile smallest independently checked QID/sitelink/property target, then composition; do not evaluate full article projection first |
+
+The attempted Lean Q207 runner was stopped after eight minutes
+while evaluating a broad full-source projection, with **no Lean kernel
+success marker**. Neither a successful Lean check nor a theorem failure
+may be inferred. Separate fast QID/sitelink JSON validation from
+kernel compilation. Use existing targeted prerequisite script
+`scripts/build_gwb_jmd_prerequisites.sh` to maintain reusable
+`.olean` dependencies; only run it if caches are missing/stale,
+without `lake build wikidata` or remote CI. Verify a minimal existing
+JMD QID lemma with a distinct exact-head Lean marker before coupling
+the full GWB article reader or the native identity bridge.
+Timeout/cancellation preserves open status. Record elapsed effort,
+module/cached dependency identity, and exit code in an inspection
+receipt before claiming payment.
+
+**Prior art remains active:** SensibLaw migrations 075–080 and
+`src/pnf/reference_binding.py` are the identity owners; SLR #78
+owns native parser reopening, #24 reviewed world identity and
+#27 QID ontology closure; JMD `Cli.Import` and `PropertyEngine`
+own the downstream proof. Do not create a new resolver, reparse the
+corpus, write identity rows from lexical candidates, or run the legacy
+numeric identity benchmark against the unrelated native source.
+No new schema, semantic admission or proof outcome was established
+by this checkpoint.
+
+## 2026-11-23 — C4.09b native identity proof inspection / P10 minimum JMD target
+
+Commits on open main-based PR #112:
+- 7012521cc42c: tools/gwb_native_identity_gate.py
+- abcd12e3debc: tests/test_gwb_native_identity_gate.py
+- 4e17d2434655 + f0b4b89f646f: tools/GwbQ207MinimalRunner.lean and scripts/run_gwb_q207_minimal.sh
+- 0e63e27ac5a4 + 8b27535fab08: require original migration-077 unique token-to-PNF-object anchor and test its negative cases.
+
+C4.09b now has a READ-ONLY, REPEATABLE READ inspection implementation. It
+consumes the actual original native carrier, an original-owner semantic graph,
+an independently exported exact numeric owner crosswalk and original SensibLaw
+PostgreSQL proof objects. Original native token/region alignment is checked
+through tools/gwb_native_binding_adapter.py. The new gate uses the original
+owner factor metadata.atom_span_ref or licensing.mentions/metadata.mention_ref,
+not any invented token-index metadata field.
+
+It then requires ALL of the following persisted owner evidence:
+1. Exact run/document/region/mention coordinates and owner-graph ref.
+2. A unique execution.semantic_pnf_parser_object_anchor from SensibLaw 077,
+   with the focus token ordinal, source characters, surface, PRON POS,
+   run and document. Same-sentence membership alone fails.
+3. The exact Level-1 hyperedge and original source object.
+4. A singular resolved_unique frontier demand, outcome_state=2,
+   candidate_count=1, selected_target_kind=1.
+5. Current authority_class=2 identity projection anchored to that target.
+6. Admitted witness of kind=5 (anaphor_demand_resolution),
+   candidate_count=1, admission_state=2 and projection membership.
+7. Original identity-substitution:v1 Level-3 derivation on that same
+   Level-1 premise, retaining the same admitted witness and entity.
+
+No identity row, parser, semantic factor, QID, authority or source is
+manufactured or modified. The reference-binding candidate/demand machinery
+still belongs to original SensibLaw; candidate sets are not positive
+identity admissions. Native he remains separate from Q207. The native
+sentence refers to the 1980 Reagan vice-presidency context, so retain
+Q23505 (George H. W. Bush) as a competing hypothesis rather than automatically
+attaching Q207 (George W. Bush).
+
+Local execution: 20/20 isolated Python tests PASS for the numeric proof
+discriminator. The test suite stubs the earlier native-to-owner verifier;
+it is NOT a live SensibLaw DB or same-source owner-graph receipt.
+C4.09a 12/12 and the real 31-token/2-NER capture remain accepted separately.
+
+Run local tests:
+  python3 -m unittest discover -s tests -p test_gwb_native_identity_gate.py -v
+With a genuinely original owner graph/crosswalk and local SensibLaw DB:
+  SENSIBLAW_DATABASE_URL=$SENSIBLAW_DATABASE_URL python3 -m tools.gwb_native_identity_gate --native .dashi/gwb-relation/native-he-binding-carrier-v1.json --owner ORIGINAL_OWNER_JSON --owner-crosswalk ORIGINAL_NUMERIC_CROSSWALK_JSON --output .dashi/gwb-relation/native-he-admitted-identity-v1.json
+
+Required crosswalk: source_revision_ref, parser_run_ref, region_ref,
+source_start_char, source_end_char, surface, candidate_ref,
+owner_document_ref, owner_run_ref, coordinate_frame (region_local or
+source_absolute), factor_ref, owner_graph_ref, source_object_id,
+premise_factor_id, demand_id, resolution_interface_id. Unchecked user-supplied coordinates do
+not create semantic authority; the original graph/DB proof chain must
+independently match them.
+
+C4.09b status: INSPECTOR SOURCE-WRITTEN, UNIT TESTS PASS;
+LIVE NATIVE ADMISSION BLOCKED by absent original same-region SensibLaw
+semantic graph, numeric source crosswalk and original DB positive proof.
+
+P10 independent lane: tools/GwbQ207MinimalRunner.lean imports the original
+JMD RequestProject.Cli.Import, checks the Q207 ID / English label /
+enwiki title in supplied EntityData JSON, and constructs a small checked
+Lean equality witness without evaluating the full 643-sentence GWB article.
+Run after confirming the pinned 4.28.0 Cli.Import olean is fresh:
+  bash scripts/run_gwb_q207_minimal.sh /path/to/original-Q207-EntityData.json
+
+This runner has a 90-second deadline, local inspection log under
+.dashi/gwb-q207/minimal-kernel.log and requires the exact
+GWB_Q207_MINIMAL_KERNEL_OK marker with zero exit code.
+Absent/stale cache, timeout or mismatch is NOT a proof receipt.
+P10 status: SOURCE-WRITTEN, NO LEAN KERNEL RUN IN THIS ENVIRONMENT.
+This JMD source-field lemma does NOT prove the Wikipedia article digest,
+native he identity, Q207 property support, historical truth or simultaneous
+Wikidata/Wikipedia revision. Property/ontology proofs and source-to-KB
+alignment remain distinct future obligations. No CI, TAR or reparse.
+
+C4.09b further hardening, 23 November: 0e36c5216e76 and 9db3c6ab3c1d
+reopen the *archived* native source digest and invoke the original C4.09a
+validate_region on all archived tokens/entities/PNF/L2 factors before any
+semantic graph or DB proof inspection. The unique frontier interface_id
+must match the admitted anaphor witness's resolution_interface_id; a
+same-demand witness from a different interface fails closed. These two
+negative controls raise the isolated read-only proof discrimination
+suite to 20/20 local PASS. The suite stubs native original validation
+because its original 12/12 acceptance belongs to C4.09a; do not promote
+the local DB simulation into original PostgreSQL evidence.
+
+## 2026-11-23 — C4.09 native SLR correction, source-work match, and Lean minimum dependency cut
+
+This is the **current controlling C4.09 path** and supersedes the older
+instruction to wait for a same-source SensibLaw *numeric prototype* graph.
+The 20/20 numeric inspector remains useful as optional parity, but its
+receipt now explicitly says production_slr_identity_admission=NOT_TESTED.
+It does not control original SLR production acceptance.
+
+### Actual SLR PR and main comparison
+
+Audited original SLR PRs #2, #5, #6, #18, #24, #25, #78 against current
+main. #5 relation-attachment and #6 semantic-status files are already
+byte-identical on main despite still-open draft PR metadata; original
+sl-semantic-admission is also on main with source-bound admission types
+that extend #2. #18 reviewed PNF and original SLR GWB chronology source
+materialization exist on main. #78 exposes the still-draft checked
+native parser/M12 CLI. These owners should be *reused*; do not
+cherry-pick old stacked PRs blindly or presume each open PR's unmerged
+status means its code is unavailable.
+
+Caution: sl-semantic-admission::admit_source_bound_candidate proves a
+candidate/scope *semantic admission boundary*, not that a pronoun
+resolves to a person. sl-semantic-status::IdentityResolutionReceipt
+and AntecedentResolutionReceipt are typed carriers, not a runtime
+automatic resolver. #24 reviewed world identity is different from
+same-article antecedent identity. Never promote source candidate,
+document topic, surname or normative delta into an admitted coreference.
+
+### Recovered original work-level provenance
+
+Original SLR native capture is
+.dashi/gwb-relation/native-he-binding-carrier-v1.json: sentence 23
+4526–4693, focus he at 4534–4536, 31 original parser tokens, two
+NER rows, original SHA-bound source revision 8dd2afe2..., and
+document:sha256:7ff2ec8f... . A separate source-work match was
+**actually checked** against SensibLaw
+demo/ingest/gwb/corpus_v1/wiki_timeline_gwb_corpus_v1.json
+Git blob 73b1b6cd5fc6f86bd6c70c64b1482fdc19e60c14:
+ev:0049's whitespace-normalized excerpt starts with the exact
+whitespace-normalized native 166-character sentence. The directly
+preceding same-source-*work* event ev:0045 discusses Bush. The
+inventory labels this work as 41: Inside the Presidency of
+George H. W. Bush (2014). This is strong source-work/discourse
+candidate evidence, **not** a check that the two manifests are
+the same exact content revision, nor an admitted he antecedent.
+George H. W. Bush/Q23505 is the natural *candidate* to review,
+not George W. Bush/Q207; neither QID is asserted for he.
+
+Committed artifacts/gwb-semantic-proof/native-he-source-work-crosscheck-v1.json
+and tools/gwb_source_work_crosscheck.py prove that candidate-level
+crosscheck deterministically from original source files, including
+pinned timeline blob, same work path, original span and
+nonpromotion. No work or QID equivalence is asserted.
+
+### Reopen canonical native discourse, no parser or duplicate database
+
+tools/gwb_original_source_context.py reads the original
+ingest.generic_source_revision + corpus.document +
+corpus.canonical_content + ingest.long_document_region +
+corpus.source_statement tables in one REPEATABLE READ READ ONLY
+transaction. It checks canonical SHA-256, document identity,
+complete captured native region, focus absolute character offsets
+(not UTF-8 byte offsets), original neighboring statement spans and
+candidate-only flags. It returns preceding/following original
+sentences as an *unresolved* antecedent review input, no parser,
+cross-source re-tokenisation, numeric SensibLaw materialisation,
+or database mutation.
+
+Run only with original local SLR PostgreSQL and original capture:
+
+    DATABASE_URL="$DATABASE_URL" python3 -m tools.gwb_original_source_context \
+      --native .dashi/gwb-relation/native-he-binding-carrier-v1.json \
+      --before 4 --after 2 \
+      --output .dashi/gwb-relation/native-he-original-context-v1.json
+
+Independent existing work-level crosscheck (requires checked-out
+SensibLaw timeline file, not an invented source):
+
+    python3 -m tools.gwb_source_work_crosscheck \
+      --native .dashi/gwb-relation/native-he-binding-carrier-v1.json \
+      --timeline /path/to/SensibLaw/demo/ingest/gwb/corpus_v1/wiki_timeline_gwb_corpus_v1.json \
+      --crosscheck artifacts/gwb-semantic-proof/native-he-source-work-crosscheck-v1.json \
+      --output .dashi/gwb-relation/native-he-source-work-crosscheck-result.json
+
+Acceptance scope: **40/40 Python controls PASS locally** in an isolated
+environment, covering the original 20 numeric-prototype discriminator
+fixtures, 12 source-context provenance/Unicode controls and 8
+independent work crosscheck controls. These test sources use mocked
+read-only row fixtures and do NOT prove original DB or semantic
+admission. In particular the native live context run remains
+UNTESTED in this execution environment.
+
+### P10 timeout root fixed at import graph, not by lengthening timeout
+
+Source owner: original JMD/meta-introspector. Extracted the exact
+entityLabelIn and entityEnwikiTitle JSON-only functions from
+RequestProject/Cli/Import.lean into
+RequestProject/Cli/EntityIdentityCore.lean. Import.lean now imports
+the same shared core definitions, so no forked importer semantics.
+tools/GwbQ207MinimalRunner.lean imports **only** this JSON source
+core, not the full JMD Engine/Mathlib/643-sentence article projection.
+scripts/build_gwb_jmd_prerequisites.sh compiles core before Import.
+scripts/run_gwb_q207_minimal.sh builds the core if needed and runs the
+small theorem, both bounded by independent 90-second local timeouts.
+A zero exit plus the distinct GWB_Q207_MINIMAL_KERNEL_OK marker is
+required for P10 source-field kernel admission; cache mere existence
+does not suffice. No Lean binary/kernel run was available here.
+The earlier c0b6fa8a7 timeout is not reclassified.
+
+NEXT DECISIVE GATES (not conditional test suites):
+1. Locally reopen the original sentence-23 predecessor and successor
+   statements with the new read-only original-store command. Compare
+   actual mention/antecedent coordinates and local discourse.
+2. Obtain a *genuinely governed* same-source SLR identity/antecedent
+   review and admitted witness, preserving competing alternatives.
+   Existing SLR typed-status/semantic-admission owners are mandatory,
+   not a standalone candidate-only JSON promotion.
+3. Only if the admitted local actor is independently joined to an
+   external pinned source, check Q23505 or another reviewed QID
+   separately. Do not reuse the valid Q207 root topic to pay that gate.
+4. Run the new lightweight P10 kernel target against original Q207
+   EntityData; then separately compile full JMD KB/property or article
+   alignment. No CI, no TAR, no whole-wikidata build, no false pass.
+
+## 2026-11-23 — C4.09 execution receipt verified, C4.10 exact antecedent geometry
+
+Operator-confirmed on branch head f1a3ac57560f3a7bd5fb8f3247766667b6a2702c:
+- Native SLR read-only source reopening passed: four preceding and two
+  following **original persisted source statements**.
+- Lightweight JMD Q207 source-field Lean runner passed with the exact
+  GWB_Q207_MINIMAL_ACCEPTED marker.
+- Prior 40/40 Python fixture regressions passed.
+- NO pronoun/actor identity, Wikidata QID, temporal proposition,
+  historical-truth or source-manifestation equivalence was admitted.
+- Locally generated output:
+  .dashi/gwb-relation/native-he-original-context-v1.json
+  remains untracked; it is **not** available in GitHub contents for
+  remote inspection. Do not pretend to have inspected its six statement
+  literals. Existing untracked outputs were preserved.
+
+C4.10 committed tools/gwb_native_antecedent_span_gate.py and
+tests/test_gwb_native_antecedent_span_gate.py as the next executable
+geometry boundary. It accepts the *actual* C4.09 canonical native
+context and an explicitly selected prior source span, and checks:
+- same original document/revision, content digest shape, focus
+  and antecedent statement IDs/regions;
+- exact Unicode character offsets, original substring/surface,
+  ordered non-overlapping source statement intervals and
+  source-unpromoted status;
+- candidate occurs before the source pronoun (including legal
+  zero-index start coordinates), rejects future/self mentions;
+- retains selected statement source coordinates and a deterministic
+  SHA256 over the original source-context JSON payload.
+
+Run from repository root with original local data:
+  python3 -m tools.gwb_native_antecedent_span_gate \
+    --context .dashi/gwb-relation/native-he-original-context-v1.json \
+    --candidate /path/to/reviewer-selected-source-span.json \
+    --output .dashi/gwb-relation/native-he-antecedent-span-candidate-v1.json
+
+Candidate input is **only** the human-selected exact original
+{statement_ref, region_ref, start_char, end_char, surface}
+and must be selected from the full SLR context JSON. A success means
+same_source_span_geometry_checked=true, candidate_only=true,
+antecedent_resolution=REVIEW_REQUIRED, identity_admission=NOT_PAID,
+external_qid=NOT_TESTED. It does NOT generate SLR-reviewed identity
+receipts or promote any candidate and must not be treated as a
+governed antecedent or Wikidata entity. The checker has 14/14 local
+Python controls PASS including malformed/foreign/overlapping/future
+coordinates and zero-mode Unicode. This raises the *separate*
+local fixture suite total to 54/54, not to 54 original live proofs.
+
+Remaining P0: inspect the six actual original local context statements
+and submit one or more source-anchored antecedent candidates to SLR's
+existing governed antecedent review owner. Require a positive review
+with explicit candidate accessibility, rival exclusions, original
+statement/mention coordinate references and correct authority. Only
+then join to pinned external QID evidence. JMD Q207 field check is
+already paid independently, but not relevant to he's original referent.
+
+## 2026-11-23 — C4.10 operator receipt and C4.11 SLR-native review queue source
+
+Operator-reported and source-corresponding C4.10 result: antecedent
+`Bush` sentence 22 absolute Unicode source [4310,4314), native focus
+`he` sentence 23 [4534,4536), same-source geometry checked.
+The C4.10 receipt remains `candidate_only=true`,
+`antecedent_resolution=REVIEW_REQUIRED`,
+`identity_admission=NOT_PAID`, `external_qid=NOT_TESTED`.
+Target test suite 14/14 PASS. Local input and receipt remain untracked
+in .dashi/gwb-relation; no user-local bytes were moved or overwritten.
+
+New C4.11 source-written on SLR
+`feat/source-bound-parser-evidence-reopen` / PR #78:
+`crates/sl-pg-source-store/src/native_antecedent_review.rs`
+plus CLI `crates/sl-cli/src/native_antecedent_review.rs`,
+and `docs/roadmap/gwb_native_antecedent_s29_review_20261123.md`.
+This adapter reopens the original immutable source revision, original
+two persisted sentence regions and UTF-8 full-corpus SHA-256; it
+inserts a candidate-only immutable sidecar and asks original S29
+ReviewItemKind::Observation to own the review queue/status. Nothing
+is parsed again. S29 Accept can pay review *workflow status* only,
+NOT antecedent coreference or external Wikidata identity.
+
+Local SLR execution prerequisite (NOT yet paid):
+
+```sh
+cd /path/to/slr
+cargo test -p sensiblaw-pg-source-store native_antecedent_review
+cargo test -p sensiblaw-cli native_antecedent_review
+cargo run -p sensiblaw-cli -- native-antecedent-review prepare \
+ /path/to/dashi_lean4/.dashi/gwb-relation/native-he-antecedent-span-candidate-v1.json
+```
+
+C4.11 is source-written, not locally Cargo-compiled or PostgreSQL
+accepted here. Review queue preparation is not a human review action.
+P0 semantic admission still requires a distinct governed
+AntecedentResolutionReceipt/identity witness with candidate
+accessibility, reviewed competing exclusions, source coordinates,
+and S29 review authority. Q207 independent Lean source fields are
+already checked, but remain separate from this mention.
+
+
+## 2026-11-23 — C4.11 operator PASS, C4.12 governed reviewer inspection
+
+C4.11 is no longer merely source-written. Operator ran targeted native
+Rust tests (4/4 SLR source-store lib, 1/1 CLI) and successfully
+persisted original-source antecedent review candidate to PostgreSQL
+on SLR #78 head `263766a` (including two committed compilation fixes).
+Original S29 review item:
+`review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1`
+Status `Pending`. Original C4.10 candidate pair remains
+`Bush` sentence 22 [4310,4314) →
+`he` sentence 23 [4534,4536).
+`identity_admission=false`, `external_qid=false`.
+This is a real workflow queue/payment, not an admitted referent.
+
+C4.12 SLR source-written extension adds
+`sensiblaw native-antecedent-review inspect REVIEW_ITEM_REF`
+to reopen that immutable original PostgreSQL candidate, actual 4+2
+sentence context, exact canonical text/statement spans, S29 status,
+stable review command references and replay invariants *directly from
+original SLR*. It has not yet been compiled or executed locally.
+This source-native read-only inspector replaces manual dependence on
+untracked dashi_lean4 context JSON for the review process.
+
+Operator must run this command from SLR:
+
+```sh
+cargo test -p sensiblaw-pg-source-store --lib native_antecedent_review
+cargo test -p sensiblaw-cli native_antecedent_review
+cargo run -p sensiblaw-cli -- native-antecedent-review inspect \
+ review-item:native-antecedent-candidate:sha256:25e927f12a0092fbed143669f6a0621fa004636d728074d576275b361da8f7d1
+```
+
+Critical authority boundary: S29 `Accept` would be a workflow
+status only. A separate **human-governed antecedent resolution**
+must review competing candidate accessibility, quoted/discourse
+context, unique resolution and provenance before source-relative
+identity `he → Bush` can be admitted. No human review decision was
+made in this work; Q23505 and Q207 remain unjoined.
+
+## 2026-11-26 — relational family observed meet
+
+SLR #79 emits the original selected observation inventory, including typed predicate/role/type/context coordinates and exact incidence transpose. New `RequestProject.Slr.RelationalObservedMeet` independently reconstructs those rows and checks that every coordinate is accounted for with exact present/not-recorded membership, no extra/duplicate coordinate or selector. Its common query uses the existing FiniteConsumerCertificate; mixed recorded answers obstruct constancy. `tools/RelationalObservedMeetRunner.lean` emits digest-bound source-only checker receipts. Source implementation pending kernel/runtime verification. This does not discharge production live-reading completeness, semantic factorisation, qualifier alignment or governed identity. Do not replace the existing JMD prover or S29 owner.
+
+## 2026-11-27 native relation query
+
+SLR #79 original numeric relation query uses exact persisted packet. Lean `selectedRelationExact` proves membership in the selected recorded relation filter; the executable validates the ordered answer inventory from the reopened packet. Independent Python acceptance recomputes the original typed canonical digest, role/atom/token and factor/constraint inverses and type inventory; missing-row and forged-admission controls. Both checks are integrated into `run_gwb_maxcut_acceptance.sh` when original native input refs are supplied. No all-live semantic or governed identity claim. Kernel and native acceptance pending.
+
+## 2026-11-27 symbolic projected-envelope weld
+
+Existing FiniteConsumerCertificate now supplies `projectedEnvelopeConsumerClosed` and `licenceOfProjectedEnvelope`: constancy on an overapproximating coordinate image implies live-query invariance given coverage and factorisation, without complete Cartesian enumeration. Chosen live reading and original source meaning remain independent. Native SLR bfd82808598b recorded factor consumer is independently checked from original alternatives by RelationalObservedMeet (four axes); exact missing/null distinction and represented separators. Runner checks all four native outputs in the deferred consolidated campaign. Source implementation pending kernel/runtime checks; semantic coverage, source factorisation and L3 remain open. This is the Lean specialization of existing DASHI consumer closure/refinement, not a replacement for JMD or an independent source meaning proof.
+
+## 2026-11-27 qualified property consumer
+
+Extend original JMD property import with generic exact Gregorian year-snak validation and same-GUID statement interval selection (P580/P582). The existing bounded GWB office-lead rule is reused as a concrete source interpretation, and `checkedOfficeClaimAndQualifiedYears` composes it with independent imported property support and original native qualifier membership. The existing office runner exports the matched complete native statement rows and separately records year-level interval agreement or unresolved. No mixing endpoints across GUIDs, no deprecated support, no inference from absent qualifiers, no day-level or general article alignment promotion. Positive result conditional on actual independent cached EntityData; kernel/runtime unverified.
+
+- Independent Lean demand inventory checker reconstructs candidate keys, same-candidate current evidence presence, all signed H3/H6/H9 sums/counts/phases (including zero), and rejects promotion flags. It deliberately requires the current native evidence owner. Consolidated runner obtains the real demand from the existing v8 endpoint receipt, not a fabricated row. Kernel and runtime not executed here.

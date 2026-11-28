@@ -130,5 +130,64 @@ theorem temporalQueryFactorsThroughDocument
     m.documentAnswer source query = answer :=
   slrJmdDocumentQuerySound licence answer checked
 
+
+/-- Licensed interval endpoints supply strict chronology without asserting
+    causal dependency or direct succession. The same scope and event
+    coordinates are used throughout. -/
+theorem licensedIntervalOrder
+    {Scope Event : Type}
+    (start finish : Scope → Event → Nat)
+    (context : Scope)
+    (left right : Event)
+    (separated : finish context left < start context right) :
+    ScopedOrderReachable
+      (fun c a b => finish c a < start c b) context left right :=
+  licensedTemporalAssertionSound
+    (fun c a b => finish c a < start c b) context left right separated
+
+/-- Reverse-solve any licensed interval path to its endpoint inequality.
+    Every intermediate interval must be well formed in the same context.
+    This excludes chronological cycles without an extra acyclicity oracle. -/
+theorem intervalReachabilityEndpoints
+    {Scope Event : Type}
+    (start finish : Scope → Event → Nat)
+    (context : Scope)
+    (wellFormed : ∀ e, start context e ≤ finish context e)
+    {left right : Event}
+    (path : ScopedOrderReachable
+      (fun c a b => finish c a < start c b) context left right) :
+    finish context left < start context right := by
+  unfold ScopedOrderReachable at path
+  induction path with
+  | single h => exact h
+  | tail _ h ih =>
+    exact Nat.lt_trans (Nat.lt_of_lt_of_le ih (wellFormed _)) h
+
+theorem wellFormedIntervalsAcyclic
+    {Scope Event : Type}
+    (start finish : Scope → Event → Nat)
+    (context : Scope)
+    (wellFormed : ∀ e, start context e ≤ finish context e) :
+    ContextAcyclic (fun c a b => finish c a < start c b) context := by
+  intro e path
+  exact (Nat.not_lt_of_ge (wellFormed e))
+    (intervalReachabilityEndpoints start finish context wellFormed path)
+
+/-- Both endpoint queries retain their independent source licences.
+    The result is chronology only, not evidence of institutional succession. -/
+theorem bilateralLicensedIntervalOrder
+    {S O R Q T P U V : Type}
+    {left : DocumentQueryModel S O R Q Nat}
+    {right : DocumentQueryModel T P U V Nat}
+    {s : S} {t : T} {q : Q} {v : V}
+    (l : SourceQueryLicence left s q)
+    (r : SourceQueryLicence right t v)
+    (separated : left.readingAnswer l.chosenReading q <
+      right.readingAnswer r.chosenReading v) :
+    left.documentAnswer s q < right.documentAnswer t v := by
+  rw [slrJmdDocumentQuerySound l _ rfl,
+      slrJmdDocumentQuerySound r _ rfl]
+  exact separated
+
 end Slr
 end Wikidata

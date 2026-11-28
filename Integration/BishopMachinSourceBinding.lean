@@ -5,7 +5,7 @@ import Integration.BishopVendoredTranscendentalExtraction
 
 Agda source owner:
 
-  DASHI.Moonshine.BishopRound11MachinSetoidComplexInstanceExact
+  DASHI.Moonshine.BishopMachinSetoidComplexInstanceExact
 
 The Agda receipt exposes, for a selected Round11 cutset:
 
@@ -17,7 +17,7 @@ The Agda receipt exposes, for a selected Round11 cutset:
 * the selected source pi is the actual constructed Bishop Machin real.
 
 This module gives that receipt one exact Lean-facing shape. Supplying one
-Round11MachinSourceBinding constructs all lower mirror records and therefore
+MachinSourceBinding constructs all lower mirror records and therefore
 the route-B primitive real extraction. No further exp/sin/cos/pi semantic
 theorem is requested.
 
@@ -25,7 +25,7 @@ This is still a mirror binding, not an Agda elaboration claim: Lean does not
 import the Agda module directly.
 -/
 
-namespace Integration.BishopRound11MachinSourceBinding
+namespace Integration.BishopMachinSourceBinding
 
 open Integration.BishopVendoredRealEvaluation
 open Integration.BishopVendoredOrderConvergenceEvaluation
@@ -38,11 +38,11 @@ open Integration.MoonshineEisensteinPrimitiveExtraction
 noncomputable section
 
 /-- Field-for-field Lean target of the Agda
-Round11MachinRouteBSourceReceipt.
+MachinRouteBSourceReceipt.
 
 The partial-sum families appearing here are the canonical mirrors already
 proved equivalent to the corresponding classical Mathlib series. -/
-structure Round11MachinSourceBinding
+structure MachinSourceBinding
     (A : VendoredArithmeticMirror) where
   expB : RegularRatReal → RegularRatReal
   sinB cosB : RegularRatReal → RegularRatReal
@@ -78,18 +78,18 @@ structure Round11MachinSourceBinding
       (atanPartialSum A bishopOneTwoHundredThirtyNinth)
       atanOneTwoHundredThirtyNinth
 
-open Round11MachinSourceBinding public
+open MachinSourceBinding public
 
 def expMirror
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     VendoredExpLimitMirror A where
   expB := B.expB
   converges := B.expConverges
 
 def trigMirror
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     VendoredTrigLimitMirror A where
   sinB := B.sinB
   cosB := B.cosB
@@ -98,7 +98,7 @@ def trigMirror
 
 def machinMirror
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     VendoredMachinSourceMirror A where
   atanOneFifth := B.atanOneFifth
   atanOneTwoHundredThirtyNinth := B.atanOneTwoHundredThirtyNinth
@@ -108,7 +108,7 @@ def machinMirror
 
 def convergenceMirror
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     VendoredTranscendentalConvergenceMirror A where
   expMirror := expMirror A B
   trigMirror := trigMirror A B
@@ -116,25 +116,25 @@ def convergenceMirror
 
 def semanticMirror
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     VendoredTranscendentalMirror A :=
   semanticMirrorFromConvergence A (convergenceMirror A B)
 
 theorem semanticMirror_pi_is_machin
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     (semanticMirror A B).piB =
       machinPiB A (machinMirror A B) := rfl
 
 theorem semanticMirror_pi_eval
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     eval (semanticMirror A B).piB = Real.pi :=
   (semanticMirror A B).eval_pi
 
 def primitiveExtraction
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     PrimitiveRealExtraction
       (bishopSourceReal A (semanticMirror A B)) :=
   Integration.BishopVendoredTranscendentalExtraction.primitiveExtraction
@@ -142,7 +142,7 @@ def primitiveExtraction
 
 def primitiveExtractionDirect
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     PrimitiveRealExtraction
       (bishopSourceReal A (semanticMirror A B)) :=
   primitiveExtractionFromConvergence A (convergenceMirror A B)
@@ -150,13 +150,13 @@ def primitiveExtractionDirect
 /-- The compiled primitive extraction is faithful on Bishop setoid classes. -/
 def faithfulPrimitiveExtraction
     (A : VendoredArithmeticMirror)
-    (B : Round11MachinSourceBinding A) :
+    (B : MachinSourceBinding A) :
     FaithfulPrimitiveRealExtraction
       (bishopSourceReal A (semanticMirror A B))
       (primitiveExtraction A B) where
   reflects_equiv := equiv_of_eval_eq
 
-structure Round11MachinBindingBoundary where
+structure MachinBindingBoundary where
   expBindingCompilerOwned : Bool
   trigBindingCompilerOwned : Bool
   machinBindingCompilerOwned : Bool
@@ -168,9 +168,9 @@ structure Round11MachinBindingBoundary where
 
   canonicalLeanBindingInhabited : Bool
   everyAdmissibleBindingUniqueUpToBishopEquivalence : Bool
-  actualRound11MachinSourceBindingReplayedFromAgda : Bool
+  actualMachinSourceBindingReplayedFromAgda : Bool
 
-def round11MachinBindingBoundary : Round11MachinBindingBoundary where
+def machinBindingBoundary : MachinBindingBoundary where
   expBindingCompilerOwned := true
   trigBindingCompilerOwned := true
   machinBindingCompilerOwned := true
@@ -182,8 +182,8 @@ def round11MachinBindingBoundary : Round11MachinBindingBoundary where
 
   canonicalLeanBindingInhabited := true
   everyAdmissibleBindingUniqueUpToBishopEquivalence := true
-  actualRound11MachinSourceBindingReplayedFromAgda := false
+  actualMachinSourceBindingReplayedFromAgda := false
 
 end
 
-end Integration.BishopRound11MachinSourceBinding
+end Integration.BishopMachinSourceBinding

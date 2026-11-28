@@ -161,6 +161,15 @@ def runSavedM12Check (jsonPath literalPath : String) : IO UInt32 := do
   if h : Slr.checkNativeM12Literal literal observed = true then
     let checked : Slr.CheckedNativeM12Literal literal observed := ⟨h⟩
     let _ := Slr.checkedM12AllSourceSpansExact checked
+    if (json.getObjVal? "reporting_clauses").isOk then
+      if hReport : Slr.checkNativeReportingRows json observed = true then
+        let _ := Slr.checkedNativeReportingRowsExact json observed hReport
+        IO.println "GWB_DB_M12_REPORTING_REFERENCE_PARITY_OK"
+      else
+        IO.eprintln "GWB_DB_M12_REPORTING_REFERENCE_PARITY_REJECTED"
+        return 1
+    else
+      IO.println "GWB_DB_M12_LEGACY_NO_REPORTING_PROJECTION"
     IO.println "GWB_DB_M12_LITERAL_AND_DEPENDENCY_KERNEL_OK"
     IO.println "Scope: source-bound original M12 product; no event/identity admission"
     return 0
@@ -215,6 +224,12 @@ def runWorldGraphCheck
   let nodes := (graph.getObjValAs? (Array Lean.Json) "nodes").toOption.getD #[]
   let mut entities : List Cli.Entity := []
   let mut snapshots : Array Lean.Json := #[]
+  let mut sourceRecords : List (String × Lean.Json) := []
+  let graphSha ← IO.Process.output { cmd := "sha256sum", args := #[graphPath] }
+  if graphSha.exitCode != 0 || (← IO.FS.readFile graphPath) != text then
+    IO.eprintln "GWB_WORLD_GRAPH_REJECTED: source graph digest/readback"
+    return 1
+  let graphDigest := (graphSha.stdout.splitOn " ").head!
   for node in nodes do
     let some qid := (node.getObjValAs? String "node_id").toOption
       | IO.eprintln "GWB_WORLD_GRAPH_REJECTED: missing QID"
@@ -232,24 +247,84 @@ def runWorldGraphCheck
     let data := (parsed.getObjVal? "entities").toOption.getD Lean.Json.null
     let record := (data.getObjVal? qid).toOption.getD Lean.Json.null
     let revision := (record.getObjValAs? Nat "lastrevid").toOption.getD 0
-    snapshots := snapshots.push (Lean.Json.mkObj [
+    let path := Cli.cachePath (System.FilePath.mk cacheDir) qid
+    let sha ← IO.Process.output { cmd := "sha256sum", args := #[path.toString] }
+    if sha.exitCode != 0 || (← IO.FS.readFile path) != raw then
+      IO.eprintln s!"GWB_WORLD_GRAPH_REJECTED: snapshot digest/readback {qid}"
+      return 1
+    let snapshot := Lean.Json.mkObj [
       ("qid", toJson qid),
       ("wikidata_lastrevid", toJson revision),
-      ("cache_path", toJson ((Cli.cachePath (System.FilePath.mk cacheDir) qid).toString))
-    ])
+      ("revision_available", toJson (revision != 0)),
+      ("source_sha256", toJson ((sha.stdout.splitOn " ").head!)),
+      ("cache_path", toJson path.toString),
+      ("original_candidate_node", node)
+    ]
+    snapshots := snapshots.push snapshot
+    sourceRecords := (qid, record) :: sourceRecords
   let pkb := Slr.GwbWorldGraph.pkbFromImportedEntities entities
   let inventory := Slr.GwbWorldGraph.checkGraphAgainstImportedKB graph pkb
   let mut supported : Nat := 0
   let mut unresolved : Array Lean.Json := #[]
+  let mut edgeReceipts : Array Lean.Json := #[]
+  let mut originalStatementContextCount : Nat := 0
   for (edge, proof?) in inventory do
+    let source := (edge.getObjValAs? String "source").toOption.getD ""
+    let property := (edge.getObjValAs? String "property_id").toOption.getD ""
+    let target := (edge.getObjValAs? String "target").toOption.getD ""
+    let record := (sourceRecords.lookup source).getD Lean.Json.null
+    let claims := (record.getObjVal? "claims").toOption.getD Lean.Json.null
+    let rows := (claims.getObjValAs? (Array Lean.Json) property).toOption.getD #[]
+    -- Reuse the original JMD JSON import's value/rank rules. Preserve the
+    -- whole native statement (GUID, rank, main snak, qualifiers, references)
+    -- and its ordinal, including deprecated matches as excluded evidence.
+    let mut context : Array Lean.Json := #[]
+    let mut admitted : Nat := 0
+    let mut ordinal : Nat := 0
+    for row in rows do
+      if Cli.statementValueId? row == some target then
+        let imported := Cli.statementRank row != "deprecated"
+        if imported then admitted := admitted + 1
+        context := context.push (Lean.Json.mkObj [
+          ("property_statement_ordinal", toJson ordinal),
+          ("jmd_imported_item_statement", toJson imported),
+          ("original_statement", row)])
+      ordinal := ordinal + 1
+    let jmdSupported := proof?.isSome
     match proof? with
     | some proof =>
         let _ := Slr.GwbWorldGraph.checkedWorldPropertySound proof
         supported := supported + 1
+        -- This PKB constructor has no extra subproperty edges. Refuse to
+        -- publish a positive property result without its raw import inverse.
+        if admitted == 0 then
+          IO.eprintln "GWB_WORLD_GRAPH_REJECTED: supported edge has no original nondeprecated item statement"
+          return 1
     | none => unresolved := unresolved.push edge
+    originalStatementContextCount := originalStatementContextCount + context.size
+    let snapshot := (snapshots.toList.find? fun s =>
+      (s.getObjValAs? String "qid").toOption == some source).getD Lean.Json.null
+    edgeReceipts := edgeReceipts.push (Lean.Json.mkObj [
+      ("source_edge_ordinal", toJson edgeReceipts.size),
+      ("original_candidate_edge", edge),
+      ("source_snapshot", snapshot),
+      ("jmd_property_supported", toJson jmdSupported),
+      ("direct_imported_statement_count", toJson admitted),
+      ("matching_original_statement_contexts", Lean.Json.arr context),
+      ("qualifier_alignment_paid", toJson false),
+      ("world_truth_paid", toJson false)
+    ])
+  if edgeReceipts.size != inventory.size || supported + unresolved.size != inventory.size then
+    IO.eprintln "GWB_WORLD_GRAPH_REJECTED: edge inventory accounting"
+    return 1
   let summary := Lean.Json.mkObj [
     ("schema", toJson ("gwb-jmd-world-graph-property-verification-v1" : String)),
     ("source_graph_schema", toJson ("slr-wikimedia-world-follow-v1" : String)),
+    ("source_graph_sha256", toJson graphDigest),
+    ("edge_receipts", Lean.Json.arr edgeReceipts),
+    ("matching_original_statement_context_count", toJson originalStatementContextCount),
+    ("all_edge_ordinals_retained", toJson true),
+    ("qualifier_alignment_paid", toJson false),
     ("nodes_reimported", toJson nodes.size),
     ("source_candidate_edges", toJson inventory.size),
     ("jmd_kb_property_proofs", toJson supported),
@@ -341,6 +416,294 @@ def runArticleP4Check
       IO.eprintln "GWB_P4_ARTICLE_REJECTED: invalid input JSON"
       return 1
 
+/-- Real bounded article-to-property agreement. No caller-supplied
+    review flag, synthetic PKB, or historical truth promotion. -/
+def runOfficeClaimCheck
+    (articlePath slrPath projectionPath rootPath officePath outputPath : String) :
+    IO UInt32 := do
+  let ok ← Slr.ArticleProof.verifyFiles articlePath slrPath projectionPath
+  if !ok then return 1
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let rootSha ← IO.Process.output { cmd := "sha256sum", args := #[rootPath] }
+  let officeSha ← IO.Process.output { cmd := "sha256sum", args := #[officePath] }
+  let digest := (sha.stdout.splitOn " ").head!
+  if sha.exitCode != 0 || rootSha.exitCode != 0 || officeSha.exitCode != 0 ||
+      digest != "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" then
+    IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: original source or snapshot digest"
+    return 1
+  match Lean.Json.parse (← IO.FS.readFile slrPath),
+        Lean.Json.parse (← IO.FS.readFile projectionPath),
+        Lean.Json.parse (← IO.FS.readFile rootPath),
+        Lean.Json.parse (← IO.FS.readFile officePath) with
+  | .ok slr, .ok projection, .ok root, .ok office =>
+    if hRoot : Slr.GwbArticleIdentity.checkGwbRootIdentity
+          article slr projection root = true then
+      if !Slr.GwbWorldGraph.jsonEntityMatchesQid "Q207" root then
+        IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: root EntityData inventory"
+        return 1
+      let some rootRev := Slr.GwbArticleSystem.entityRevision root "Q207"
+        | IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: root revision absent"
+          return 1
+      let some officeRev := Slr.GwbArticleSystem.entityRevision office "Q11696"
+        | IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: office revision absent"
+          return 1
+      if rootRev == 0 || officeRev == 0 then return 1
+      if hClaim : Slr.GwbArticleSystem.officeClaim article = true then
+        if hLabel : Slr.GwbArticleSystem.officeLabelChecked office = true then
+          if hSupport : Slr.GwbArticleSystem.officePropertySupported root office = true then
+            let checked : Slr.GwbArticleIdentity.CheckedGwbRootIdentity
+              article slr projection root := ⟨hRoot⟩
+            let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndKB
+              checked hClaim hLabel hSupport
+            let qualified := Slr.GwbWorldGraph.qualifiedYearRows root "Q207" "P39" "Q11696" 2001 2009
+            let yearSupport := !qualified.isEmpty
+            for statement in qualified.attach do
+              let _ := Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears
+                checked hClaim hLabel hSupport statement.property
+            IO.FS.writeFile outputPath ((Lean.Json.mkObj [
+              ("schema", toJson ("gwb-bounded-office-claim-kb-agreement-v1" : String)),
+              ("source_revision", toJson ("enwiki-revid:1385850169" : String)),
+              ("source_sha256", toJson digest),
+              ("source_start_char", toJson (0 : Nat)),
+              ("source_end_char", toJson Slr.GwbArticleSystem.officeLead.toList.length),
+              ("source_literal", toJson Slr.GwbArticleSystem.officeLead),
+              ("subject", toJson ("Q207" : String)),
+              ("property", toJson ("P39" : String)),
+              ("object", toJson ("Q11696" : String)),
+              ("root_revision", toJson rootRev),
+              ("root_sha256", toJson ((rootSha.stdout.splitOn " ").head!)),
+              ("office_revision", toJson officeRev),
+              ("office_sha256", toJson ((officeSha.stdout.splitOn " ").head!)),
+              ("scope", toJson ("bounded-explicit-lead-rule-and-independent-kb-support" : String)),
+              ("year_interval_consumer", toJson ("P580/P582 Gregorian year only" : String)),
+              ("source_start_year", toJson (2001 : Nat)),
+              ("source_end_year", toJson (2009 : Nat)),
+              ("bounded_year_interval_alignment_paid", toJson yearSupport),
+              ("matching_original_year_interval_statements", toJson qualified),
+              ("year_interval_disposition", toJson (if yearSupport then "matched" else "unresolved")),
+              ("governed_identity_paid", toJson false),
+              ("general_semantic_alignment_paid", toJson false),
+              ("qualifier_alignment_paid", toJson false),
+              ("world_truth_paid", toJson false)]).pretty ++ "\n")
+            IO.println "GWB_BOUNDED_OFFICE_CLAIM_JMD_AGREEMENT_OK"
+            return 0
+          else
+            IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: independent P39 support absent"
+            return 1
+        else
+          IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: office entity or label mismatch"
+          return 1
+      else
+        IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: exact source rule not matched"
+        return 1
+    else
+      IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: original Q207/article mismatch"
+      return 1
+  | _, _, _, _ =>
+    IO.eprintln "GWB_OFFICE_CLAIM_REJECTED: invalid input JSON"
+    return 1
+
+/-- Independent article observation and original KB interval witnesses.
+    This is a generic indexed producer, not an automatic semantic alignment.
+    Preserve complete original rows and original statement qualifiers. -/
+def runIndexedArticleKBCheck
+    (articlePath slrPath projectionPath entityPath subject property target
+      kind value startStr endStr outputPath : String) : IO UInt32 := do
+  let some startYear := startStr.toNat? | return 2
+  let some endYear := endStr.toNat? | return 2
+  let some query := Slr.ArticleProof.parseArticleQuery? kind value | return 2
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let kbSha ← IO.Process.output { cmd := "sha256sum", args := #[entityPath] }
+  let slrSha ← IO.Process.output { cmd := "sha256sum", args := #[slrPath] }
+  let projectionSha ← IO.Process.output { cmd := "sha256sum", args := #[projectionPath] }
+  if sha.exitCode != 0 || kbSha.exitCode != 0 || slrSha.exitCode != 0 ||
+      projectionSha.exitCode != 0 then return 1
+  let digest := (sha.stdout.splitOn " ").head!
+  match Lean.Json.parse (← IO.FS.readFile slrPath),
+        Lean.Json.parse (← IO.FS.readFile projectionPath),
+        Lean.Json.parse (← IO.FS.readFile entityPath) with
+  | .ok slr, .ok projection, .ok entity =>
+    let manifestation := (slr.getObjVal? "manifestation").toOption.getD Lean.Json.null
+    if (manifestation.getObjValAs? String "source_text_sha256").toOption != some digest ||
+        (projection.getObjValAs? String "source_text_sha256").toOption != some digest then
+      return 1
+    let some checked := Slr.ArticleProof.checkedIndexedArticle? subject article slr projection
+      | return 1
+    let some revision := Slr.GwbArticleSystem.entityRevision entity subject | return 1
+    if revision == 0 || !Slr.GwbWorldGraph.jsonEntityMatchesQid subject entity then return 1
+    let rows := Slr.ArticleProof.queryIndexedArticle checked query
+    for row in rows.attach do
+      let _ := Slr.ArticleProof.indexedArticleQuerySound checked query row.val row.property
+    let qualified := Slr.GwbWorldGraph.originalQualifiedYearWitnesses
+      entity subject property target startYear endYear
+    for witness in qualified do
+      let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound witness
+      let _ := Slr.GwbWorldGraph.checkedWorldPropertySound witness.propertyProof
+    let propertySupported := (Slr.GwbWorldGraph.originalEntityPropertyProof?
+      entity subject property target).isSome
+    IO.FS.writeFile outputPath ((Lean.Json.mkObj [
+      ("schema", toJson ("jmd-indexed-independent-article-kb-v1" : String)),
+      ("source_sha256", toJson digest),
+      ("source_revision", (slr.getObjVal? "revision_ref").toOption.getD Lean.Json.null),
+      ("source_unit_ref", (slr.getObjVal? "source_unit_ref").toOption.getD Lean.Json.null),
+      ("slr_sha256", toJson ((slrSha.stdout.splitOn " ").head!)),
+      ("projection_sha256", toJson ((projectionSha.stdout.splitOn " ").head!)),
+      ("entity_sha256", toJson ((kbSha.stdout.splitOn " ").head!)),
+      ("entity_revision", toJson revision),
+      ("subject", toJson subject), ("property", toJson property), ("object", toJson target),
+      ("query_kind", toJson kind), ("query_value", toJson value),
+      ("original_observation_rows", toJson rows),
+      ("start_year", toJson startYear), ("end_year", toJson endYear),
+      ("independent_property_supported", toJson propertySupported),
+      ("original_qualified_statements", toJson (qualified.map (fun w => w.statement))),
+      ("interval_supported", toJson (!qualified.isEmpty)),
+      ("semantic_alignment_paid", toJson false), ("governed_identity_paid", toJson false),
+      ("world_truth_paid", toJson false)]).pretty ++ "\n")
+    return 0
+  | _, _, _ => return 1
+
+/-- Actual archived clause semantic consumer. Fail closed on changed
+source literal, root sitelink or original source checker. -/
+def runArchivedClauseCheck
+    (articlePath slrPath projectionPath rootPath outputPath : String) : IO UInt32 := do
+  let ok ← Slr.ArticleProof.verifyFiles articlePath slrPath projectionPath
+  if !ok then return 1
+  let article ← IO.FS.readFile articlePath
+  let sha ← IO.Process.output { cmd := "sha256sum", args := #[articlePath] }
+  let rootSha ← IO.Process.output { cmd := "sha256sum", args := #[rootPath] }
+  let digest := (sha.stdout.splitOn " ").head!
+  if sha.exitCode != 0 || rootSha.exitCode != 0 ||
+      digest != "a88ef63b9c109f0f09c2fc2a266373a9ecaae855104cb0e11c4e6c53d90d3233" then
+    return 1
+  match Json.parse (← IO.FS.readFile slrPath), Json.parse (← IO.FS.readFile projectionPath),
+      Json.parse (← IO.FS.readFile rootPath) with
+  | .ok slr, .ok projection, .ok root =>
+    if h : Slr.GwbArticleIdentity.checkGwbRootIdentity article slr projection root = true then
+      let source : Slr.GwbArticleIdentity.CheckedGwbRootIdentity article slr projection root := ⟨h⟩
+      let some rev := Slr.GwbArticleSystem.entityRevision root "Q207" | return 1
+      if rev == 0 then return 1
+      let rules : List Slr.GwbArticleSystem.ArchivedClauseRule :=
+        [.governor, .suspension, .taxStatements]
+      let mut answers : List Json := []
+      for rule in rules do
+        if hm : Slr.GwbArticleSystem.archivedClauseMatches article rule = true then
+          let _ := Slr.GwbArticleSystem.checkedArchivedClauseSound source rule hm
+          let claims := Slr.GwbArticleSystem.ruleClaims rule
+          let span := Slr.GwbArticleSystem.ruleSpan rule
+          answers := answers ++ [Json.mkObj [
+            ("start_char", toJson span.1), ("end_char", toJson span.2),
+            ("literal", toJson (Slr.GwbArticleSystem.ruleLiteral rule)),
+            ("claims", toJson (claims.map Slr.GwbArticleSystem.clauseJson)),
+            ("bush_asserted_actions", toJson ((claims.filter
+              (Slr.GwbArticleSystem.assertedAction "Bush")).map Slr.GwbArticleSystem.clauseJson))]]
+        else return 1
+      IO.FS.writeFile outputPath ((Json.mkObj [
+        ("schema", toJson ("gwb-bounded-archived-clause-licence-v1" : String)),
+        ("source_sha256", toJson digest), ("source_revision", toJson ("enwiki-revid:1385850169" : String)),
+        ("root_revision", toJson rev), ("root_sha256", toJson ((rootSha.stdout.splitOn " ").head!)),
+        ("answers", toJson answers), ("scope", toJson ("exact controlled source clauses; local actor labels" : String)),
+        ("general_semantic_coverage_paid", toJson false), ("governed_identity_paid", toJson false),
+        ("world_truth_paid", toJson false)]).pretty ++ "\n")
+      return 0
+    else return 1
+  | _, _, _ => return 1
+
+
+/-- Independently reopen the two original article/EntityData inputs.
+The controlled lead rule must actually match; no fallback to assumed dates. -/
+def runReciprocalOfficeCheck
+    (sonArticle sonSlr sonProjection sonRoot fatherArticle fatherSlr
+      fatherProjection fatherRoot officePath outputPath : String) : IO UInt32 := do
+  let a ← IO.FS.readFile sonArticle
+  let b ← IO.FS.readFile fatherArticle
+  let paths := [sonArticle, sonSlr, sonProjection, sonRoot,
+    fatherArticle, fatherSlr, fatherProjection, fatherRoot, officePath]
+  let mut digests : List String := []
+  for p in paths do
+    let out ← IO.Process.output { cmd := "sha256sum", args := #[p] }
+    if out.exitCode != 0 then return 1
+    digests := digests ++ [(out.stdout.splitOn " ").head!]
+  match Json.parse (← IO.FS.readFile sonSlr), Json.parse (← IO.FS.readFile sonProjection),
+      Json.parse (← IO.FS.readFile sonRoot), Json.parse (← IO.FS.readFile fatherSlr),
+      Json.parse (← IO.FS.readFile fatherProjection), Json.parse (← IO.FS.readFile fatherRoot),
+      Json.parse (← IO.FS.readFile officePath) with
+  | .ok sa, .ok pa, .ok ea, .ok sb, .ok pb, .ok eb, .ok office =>
+    let manifestA := (sa.getObjVal? "manifestation").toOption.getD Json.null
+    let manifestB := (sb.getObjVal? "manifestation").toOption.getD Json.null
+    if (manifestA.getObjValAs? String "source_text_sha256").toOption != some digests[0]! ||
+       (pa.getObjValAs? String "source_text_sha256").toOption != some digests[0]! ||
+       (manifestB.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
+       (pb.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
+       digests[0]! == digests[4]! then return 1
+    if !Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea ||
+       !Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb ||
+       !Slr.GwbArticleSystem.officeLabelChecked office then return 1
+    let some ra := Slr.GwbArticleSystem.entityRevision ea "Q207" | return 1
+    let some rb := Slr.GwbArticleSystem.entityRevision eb "Q23505" | return 1
+    let some ro := Slr.GwbArticleSystem.entityRevision office "Q11696" | return 1
+    if ra == 0 || rb == 0 || ro == 0 then return 1
+    if ha : Slr.GwbArticleSystem.indexedOfficeLeadMatches .son a = true then
+      if hb : Slr.GwbArticleSystem.indexedOfficeLeadMatches .father b = true then
+        let wa := Slr.GwbWorldGraph.originalQualifiedYearWitnesses ea "Q207" "P39" "Q11696" 2001 2009
+        let wb := Slr.GwbWorldGraph.originalQualifiedYearWitnesses eb "Q23505" "P39" "Q11696" 1989 1993
+        if wa.isEmpty || wb.isEmpty then return 1
+        for w in wa do
+          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        for w in wb do
+          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        let _ := Slr.GwbArticleSystem.reciprocalBushOfficeSound ha hb
+        let some literalA := Slr.GwbArticleSystem.matchedOfficeLead? .son a | return 1
+        let some literalB := Slr.GwbArticleSystem.matchedOfficeLead? .father b | return 1
+        let row := fun (subject : Slr.GwbArticleSystem.BushOfficeSubject) (s : Json)
+            (revision : Nat) (sha literal : String) (statements : List Json) =>
+          Json.mkObj [("subject", toJson (Slr.GwbArticleSystem.officeSubjectQid subject)),
+            ("property", toJson ("P39" : String)), ("object", toJson ("Q11696" : String)),
+            ("source_revision", (s.getObjVal? "revision_ref").toOption.getD Json.null),
+            ("source_sha256", toJson sha), ("entity_revision", toJson revision),
+            ("source_literal", toJson literal),
+            ("source_start_char", toJson (0 : Nat)),
+            ("source_end_char", toJson literal.toList.length),
+            ("years", toJson (Slr.GwbArticleSystem.officeSubjectYears subject)),
+            ("original_qualified_statements", toJson statements)]
+        let left := row .son sa ra digests[0]! literalA (wa.map (fun w => w.statement))
+        let right := row .father sb rb digests[4]! literalB (wb.map (fun w => w.statement))
+        let esA : Slr.GwbArticleSystem.ElectionSource := (a, pa)
+        let esB : Slr.GwbArticleSystem.ElectionSource := (b, pb)
+        let rowsA := Slr.GwbArticleSystem.electionRows .son a pa
+        let rowsB := Slr.GwbArticleSystem.electionRows .father b pb
+        let sharedElection := decide (Slr.GwbArticleSystem.electionAnswer esA .son =
+          some Slr.GwbArticleSystem.election2000 ∧
+          Slr.GwbArticleSystem.electionAnswer esB .father =
+          some Slr.GwbArticleSystem.election2000)
+        if hA : Slr.GwbArticleSystem.electionAnswer esA .son = some Slr.GwbArticleSystem.election2000 then
+          if hB : Slr.GwbArticleSystem.electionAnswer esB .father = some Slr.GwbArticleSystem.election2000 then
+            let _ := Slr.GwbArticleSystem.reciprocalElectionClaimSound esA esB hA hB
+            let _ := Slr.GwbArticleSystem.reciprocalElectionReadingsSound esA esB
+            pure ()
+        IO.FS.writeFile outputPath ((Json.mkObj [
+          ("schema", toJson ("jmd-bounded-reciprocal-office-v1" : String)),
+          ("son", left), ("father", right), ("input_sha256_in_argument_order", toJson digests),
+          ("office_entity_revision", toJson ro),
+          ("forward", toJson ("son tenure after father tenure" : String)),
+          ("backward", toJson ("father tenure before son tenure" : String)),
+          ("same_office", toJson true), ("distinct_holders", toJson true),
+          ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
+          ("shared_event_identity_paid", toJson false),
+          ("bounded_shared_election_outcome_paid", toJson sharedElection),
+          ("election_son_rows", toJson rowsA), ("election_father_rows", toJson rowsB),
+          ("election_claim", if sharedElection then Json.mkObj [("event_key", toJson ("us-presidential-election:2000" : String)), ("winner", toJson ("Q207" : String)), ("opponent", toJson ("Al Gore" : String)), ("year", toJson (2000 : Nat))] else Json.null),
+          ("general_semantic_coverage_paid", toJson false),
+          ("world_truth_paid", toJson false)]).pretty ++ "\n")
+        return 0
+      else
+        IO.eprintln "GHWB exact controlled lead did not match; no semantic answer"
+        return 1
+    else return 1
+  | _, _, _, _, _, _, _ => return 1
+
+
 def main (args : List String) : IO UInt32 := do
   match args with
   | ["native-trace", article, source, projection, executable, parserRun,
@@ -359,8 +722,18 @@ def main (args : List String) : IO UInt32 := do
       IO.println "PROVED: source-claim/year-string consumer closure; four semantic nonfactorability countermodels; ACI fibre join retains provenance"
       IO.println "NOT PROVED HERE: GWB article semantic admission, reviewed S28 event identity, world occurrence"
       return 0
+  | ["indexed-article-kb-check", article, slr, projection, entity, subject,
+      property, target, kind, value, startYear, endYear, output] =>
+      runIndexedArticleKBCheck article slr projection entity subject property target
+        kind value startYear endYear output
   | ["article-p4-check", article, slr, projection, native, wikidata] =>
       runArticleP4Check article slr projection native wikidata
+  | ["reciprocal-office-check", a, sa, pa, ea, b, sb, pb, eb, office, output] =>
+      runReciprocalOfficeCheck a sa pa ea b sb pb eb office output
+  | ["article-clause-check", article, slr, projection, root, output] =>
+      runArchivedClauseCheck article slr projection root output
+  | ["article-office-check", article, slr, projection, root, office, output] =>
+      runOfficeClaimCheck article slr projection root office output
   | ["article-qid-check", article, slr, projection, wikidata] =>
       runArticleQidCheck article slr projection wikidata
   | ["world-graph-check", graph, cacheDir, output] =>
@@ -392,10 +765,13 @@ def main (args : List String) : IO UInt32 := do
       runRealScopeCheck article source projection
   | ["rust-fibre-check", article, source, projection, native] =>
       runNativeFibreReceipt article source projection native
+  | ["article-query", article, source, projection, kind, value] =>
+      let ok ← Slr.ArticleProof.verifyFiles article source projection (some (kind, value))
+      return if ok then 0 else 1
   | "article-check" :: rest =>
       runArticleCheck rest
   | _ =>
-      IO.eprintln "usage: fibre | composition | axioms | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON"
+      IO.eprintln "usage: indexed-article-kb-check ARTICLE SLR PROJECTION ENTITY SUBJECT PROPERTY TARGET KIND VALUE START_YEAR END_YEAR OUTPUT | fibre | composition | axioms | article-query ARTICLE SLR_RECORD PROJECTION KIND VALUE | article-check ARTICLE SLR_RECORD PROJECTION | semantic-scope ARTICLE SLR_RECORD PROJECTION | rust-fibre-check ARTICLE SLR_RECORD PROJECTION NATIVE_JSON | db-m12-check DB_M12_JSON EXACT_LITERAL | db-s28-check S28_JSON EVENT_REF | world-graph-check[-offline] WORLD_JSON ENTITY_CACHE OUTPUT_JSON | world-graph-strict WORLD_JSON ENTITY_CACHE OUTPUT_JSON | article-qid-check ARTICLE SLR_RECORD PROJECTION WIKIDATA_Q207_JSON | article-office-check ARTICLE SLR_RECORD PROJECTION Q207_JSON Q11696_JSON OUTPUT"
       return 2
 
 #print axioms Wikidata.Slr.GwbConsumer.fibreJoinAssociative
@@ -449,3 +825,28 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbProductionTrace.checkedTraceSound
 #print axioms Wikidata.Slr.GwbProductionTrace.temporalQueryOriginal
+
+#print axioms Wikidata.Slr.ArticleProof.queryCheckedArticleExact
+#print axioms Wikidata.Slr.ArticleProof.checkedArticleQuerySound
+
+#print axioms Wikidata.Slr.GwbCanonicalSource.licensedPredicateQuerySound
+#print axioms Wikidata.Slr.GwbCanonicalSource.reportingReadingInvariant
+#print axioms Wikidata.Slr.GwbCanonicalSource.checkedReportingAnswerSound
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndKB
+
+#print axioms Wikidata.Slr.checkedNativeReportingRowsExact
+
+#print axioms Wikidata.Slr.GwbWorldGraph.qualifiedYearRowsExact
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedOfficeClaimAndQualifiedYears
+
+#print axioms Wikidata.Slr.GwbArticleSystem.checkedArchivedClauseSound
+#print axioms Wikidata.Slr.GwbArticleSystem.suspensionIsNotBushAction
+#print axioms Wikidata.Slr.GwbArticleSystem.predictionIsNotBushAction
+#print axioms Wikidata.Slr.GwbArticleSystem.governorCoordinatedActions
+
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalBushOfficeSound
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeAnswerSound
+
+#print axioms Wikidata.Slr.GwbArticleSystem.electionRowsExact
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionClaimSound
+#print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionReadingsSound

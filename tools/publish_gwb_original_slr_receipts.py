@@ -16,6 +16,45 @@ FILES=("lean-source-instances.json","lean-source-instances.log","canonical-sourc
        "original-scope-and-mention-audit.json","original-scope-and-mention.log")
 def require(ok,why):
     if not ok:raise ValueError(why)
+REPORT_LEMMAS=("state","claim","say","assert","deny","report")
+
+def reporting_reference(article, slr, projection, lemma):
+    """Independent exact graph-join reference; never semantic admission."""
+    events=projection["event_candidates"]
+    by_sentence={}
+    for event in events:
+        key=(event["sentence_index"],event["slr_claim_candidate_id"])
+        by_sentence.setdefault(key,[]).append(event)
+    raw={(s["sentence_index"],s["claim_candidate_id"]):s["dependency_rows"]
+         for s in slr["pnf_candidates"]}
+    def children(parent, dep):
+        p=parent["predicate"]
+        key=(parent["sentence_index"],parent["slr_claim_candidate_id"])
+        return [e for e in by_sentence[key]
+                if e["predicate"]["dep"]==dep
+                and e["predicate"]["head_i"]==p["i"]
+                and e["predicate"]["i"]!=p["i"]]
+    def neg(event):
+        key=(event["sentence_index"],event["slr_claim_candidate_id"])
+        return [t for t in raw[key] if t["dep"]=="neg"
+                and t["head_i"]==event["predicate"]["i"]
+                and t["text"] and type(t["idx"]) is int and t["idx"]>=0
+                and article[t["idx"]:t["idx"]+len(t["text"])]==t["text"]]
+    def row(report, complement, content, attachment):
+        return dict(report=report,complement=complement,content=content,
+                    attachment=attachment,report_negation_tokens=neg(report),
+                    complement_negation_tokens=neg(complement),
+                    content_negation_tokens=neg(content))
+    answer=[]
+    for report in events:
+        if report["predicate"]["lemma"]!=lemma:
+            continue
+        for complement in children(report,"ccomp"):
+            answer.append(row(report,complement,complement,"ccomp"))
+            for content in children(complement,"conj"):
+                answer.append(row(report,complement,content,"ccomp/conj"))
+    return answer
+
 def publish(source,run,dest):
     article=(source/"article.txt").read_bytes()
     require(hashlib.sha256(article).hexdigest()==PIN,"source digest changed")
@@ -76,6 +115,26 @@ def publish(source,run,dest):
             {q["query"]:q["answer"] for q in queries}==expected_queries and
             all(q["scope"]=="original-predicate-surface-only" for q in queries),
             "Lean predicate query inventory is incomplete or altered")
+    slr=json.loads((source/"slr-record.json").read_bytes())
+    reporting=instances["reporting_queries"]
+    require([q["lemma"] for q in reporting]==list(REPORT_LEMMAS),
+            "reporting-query inventory missing or duplicated")
+    for q in reporting:
+        require(q["scope"]=="original-source-reporting-dependency-v1" and
+                q["semantic_identity_paid"] is False and q["world_truth_paid"] is False and
+                q["rows"]==reporting_reference(article.decode("utf-8"),slr,projection,q["lemma"]),
+                "reporting relation or scoped negation mismatch: "+q["lemma"])
+    # Real pinned sentence 148: Bush stated that a tax cut would stimulate
+    # the economy and create jobs. The two contents must not collapse into
+    # an asserted historical outcome or inherit the unrelated warned actor.
+    state=next(q["rows"] for q in reporting if q["lemma"]=="state")
+    example=[r for r in state if r["report"]["sentence_index"]==148
+             and r["report"]["predicate"]["surface"]=="stated"]
+    require(any(r["attachment"]=="ccomp" and
+                r["content"]["predicate"]["surface"]=="stimulate" for r in example)
+            and any(r["attachment"]=="ccomp/conj" and
+                r["content"]["predicate"]["surface"]=="create" for r in example),
+            "actual source reporting-clause specimen missing")
     manifest={
       "schema":"gwb-original-slr-source-lean-proof-v1",
       "source_revision":REV, "source_utf8_sha256":PIN,
@@ -91,6 +150,10 @@ def publish(source,run,dest):
       "source_lean_article_checker":"PASSED",
       "lean_source_instances":len(instances["instances"]),
       "lean_predicate_queries":len(queries),
+      "lean_reporting_queries":len(reporting),
+      "lean_reporting_rows":sum(len(q["rows"]) for q in reporting),
+      "reporting_reference_parity":"PASSED",
+      "reporting_scope":"original-source-reporting-dependency-v1",
       "original_scope_nonfactorability":"PASSED",
       "adversarial_source_controls_rejected":len(NEGATIVE),
       "canonical_regression_tests_passed":8,

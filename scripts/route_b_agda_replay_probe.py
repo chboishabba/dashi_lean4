@@ -22,11 +22,11 @@ import sys
 
 TARGETS: dict[str, tuple[str, ...]] = {
     "DASHI/Moonshine/BishopRound11MachinSetoidComplexInstanceExact.agda": (
-        "round11MachinExpConverges",
-        "round11MachinSineConverges",
-        "round11MachinCosineConverges",
-        "round11MachinAtanOneFifthConverges",
-        "round11MachinAtanOneTwoHundredThirtyNinthConverges",
+        "machinExpConverges",
+        "machinSineConverges",
+        "machinCosineConverges",
+        "machinAtanOneFifthConverges",
+        "machinAtanOneTwoHundredThirtyNinthConverges",
     ),
     "DASHI/Foundations/BishopMachinArctanConstructionExact.agda": (
         "bishopMachinPi",

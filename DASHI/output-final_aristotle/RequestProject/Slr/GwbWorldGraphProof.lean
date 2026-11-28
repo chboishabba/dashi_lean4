@@ -144,6 +144,104 @@ theorem checkedGraphInventoryExact (graph : Json) (kb : PKB) :
       ((arr? graph "item_property_edges").getD #[]).size := by
   simp [checkGraphAgainstImportedKB]
 
+/-- A generic year-level consumer over an original Wikidata time snak.
+We reject ambiguous precision, non-Gregorian calendars, uncertain intervals
+and missing coordinates. This does not interpret prose or claim day equality. -/
+def exactGregorianYearSnak (property : String) (year : Nat) (snak : Json) : Bool :=
+  let value := ((snak.getObjVal? "datavalue").toOption.getD Json.null)
+  let time := (value.getObjVal? "value").toOption.getD Json.null
+  let calendar := str? time "calendarmodel"
+  let precision := nat? time "precision"
+  str? snak "property" == some property &&
+  str? snak "snaktype" == some "value" &&
+  str? value "type" == some "time" &&
+  (calendar == some "http://www.wikidata.org/entity/Q1985727" ||
+    calendar == some "https://www.wikidata.org/entity/Q1985727") &&
+  (match precision with | some p => decide (9 ≤ p ∧ p ≤ 14) | none => false) &&
+  nat? time "before" == some 0 && nat? time "after" == some 0 &&
+  nat? time "timezone" == some 0 &&
+  decide (1000 ≤ year ∧ year ≤ 9999) &&
+  ((str? time "time").getD "").startsWith ("+" ++ toString year ++ "-")
+
+def exactYearQualifier (property : String) (year : Nat) (statement : Json) : Bool :=
+  let qualifiers := (statement.getObjVal? "qualifiers").toOption.getD Json.null
+  match (arr? qualifiers property).map Array.toList with
+  | some [snak] => exactGregorianYearSnak property year snak
+  | _ => false
+
+/-- Do not join a start from one statement to an end from another. Both
+qualifiers are checked on the SAME original nondeprecated item statement. -/
+def yearIntervalStatementMatches (property target : String)
+    (startYear endYear : Nat) (statement : Json) : Bool :=
+  let mainsnak := (statement.getObjVal? "mainsnak").toOption.getD Json.null
+  str? mainsnak "property" == some property &&
+  str? mainsnak "snaktype" == some "value" &&
+  Cli.statementValueId? statement == some target &&
+  (str? statement "rank" == some "normal" || str? statement "rank" == some "preferred") &&
+  Cli.statementRank statement != "deprecated" &&
+  (match str? statement "id" with | some id => !id.isEmpty | none => false) &&
+  decide (startYear ≤ endYear) &&
+  exactYearQualifier "P580" startYear statement &&
+  exactYearQualifier "P582" endYear statement
+
+def originalPropertyRows (entity : Json) (subject property : String) : List Json :=
+  let entities := (entity.getObjVal? "entities").toOption.getD Json.null
+  let record := (entities.getObjVal? subject).toOption.getD Json.null
+  let claims := (record.getObjVal? "claims").toOption.getD Json.null
+  ((arr? claims property).getD #[]).toList
+
+def qualifiedYearRows (entity : Json) (subject property target : String)
+    (startYear endYear : Nat) : List Json :=
+  (originalPropertyRows entity subject property).filter
+    (yearIntervalStatementMatches property target startYear endYear)
+
+theorem qualifiedYearRowsExact (entity : Json) (subject property target : String)
+    (startYear endYear : Nat) (statement : Json) :
+    statement ∈ qualifiedYearRows entity subject property target startYear endYear ↔
+    statement ∈ originalPropertyRows entity subject property ∧
+    yearIntervalStatementMatches property target startYear endYear statement = true := by
+  simp [qualifiedYearRows, List.mem_filter]
+
+/-- Construct the JMD property proof directly from the independently
+    reopened original EntityData, not from an SLR candidate triple. -/
+def originalEntityPropertyProof? (entity : Json)
+    (subject property target : String) : Option CheckedWorldProperty := do
+  if !jsonEntityMatchesQid subject entity then none else
+    let kb := pkbFromImportedEntities (Cli.entitiesOfJson entity)
+    let p := Pid.wd property
+    let s := Qid.wd subject
+    let o := Qid.wd target
+    if h : kb.supportsB p s o = true then
+      some ⟨kb, p, s, o, h⟩
+    else none
+
+/-- The qualified producer retains the full native statement JSON. The
+    independent property proof and the same-row time check are separate
+    requirements. Unsupported qualifiers do not become negative facts. -/
+structure OriginalQualifiedYearWitness (entity : Json)
+    (subject property target : String) (startYear endYear : Nat) where
+  statement : Json
+  originalMatch : statement ∈ qualifiedYearRows entity subject property target startYear endYear
+  propertyProof : CheckedWorldProperty
+  independentlyImported :
+    originalEntityPropertyProof? entity subject property target = some propertyProof
+
+def originalQualifiedYearWitnesses (entity : Json)
+    (subject property target : String) (startYear endYear : Nat) :
+    List (OriginalQualifiedYearWitness entity subject property target startYear endYear) :=
+  match h : originalEntityPropertyProof? entity subject property target with
+  | none => []
+  | some proof =>
+    (qualifiedYearRows entity subject property target startYear endYear).attach.map
+      (fun row => ⟨row.val, row.property, proof, h⟩)
+
+theorem originalQualifiedYearWitnessSound
+    {entity : Json} {subject property target : String} {startYear endYear : Nat}
+    (w : OriginalQualifiedYearWitness entity subject property target startYear endYear) :
+    w.statement ∈ originalPropertyRows entity subject property ∧
+    yearIntervalStatementMatches property target startYear endYear w.statement = true :=
+  (qualifiedYearRowsExact entity subject property target startYear endYear w.statement).mp w.originalMatch
+
 end GwbWorldGraph
 end Slr
 end Wikidata

@@ -1,6 +1,6 @@
 import Integration.BishopVendoredArithmeticConcrete
-import Integration.BishopRound11MachinSourceBinding
-import Integration.MoonshineEisensteinRound11RouteB
+import Integration.BishopMachinSourceBinding
+import Integration.MoonshineEisensteinRouteB
 
 /-!
 # Route-B binding specialized to the concrete pinned Bishop arithmetic mirror
@@ -16,7 +16,7 @@ binding itself.
 This specialization still does not claim generated Agda replay.
 -/
 
-namespace Integration.BishopRound11MachinConcreteBinding
+namespace Integration.BishopMachinConcreteBinding
 
 open Filter
 open Complex
@@ -24,8 +24,8 @@ open UpperHalfPlane
 
 open Integration.BishopVendoredArithmeticConcrete
 open Integration.BishopVendoredRealEvaluation
-open Integration.BishopRound11MachinSourceBinding
-open Integration.MoonshineEisensteinRound11RouteB
+open Integration.BishopMachinSourceBinding
+open Integration.MoonshineEisensteinRouteB
 
 noncomputable section
 
@@ -33,30 +33,30 @@ abbrev Arithmetic : VendoredArithmeticMirror :=
   concreteVendoredArithmeticMirror
 
 abbrev SourceBinding :=
-  Round11MachinSourceBinding Arithmetic
+  MachinSourceBinding Arithmetic
 
 /-- One concrete source binding now immediately yields the faithful primitive
 real extraction; the source arithmetic no longer appears as an input. -/
 def primitiveExtraction
     (B : SourceBinding) :=
-  Integration.BishopRound11MachinSourceBinding.primitiveExtraction
+  Integration.BishopMachinSourceBinding.primitiveExtraction
     Arithmetic B
 
 def faithfulPrimitiveExtraction
     (B : SourceBinding) :=
-  Integration.BishopRound11MachinSourceBinding.faithfulPrimitiveExtraction
+  Integration.BishopMachinSourceBinding.faithfulPrimitiveExtraction
     Arithmetic B
 
 /-- End-to-end route-B source complex carrier specialized to the pinned
 arithmetic mirror. -/
 abbrev RouteComplex
     (B : SourceBinding) :=
-  Integration.MoonshineEisensteinRound11RouteB.RouteComplex Arithmetic B
+  Integration.MoonshineEisensteinRouteB.RouteComplex Arithmetic B
 
 def mapRouteComplex
     {B : SourceBinding}
     (z : RouteComplex B) : ℂ :=
-  Integration.MoonshineEisensteinRound11RouteB.mapRouteComplex z
+  Integration.MoonshineEisensteinRouteB.mapRouteComplex z
 
 theorem mapped_sourceE4_tendsto_mathlib_E4
     {B : SourceBinding}
@@ -65,13 +65,13 @@ theorem mapped_sourceE4_tendsto_mathlib_E4
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
     Tendsto
       (fun N =>
-        Integration.MoonshineEisensteinRound11RouteB.mapRouteComplex
-          (Integration.MoonshineEisensteinRound11RouteB.sourceE4
+        Integration.MoonshineEisensteinRouteB.mapRouteComplex
+          (Integration.MoonshineEisensteinRouteB.sourceE4
             (A := Arithmetic) (B := B) N
-            (Integration.MoonshineEisensteinRound11RouteB.sourceQ τs)))
+            (Integration.MoonshineEisensteinRouteB.sourceQ τs)))
       atTop
       (𝓝 (Integration.MoonshineEisensteinAnalytic.E4 τ)) :=
-  Integration.MoonshineEisensteinRound11RouteB
+  Integration.MoonshineEisensteinRouteB
     .mapped_sourceE4_tendsto_mathlib_E4 τs τ hτ
 
 theorem mapped_sourceE6_tendsto_mathlib_E6
@@ -81,13 +81,13 @@ theorem mapped_sourceE6_tendsto_mathlib_E6
     (hτ : mapRouteComplex τs = (τ : ℂ)) :
     Tendsto
       (fun N =>
-        Integration.MoonshineEisensteinRound11RouteB.mapRouteComplex
-          (Integration.MoonshineEisensteinRound11RouteB.sourceE6
+        Integration.MoonshineEisensteinRouteB.mapRouteComplex
+          (Integration.MoonshineEisensteinRouteB.sourceE6
             (A := Arithmetic) (B := B) N
-            (Integration.MoonshineEisensteinRound11RouteB.sourceQ τs)))
+            (Integration.MoonshineEisensteinRouteB.sourceQ τs)))
       atTop
       (𝓝 (Integration.MoonshineEisensteinAnalytic.E6 τ)) :=
-  Integration.MoonshineEisensteinRound11RouteB
+  Integration.MoonshineEisensteinRouteB
     .mapped_sourceE6_tendsto_mathlib_E6 τs τ hτ
 
 structure Boundary where
@@ -114,4 +114,4 @@ def boundary : Boundary where
 
 end
 
-end Integration.BishopRound11MachinConcreteBinding
+end Integration.BishopMachinConcreteBinding

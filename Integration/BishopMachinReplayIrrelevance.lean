@@ -1,5 +1,5 @@
-import Integration.BishopRound11MachinCanonicalBinding
-import Integration.MoonshineEisensteinRound11RouteB
+import Integration.BishopMachinCanonicalBinding
+import Integration.MoonshineEisensteinRouteB
 
 /-!
 # Replay irrelevance for the Round11/Machin route-B semantics
@@ -17,22 +17,22 @@ mapped finite Eisenstein or normalized-Delta values once their source points
 map to the same upper-half-plane point.
 -/
 
-namespace Integration.BishopRound11MachinReplayIrrelevance
+namespace Integration.BishopMachinReplayIrrelevance
 
 open Complex
 open UpperHalfPlane
 open Integration.BishopVendoredRealEvaluation
-open Integration.BishopRound11MachinCanonicalBinding
-open Integration.BishopRound11MachinSourceBinding
-open Integration.MoonshineEisensteinRound11RouteB
+open Integration.BishopMachinCanonicalBinding
+open Integration.BishopMachinSourceBinding
+open Integration.MoonshineEisensteinRouteB
 
 noncomputable section
 
 abbrev Arithmetic :=
-  Integration.BishopRound11MachinCanonicalBinding.Arithmetic
+  Integration.BishopMachinCanonicalBinding.Arithmetic
 
 theorem mapped_q_independent_of_binding
-    {B₁ B₂ : Round11MachinSourceBinding Arithmetic}
+    {B₁ B₂ : MachinSourceBinding Arithmetic}
     (τ₁ : RouteComplex Arithmetic B₁)
     (τ₂ : RouteComplex Arithmetic B₂)
     (τ : ℍ)
@@ -44,7 +44,7 @@ theorem mapped_q_independent_of_binding
       map_sourceQ_eq_qOfTarget τ₂ τ h₂]
 
 theorem mapped_e4_independent_of_binding
-    {B₁ B₂ : Round11MachinSourceBinding Arithmetic}
+    {B₁ B₂ : MachinSourceBinding Arithmetic}
     (τ₁ : RouteComplex Arithmetic B₁)
     (τ₂ : RouteComplex Arithmetic B₂)
     (τ : ℍ)
@@ -57,7 +57,7 @@ theorem mapped_e4_independent_of_binding
       map_sourceE4_eq_e4At τ₂ τ h₂ N]
 
 theorem mapped_e6_independent_of_binding
-    {B₁ B₂ : Round11MachinSourceBinding Arithmetic}
+    {B₁ B₂ : MachinSourceBinding Arithmetic}
     (τ₁ : RouteComplex Arithmetic B₁)
     (τ₂ : RouteComplex Arithmetic B₂)
     (τ : ℍ)
@@ -70,7 +70,7 @@ theorem mapped_e6_independent_of_binding
       map_sourceE6_eq_e6At τ₂ τ h₂ N]
 
 theorem mapped_deltaNumerator_independent_of_binding
-    {B₁ B₂ : Round11MachinSourceBinding Arithmetic}
+    {B₁ B₂ : MachinSourceBinding Arithmetic}
     (τ₁ : RouteComplex Arithmetic B₁)
     (τ₂ : RouteComplex Arithmetic B₂)
     (τ : ℍ)
@@ -83,7 +83,7 @@ theorem mapped_deltaNumerator_independent_of_binding
       map_sourceDiscriminantNumerator τ₂ τ h₂ N]
 
 theorem mapped_normalizedDelta_independent_of_binding
-    {B₁ B₂ : Round11MachinSourceBinding Arithmetic}
+    {B₁ B₂ : MachinSourceBinding Arithmetic}
     (τ₁ : RouteComplex Arithmetic B₁)
     (τ₂ : RouteComplex Arithmetic B₂)
     (τ : ℍ)
@@ -98,7 +98,7 @@ theorem mapped_normalizedDelta_independent_of_binding
 /-- In particular, every admissible replay has the same mapped finite route as
 the canonical completion binding. -/
 theorem mapped_normalizedDelta_eq_canonical
-    {B : Round11MachinSourceBinding Arithmetic}
+    {B : MachinSourceBinding Arithmetic}
     (τB : RouteComplex Arithmetic B)
     (τC : RouteComplex Arithmetic canonicalBinding)
     (τ : ℍ)
@@ -132,4 +132,4 @@ def boundary : Boundary where
 
 end
 
-end Integration.BishopRound11MachinReplayIrrelevance
+end Integration.BishopMachinReplayIrrelevance

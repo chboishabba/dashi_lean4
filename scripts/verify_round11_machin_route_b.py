@@ -204,7 +204,7 @@ def write_lean_certificate(
     closure_items = "\n".join(f'  , "{lean_string(p)}"' for p in closure[1:])
     first_closure = closure[0] if closure else ""
 
-    content = f'''import Integration.BishopRound11MachinBindingManifest
+    content = f'''import Integration.BishopMachinBindingManifest
 
 /-!
 # Generated Round11/Machin Agda provenance replay certificate
@@ -219,7 +219,7 @@ checked-in Lean manifest.
 
 namespace Generated.BishopRound11MachinReplayCertificate
 
-open Integration.BishopRound11MachinBindingManifest
+open Integration.BishopMachinBindingManifest
 
 def observedAgdaCommit : String := "{agda_commit}"
 def observedBishopCommit : String := "{bishop_commit}"

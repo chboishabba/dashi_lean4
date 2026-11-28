@@ -637,9 +637,13 @@ def runReciprocalOfficeCheck
        (manifestB.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
        (pb.getObjValAs? String "source_text_sha256").toOption != some digests[4]! ||
        digests[0]! == digests[4]! then return 1
-    if !Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea ||
-       !Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb ||
-       !Slr.GwbArticleSystem.officeLabelChecked office then return 1
+    if !Slr.GwbArticleSystem.officeLabelChecked office then return 1
+    if hRootA : Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea = true then
+      pure ()
+    else return 1
+    if hRootB : Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb = true then
+      pure ()
+    else return 1
     let some ra := Slr.GwbArticleSystem.entityRevision ea "Q207" | return 1
     let some rb := Slr.GwbArticleSystem.entityRevision eb "Q23505" | return 1
     let some ro := Slr.GwbArticleSystem.entityRevision office "Q11696" | return 1
@@ -648,11 +652,19 @@ def runReciprocalOfficeCheck
       if hb : Slr.GwbArticleSystem.indexedOfficeLeadMatches .father b = true then
         let wa := Slr.GwbWorldGraph.originalQualifiedYearWitnesses ea "Q207" "P39" "Q11696" 2001 2009
         let wb := Slr.GwbWorldGraph.originalQualifiedYearWitnesses eb "Q23505" "P39" "Q11696" 1989 1993
-        if wa.isEmpty || wb.isEmpty then return 1
-        for w in wa do
-          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
-        for w in wb do
-          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        let some witnessA := wa.head? | return 1
+        let some witnessB := wb.head? | return 1
+        if hRootA : Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea = true then
+          if hRootB : Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb = true then
+            for w in wa do
+              let _ := Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement .son hRootA ha w
+            for w in wb do
+              let _ := Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement .father hRootB hb w
+            let _ := Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison
+              hRootA hRootB ha hb witnessA witnessB
+            pure ()
+          else return 1
+        else return 1
         let _ := Slr.GwbArticleSystem.reciprocalBushOfficeSound ha hb
         let some literalA := Slr.GwbArticleSystem.matchedOfficeLead? .son a | return 1
         let some literalB := Slr.GwbArticleSystem.matchedOfficeLead? .father b | return 1
@@ -689,6 +701,8 @@ def runReciprocalOfficeCheck
           ("forward", toJson ("son tenure after father tenure" : String)),
           ("backward", toJson ("father tenure before son tenure" : String)),
           ("same_office", toJson true), ("distinct_holders", toJson true),
+          ("bounded_article_kb_interval_weld_checked", toJson true),
+          ("weld_theorem", toJson ("Wikidata.Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison" : String)),
           ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
           ("shared_event_identity_paid", toJson false),
           ("bounded_shared_election_outcome_paid", toJson sharedElection),
@@ -846,6 +860,8 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbArticleSystem.reciprocalBushOfficeSound
 #print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeAnswerSound
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison
 
 #print axioms Wikidata.Slr.GwbArticleSystem.electionRowsExact
 #print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionClaimSound

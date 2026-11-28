@@ -53,6 +53,17 @@ def clean(path,expected=None):
 def local_source():
     head=git(ROOT,"rev-parse","HEAD")
     files=git(ROOT,"ls-files","--",".").splitlines()
+    tracked=set(files)
+    for f in files:
+        if (f.endswith((".lean",".py",".toml")) or f=="lean-toolchain") and not (ROOT/f).is_file():
+            raise ValueError(f"deleted admission input: {f}")
+    # A newly introduced .lean module could otherwise be loaded by Lake
+    # without appearing in the recorded tracked-source hash set.
+    for p in ROOT.rglob("*.lean"):
+        rel=p.relative_to(ROOT)
+        if any(part in (".lake",".git","vendor") for part in rel.parts):continue
+        if rel.as_posix() not in tracked:
+            raise ValueError(f"untracked Lean admission input: {rel}")
     blobs={}
     for f in files:
         p=ROOT/f
@@ -88,7 +99,7 @@ def run():
     if not (ROOT/"lake-manifest.json").is_file():raise ValueError("local manifest absent; install pinned dependencies first")
     before=local_source();deps=packages()
     env=dict(os.environ)
-    for k in ("ELAN_TOOLCHAIN","LEAN_PATH","LEAN_SRC_PATH"):env.pop(k,None)
+    for k in ("ELAN_TOOLCHAIN","LEAN_PATH","LEAN_SRC_PATH","LEAN_SYSROOT","LEAN_CC"):env.pop(k,None)
     report=pathlib.Path(tempfile.mkdtemp(prefix="ns-direct-admission-"))
     def cmd(name,*args):
         p=subprocess.run(args,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)

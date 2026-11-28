@@ -57,13 +57,13 @@ theorem tPower (z : ℂ) (n : ℕ) :
 theorem squareTerm (z : ℂ) (n : ℕ) :
     jacobiTheta₂_term (n:ℤ) 0 z=t z^(n*n) ∧
     jacobiTheta₂_term (-(n:ℤ)) 0 z=t z^(n*n) := by
-  rw [tPower]
+  simp only [tPower]
   constructor <;> unfold jacobiTheta₂_term p <;> push_cast <;> congr 1 <;> ring
 
 theorem triangularTerm (z : ℂ) (n : ℕ) :
     jacobiTheta₂_term (n:ℤ) (z/2) z=t z^(n*(n+1)) ∧
     jacobiTheta₂_term (-(n:ℤ)-1) (z/2) z=t z^(n*(n+1)) := by
-  rw [tPower]
+  simp only [tPower]
   constructor <;> unfold jacobiTheta₂_term p <;> push_cast <;> congr 1 <;> ring
 
 def sqTail (q : ℂ) (n : ℕ) := q^((n+1)*(n+1))

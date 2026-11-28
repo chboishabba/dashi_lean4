@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SIDECAR="$ROOT/proofs/alpoge-lean433"
-SOURCE="${GRH_P0_SOURCE:-original}"
+SOURCE="${GRH_P0_SOURCE:-compact}"
 case "$SOURCE" in
   original) DEFAULT="$ROOT/.local/alpoge-rh-v4331"; PROJECT=""; VERSION=4.33.1; REPLAY=0; CACHE=0 ;;
   compact) DEFAULT="$ROOT/.local/alpoge-grh-v4350"; PROJECT=grh-compact; VERSION=4.35.0; REPLAY=1; CACHE=1 ;;
@@ -97,6 +97,16 @@ PY
     # below must not depend on sorryAx or any nonstandard axiom.
     lake env lean --root="$VENDOR" -o "$BUILD/Problems/RiemannHypothesis/Millennium.olean" "$VENDOR/$TARGET" 2>&1 |
       tee "$REPORT_DIR/clay-target-build.log"
+    # Compile the actual root adapter from this checkout, not a duplicate
+    # cross-version theorem or a supplied root .olean.
+    ROOT_ADAPTER="$ROOT/MillenniumExternal/AlpogeRHBoundaryExact.lean"
+    ROOT_ADAPTER_BLOB="$(git -C "$ROOT" rev-parse HEAD:MillenniumExternal/AlpogeRHBoundaryExact.lean)"
+    [[ "$(git hash-object --no-filters "$ROOT_ADAPTER")" == "$ROOT_ADAPTER_BLOB" ]]
+    mkdir -p "$BUILD/MillenniumExternal"
+    lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$3" -o "$1/MillenniumExternal/AlpogeRHBoundaryExact.olean" "$2"' \
+      _ "$BUILD" "$ROOT_ADAPTER" "$ROOT" 2>&1 | tee "$REPORT_DIR/root-boundary.log"
+    python3 "$SIDECAR/audit_p0_axioms.py" root "$REPORT_DIR/root-boundary.log" |
+      tee "$REPORT_DIR/root-boundary-axioms.log"
     lake env bash -c 'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$3" -o "$1/RHClayAdmission.olean" "$2"' \
       _ "$BUILD" "$SIDECAR/RHClayAdmission.lean" "$SIDECAR" 2>&1 |
       tee "$REPORT_DIR/clay-admission.log"
@@ -133,4 +143,4 @@ printf 'Receipts: %s\n' "$REPORT_DIR"
 if [[ "${GRH_P0_CLAY:-$REPLAY}" == 1 ]]; then
   printf 'SAME-KERNEL PINNED CLAY RH AND XI ADAPTER CHECKED (isolated %s).\n' "$VERSION"
 fi
-printf 'Still separate: root-package proof import, Agda same-object transport, independent external checker acceptance.\n'
+printf 'Still separate: root v4.28 compiled-environment proof import, Agda same-object transport, independent external checker acceptance.\n'

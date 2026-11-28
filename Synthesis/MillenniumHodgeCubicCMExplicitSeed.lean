@@ -235,4 +235,29 @@ theorem middleCyclotomicLift_phi7 {F : Type*} [Field F] [CharZero F]
       r*(theta^3+theta^2-theta)+theta^4+theta^3-2*theta^2-theta+1)*hq+
     (r*theta^2-r-theta)*ht
 
+
+/-- The ORIGINAL signed cyclotomic lift has seventh power one, not
+merely a matching trace or unsigned dimension count. This is field
+arithmetic, not an algebraic-correspondence existence assertion. -/
+theorem middleCyclotomicLift_seventh {F : Type*} [Field F] [CharZero F]
+    (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    (middleCyclotomicLift theta j)^7=1 := by
+  have hphi := middleCyclotomicLift_phi7 theta j ht hj
+  dsimp only at hphi
+  linear_combination (middleCyclotomicLift theta j-1)*hphi
+
+/-- The order-seven action is nonidentity in characteristic zero. -/
+theorem middleCyclotomicLift_nontrivial {F : Type*} [Field F] [CharZero F]
+    (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    middleCyclotomicLift theta j ≠ 1 := by
+  intro he
+  have hphi := middleCyclotomicLift_phi7 theta j ht hj
+  dsimp only at hphi
+  rw [he] at hphi
+  norm_num at hphi
+
 end DASHI.Hodge.CubicCM

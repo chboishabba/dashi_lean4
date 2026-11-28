@@ -45,7 +45,6 @@ def main() -> int:
     p.add_argument("--main-sha256", required=True)
     p.add_argument("--lean-version", default=REQUIRED_VERSION)
     p.add_argument("--lake", default="lake")
-    p.add_argument("--allow-axiom", action="append", default=[])
     a = p.parse_args()
     root = a.external_root.resolve()
     src = root / "Main.lean"
@@ -101,11 +100,11 @@ def main() -> int:
         print("FAIL: transitive axiom report missing")
         return 2
     match = re.search(r"depends on axioms:\s*\[([^]]*)\]", axiom_text)
-    if not match:
+    if not match and "does not depend on any axioms" not in axiom_text:
         print("FAIL: unable to parse explicit RH axiom dependency list")
         return 2
-    actual = {s.strip() for s in match.group(1).split(",") if s.strip()}
-    unexpected = actual - (WHITELIST | set(a.allow_axiom))
+    actual = {s.strip() for s in match.group(1).split(",") if s.strip()} if match else set()
+    unexpected = actual - WHITELIST
     if unexpected:
         print("FAIL: unexpected transitive axioms", sorted(unexpected))
         return 2

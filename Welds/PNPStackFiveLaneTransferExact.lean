@@ -137,4 +137,39 @@ theorem selectExit (Q A : Nat) (table : Nat → Nat → Option Instruction)
 -- spectator lanes preserved, not merely the earlier two-lane model.
 -- Whole instruction composition (digit dispatch, extent branch, source
 -- code and prime valuation bridge) remains separate from this theorem.
+-- Every transfer produced by the actual emitter has a positive
+-- divisor and distinct source/destination lanes, including action
+-- phases whose stack is selected by the candidate rule table.
+theorem actionLane (table : Nat → Nat → Option Instruction) (q a : Nat) :
+    (actionSpec table q a).1 = L ∨ (actionSpec table q a).1 = R := by
+  unfold actionSpec
+  split
+  · exact Or.inr rfl
+  · rename_i i hi
+    cases i.move <;> simp
+
+theorem actualTransferGood (A : Nat) (table : Nat → Nat → Option Instruction)
+    (p : Phase) (t : Transfer)
+    (h : transfer (max 2 A) table p=some t) :
+    t.x≠t.y ∧ 0<t.a := by
+  cases p <;> simp only [transfer,Option.some.injEq] at h
+  all_goals try contradiction
+  all_goals subst t
+  all_goals try (constructor <;> first | decide | omega)
+  all_goals rename_i q a
+  all_goals rcases actionLane table q a with hl | hr
+  all_goals simp [hl,hr,L,R,U]
+
+theorem actualMaximal (Q A : Nat) (table : Nat → Nat → Option Instruction)
+    (p : Phase) (t : Transfer) (v : Data)
+    (hm : mainTag p∈inventory Q A) (hh : midTag p∈inventory Q A)
+    (ht : transfer (max 2 A) table p=some t) :
+    let k := v t.x/t.a
+    run (compile Q A table) (2*k) ⟨mainTag p,v⟩ =
+      some ⟨mainTag p,moveData t k v⟩ ∧
+    moveData t k v t.x=v t.x%t.a ∧
+    ¬ enabled ⟨mainTag p,loopBody p t⟩ ⟨mainTag p,moveData t k v⟩ :=
+  maximalExact Q A table p t v hm hh ht
+    (actualTransferGood A table p t ht).1 (actualTransferGood A table p t ht).2
+
 end PNPStackFiveLane

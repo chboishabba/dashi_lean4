@@ -107,22 +107,23 @@ theorem compact_uniform_restart (F : E → E) (hF : ContDiff ℝ 1 F)
 restart inside the old interval sufficiently close to its boundary.
 Overlap agreement is the clopen uniqueness lemma above, not a
 selection of an unrelated trajectory. -/
-theorem extend_bounded_open_interval (F : E → E) (hF : ContDiff ℝ 1 F)
-    (x : ℝ → E) (a b : ℝ) (hab : a<b)
+theorem extend_bounded_open_interval_tail (F : E → E) (hF : ContDiff ℝ 1 F)
+    (x : ℝ → E) (a s b : ℝ) (has : a≤s) (hsb : s<b)
     (hx : SolvesOn F x (Ioo a b))
-    (K : Set E) (hK : IsCompact K) (hb : ∀ t∈Ioo a b,x t∈K) :
+    (K : Set E) (hK : IsCompact K) (hb : ∀ t∈Ioo s b,x t∈K) :
     ∃ c>b,∃ z : ℝ → E,SolvesOn F z (Ioo a c) ∧ EqOn z x (Ioo a b) := by
-  have hmid : (a+b)/2∈Ioo a b := ⟨by linarith,by linarith⟩
+  have hmid : (s+b)/2∈Ioo s b := ⟨by linarith,by linarith⟩
   obtain ⟨δ,hδ,H⟩ := compact_uniform_restart F hF K hK ⟨x _,hb _ hmid⟩
-  let t₀ := b-min (δ/2) ((b-a)/2)
-  have hgap : 0<min (δ/2) ((b-a)/2) := lt_min (by positivity) (by linarith)
-  have ht₀ : t₀∈Ioo a b := by
+  let t₀ := b-min (δ/2) ((b-s)/2)
+  have hgap : 0<min (δ/2) ((b-s)/2) := lt_min (by positivity) (by linarith)
+  have ht₀tail : t₀∈Ioo s b := by
     dsimp [t₀]
-    exact ⟨by linarith [min_le_right (δ/2) ((b-a)/2)],by linarith⟩
+    exact ⟨by linarith [min_le_right (δ/2) ((b-s)/2)],by linarith⟩
+  have ht₀ : t₀∈Ioo a b := ⟨has.trans_lt ht₀tail.1,ht₀tail.2⟩
   have hc : b<t₀+δ := by
     dsimp [t₀]
-    linarith [min_le_left (δ/2) ((b-a)/2)]
-  obtain ⟨y,hy,hd⟩ := H (x t₀) (hb t₀ ht₀) t₀
+    linarith [min_le_left (δ/2) ((b-s)/2)]
+  obtain ⟨y,hy,hd⟩ := H (x t₀) (hb t₀ ht₀tail) t₀
   let J := Ioo (max a (t₀-δ)) b
   have hj (t : ℝ) (ht : t∈J) :
       t∈Ioo a b ∧ t∈Ioo (t₀-δ) (t₀+δ) := by
@@ -161,6 +162,14 @@ theorem extend_bounded_open_interval (F : E → E) (hF : ContDiff ℝ 1 F)
     have hz' : z t=y t := by simp [z,h]
     rw [hz']
     exact (hd t hNew).congr_of_eventuallyEq hev
+
+/-- The full-interval version is the special case s=a. -/
+theorem extend_bounded_open_interval (F : E → E) (hF : ContDiff ℝ 1 F)
+    (x : ℝ → E) (a b : ℝ) (hab : a<b)
+    (hx : SolvesOn F x (Ioo a b))
+    (K : Set E) (hK : IsCompact K) (hb : ∀ t∈Ioo a b,x t∈K) :
+    ∃ c>b,∃ z : ℝ → E,SolvesOn F z (Ioo a c) ∧ EqOn z x (Ioo a b) :=
+  extend_bounded_open_interval_tail F hF x a a b le_rfl hab hx K hK hb
 
 end
 end DASHI.NavierStokes.RealContinuation

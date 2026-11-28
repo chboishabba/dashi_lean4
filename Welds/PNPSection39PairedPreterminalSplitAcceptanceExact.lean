@@ -1,0 +1,11 @@
+/-!
+Section39 original legally reopened anchored F3 residual produces
+a paired observation disagreement strictly before terminal time,
+and consequently terminal time k>0. Both actual executions retain
+the SAME source x/d and Boolean terminal consumer.
+No universal SAT lower bound or computational work promotion.
+-/
+import Welds.PNPOriginalAnchoredPairedPreterminalObservationSplitExact
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_visible_has_paired_observation_split_before_terminal
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_visible_needs_positive_terminal_clock
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_visible_has_paired_observation_split_before_terminal

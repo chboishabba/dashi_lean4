@@ -44,11 +44,11 @@ theorem sFactorFourth (z : ℂ) : sFactor z^4 = -z^2 := by
 theorem thetaS (u z : ℂ) (hz : z≠0) :
     jacobiTheta₂ (u/z) (-1/z) =
       sFactor z*Complex.exp (p*u^2/z)*jacobiTheta₂ u z := by
-  have h := jacobiTheta₂_functional_equation u z
-  have hs := sFactorNonzero hz
-  change jacobiTheta₂ u z =
+  have h : jacobiTheta₂ u z =
     1/sFactor z * Complex.exp (-p*u^2/z) *
-      jacobiTheta₂ (u/z) (-1/z) at h
+      jacobiTheta₂ (u/z) (-1/z) := by
+    simpa [sFactor,p,neg_mul] using jacobiTheta₂_functional_equation u z
+  have hs := sFactorNonzero hz
   have he : Complex.exp (p*u^2/z)*Complex.exp (-p*u^2/z)=1 := by
     rw [← Complex.exp_add]
     simp [show p*u^2/z+(-p*u^2/z)=0 by ring]

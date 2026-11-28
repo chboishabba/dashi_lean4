@@ -77,6 +77,37 @@ theorem phase_midpoint_resolvent_bound (ν : ℝ) (hν : 0 < ν)
   exact div_le_div_of_nonneg_right (phase_midpoint_dual_bound η ξ u hr hi)
     (le_of_lt (mul_pos hν hRate))
 
+
+/-- Literal identification with the original complex Fourier dot, rather
+than merely a convenient phase-pair proxy. -/
+theorem phaseDotSq_eq_complex_normSq (a : Fin 3 → ℝ) (u : Fin 3 → ℂ) :
+    phaseDotSq a u = Complex.normSq (∑ i : Fin 3, (a i : ℂ)*u i) := by
+  simp [phaseDotSq, realDot, Fin.sum_univ_three, Complex.normSq_apply,
+    Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, pow_two]
+  <;> ring
+
+theorem phaseMass_eq_complex_normSq_sum (u : Fin 3 → ℂ) :
+    phaseMass u = ∑ i : Fin 3, Complex.normSq (u i) := by
+  simp [phaseMass, massSq, Fin.sum_univ_three, Complex.normSq_apply, pow_two]
+  <;> ring
+
+/-- Actual original complex incompressibility supplies both real-phase
+premises. This uses the same xi, eta and u as the earlier native module. -/
+theorem physical_complex_phase_midpoint_bound (η ξ : Fin 3 → ℝ)
+    (u : Fin 3 → ℂ) (hη : (∑ i : Fin 3, (η i : ℂ)*u i) = 0) :
+    Complex.normSq (∑ i : Fin 3, (ξ i : ℂ)*u i) ≤
+      min (massSq ξ * (∑ i : Fin 3, Complex.normSq (u i)))
+          (4 * massSq (fun i => η i-ξ i/2) *
+            (∑ i : Fin 3, Complex.normSq (u i))) := by
+  have hr : realDot η (fun i => (u i).re) = 0 := by
+    simpa [realDot, Fin.sum_univ_three, Complex.add_re, Complex.mul_re]
+      using congrArg Complex.re hη
+  have hi : realDot η (fun i => (u i).im) = 0 := by
+    simpa [realDot, Fin.sum_univ_three, Complex.add_im, Complex.mul_im]
+      using congrArg Complex.im hη
+  simpa only [phaseDotSq_eq_complex_normSq, phaseMass_eq_complex_normSq_sum]
+    using phase_midpoint_dual_bound η ξ u hr hi
+
 end DASHI.NavierStokes.EuclideanMidpoint
 
 namespace DASHI.NavierStokes.SignedMeasure
@@ -104,6 +135,19 @@ theorem signed_integral_error {X : Type*} [MeasurableSpace X]
 of a same-output interaction, not a 27-voxel counting proxy. -/
 theorem euclidean_pair_signed_integral_error
     (f g e : (Fin 3 → ℝ) × (Fin 3 → ℝ) → ℝ)
+    (hf : Integrable f) (hg : Integrable g) (he : Integrable e)
+    (h : ∀ x, |f x-g x| ≤ e x) :
+    |(∫ x, f x) - (∫ x, g x)| ≤ ∫ x, e x :=
+  signed_integral_error volume f g e hf hg he h
+
+
+/-- R406 pairs TWO same-output interactions. Its rich frequency carrier
+has three independent R³ coordinates (xi, eta, eta') after eliminating
+both convolution constraints. Use actual product volume on those nine
+coordinates, rather than accidentally integrating only one input pair.
+The signed integrand and majorant must still be constructed on that carrier. -/
+theorem euclidean_double_interaction_signed_integral_error
+    (f g e : (Fin 3 → ℝ) × (Fin 3 → ℝ) × (Fin 3 → ℝ) → ℝ)
     (hf : Integrable f) (hg : Integrable g) (he : Integrable e)
     (h : ∀ x, |f x-g x| ≤ e x) :
     |(∫ x, f x) - (∫ x, g x)| ≤ ∫ x, e x :=

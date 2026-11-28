@@ -88,4 +88,40 @@ theorem full_support_evenFlip (i j : Fin 6) (hij : i ≠ j) :
   rw [hq] at hp
   simpa [evenFlip] using hp.symm
 
+
+/-- On the selected K3^k × C × D Kunneth chart, every algebraic
+factor has even degree. A degree-one curve slot cannot be split
+from the other degree-one curve slot by such a factor. -/
+theorem mixedCurveSlotsTogether (a c x y : ℕ)
+    (hx : x ≤ 1) (hy : y ≤ 1) (h : 2*a+x+y = 2*c) :
+    x = y := by omega
+
+/-- With two or three primitive K3 slots, a positive pure K3
+factor is odd or consists of one symmetric pair. In the actual
+SO6 representation odd factors vanish, and alternation kills the
+symmetric pair. This arithmetic lemma retains the degree constraint. -/
+theorem mixedPureFactorShape (n : ℕ) (hn : 0 < n) (hmax : n ≤ 3) :
+    n % 2 = 1 ∨ n = 2 := by omega
+
+/-- Newton's formula, followed by an actual linear cohomology
+projector that annihilates the lower-codimension products.
+The existence of a bundle with nonzero projected fourth Chern
+class is not supplied by this identity. -/
+theorem mixed_ch4_projection
+    {R V : Type*} [CommRing R] [Algebra ℚ R]
+    [AddCommGroup V] [Module ℚ V]
+    (P : R →ₗ[ℚ] V) (c1 c2 c3 c4 : R)
+    (h1 : P (c1^4) = 0)
+    (h2 : P (c1^2*c2) = 0)
+    (h3 : P (c2^2) = 0)
+    (h4 : P (c1*c3) = 0) :
+    P ((1/24 : ℚ) • c1^4 + (-1/6 : ℚ) • (c1^2*c2) +
+      (1/12 : ℚ) • c2^2 + (1/6 : ℚ) • (c1*c3) +
+      (-1/6 : ℚ) • c4) = (-1/6 : ℚ) • P c4 := by
+  simp [h1, h2, h3, h4]
+
+theorem mixed_ch4_nonzero_iff {V : Type*} [AddCommGroup V] [Module ℚ V]
+    (c : V) : (-1/6 : ℚ) • c ≠ 0 ↔ c ≠ 0 := by
+  simp [smul_eq_zero]
+
 end DASHI.Hodge.Orientation

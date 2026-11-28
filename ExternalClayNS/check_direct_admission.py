@@ -15,6 +15,13 @@ TARGETS=("NavierStokesR3.theorem_1_1","NavierStokesR3.comparator_of_breakdown",
          PREFIX+"directComparatorD",PREFIX+"directClayD",PREFIX+"directClayD_roundTrip",
          PREFIX+"dualRouteReceipt")
 ALLOWED={"propext","Classical.choice","Quot.sound"}
+SOURCE_BLOBS={
+    "NavierStokes/R3/Theorem.lean":"4151e7c90a9de31d8454fc49932b066d475bed08",
+    "NavierStokes/R3/ComparatorBridge.lean":"386c0981a0bdd32b68386f89113180d7f7666ea9",
+    "NavierStokes/PeriodicPaperTheorem.lean":"e7cdc29594f635a0eebf6967352a148be1b818e9",
+    "NavierStokes/PeriodicPaperComparator.lean":"8362165515d86500f55404382e3cf11689b0a584",
+    "lean-toolchain":"b814d987e0c93cb99938be934d9b277778495ba1",
+}
 
 def audit(log):
     out={}
@@ -68,6 +75,10 @@ def packages():
         if p["type"]!="git":raise ValueError("unexpected non-git package "+p["name"])
         heads[p["name"]]=clean(base/p["name"],p["rev"])
     if heads.get("NavierStokesAndEuler")!=PIN:raise ValueError("upstream pin mismatch")
+    upstream=base/"NavierStokesAndEuler"
+    for f,blob in SOURCE_BLOBS.items():
+        if git(upstream,"rev-parse",f"HEAD:{f}")!=blob or git(upstream,"hash-object","--no-filters",str(upstream/f))!=blob:
+            raise ValueError("source blob drift: "+f)
     return heads
 
 def run():

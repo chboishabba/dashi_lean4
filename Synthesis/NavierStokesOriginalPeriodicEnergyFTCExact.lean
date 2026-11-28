@@ -117,9 +117,9 @@ theorem periodic_energy_derivative (N : ℕ) (ν : ℝ)
 
 /-- Same trajectory, exact finite energy equality over real time.
 Integrability of dissipation is supplied by continuity of the modes. -/
-theorem periodic_energy_FTC (N : ℕ) (ν : ℝ)
+theorem periodic_energy_FTC_on_interval (N : ℕ) (ν : ℝ)
     (U : Vec3 → ℝ → CVec3) (T : ℝ)
-    (hc : ∀ k i,Continuous (fun s=>U k s i))
+    (hc : ∀ k i,ContinuousOn (fun s=>U k s i) (Set.uIcc 0 T))
     (hODE : ∀ t ∈ Set.uIcc 0 T,∀ k i,HasDerivAt (fun s=>U k s i)
       (-((ν*massSq k:ℝ):ℂ)*U k t i+galerkinForce N U k t i) t)
     (htrans : ∀ t ∈ Set.uIcc 0 T,∀ k,outputDot (embedMode k) (U (embedMode k) t)=0)
@@ -131,18 +131,32 @@ theorem periodic_energy_FTC (N : ℕ) (ν : ℝ)
       HasDerivAt (periodicEnergy N U) (-2*ν*periodicDissipation N U t) t :=
     fun t ht=>periodic_energy_derivative N ν U t (hODE t ht) (htrans t ht)
       (hreal t ht) (hmean t ht)
-  have hcont : Continuous (periodicDissipation N U) := by
+  have hcont : ContinuousOn (periodicDissipation N U) (Set.uIcc 0 T) := by
     unfold periodicDissipation
-    apply continuous_finset_sum
+    apply continuousOn_finset_sum
     intro k _
-    apply Continuous.const_mul
+    apply ContinuousOn.const_mul
     unfold realHermitian
     simp only [Fin.sum_univ_three]
     fun_prop
   have hi := intervalIntegral.integral_eq_sub_of_hasDerivAt hd
-    ((hcont.const_mul (-2*ν)).intervalIntegrable _ _)
+    ((hcont.const_mul (-2*ν)).intervalIntegrable)
   rw [intervalIntegral.integral_const_mul] at hi
   linarith
+
+
+theorem periodic_energy_FTC (N : ℕ) (ν : ℝ)
+    (U : Vec3 → ℝ → CVec3) (T : ℝ)
+    (hc : ∀ k i,Continuous (fun s=>U k s i))
+    (hODE : ∀ t ∈ Set.uIcc 0 T,∀ k i,HasDerivAt (fun s=>U k s i)
+      (-((ν*massSq k:ℝ):ℂ)*U k t i+galerkinForce N U k t i) t)
+    (htrans : ∀ t ∈ Set.uIcc 0 T,∀ k,outputDot (embedMode k) (U (embedMode k) t)=0)
+    (hreal : ∀ t ∈ Set.uIcc 0 T,∀ k i,U (embedMode (-k)) t i=star (U (embedMode k) t i))
+    (hmean : ∀ t ∈ Set.uIcc 0 T,U (embedMode 0) t=0) :
+    periodicEnergy N U T+2*ν*(∫ t in 0..T,periodicDissipation N U t)=
+      periodicEnergy N U 0 :=
+  periodic_energy_FTC_on_interval N ν U T (fun k i=>(hc k i).continuousOn)
+    hODE htrans hreal hmean
 
 end
 end DASHI.NavierStokes.PhysicalMixed

@@ -25,7 +25,7 @@ def Crossed (c : C(G, X)) : Prop :=
 
 theorem crossed_one (c : C(G,X)) (hc : Crossed X c) : c 1 = 0 := by
   have h := hc 1 1
-  simp only [one_mul, map_one, ContinuousLinearMap.one_apply] at h
+  simp at h
   exact add_left_cancel (show c 1 + c 1 = c 1 + 0 by simpa using h.symm)
 
 def homogeneousRaw (c : C(G,X)) : C(G × G,X) where
@@ -134,6 +134,75 @@ def actualH1QuotientIso :
   ((TopRep.homogeneousCochains X).homologyIsCokernel
     (CochainComplex.prev_nat_succ 0)).coconePointUniqueUpToIso
       (TopModuleCat.isColimitCoker _)
+
+
+/-- The actual quotient isomorphism intertwines the library's class map
+with its literal quotient projection. -/
+theorem actualH1QuotientIso_comm :
+    (ContinuousCohomology.π X 1) ≫ (actualH1QuotientIso X).hom =
+      TopModuleCat.cokerπ ((TopRep.homogeneousCochains X).toCycles 0 1) := by
+  unfold actualH1QuotientIso
+  exact Limits.IsColimit.comp_coconePointUniqueUpToIso_hom
+    ((TopRep.homogeneousCochains X).homologyIsCokernel
+      (CochainComplex.prev_nat_succ 0))
+    (TopModuleCat.isColimitCoker _) Limits.WalkingParallelPair.one
+
+/-- Every class has a representative in the actual categorical cycles,
+not merely a point of an externally stipulated quotient. -/
+theorem actualClassMap_surjective :
+    Function.Surjective (ContinuousCohomology.π X 1) := by
+  intro x
+  obtain ⟨z,hz⟩ := TopModuleCat.cokerπ_surjective
+    ((TopRep.homogeneousCochains X).toCycles 0 1) ((actualH1QuotientIso X).hom x)
+  refine ⟨z, ?_⟩
+  apply (actualH1QuotientIso X).toContinuousLinearEquiv.injective
+  change (actualH1QuotientIso X).hom ((ContinuousCohomology.π X 1) z) =
+    (actualH1QuotientIso X).hom x
+  rw [← ConcreteCategory.comp_apply, actualH1QuotientIso_comm]
+  exact hz
+
+/-- At the literal cycles object the kernel is exactly the incoming
+boundary map. This is the required quotient identification, not an
+axiom asserting the long exact sequence. -/
+theorem actualClassMap_zero_iff_boundary
+    (z : ContinuousCohomology.cocycles X 1) :
+    (ContinuousCohomology.π X 1) z = 0 ↔
+      ∃ b : (TopRep.homogeneousCochains X).X 0,
+        (TopRep.homogeneousCochains X).toCycles 0 1 b = z := by
+  have hq : (actualH1QuotientIso X).hom ((ContinuousCohomology.π X 1) z) =
+      TopModuleCat.cokerπ ((TopRep.homogeneousCochains X).toCycles 0 1) z := by
+    rw [← ConcreteCategory.comp_apply, actualH1QuotientIso_comm]
+  constructor
+  · intro hz
+    rw [hz, map_zero] at hq
+    have hm : z ∈ ((TopRep.homogeneousCochains X).toCycles 0 1).hom.range := by
+      have hzero := hq.symm
+      change Submodule.mkQ _ z = 0 at hzero
+      exact Submodule.Quotient.mk_eq_zero.mp hzero
+    exact hm
+  · rintro ⟨b,hb⟩
+    rw [← hb, ← ConcreteCategory.comp_apply,
+      HomologicalComplex.toCycles_comp_homologyπ]
+    rfl
+
+/-- Normalization of the actual incoming differential. For a homogeneous
+zero-cochain b, invariance gives b(g)=ρ(g)b(1), so the normalized
+boundary is the signed difference ρ(g)b(1)-b(1). -/
+theorem zeroCochain_orbit (b : (TopRep.homogeneousCochains X).X 0) (g : G) :
+    b.1 g = X.ρ g (b.1 1) := by
+  have h := DFunLike.ext_iff.1 (b.2 g) g
+  simpa only [coind₁_apply_apply, inv_mul_cancel] using h.symm
+
+theorem incomingDifferential_normalized
+    (b : (TopRep.homogeneousCochains X).X 0) (g : G) :
+    (((TopRep.homogeneousCochains X).d 0 1).hom b).1 1 g =
+      X.ρ g (b.1 1)-b.1 1 := by
+  rw [TopRep.homogeneousCochains.d_apply]
+  simp only [Nat.reduceAdd, TopRep.d_succ, TopRep.d_zero,
+    ConcreteCategory.hom_ofHom, hom_sub, ContIntertwiningMap.sub_apply,
+    coind₁ι_toFun, coind₁Map_toFun, ContinuousMap.const_apply,
+    ContinuousMap.comp_apply, ContinuousMap.coe_mk]
+  exact congrArg (fun v => v-b.1 1) (zeroCochain_orbit X b g)
 
 end
 end DASHI.BSD.OriginalH1

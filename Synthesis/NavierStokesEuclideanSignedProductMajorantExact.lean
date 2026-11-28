@@ -9,6 +9,7 @@ No cutoff-uniform spacetime bound is inferred.
 -/
 namespace DASHI.NavierStokes.EuclideanMidpoint
 open MeasureTheory
+noncomputable section
 
 noncomputable def amplitude (u : CVec3) : ℝ := Real.sqrt (phaseMass u)
 
@@ -225,4 +226,106 @@ theorem centered_fixed_output_integral_bound
       rw [integral_mul_const,integral_const_mul]
       ring
 
+/-- The physical L² energy alone controls the pair-amplitude convolution
+at every fixed output. Translation-reflection preserves Lebesgue
+measure (Mathlib additive Haar integral_sub_left_eq_self); no artificial
+cutoff or extra assumption of integrability of the product is needed. -/
+theorem pairAmplitude_integrable_and_energy_bound
+    (U : Vec3 → CVec3) (ξ : Vec3)
+    (hU : Measurable (fun η => amplitude (U η)))
+    (hE : Integrable (fun η => phaseMass (U η))) :
+    Integrable (pairAmplitude U ξ) ∧
+      (∫ η, pairAmplitude U ξ η) ≤ ∫ η, phaseMass (U η) := by
+  let e : Vec3 → ℝ := fun η => phaseMass (U η)
+  have hs : Integrable (fun η : Vec3 => e (ξ-η)) :=
+    hE.comp_sub_left ξ
+  have hm : Measurable (pairAmplitude U ξ) := by
+    exact hU.mul (hU.comp (measurable_const.sub measurable_id))
+  have hb (η : Vec3) :
+      pairAmplitude U ξ η ≤ (e η+e (ξ-η))/2 := by
+    have h := sq_nonneg (amplitude (U η)-amplitude (U (ξ-η)))
+    rw [show (amplitude (U η)-amplitude (U (ξ-η)))^2 =
+        amplitude (U η)^2+amplitude (U (ξ-η))^2-
+        2*amplitude (U η)*amplitude (U (ξ-η)) by ring,
+      amplitude_sq,amplitude_sq] at h
+    change amplitude (U η)*amplitude (U (ξ-η)) ≤ _
+    linarith
+  have hg : Integrable (fun η : Vec3 => (e η+e (ξ-η))/2) := by
+    exact (hE.add hs).div_const 2
+  have hp : Integrable (pairAmplitude U ξ) :=
+    hg.mono' hm.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun η => by
+        rw [Real.norm_eq_abs,abs_of_nonneg (pairAmplitude_nonnegative U ξ η)]
+        exact hb η)
+  refine ⟨hp,?_⟩
+  calc
+    (∫ η, pairAmplitude U ξ η) ≤ ∫ η, (e η+e (ξ-η))/2 :=
+      integral_mono hp hg hb
+    _ = ∫ η, phaseMass (U η) := by
+      rw [integral_div,integral_add hE hs,integral_sub_left_eq_self e volume ξ]
+      change ((∫ η, e η)+(∫ η,e η))/2 = _
+      ring
+
+/-- Source integrability at each output now follows from finite energy
+and measurability of the actual cell; no extra positive pair-integral
+authority. For the outer integral we retain the explicit measurable
+inner marginal hypothesis (standard measurable integral/Fubini ingress). -/
+theorem centered_fixed_output_energy_bound
+    (ν : ℝ) (U : Vec3 → CVec3) (ξ : Vec3)
+    (hν : 0 < ν) (hξ : 0 < massSq ξ)
+    (hU : Measurable (fun η => amplitude (U η)))
+    (hE : Integrable (fun η => phaseMass (U η)))
+    (hk : ∀ η, AEStronglyMeasurable (centeredSignedKernel ν U ξ η))
+    (houter : AEStronglyMeasurable
+      (fun η => ∫ η', centeredSignedKernel ν U ξ η')) :
+    |∫ η, ∫ η', centeredSignedKernel ν U ξ η η'| ≤
+      (2/ν)*(∫ η, phaseMass (U η))^2 := by
+  obtain ⟨hp,hpE⟩ := pairAmplitude_integrable_and_energy_bound U ξ hU hE
+  let p := pairAmplitude U ξ
+  let k := centeredSignedKernel ν U ξ
+  have hi (η : Vec3) : Integrable (k η) :=
+    (hp.const_mul ((2/ν)*p η)).mono' (hk η)
+      (Filter.Eventually.of_forall fun η' => by
+        rw [Real.norm_eq_abs]
+        exact centered_signed_product_majorant ν U ξ η η' hν hξ)
+  have hb (η : Vec3) :
+      |∫ η', k η η'| ≤ ((2/ν)*p η)*(∫ η',p η') := by
+    have h := norm_integral_le_of_norm_le (hp.const_mul ((2/ν)*p η))
+      (Filter.Eventually.of_forall fun η' => by
+        rw [Real.norm_eq_abs]
+        exact centered_signed_product_majorant ν U ξ η η' hν hξ)
+    rw [integral_const_mul] at h
+    simpa [Real.norm_eq_abs] using h
+  have hM : Integrable (fun η => ((2/ν)*p η)*(∫ η',p η')) :=
+    (hp.const_mul (2/ν)).mul_const _
+  have ho : Integrable (fun η => ∫ η',k η η') :=
+    hM.mono' houter (Filter.Eventually.of_forall fun η => by
+      rw [Real.norm_eq_abs]; exact hb η)
+  have h := centered_fixed_output_integral_bound ν U ξ hν hξ hp hi ho
+  have hnn : 0 ≤ ∫ η,p η := integral_nonneg (pairAmplitude_nonnegative U ξ)
+  have hs : (∫ η,p η)^2 ≤ (∫ η,phaseMass (U η))^2 :=
+    pow_le_pow_left₀ hnn hpE 2
+  exact le_trans h (mul_le_mul_of_nonneg_left hs (div_nonneg (by norm_num) hν.le))
+
+/-- Local output region: finite volume gives a finite integral from
+energy alone. This does not assert an infinite-volume E-only bound or
+a uniform time-integrated critical continuation estimate. -/
+theorem finite_output_region_budget (ν E : ℝ) (hν : 0 < ν)
+    (S : Set Vec3) (hS : volume S < ⊤) (g : Vec3 → ℝ)
+    (hg : AEStronglyMeasurable g (volume.restrict S))
+    (hb : ∀ᵐ ξ ∂volume.restrict S, |g ξ| ≤ (2/ν)*E^2) :
+    Integrable g (volume.restrict S) ∧
+      |∫ ξ in S,g ξ| ≤ (volume S).toReal*((2/ν)*E^2) := by
+  letI : IsFiniteMeasure (volume.restrict S) :=
+    ⟨by simpa using hS⟩
+  have hc : Integrable (fun _ : Vec3 => (2/ν)*E^2) (volume.restrict S) :=
+    integrable_const _
+  have hnorm : ∀ᵐ ξ ∂volume.restrict S, ‖g ξ‖ ≤ (2/ν)*E^2 := by
+    simpa only [Real.norm_eq_abs] using hb
+  refine ⟨hc.mono' hg hnorm,?_⟩
+  have h := norm_integral_le_of_norm_le hc hnorm
+  simpa [Real.norm_eq_abs,Measure.real,Measure.restrict_apply_univ,
+    smul_eq_mul] using h
+
+end
 end DASHI.NavierStokes.EuclideanMidpoint

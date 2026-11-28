@@ -107,13 +107,14 @@ theorem compact_uniform_restart (F : E → E) (hF : ContDiff ℝ 1 F)
 restart inside the old interval sufficiently close to its boundary.
 Overlap agreement is the clopen uniqueness lemma above, not a
 selection of an unrelated trajectory. -/
-theorem extend_bounded_open_interval_tail (F : E → E) (hF : ContDiff ℝ 1 F)
+theorem extend_with_restart_radius (F : E → E) (hF : ContDiff ℝ 1 F)
     (x : ℝ → E) (a s b : ℝ) (has : a≤s) (hsb : s<b)
     (hx : SolvesOn F x (Ioo a b))
-    (K : Set E) (hK : IsCompact K) (hb : ∀ t∈Ioo s b,x t∈K) :
-    ∃ c>b,∃ z : ℝ → E,SolvesOn F z (Ioo a c) ∧ EqOn z x (Ioo a b) := by
-  have hmid : (s+b)/2∈Ioo s b := ⟨by linarith,by linarith⟩
-  obtain ⟨δ,hδ,H⟩ := compact_uniform_restart F hF K hK ⟨x _,hb _ hmid⟩
+    (K : Set E) (δ : ℝ) (hδ : 0<δ)
+    (H : ∀ z∈K,∀ t₀ : ℝ,∃ y : ℝ → E,
+      y t₀=z ∧ SolvesOn F y (Ioo (t₀-δ) (t₀+δ)))
+    (hb : ∀ t∈Ioo s b,x t∈K) :
+    ∃ z : ℝ → E,SolvesOn F z (Ioo a (b+δ/2)) ∧ EqOn z x (Ioo a b) := by
   let t₀ := b-min (δ/2) ((b-s)/2)
   have hgap : 0<min (δ/2) ((b-s)/2) := lt_min (by positivity) (by linarith)
   have ht₀tail : t₀∈Ioo s b := by
@@ -140,8 +141,12 @@ theorem extend_bounded_open_interval_tail (F : E → E) (hF : ContDiff ℝ 1 F)
     · simp [z,h]
     · have htj : t∈J := ⟨htJ.1.trans_le (le_of_not_gt h),ht.2⟩
       simp [z,h,heq htj]
-  refine ⟨t₀+δ,hc,z,?_,hz⟩
-  intro t ht
+  have hreach : b+δ/2≤t₀+δ := by
+    dsimp [t₀]
+    linarith [min_le_left (δ/2) ((b-s)/2)]
+  refine ⟨z,?_,hz⟩
+  intro t ht'
+  have ht : t∈Ioo a (t₀+δ) := ⟨ht'.1,ht'.2.trans_le hreach⟩
   by_cases h : t<t₀
   · have hOld : t∈Ioo a b := ⟨ht.1,h.trans ht₀.2⟩
     have hev : z =ᶠ[𝓝 t] x := by
@@ -162,6 +167,16 @@ theorem extend_bounded_open_interval_tail (F : E → E) (hF : ContDiff ℝ 1 F)
     have hz' : z t=y t := by simp [z,h]
     rw [hz']
     exact (hd t hNew).congr_of_eventuallyEq hev
+
+theorem extend_bounded_open_interval_tail (F : E → E) (hF : ContDiff ℝ 1 F)
+    (x : ℝ → E) (a s b : ℝ) (has : a≤s) (hsb : s<b)
+    (hx : SolvesOn F x (Ioo a b))
+    (K : Set E) (hK : IsCompact K) (hb : ∀ t∈Ioo s b,x t∈K) :
+    ∃ c>b,∃ z : ℝ → E,SolvesOn F z (Ioo a c) ∧ EqOn z x (Ioo a b) := by
+  have hmid : (s+b)/2∈Ioo s b := ⟨by linarith,by linarith⟩
+  obtain ⟨δ,hδ,H⟩ := compact_uniform_restart F hF K hK ⟨x _,hb _ hmid⟩
+  obtain ⟨z,hz,he⟩ := extend_with_restart_radius F hF x a s b has hsb hx K δ hδ H hb
+  exact ⟨b+δ/2,by linarith,z,hz,he⟩
 
 /-- The full-interval version is the special case s=a. -/
 theorem extend_bounded_open_interval (F : E → E) (hF : ContDiff ℝ 1 F)

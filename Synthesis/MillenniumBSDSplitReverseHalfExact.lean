@@ -19,7 +19,7 @@ theorem reverseHalf_pair_nonzero (r s e f x : F)
   apply hef
   have he : r = -s := eq_neg_of_add_eq_zero_left h
   rw [he] at hr
-  linear_combination hs-hr
+  linear_combination hr-hs
 
 /-- The original three root equations become products of pair sums.
 This is the square-root fibre geometry, including all four even signs. -/
@@ -52,10 +52,10 @@ theorem reverseHalf_tangent_factor (x y r s t e0 e1 e2 z : F)
     (hp : r*s*t= -y) :
     (z-e0)*(z-e1)*(z-e2)-(-y-(r+s+t)*(z-x))^2 =
       (z-reverseHalfX x r s t)^2*(z-x) := by
-  have he0 : e0=x-r^2 := by linear_combination -hr
-  have he1 : e1=x-s^2 := by linear_combination -hs
-  have he2 : e2=x-t^2 := by linear_combination -ht
-  have hy : y= -r*s*t := by linear_combination -hp
+  have he0 : e0=x-r^2 := by linear_combination hr
+  have he1 : e1=x-s^2 := by linear_combination hs
+  have he2 : e2=x-t^2 := by linear_combination ht
+  have hy : y= -r*s*t := by linear_combination hp
   rw [he0,he1,he2,hy]
   unfold reverseHalfX pairSum
   ring

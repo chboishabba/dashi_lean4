@@ -72,11 +72,16 @@ theorem reciprocalYears (a b : Source)
   rw [yearAnswer a ha, yearAnswer b hb]
   exact sameSupportPreservesBothProofSigns _
 
+set_option maxRecDepth 10000 in
 theorem enDaysHeld : answer (.en, lead .en) dayQuery = none := by decide
+set_option maxRecDepth 10000 in
 theorem simpleDaysHeld : answer (.simple, lead .simple) dayQuery = none := by decide
+set_option maxRecDepth 10000 in
 theorem esDaysAvailable : answer (.es, lead .es) dayQuery = some (support .positive) := by decide
+set_option maxRecDepth 10000 in
 theorem unrelatedHeld : answer (.en, "He flew warplanes.") yearQuery = none := by decide
 
+set_option maxRecDepth 10000 in
 theorem yearSupportCannotRecoverDays :
     ¬ (∃ f : Option Support → Option Support,
        ∀ s : Source, f (answer s yearQuery) = answer s dayQuery) := by

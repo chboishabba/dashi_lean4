@@ -226,5 +226,61 @@ theorem reciprocalLicensedComparison
   rw [← slrJmdDocumentQuerySoundForAnyLiveReading l x hx _ rfl,
       ← slrJmdDocumentQuerySoundForAnyLiveReading r y hy _ rfl]
 
+
+/-- A consumer-specific answer projection: this changes the answer algebra,
+    not the observation or live fibre. Source factorisation and closure
+    transport through the same map. It does not certify omitted queries. -/
+def projectQueryAnswer
+    {S O R Q A B : Type} (m : DocumentQueryModel S O R Q A)
+    (project : A → B) : DocumentQueryModel S O R Q B where
+  observe := m.observe
+  live := m.live
+  documentAnswer := fun s q => project (m.documentAnswer s q)
+  readingAnswer := fun r q => project (m.readingAnswer r q)
+
+def projectSourceQueryLicence
+    {S O R Q A B : Type} {m : DocumentQueryModel S O R Q A}
+    {s : S} {q : Q} (l : SourceQueryLicence m s q) (project : A → B) :
+    SourceQueryLicence (projectQueryAnswer m project) s q where
+  observation := l.observation
+  sameProducedObservation := l.sameProducedObservation
+  chosenReading := l.chosenReading
+  chosenIsLive := l.chosenIsLive
+  consumerFactorises := fun t h => congrArg project (l.consumerFactorises t h)
+  consumerClosed := fun r h => congrArg project (l.consumerClosed r h)
+
+/-- The exact compression cut: a query family factors through the retained
+    coordinate if and only if every collision preserves all its answers.
+    The section is supplied by the existing source/provenance inverse;
+    this does not assert that an arbitrary summary has such a section. -/
+theorem sectionedContextCompressionIff
+    {S C Q A : Type} (compress : S → C) (expand : C → S)
+    (section : ∀ c, compress (expand c) = c)
+    (answer : S → Q → A) :
+    (∃ compactAnswer : C → Q → A, ∀ s q, answer s q = compactAnswer (compress s) q) ↔
+    (∀ s t, compress s = compress t → ∀ q, answer s q = answer t q) := by
+  constructor
+  · rintro ⟨f, hf⟩ s t h q
+    rw [hf s q, hf t q, h]
+  · intro h
+    refine ⟨fun c q => answer (expand c) q, ?_⟩
+    intro s q
+    exact h s (expand (compress s)) (section (compress s)).symm q
+
+/-- Reverse solve: if an omitted context coordinate separates two live
+    sources on a requested query, no compressed answer can serve both. -/
+theorem contextCollisionBlocksCompression
+    {S C Q A : Type} (compress : S → C) (answer : S → Q → A)
+    (s t : S) (q : Q) (collision : compress s = compress t)
+    (different : answer s q ≠ answer t q) :
+    ¬ (∃ compactAnswer : C → Q → A, ∀ x k, answer x k = compactAnswer (compress x) k) := by
+  rintro ⟨f, hf⟩
+  apply different
+  rw [hf s q, hf t q, collision]
+
 end Slr
 end Wikidata
+
+#print axioms Wikidata.Slr.sectionedContextCompressionIff
+#print axioms Wikidata.Slr.contextCollisionBlocksCompression
+#print axioms Wikidata.Slr.projectSourceQueryLicence

@@ -255,7 +255,7 @@ def projectSourceQueryLicence
     this does not assert that an arbitrary summary has such a section. -/
 theorem sectionedContextCompressionIff
     {S C Q A : Type} (compress : S → C) (expand : C → S)
-    (section : ∀ c, compress (expand c) = c)
+    (hsection : ∀ c, compress (expand c) = c)
     (answer : S → Q → A) :
     (∃ compactAnswer : C → Q → A, ∀ s q, answer s q = compactAnswer (compress s) q) ↔
     (∀ s t, compress s = compress t → ∀ q, answer s q = answer t q) := by
@@ -265,7 +265,7 @@ theorem sectionedContextCompressionIff
   · intro h
     refine ⟨fun c q => answer (expand c) q, ?_⟩
     intro s q
-    exact h s (expand (compress s)) (section (compress s)).symm q
+    exact h s (expand (compress s)) (hsection (compress s)).symm q
 
 /-- Reverse solve: if an omitted context coordinate separates two live
     sources on a requested query, no compressed answer can serve both. -/

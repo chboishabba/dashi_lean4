@@ -1,6 +1,8 @@
 import BSDCohomology.EllipticKummerCocycleAlgebraExact
 import Synthesis.MillenniumBSDCMOriginalGeometricKummerGroupExact
 import Synthesis.MillenniumBSDCMGeometricKummerContinuousH1Exact
+import Mathlib.FieldTheory.KrullTopology
+import Mathlib.Topology.Order
 import Mathlib.Tactic
 
 /-! Degree-one Kummer exactness on the original geometric point action.
@@ -12,6 +14,7 @@ completion maps, and the analytic rank theorem remain separate. -/
 namespace BSDCohomology
 
 open WeierstrassCurve
+open scoped Topology
 noncomputable section
 universe u
 variable {K : Type u} [Field K]
@@ -148,6 +151,86 @@ theorem double_coboundary_iff_torsion_lift
     refine ⟨(2 : ℕ) • Q,fun σ => ?_⟩
     rw [hQ σ,nsmul_add,(mem_ellipticTwoTorsion_iff W (d σ).1).mp (d σ).2,
       zero_add,kummerDifference_double]
+
+
+section ContinuousRepresentatives
+local instance : TopologicalSpace (GeometricPoint W) := ⊥
+local instance : DiscreteTopology (GeometricPoint W) := discreteTopology_bot _
+local instance : TopologicalSpace (EllipticTwoTorsion W) := ⊥
+local instance : DiscreteTopology (EllipticTwoTorsion W) := discreteTopology_bot _
+
+/-- Krull continuity for the actual point orbit, without assuming trivial
+Galois action on the two-torsion. The two affine coordinate stabilizers
+suffice, as in the existing selected CM character implementation. -/
+theorem originalPointOrbit_continuous (Q : GeometricPoint W) :
+    Continuous (fun σ : Field.absoluteGaloisGroup K => galoisPointMap W σ Q) := by
+  rw [continuous_iff_continuousAt]
+  intro σ
+  rw [ContinuousAt, nhds_discrete, tendsto_pure]
+  cases hQ : Q with
+  | zero =>
+    exact Filter.Eventually.of_forall (fun τ => by simp [hQ])
+  | some x y hxy =>
+    let Hx := MulAction.stabilizer (Field.absoluteGaloisGroup K) x
+    let Hy := MulAction.stabilizer (Field.absoluteGaloisGroup K) y
+    have hxOpen : IsOpen (Hx : Set (Field.absoluteGaloisGroup K)) :=
+      stabilizer_isOpen_of_isIntegral x
+    have hyOpen : IsOpen (Hy : Set (Field.absoluteGaloisGroup K)) :=
+      stabilizer_isOpen_of_isIntegral y
+    let f : Field.absoluteGaloisGroup K → Field.absoluteGaloisGroup K :=
+      fun τ => σ⁻¹ * τ
+    have hf : Continuous f := continuous_const.mul continuous_id
+    have hopen : IsOpen (f ⁻¹' ((Hx : Set _) ∩ (Hy : Set _))) :=
+      (hxOpen.inter hyOpen).preimage hf
+    have hmem : σ ∈ f ⁻¹' ((Hx : Set _) ∩ (Hy : Set _)) := by
+      simp [f, Hx, Hy]
+    filter_upwards [hopen.mem_nhds hmem] with τ hτ
+    have hx : (σ⁻¹ * τ) x = x := hτ.1
+    have hy : (σ⁻¹ * τ) y = y := hτ.2
+    have hfix : galoisPointMap W (σ⁻¹ * τ) Q = Q := by
+      rw [hQ]
+      simp [galoisPointMap, hx, hy]
+    calc
+      galoisPointMap W τ Q =
+          galoisPointMap W σ (galoisPointMap W (σ⁻¹ * τ) Q) := by
+            rw [← galoisPointMap_mul]
+            congr 1
+            group
+      _ = galoisPointMap W σ Q := by rw [hfix]
+
+theorem originalKummerDifference_continuous (Q : GeometricPoint W) :
+    Continuous (kummerDifference W Q) :=
+  (originalPointOrbit_continuous W Q).sub continuous_const
+
+/-- A continuous point cocycle gives a continuous literal torsion lift;
+no topological quotient is replaced by a discrete finite proxy. -/
+theorem liftDoubleCoboundary_continuous
+    (c : Field.absoluteGaloisGroup K → GeometricPoint W)
+    (hc : Continuous c)
+    (P Q : GeometricPoint W) (hQ : (2 : ℕ) • Q = P)
+    (h : ∀ σ, (2 : ℕ) • c σ = kummerDifference W P σ) :
+    Continuous (liftDoubleCoboundary W c P Q hQ h) := by
+  have hsub : Continuous (removeHalfCoboundary W c Q) :=
+    hc.sub (originalKummerDifference_continuous W Q)
+  -- Both topologies are discrete; every fibre is open by the
+  -- continuous map to the original geometric point group.
+  rw [continuous_def]
+  intro s hs
+  let t : Set (GeometricPoint W) := {v | ∃ h : v ∈ EllipticTwoTorsion W,
+    (⟨v,h⟩ : EllipticTwoTorsion W) ∈ s}
+  have ht : IsOpen t := isOpen_discrete t
+  have he : liftDoubleCoboundary W c P Q hQ h ⁻¹' s =
+      removeHalfCoboundary W c Q ⁻¹' t := by
+    ext σ
+    constructor
+    · intro hσ
+      exact ⟨(liftDoubleCoboundary W c P Q hQ h σ).2,hσ⟩
+    · rintro ⟨hm,hs'⟩
+      exact hs'
+  rw [he]
+  exact ht.preimage hsub
+
+end ContinuousRepresentatives
 
 end
 end BSDCohomology

@@ -1,0 +1,11 @@
+import Welds.PNPSection36CompressedBoundaryAcceptanceExact
+import Welds.PNPSection36SameObligationInputVsWorkAcceptanceExact
+import Welds.PNPNonlinearObservationLiftExact
+
+-- Source-written root. No kernel acceptance is asserted.
+#check PNPNonlinearObservationLift.original_observation_conflict
+#check PNPNonlinearObservationLift.disjoint_support_reopen
+#check PNPNormalMass.parent_boundary_le
+#print axioms PNPNonlinearObservationLift.original_observation_conflict
+#print axioms PNPNonlinearObservationLift.disjoint_support_reopen
+#print axioms PNPResidualFutureReadWeld.original_anchored_dual_capacity_same_obligations

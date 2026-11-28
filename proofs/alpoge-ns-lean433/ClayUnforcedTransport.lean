@@ -56,9 +56,17 @@ theorem gradient_original (p : R3 → ℝ) (x : R3) :
   have h := inner_gradient_right (𝕜 := ℝ) (f := p)
     (x := spatialBasis i) (y := x)
   have hi : fderiv ℝ p x (spatialBasis i) = (gradient p x) i := by
-    simpa [spatialBasis, EuclideanSpace.inner_single_left,
-      starRingEnd_apply, star_trivial] using h.symm
-  simp [Breakdown.gradientAt, Breakdown.unitVector, ← hi, spatialBasis]
+    calc
+      _ = ⟪spatialBasis i, gradient p x⟫_ℝ := by
+        simpa only [starRingEnd_apply, star_trivial] using h.symm
+      _ = _ := by
+        simpa [spatialBasis] using
+          (EuclideanSpace.inner_single_left i (1 : ℝ) (gradient p x))
+  calc
+    (gradient p x) i = fderiv ℝ p x (spatialBasis i) := hi.symm
+    _ = (Breakdown.gradientAt p x) i := by
+      simp [Breakdown.gradientAt, Breakdown.unitVector, spatialBasis,
+        EuclideanSpace.single_apply]
 
 /-- Same physical momentum and divergence, no assumptions on the force
 except its literal equality to zero. The source requires t>0 only. -/
@@ -74,8 +82,7 @@ theorem solution_original {ν : ℝ} {u₀ : InitialVelocity} {u : Velocity} {p 
       gradient_original, add_zero] at h
     exact h
   · intro t ht x
-    rw [← divergence_original hu x ht.le]
-    exact hd (x,t) ht.le
+    exact (divergence_original hu x ht.le).symm.trans (hd (x,t) ht.le)
 
 theorem zeroDirectional (dirs : List SpaceTime) :
     iteratedDirectionalWithin dirs (fun _ => (0 : R3)) = fun _ => 0 := by
@@ -200,6 +207,30 @@ theorem original_cell_condition_to_clayC {k : ℕ} {C : Type} {nE nM : ℕ}
     (h : CellSystemCondition D X R T Y N B) : ClayOptionC :=
   original_space_to_clayC (from_original_cell_condition D X R T Y N B h).1
 
+/-- All already-proved upstream routes consume the same literal C/D
+specification. The weak and certificate routes need no cell-system
+witness in addition to their own stated source hypothesis. -/
+theorem original_profile_to_clayCD (h : Breakdown.PeriodicSimilarityProfileExists) :
+    ClayOptionC ∧ ClayOptionD :=
+  ⟨original_space_to_clayC (Breakdown.breakdown_on_space h),
+   original_torus_to_clayD (Breakdown.breakdown_on_torus h)⟩
+
+theorem original_weak_profile_to_clayC (h : Breakdown.WeakPeriodicSimilarityProfileExists) :
+    ClayOptionC :=
+  original_space_to_clayC (Breakdown.breakdown_on_space_of_weak h)
+
+theorem original_certificate_to_clayC (h : Breakdown.CertificateHypothesis) :
+    ClayOptionC :=
+  original_space_to_clayC (Breakdown.certificate_breakdown_on_space h)
+
+theorem original_extended_certificate_to_clayC (h : Breakdown.ExtendedCertificateHypothesis) :
+    ClayOptionC :=
+  original_space_to_clayC (Breakdown.extended_certificate_breakdown_on_space h)
+
+#print axioms DASHI.AlpogeBuckmaster.original_profile_to_clayCD
+#print axioms DASHI.AlpogeBuckmaster.original_weak_profile_to_clayC
+#print axioms DASHI.AlpogeBuckmaster.original_certificate_to_clayC
+#print axioms DASHI.AlpogeBuckmaster.original_extended_certificate_to_clayC
 #print axioms DASHI.AlpogeBuckmaster.original_space_to_clayC
 #print axioms DASHI.AlpogeBuckmaster.original_cell_condition_to_clayC
 #print axioms DASHI.AlpogeBuckmaster.solution_original

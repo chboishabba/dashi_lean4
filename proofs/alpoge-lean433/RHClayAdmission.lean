@@ -1,5 +1,6 @@
 import RHAdmission
 import MillenniumExternal.AlpogeRHBoundaryExact
+import MillenniumExternal.AlpogeRHUniversalXiZetaBidiExact
 
 /-!
 # Direct same-kernel exact Clay admission

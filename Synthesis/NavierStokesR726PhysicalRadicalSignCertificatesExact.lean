@@ -101,4 +101,69 @@ theorem witnessA_viscosity_bidi :
     witnessA_R406 witnessA_combined
     witnessA_R406_positive witnessA_combined_positive
 
+
+/-!
+## R645 original C2 strict-margin no-go at C=1
+
+The actual complete C=1 original nonzero Galerkin cube has 26 modes,
+each max-norm one, so literal w(k)=2^(ceil log2||k||∞)=1.
+Its physical unforced nonlinear energy production is identically zero.
+The exact *same original 316-incidence source* witness B (in the Python
+script in Agda #1551) has physical critical dissipation 108 and
+strictly negative original R406 unlifted remainder at ν=1.
+Scaling the SAME real divergence-free initial state by 2 multiplies
+R406 by 2^5, dissipation by 2^2, and production by 2^3=0.
+Consequently even the δ=0 R645 estimate is false at t=0; any δ>0
+makes its RHS smaller. Finite-dimensional Galerkin ODE continuity
+turns the strict pointwise obstruction into an integrated short-time
+one. This source theorem only proves exact radical arithmetic and
+the scalar comparison, not a native field embedding or Galerkin ODE.
+-/
+
+/-- Exact R406(1) from witness B, not the R726 defect or the lifted R687. -/
+def witnessB_R406 : ℝ :=
+  - (1216 : ℝ) / 9
+  - (317 : ℝ) / 9 * Real.sqrt 3
+  - (77 : ℝ) / 4 * Real.sqrt 6
+  + (815 : ℝ) / 12 * Real.sqrt 2
+
+/-- Strict rational enclosure of original physical R406:
+sqrt(2)<2, sqrt(3)>1, sqrt(6)>=0 force R406<-69/2. -/
+theorem witnessB_R406_strict_negative :
+    witnessB_R406 < -(69 : ℝ) / 2 := by
+  have hs2 := sqrt2_lt_two
+  have hs3 : (1 : ℝ) < Real.sqrt 3 := by
+    have h0 : 0 ≤ Real.sqrt (3 : ℝ) := Real.sqrt_nonneg _
+    have hsq : (Real.sqrt (3 : ℝ)) ^ 2 = 3 :=
+      Real.sq_sqrt (by norm_num)
+    nlinarith only [h0,hsq]
+  have hs6 : 0 ≤ Real.sqrt (6 : ℝ) := Real.sqrt_nonneg _
+  dsimp [witnessB_R406]
+  nlinarith only [hs2,hs3,hs6]
+
+/-- The genuine original C=1 physical production at the scaled witness
+is zero, its literal dissipative rate is 432, and the R406 source scales
+by 32. Already δ=0 fails by more than 240 in exact rational order. -/
+theorem original_R645_scaled_witness_strict_failure :
+    240 < (0 : ℝ) - 2 * 432 - 32 * witnessB_R406 := by
+  have hr := witnessB_R406_strict_negative
+  linarith only [hr]
+
+/-- Not merely one failed chosen C2 margin: EVERY δ>=0 fails the
+unrestricted physical initial-rate inequality at this same input. -/
+theorem original_R645_every_positive_margin_fails
+    (δ : ℝ) (hδ : 0 ≤ δ) :
+    (2 - δ) * 432 + 32 * witnessB_R406 < 0 := by
+  have hr := witnessB_R406_strict_negative
+  nlinarith only [hr,hδ]
+
+/-- Exact source-scaling operation necessary for the original witness
+attachment. q(u) is quadratic while R406(u) is quintic; this is
+an algebraic identity only, not proof of the physical polynomial law. -/
+theorem original_R645_scaling_identity (D R amplitude : ℝ) :
+    (2 * ((amplitude ^ 2) * D) +
+      amplitude ^ 5 * R) =
+      amplitude ^ 2 * (2 * D + amplitude ^ 3 * R) := by
+  ring
+
 end DASHI.NavierStokes.R726PhysicalSign

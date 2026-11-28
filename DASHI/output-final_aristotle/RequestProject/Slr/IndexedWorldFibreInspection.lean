@@ -35,7 +35,7 @@ enter this prose checker. Existing JMD extraction checker remains the owner. -/
 def checkEditionRoot (edition qid title article : String)
     (source projection entity : Json) : Bool :=
   let site := edition.replace "-" "_" ++ "wiki"
-  let prefix := site ++ "-revid:"
+  let editionPrefix := site ++ "-revid:"
   let revision := str source "revision_ref"
   let entities := (entity.getObjVal? "entities").toOption.getD Json.null
   let e := (entities.getObjVal? qid).toOption.getD Json.null
@@ -50,8 +50,8 @@ def checkEditionRoot (edition qid title article : String)
   str link "site" == site && str link "title" == title &&
   (str manifest "language" == edition ||
     (edition == "simple" && str manifest "language" == "en")) &&
-  revision.startsWith prefix &&
-  (match (revision.drop prefix.length).toString.toNat? with
+  revision.startsWith editionPrefix &&
+  (match (revision.drop editionPrefix.length).toString.toNat? with
    | some n => decide (n > 0) && str source "source_unit_ref" ==
        ("wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":" ++ toString n)
    | none => false)

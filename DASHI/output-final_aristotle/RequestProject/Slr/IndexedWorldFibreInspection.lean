@@ -59,10 +59,10 @@ def checkEditionRoot (edition qid title article : String)
     str manifest "language" == edition &&
     str manifest "revision_ref" == revision &&
     str manifest "source_unit_ref" == str source "source_unit_ref" &&
-    (let prefix := "source:wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":revid:"
+    (let editionSourcePrefix := "source:wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":revid:"
      let unit := str source "source_unit_ref"
-     unit.startsWith prefix &&
-       (match (unit.drop prefix.length).toString.toNat? with
+     unit.startsWith editionSourcePrefix &&
+       (match (unit.drop editionSourcePrefix.length).toString.toNat? with
         | some n => decide (n > 0)
         | none => false))))
 

@@ -65,17 +65,21 @@ theorem originalInclusionH1_zero_iff_kummer (x : EllipticTwoTorsionH1 W) :
     -- Changing the chosen half by the literal torsion point realizes
     -- the signed coboundary; the rational target stays fixed.
     let Q' : GeometricHalfData W P := ⟨Q.half+T.1,by
-      rw [nsmul_add,Q.double_eq,T.2,add_zero]⟩
+      rw [nsmul_add,Q.double_half,T.2,add_zero]⟩
     refine ⟨P,hP,Q',fun σ => ?_⟩
     apply Subtype.ext
     have hval := congrArg Subtype.val (hT σ)
     change (c σ).1-kummerDifference W Q.half σ =
       galoisPointMap W σ T.1-T.1 at hval
     change (c σ).1=kummerDifference W (Q.half+T.1) σ
-    unfold kummerDifference at *
-    rw [map_add]
-    abel_nf at hval ⊢
-    exact sub_eq_iff_eq_add.mp hval
+    calc
+      (c σ).1 = ((c σ).1-kummerDifference W Q.half σ)+
+        kummerDifference W Q.half σ := by abel
+      _ = (galoisPointMap W σ T.1-T.1)+kummerDifference W Q.half σ := by rw [hval]
+      _ = kummerDifference W (Q.half+T.1) σ := by
+        unfold kummerDifference
+        rw [map_add]
+        abel
 
 /-- Exactness at the actual point H1: if doubling kills the class, the
 reverse lift is obtained by subtracting a genuine geometric half
@@ -115,3 +119,18 @@ theorem originalDoublingH1_zero_iff_inclusion
 
 end
 end BSDCohomology
+
+
+namespace Synthesis.Millennium.BSD
+open BSDCohomology
+noncomputable section
+/-- Geometric surjectivity is already supplied for the selected original
+curve. Neither exactness assertion relies on a new abstract H1 object. -/
+theorem cmOriginalPointH1_doubling_exact (x : EllipticPointH1 cmWeierstrass) :
+    originalDoublingH1 cmWeierstrass x = 0 ↔
+      ∃ y : EllipticTwoTorsionH1 cmWeierstrass,
+        originalInclusionH1 cmWeierstrass y = x :=
+  originalDoublingH1_zero_iff_inclusion cmWeierstrass
+    cmSelectedGeometricDoubling_onto x
+end
+end Synthesis.Millennium.BSD

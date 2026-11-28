@@ -1,3 +1,4 @@
+import Synthesis.NavierStokesOriginalPeriodicEnergyFTCExact
 import Synthesis.NavierStokesLiteralGalerkinOutputFTCExact
 import Synthesis.NavierStokesRealCauchyLaplaceCoherentExact
 import Synthesis.NavierStokesLiteralHelicalRealTraceExact

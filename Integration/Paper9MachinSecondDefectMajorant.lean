@@ -132,6 +132,47 @@ theorem rawPowerSecond_succ_succ (n : ℕ) (r : ℚ) :
     rw [pow_succ]
     ring
 
+
+-- Exact per-term identification: this is the literal rational readback
+-- of BishopOriginalMachinSecondRadiusRationalReadbackExact.qRadiusTerm.
+-- The k=0 case must not replace 2k-1 by a truncated Nat exponent.
+def sourceHalfRadiusTerm (k : ℕ) : ℚ :=
+  ((1 : ℚ) / ((2*k+1 : ℕ) : ℚ)) *
+    rawPowerSecond (2*k+1) (1/2 : ℚ)
+
+theorem sourceHalfRadiusTerm_eq_radiusTerm (k : ℕ) :
+    sourceHalfRadiusTerm k = radiusTerm k := by
+  cases k with
+  | zero =>
+      norm_num [sourceHalfRadiusTerm, radiusTerm,
+        rawPowerSecond, rawPowerZero]
+  | succ k =>
+      have hidx : 2*(k+1)+1 = (2*k+1)+2 := by omega
+      unfold sourceHalfRadiusTerm radiusTerm
+      rw [hidx, rawPowerSecond_succ_succ (2*k+1) (1/2 : ℚ)]
+      have hd : (((2*((k+1))+1 : ℕ) : ℚ)) ≠ 0 := by positivity
+      have hpow : ((1/2 : ℚ)^(2*k+1)) =
+        (1/2 : ℚ) * (1/4 : ℚ)^k := by
+        rw [show 2*k+1 = 1+k*2 by omega, pow_add, pow_mul]
+        norm_num [pow_two]
+      rw [hpow]
+      push_cast
+      field_simp
+      ring
+
+def sourceHalfRadiusBudget (N : ℕ) : ℚ :=
+  ∑ k ∈ Finset.range N, sourceHalfRadiusTerm k
+
+theorem sourceHalfRadiusBudget_eq (N : ℕ) :
+    sourceHalfRadiusBudget N = radiusBudget N := by
+  unfold sourceHalfRadiusBudget radiusBudget
+  exact Finset.sum_congr rfl (fun k _ => sourceHalfRadiusTerm_eq_radiusTerm k)
+
+theorem sourceHalfRadiusBudget_le (N : ℕ) :
+    sourceHalfRadiusBudget N ≤ (8/9 : ℚ) := by
+  rw [sourceHalfRadiusBudget_eq]
+  exact radiusBudget_le_eightNinths N
+
 -- The coefficient count and closedBudget above are exact rational
 -- finite theorems. To transfer these to the original Bishop radius
 -- sum, use the already-owned Nat/odd reciprocal embedding and

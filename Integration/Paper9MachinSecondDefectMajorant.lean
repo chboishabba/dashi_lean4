@@ -87,11 +87,13 @@ def secondPolynomial (m : ℕ) (x y : ℚ) : ℚ :=
   ∑ j ∈ Finset.range (m-1), secondMonomial m j x y
 
 theorem coefficientCount (n : ℕ) :
-    ∑ j ∈ Finset.range n, (j+1 : ℕ) = n*(n+1)/2 := by
+    (∑ j ∈ Finset.range n, ((j+1 : ℕ) : ℚ)) =
+      (n : ℚ)*((n : ℚ)+1)/2 := by
   induction n with
   | zero => simp
   | succ n ih =>
     rw [Finset.sum_range_succ, ih]
-    omega
+    push_cast
+    ring
 
 end Integration.Paper9MachinSecondDefectMajorant

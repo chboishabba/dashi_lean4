@@ -165,4 +165,29 @@ have uniformly bounded degree follows from this arithmetic identity. -/
 theorem cayley_seed_residue29 :
     (-4*((1 : ZMod 29)^2-(2-3))+10*1) = 2 := by decide
 
+
+/-- One complementary triple pair of the actual nonsplit middle star.
+The two signed weights multiply to -pi; no square root is chosen. -/
+def middleStarBlock {F : Type*} [Field F] (a b : F) :
+    Matrix (Fin 2) (Fin 2) F := !![0,-b;a,0]
+
+theorem middleStarBlock_square {F : Type*} [Field F] (a b pi : F)
+    (h : a*b=pi) :
+    middleStarBlock a b * middleStarBlock a b =
+      (-pi) • (1 : Matrix (Fin 2) (Fin 2) F) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [middleStarBlock, Matrix.mul_apply, Fin.sum_univ_succ, mul_comm, h]
+
+/-- The actual cubic discriminant field has generator j with j²=theta-2.
+This substitution is the degree-six relation, not a split surrogate. -/
+theorem middleStar_field_polynomial {F : Type*} [Field F] (theta j : F)
+    (ht : theta^3+theta^2-2*theta-1=0)
+    (hj : j^2=theta-2) :
+    j^6+7*j^4+14*j^2+7=0 := by
+  calc
+    j^6+7*j^4+14*j^2+7 =
+      (j^2+2)^3+(j^2+2)^2-2*(j^2+2)-1 := by ring
+    _ = 0 := by rw [hj]; convert ht using 1 <;> ring
+
 end DASHI.Hodge.CubicCM

@@ -75,12 +75,10 @@ theorem original_incidence_refutes {n m modulus : Nat}
     (annihilate : ∀ j, (∑ i, y i*(if j∈rows i then 1 else 0))=0)
     (nonzero : (∑ i,y i)≠0) : ¬ ∃ x : Assignment n, SatAll x F := by
   rintro ⟨x,hx⟩
-  apply modular_conflict (fun i j => if j∈rows i then 1 else 0)
-    (fun _ => (1 : ZMod modulus)) y (fun j => emb (ZMod modulus) (x j)) _ annihilate
-  · simpa using nonzero
-  · intro i
-    exact exactOne_sum x (rows i) (exactOneFromClauses F x (rows i) hx
-      (pos i) (neg i))
+  exact modular_conflict (fun i j => if j∈rows i then 1 else 0)
+    (fun _ => (1 : ZMod modulus)) y (fun j => emb (ZMod modulus) (x j))
+    (fun i => exactOne_sum x (rows i) (exactOneFromClauses F x (rows i) hx
+      (pos i) (neg i))) annihilate (by simpa using nonzero)
 
 def blocking {n : Nat} (scope : Finset (Fin n)) (z : Assignment n) : Clause n :=
   scope.image (fun i => (i,!z i))

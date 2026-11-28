@@ -3260,4 +3260,337 @@ theorem real_cosh_sub_sixth_abs_le_eighth
       ring
 
 
+
+/-!
+## Signed eighth harmonic: original local consumer, no far polynomial sum
+
+The sixth harmonic above already uses the actual multiplicity and scale.
+Keep the eighth harmonic on that same source and retain an exact tenth-order
+residual. Analytic bounds on the tenth residual are separate from the ring
+identities below.
+-/
+
+def quarticSignedPoleEighthPhaseReal (alpha q : ℝ) : ℝ :=
+  alpha^8 - 28*alpha^6*q^2 + 70*alpha^4*q^4 - 28*alpha^2*q^6 + q^8
+
+theorem quarticSignedPoleEighthPhaseReal_eq_complex_re (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal alpha q =
+      (((alpha : ℂ) + (q : ℂ) * Complex.I)^8).re := by
+  unfold quarticSignedPoleEighthPhaseReal
+  norm_num [pow_succ, Complex.mul_re, Complex.add_re]
+  ring
+
+theorem quarticSignedPoleSixthPhaseReal_eq_mixed (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal alpha q =
+      (alpha^6-q^6) - 15*(alpha^2*q^2*(alpha^2-q^2)) := by
+  unfold quarticSignedPoleSixthPhaseReal
+  ring
+
+theorem quarticSignedPoleEighthPhaseReal_eq_mixed (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal alpha q =
+      (alpha^4-q^4)^2 + 16*alpha^4*q^4 -
+        28*(alpha^2*q^2*(alpha^2-q^2)^2) := by
+  unfold quarticSignedPoleEighthPhaseReal
+  ring
+
+theorem quarticSignedPoleSixthPhaseReal_horizontal_reflect (alpha q : ℝ) :
+    quarticSignedPoleSixthPhaseReal (-alpha) q =
+      quarticSignedPoleSixthPhaseReal alpha q := by
+  unfold quarticSignedPoleSixthPhaseReal
+  ring
+
+theorem quarticSignedPoleEighthPhaseReal_horizontal_reflect (alpha q : ℝ) :
+    quarticSignedPoleEighthPhaseReal (-alpha) q =
+      quarticSignedPoleEighthPhaseReal alpha q := by
+  unfold quarticSignedPoleEighthPhaseReal
+  ring
+
+def QuarticFourSignedPolePair.signedProfileMomentEight
+    {t : ℝ} (W : QuarticFourSignedPolePair t) : ℝ :=
+  ∫ u : ℝ, quarticFourSignedPoleCombinedProfile W.R W.muHalf W.muTwo t u * u^8
+
+def QuarticFourSignedPolePair.completeJointEighthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (alpha q : ℝ) : ℝ :=
+  (W.signedProfileMomentEight / 40320) * quarticSignedPoleEighthPhaseReal alpha q
+
+def QuarticFourSignedPolePair.completeJointBeyondEighthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (alpha q : ℝ) : ℝ :=
+  W.completeJointBeyondSixthRemainder alpha q -
+    W.completeJointEighthHarmonic alpha q
+
+theorem QuarticFourSignedPolePair.completeJointBeyondSixth_eq_eighth_add_beyond
+    {t alpha q : ℝ} (W : QuarticFourSignedPolePair t) :
+    W.completeJointBeyondSixthRemainder alpha q =
+      W.completeJointEighthHarmonic alpha q +
+        W.completeJointBeyondEighthRemainder alpha q := by
+  unfold QuarticFourSignedPolePair.completeJointBeyondEighthRemainder
+  ring
+
+def QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2 *
+    W.completeJointEighthHarmonic alpha q
+
+def QuarticFourSignedPolePair.literalCompleteJointBeyondEighthRemainder
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) : ℝ :=
+  let r := t/16
+  let alpha := heightOf sigma / r
+  let q := ((sigma : ℂ).im-t) / r
+  ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) / r^2 *
+    W.completeJointBeyondEighthRemainder alpha q
+
+theorem QuarticFourSignedPolePair.literalSixth_physical_scale
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointSixthHarmonic sigma =
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) * W.signedProfileMomentSix *
+        quarticSignedPoleSixthPhaseReal (heightOf sigma) ((sigma : ℂ).im-t) /
+        (720*(t/16)^8) := by
+  have hr : t/16 ≠ 0 := by positivity
+  unfold QuarticFourSignedPolePair.literalCompleteJointSixthHarmonic
+    QuarticFourSignedPolePair.completeJointSixthHarmonic quarticSignedPoleSixthPhaseReal
+  dsimp
+  field_simp
+  <;> ring
+
+theorem QuarticFourSignedPolePair.literalEighth_physical_scale
+    {t : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointEighthHarmonic sigma =
+      ((zetaZeroConfig).mult (sigma : ℂ) : ℝ) * W.signedProfileMomentEight *
+        quarticSignedPoleEighthPhaseReal (heightOf sigma) ((sigma : ℂ).im-t) /
+        (40320*(t/16)^10) := by
+  have hr : t/16 ≠ 0 := by positivity
+  unfold QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    QuarticFourSignedPolePair.completeJointEighthHarmonic quarticSignedPoleEighthPhaseReal
+  dsimp
+  field_simp
+  <;> ring
+
+theorem QuarticFourSignedPolePair.literalBeyondSixth_eq_eighth_add_beyond
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (sigma : Zeros) :
+    W.literalCompleteJointBeyondSixthRemainder sigma =
+      W.literalCompleteJointEighthHarmonic sigma +
+        W.literalCompleteJointBeyondEighthRemainder sigma := by
+  unfold QuarticFourSignedPolePair.literalCompleteJointBeyondSixthRemainder
+    QuarticFourSignedPolePair.literalCompleteJointEighthHarmonic
+    QuarticFourSignedPolePair.literalCompleteJointBeyondEighthRemainder
+  dsimp
+  rw [W.completeJointBeyondSixth_eq_eighth_add_beyond]
+  ring
+
+def QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointEighthHarmonic rho
+      else 0
+    else 0
+
+def QuarticFourSignedPolePair.literalLocalBeyondEighthRemainderAt
+    {t : ℝ} (W : QuarticFourSignedPolePair t) (eta : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        W.literalCompleteJointBeyondEighthRemainder rho
+      else 0
+    else 0
+
+theorem QuarticFourSignedPolePair.literalLocalBeyondSixth_eq_eighth_add_beyond
+    {t eta : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalBeyondSixthRemainderAt eta n =
+      W.literalLocalSignedEighthHarmonicAt eta n +
+        W.literalLocalBeyondEighthRemainderAt eta n := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalBeyondSixthRemainderAt
+    QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    QuarticFourSignedPolePair.literalLocalBeyondEighthRemainderAt
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp [hl, hoff, W.literalBeyondSixth_eq_eighth_add_beyond rho]
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalCompleteRemainder_eq_sixth_eighth_beyond
+    {t eta : ℝ} (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalCompleteRemainderAt eta n =
+      W.literalLocalSignedSixthHarmonicAt eta n +
+      W.literalLocalSignedEighthHarmonicAt eta n +
+      W.literalLocalBeyondEighthRemainderAt eta n := by
+  rw [W.literalLocalCompleteRemainderAt_eq_signedSixth_add_beyond n,
+      W.literalLocalBeyondSixth_eq_eighth_add_beyond n]
+  ring
+
+
+-- Original finite local source: all phase moments share precisely the same
+-- centeredZeroFinset, multiplicity and off-ordinate guard.
+def literalLocalPhysicalPhaseAt (t eta : ℝ) (n : ℕ)
+    (phase : ℝ → ℝ → ℝ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    if quarticSignedPoleLocal t eta rho then
+      if _h : rho ∈ ((SameOrd t)ᶜ : Set Zeros) then
+        ((zetaZeroConfig).mult (rho : ℂ) : ℝ) *
+          phase (heightOf rho) ((rho : ℂ).im-t)
+      else 0
+    else 0
+
+theorem QuarticFourSignedPolePair.literalLocalSixth_eq_physical_phase
+    {t eta : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalSignedSixthHarmonicAt eta n =
+      (W.signedProfileMomentSix / (720*(t/16)^8)) *
+        literalLocalPhysicalPhaseAt t eta n quarticSignedPoleSixthPhaseReal := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedSixthHarmonicAt
+    literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, W.literalSixth_physical_scale ht rho]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem QuarticFourSignedPolePair.literalLocalEighth_eq_physical_phase
+    {t eta : ℝ} (ht : 0 < t) (W : QuarticFourSignedPolePair t) (n : ℕ) :
+    W.literalLocalSignedEighthHarmonicAt eta n =
+      (W.signedProfileMomentEight / (40320*(t/16)^10)) *
+        literalLocalPhysicalPhaseAt t eta n quarticSignedPoleEighthPhaseReal := by
+  classical
+  unfold QuarticFourSignedPolePair.literalLocalSignedEighthHarmonicAt
+    literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, W.literalEighth_physical_scale ht rho]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem literalLocalSixthPhase_eq_mixed (t eta : ℝ) (n : ℕ) :
+    literalLocalPhysicalPhaseAt t eta n quarticSignedPoleSixthPhaseReal =
+      literalLocalPhysicalPhaseAt t eta n (fun a d => a^6-d^6) -
+      15 * literalLocalPhysicalPhaseAt t eta n
+        (fun a d => a^2*d^2*(a^2-d^2)) := by
+  classical
+  unfold literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, quarticSignedPoleSixthPhaseReal_eq_mixed]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+theorem literalLocalEighthPhase_eq_mixed (t eta : ℝ) (n : ℕ) :
+    literalLocalPhysicalPhaseAt t eta n quarticSignedPoleEighthPhaseReal =
+      literalLocalPhysicalPhaseAt t eta n (fun a d => (a^4-d^4)^2) +
+      16 * literalLocalPhysicalPhaseAt t eta n (fun a d => a^4*d^4) -
+      28 * literalLocalPhysicalPhaseAt t eta n
+        (fun a d => a^2*d^2*(a^2-d^2)^2) := by
+  classical
+  unfold literalLocalPhysicalPhaseAt
+  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
+      ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hl : quarticSignedPoleLocal t eta rho
+  · by_cases hoff : rho ∈ ((SameOrd t)ᶜ : Set Zeros)
+    · simp only [hl, hoff, dite_true, if_true, quarticSignedPoleEighthPhaseReal_eq_mixed]
+      ring
+    · simp [hl, hoff]
+  · simp [hl]
+
+end Synthesis
+
+
+/-!
+## Positive horizontal curvature on the original finite zero carrier
+
+For the literal unweighted atom (cosh(a*u)-1)*cos(delta*u), the second
+derivative at zero is a^2, independent of delta.  Unlike the signed W
+profile, this observer retains all centered zeros, INCLUDING SameOrd,
+and uses the original nonnegative multiplicity.  This is an exact
+finite reverse consumer, not a claim that the analytic curvature vanishes.
+-/
+
+namespace Synthesis
+
+noncomputable def centeredHorizontalCurvatureAt (t : ℝ) (n : ℕ) : ℝ := by
+  classical
+  exact ∑ rho ∈ centeredZeroFinset t n,
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2
+
+theorem centeredHorizontalCurvatureAt_nonneg (t : ℝ) (n : ℕ) :
+    0 ≤ centeredHorizontalCurvatureAt t n := by
+  classical
+  unfold centeredHorizontalCurvatureAt
+  exact Finset.sum_nonneg fun rho _ =>
+    mul_nonneg (by positivity) (sq_nonneg (heightOf rho))
+
+/-- Reverse quantitative payment for each actual included zero. -/
+theorem centeredHorizontalCurvatureAt_atom_le
+    {t : ℝ} {n : ℕ} {rho : Zeros}
+    (hrho : rho ∈ centeredZeroFinset t n) :
+    ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2
+      ≤ centeredHorizontalCurvatureAt t n := by
+  classical
+  unfold centeredHorizontalCurvatureAt
+  exact Finset.single_le_sum
+    (fun z _ => mul_nonneg (by positivity) (sq_nonneg (heightOf z))) hrho
+
+/-- Zero curvature detects every positive-multiplicity zero; no claim
+about an index assigned zero multiplicity. -/
+theorem centeredHorizontalCurvatureAt_eq_zero_iff (t : ℝ) (n : ℕ) :
+    centeredHorizontalCurvatureAt t n = 0 ↔
+      ∀ rho ∈ centeredZeroFinset t n,
+        0 < (zetaZeroConfig).mult (rho : ℂ) → heightOf rho = 0 := by
+  classical
+  constructor
+  · intro h rho hrho hm
+    have hle := centeredHorizontalCurvatureAt_atom_le hrho
+    rw [h] at hle
+    have hmR : 0 < ((zetaZeroConfig).mult (rho : ℂ) : ℝ) := by exact_mod_cast hm
+    have hz : ((zetaZeroConfig).mult (rho : ℂ) : ℝ) * heightOf rho ^ 2 = 0 :=
+      le_antisymm hle (mul_nonneg hmR.le (sq_nonneg (heightOf rho)))
+    have hs := (mul_eq_zero.mp hz).resolve_left hmR.ne'
+    rw [pow_two] at hs
+    rcases mul_eq_zero.mp hs with hs | hs <;> exact hs
+  · intro h
+    unfold centeredHorizontalCurvatureAt
+    apply Finset.sum_eq_zero
+    intro rho hrho
+    by_cases hm : (zetaZeroConfig).mult (rho : ℂ) = 0
+    · simp [hm]
+    · have hmpos : 0 < (zetaZeroConfig).mult (rho : ℂ) :=
+        Nat.pos_of_ne_zero hm
+      simp [h rho hrho hmpos]
+
+/-- A cofinal sequence of small upper bounds is enough: pointwise
+nonnegative curvature is squeezed by the actual finite-cloud budget.
+The covering/vanishing source theorem is separate. -/
+theorem centeredHorizontalCurvatureAt_zero_of_arbitrary_upper
+    (t : ℝ) (n : ℕ)
+    (h : ∀ eps : ℝ, 0 < eps → centeredHorizontalCurvatureAt t n ≤ eps) :
+    centeredHorizontalCurvatureAt t n = 0 := by
+  have hn := centeredHorizontalCurvatureAt_nonneg t n
+  by_contra hne
+  have hp : 0 < centeredHorizontalCurvatureAt t n :=
+    lt_of_le_of_ne hn (Ne.symm hne)
+  have hh := h (centeredHorizontalCurvatureAt t n / 2) (by linarith)
+  linarith
+
 end Synthesis

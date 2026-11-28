@@ -1,4 +1,4 @@
-import MillenniumExternal.ExactTargetSurface
+import Problems.RiemannHypothesis.Millennium
 
 /-!
 # RH/Clay precise terminal handoff — source-independent and bidirectional
@@ -14,7 +14,7 @@ existing pinned Millennium target compiler closes the original Clay statement.
 Both directions use the existing LeanDojo ↔ Mathlib weld, not another RH
 proposition or a substitute zero carrier.
 
-Source owner: MillenniumExternal.ExactTargetSurface.
+Source owner: the pinned Problems.RiemannHypothesis.Millennium. This narrow root adapter is re-elaborated verbatim by the isolated admission runner; unrelated Clay problem imports are not prerequisites.
 -/
 
 namespace MillenniumExternal.AlpogeRH
@@ -23,18 +23,18 @@ namespace MillenniumExternal.AlpogeRH
 theorem clay_of_admitted_mathlib
     (admitted : _root_.RiemannHypothesis) :
     Millennium.ClayRiemannHypothesis :=
-  MillenniumExternal.clayRiemannHypothesis_of_mathlib admitted
+  Millennium.ClayRiemannHypothesis.of_mathlib admitted
 
 /-- Reverse solve: the exact Clay target returns to the *same* Mathlib RH. -/
 theorem mathlib_of_clay
     (clay : Millennium.ClayRiemannHypothesis) :
     _root_.RiemannHypothesis :=
-  MillenniumExternal.mathlibRiemannHypothesis_of_clay clay
+  Millennium.ClayRiemannHypothesis.mathlib clay
 
 /-- Actual two-way statement identity; no missing analytic premise is smuggled in. -/
 theorem clay_iff_mathlib :
     Millennium.ClayRiemannHypothesis ↔ _root_.RiemannHypothesis :=
-  MillenniumExternal.clayRiemannHypothesis_iff_mathlib
+  ⟨mathlib_of_clay, clay_of_admitted_mathlib⟩
 
 #print axioms clay_of_admitted_mathlib
 #print axioms mathlib_of_clay

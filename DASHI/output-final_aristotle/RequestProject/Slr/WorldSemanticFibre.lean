@@ -76,7 +76,9 @@ theorem predictionNotAction (actor : Referent) (r : Reading)
   simp [action, h]
 
 theorem outsideNotNamedEntity (key : String) :
-    Referent.outside ≠ Referent.entity key := by decide
+    Referent.outside ≠ Referent.entity key := by
+  intro h
+  cases h
 
 /-- Fixed source coordinates can be returned without resolving referent identity. -/
 theorem anchorInvariant (a : Anchor) (live : Reading → Prop)
@@ -127,12 +129,14 @@ Equality of event labels alone is insufficient. -/
 def propositionCoordinate (r : Reading) :=
   (r.referent, r.role, r.scope, r.event, r.capacity, r.time, r.attribution)
 
-def compare (a b : Reading) : Option (Support × Support) :=
-  if propositionCoordinate a = propositionCoordinate b
-  then some (support a.sign, support b.sign) else none
+def compare (a b : Reading) : Option (Support × Support) := by
+  classical
+  exact if propositionCoordinate a = propositionCoordinate b
+    then some (support a.sign, support b.sign) else none
 
 theorem reciprocalComparison (a b : Reading) :
     compare b a = (compare a b).map Prod.swap := by
+  classical
   by_cases h : propositionCoordinate a = propositionCoordinate b
   · simp [compare, h, h.symm, Prod.swap]
   · have hr : propositionCoordinate b ≠ propositionCoordinate a := Ne.symm h

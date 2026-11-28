@@ -144,7 +144,7 @@ theorem weighted_convolution_point
     funext η
     dsimp [H]
     rw [inv_pow,Real.sq_sqrt (mul_nonneg (hW η).le (hW (ξ-η)).le)]
-    rw [mul_inv_rev₀,mul_comm]
+    field_simp [ne_of_gt (hW η),ne_of_gt (hW (ξ-η))] <;> ring
   have heC : (fun η => G η*H η) = fun η => w η*w (ξ-η) := by
     funext η
     dsimp [G,H]
@@ -308,9 +308,7 @@ theorem centered_kernel_weighted_spatial_budget
   have hi := norm_integral_le_of_norm_le hM hn
   rw [Real.norm_eq_abs,hMb] at hi
   have hb := mul_le_mul_of_nonneg_left hCb (div_nonneg (by norm_num) hν.le)
-  rw [mul_assoc] at hb
-  simp only [w,amplitude_sq] at hb
-  exact le_trans hi hb
+  exact le_trans hi (by simpa [w,amplitude_sq,mul_assoc] using hb)
 
 end
 end DASHI.NavierStokes.EuclideanMidpoint

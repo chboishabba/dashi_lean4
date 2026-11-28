@@ -20,11 +20,13 @@ def checkRoot (qid title article : String) (source projection entity : Json) : B
   Wikidata.Slr.ArticleProof.checkProjectionFor qid article source projection &&
   Wikidata.Slr.GwbArticleIdentity.checkSitelink qid title entity &&
   Wikidata.Slr.GwbWorldGraph.jsonEntityMatchesQid qid entity &&
-  revision.startsWith "enwiki-revid:" &&
-  (match (revision.drop "enwiki-revid:".length).toString.toNat? with
-   | some n => decide (n > 0) && str source "source_unit_ref" ==
-       ("wikipedia:en:" ++ title.replace " " "_" ++ ":" ++ toString n)
-   | none => false)
+  -- Native SLR revisions are content-addressed and may represent any
+  -- Wikimedia language. The exact source revision/document digest and the
+  -- persisted source-unit coordinate are checked by the source projection;
+  -- this generic weld must not hard-code enwiki revision syntax.
+  revision.startsWith "source-revision:" &&
+  (str source "source_unit_ref").startsWith "source:wikipedia:" &&
+  !(str source "source_unit_ref").isEmpty
 
 /-- Edition-aware original source check. The language code names a Wikipedia
 edition, not a semantic language or a translation licence. Simple is a peer

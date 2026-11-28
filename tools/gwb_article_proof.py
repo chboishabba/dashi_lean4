@@ -215,6 +215,14 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
     timeline_candidates = []
     for match in YEAR.finditer(text):
         start, stop = match.span()
+        # Native Wikimedia projections retain heading text verbatim, while
+        # the native parser jobs intentionally cover narrative regions only.
+        # A year embedded in a heading is therefore a source heading
+        # observation, not a parser-backed lexical-year observation. Keep it
+        # out of this lane rather than inventing a token support row.
+        if any(s["kind"] == "heading" and s["start_char"] <= start < stop <= s["end_char"]
+               for s in sections):
+            continue
         covering = [
             (candidate, token) for candidate, token in parser_rows
             if token["start_char"] <= start < stop <= token["end_char"]

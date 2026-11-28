@@ -22,3 +22,5 @@ import Synthesis.NavierStokesPressureSummableFromRawProjectedExact
 #print axioms DASHI.NavierStokes.EuclideanMidpoint.pressure_series_split
 
 #print axioms DASHI.NavierStokes.EuclideanMidpoint.pressure_summable_from_raw_projected
+
+#print axioms DASHI.NavierStokes.EuclideanMidpoint.pressure_summable_zero_output

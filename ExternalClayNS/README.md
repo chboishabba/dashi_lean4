@@ -92,3 +92,7 @@ factor payment and periodic B R568/R650/R571/R854) are reconciled in
 The fail-closed paired driver is
 `dashi_agda/scripts/check_ns_toe_abcd_pinned_local_20261115.sh`
 (with `DASHI_CLAY_LEAN_WORKTREE` set to this repository checkout).
+
+## 28 November — exact direct C/D admission
+
+After installing the pinned local dependencies, run `python3 ExternalClayNS/check_direct_admission.py` from the parent checkout. It validates local source hashes, exact nested toolchain, upstream and dependency commits, four inspected direct theorem/comparator blobs, then builds and explicitly elaborates SubmissionAudit.lean for fresh transitive axiom receipts. A cached build or parser fixture alone is not acceptance. No network fallback; missing local installation is BLOCKED. Original proof authors retain attribution. No new native receipt has been obtained in this environment.

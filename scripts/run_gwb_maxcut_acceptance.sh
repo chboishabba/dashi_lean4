@@ -9,9 +9,9 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 mode="${1:---proof-only}"
 case "$mode" in
-  --proof-only|--full|--strict|--legacy-rust) ;;
+  --proof-only|--full|--strict|--legacy-rust|--build-only) ;;
   *)
-    echo "usage: bash scripts/run_gwb_maxcut_acceptance.sh [--proof-only|--full|--strict|--legacy-rust]" >&2
+    echo "usage: bash scripts/run_gwb_maxcut_acceptance.sh [--proof-only|--full|--strict|--legacy-rust|--build-only]" >&2
     exit 2 ;;
 esac
 
@@ -64,6 +64,10 @@ compile_slr IndexedWorldFibreInspection
 lake env lean tools/IndexedWorldFibreRunner.lean
 lake env lean tools/GwbProofRunner.lean
 lake env lean tools/RelationalObservedMeetRunner.lean
+if [[ "$mode" == --build-only ]]; then
+  echo GWB_MAXCUT_BUILD_ONLY_OK
+  exit 0
+fi
 
 # Optional actual multi-edition campaign. Each entry identifies original
 # independently pinned input files, not a synthetic translation or parser.

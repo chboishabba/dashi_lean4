@@ -1,4 +1,6 @@
 import Synthesis.MillenniumNSSignedSpectralResidualExact
+import Synthesis.NavierStokesFractionalR568EndpointWeldExact
+import Synthesis.NavierStokesR726SignedDefectViscosityNoGoExact
 import Mathlib
 
 /-!

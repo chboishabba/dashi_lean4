@@ -74,4 +74,43 @@ theorem zero_fibre_two_bits (x y : Bool) :
       x=false ∧ y=false := by
   cases x <;> cases y <;> decide
 
+-- Rank-nullity turns the exact kernel criterion into a capacity
+-- inequality on the ORIGINAL Boolean lifts, not an F3 volume count.
+def readsMap {n : Nat} (R : Finset (Fin n)) :
+    Syndrome n →ₗ[ZMod 3] (↥R → ZMod 3) where
+  toFun x := fun i => x i
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+
+theorem rank_capacity {n w m : Nat}
+    (A : Syndrome n →ₗ[ZMod 3] Syndrome w)
+    (B : Syndrome n →ₗ[ZMod 3] Syndrome m)
+    (R : Finset (Fin n))
+    (correct : ∀ x y : Fin n → Bool,
+      A (boolEmbed x)=A (boolEmbed y) →
+      (∀ i∈R,x i=y i) → B (boolEmbed x)=B (boolEmbed y)) :
+    Module.finrank (ZMod 3) B.range ≤
+      Module.finrank (ZMod 3) A.range + R.card := by
+  classical
+  let M := A.rangeRestrict.prod (readsMap R)
+  have hker : M.ker ≤ B.ker := by
+    intro d hd
+    have hz : M d=0 := LinearMap.mem_ker.mp hd
+    have ha : A d=0 := by
+      have h := congrArg (fun p : ↥A.range × (↥R → ZMod 3) => p.1.val) hz
+      exact h
+    have hr : ∀ i∈R,d i=0 := by
+      intro i hi
+      exact congrFun (congrArg Prod.snd hz) ⟨i,hi⟩
+    exact LinearMap.mem_ker.mpr (necessary_kernel A B R correct d ha hr)
+  have hdim := Submodule.finrank_mono hker
+  have hm := M.finrank_range_add_finrank_ker
+  have hb := B.finrank_range_add_finrank_ker
+  have hle : Module.finrank (ZMod 3) B.range ≤ Module.finrank (ZMod 3) M.range := by omega
+  have hcap := M.range.finrank_le
+  have htarget :
+      Module.finrank (ZMod 3) (↥A.range × (↥R → ZMod 3)) =
+        Module.finrank (ZMod 3) A.range + R.card := by simp
+  exact hle.trans (by simpa only [htarget] using hcap)
+
 end PNPLinearConsumerCut

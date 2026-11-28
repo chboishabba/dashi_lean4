@@ -24,6 +24,8 @@ CLAY = tuple("DASHI.AlpogeRH." + x for x in (
     "original_clay_rh",
     "original_clay_xi",
     "original_clay_mathlib_roundtrip",
+    "original_all_zeta_subtype_critical",
+    "original_all_xi_subtype_axis",
 ))
 ROOT = tuple("MillenniumExternal.AlpogeRH." + x for x in (
     "originalXiZetaZeroEquiv",

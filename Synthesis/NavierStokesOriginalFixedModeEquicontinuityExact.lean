@@ -54,8 +54,8 @@ theorem orderedFibre_fst_injOn (N : ℕ) (k : Lattice) :
   have hb' := (mem_orderedFibre N k b).mp hb
   apply Prod.ext
   · exact he
-  · apply add_left_cancel (a:=a.1)
-    rw [ha'.2.2,he,hb'.2.2]
+  · have h : a.1+a.2=a.1+b.2 := by rw [ha'.2.2,he,hb'.2.2]
+    exact add_left_cancel h
 
 theorem orderedFibre_snd_injOn (N : ℕ) (k : Lattice) :
     Set.InjOn Prod.snd (orderedFibre N k : Set (Lattice×Lattice)) := by
@@ -63,8 +63,8 @@ theorem orderedFibre_snd_injOn (N : ℕ) (k : Lattice) :
   have ha' := (mem_orderedFibre N k a).mp ha
   have hb' := (mem_orderedFibre N k b).mp hb
   apply Prod.ext
-  · apply add_right_cancel (b:=a.2)
-    rw [ha'.2.2,he,hb'.2.2]
+  · have h : a.1+a.2=b.1+a.2 := by rw [ha'.2.2,he,hb'.2.2]
+    exact add_right_cancel h
   · exact he
 
 theorem allModes_energy_eq (N : ℕ) (U : Vec3 → ℝ → CVec3) (t : ℝ)
@@ -136,7 +136,7 @@ theorem original_force_coordinate_bound (N : ℕ) (k : Lattice)
         have hq := ordered_snd_energy_le N k U t hmean
         have hs := add_le_add hp hq
         have h := mul_le_mul_of_nonneg_left hs (Real.sqrt_nonneg (massSq (embedMode k)))
-        simp_rw [mul_add,add_div,Finset.sum_add_distrib,← Finset.sum_div,← Finset.mul_sum]
+        rw [← Finset.sum_div,← Finset.mul_sum,Finset.sum_add_distrib]
         linarith
   · have hout : embedMode k∉(outputModes N).image embedMode := by
       intro h
@@ -175,8 +175,9 @@ theorem fixed_mode_time_bound (N : ℕ) (ν B T : ℝ)
   · intro r hr'
     have hr0 := hs.trans hr'.1
     have hrb : r<b := by dsimp [b]; linarith [hr'.2]
-    have hEn : stateEnergy (x r)≤B :=
-      (forward_energy_bound N ν a b hν x ha hb hr ht hsol r ⟨hr0,hrb⟩).trans henergy
+    have hEn₀ := forward_energy_bound N ν a b hν x ha hb hr ht hsol r ⟨hr0,hrb⟩
+    change stateEnergy (x r)≤stateEnergy (x 0) at hEn₀
+    have hEn : stateEnergy (x r)≤B := hEn₀.trans henergy
     have hforce := original_force_coordinate_bound N k U r i
       (fun p=>htr r hr0 _) (zeroExtend_mean (x r))
     have hcoord : ‖U (embedMode k) r i‖≤Real.sqrt B := by

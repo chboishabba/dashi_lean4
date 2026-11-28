@@ -206,6 +206,61 @@ theorem incomingDifferential_normalized
   exact congrArg (fun v => v-b.1 1) (zeroCochain_orbit X b g)
 
 
+
+
+/-- The canonical categorical cycles isomorphism preserves the actual
+cochain. This is the same kernel identification used by the selected
+trivial-action donor. -/
+theorem actualCyclesIso_cochain (z : ContinuousCohomology.cocycles X 1) :
+    ((actualCyclesIso X).hom z).1 =
+      (TopRep.homogeneousCochains X).iCycles 1 z := by
+  rfl
+
+theorem actualClass_zero_iff_coboundary (c : C(G,X)) (hc : Crossed X c) :
+    actualClass X c hc = 0 ↔ ∃ q : X, ∀ g, c g = X.ρ g q-q := by
+  let z := (actualCyclesIso X).inv (toKernelOne X c hc)
+  change (ContinuousCohomology.π X 1) z = 0 ↔ _
+  rw [actualClassMap_zero_iff_boundary]
+  constructor
+  · rintro ⟨b,hb⟩
+    refine ⟨b.1 1,fun g => ?_⟩
+    have hco := congrArg (fun v => ((actualCyclesIso X).hom v).1.1 1 g) hb
+    rw [actualCyclesIso_cochain, ← ConcreteCategory.comp_apply,
+      HomologicalComplex.toCycles_i] at hco
+    have hz : (actualCyclesIso X).hom z = toKernelOne X c hc := by simp [z]
+    rw [hz] at hco
+    change (((TopRep.homogeneousCochains X).d 0 1).hom b).1 1 g = c g-c 1 at hco
+    rw [crossed_one X c hc,sub_zero,incomingDifferential_normalized] at hco
+    exact hco.symm
+  · rintro ⟨q,hq⟩
+    let orb : C(G,X) := c + ContinuousMap.const G q
+    have horb (g : G) : orb g = X.ρ g q := by
+      change c g+q = X.ρ g q
+      rw [hq]; abel
+    let b : (TopRep.homogeneousCochains X).X 0 := ⟨orb,by
+      intro g
+      ext h
+      simp only [coind₁_apply_apply,horb,← ContinuousLinearMap.comp_apply]
+      change X.ρ g (X.ρ (g⁻¹*h) q) = X.ρ h q
+      rw [← map_mul]
+      simp [← mul_assoc]⟩
+    refine ⟨b,?_⟩
+    apply (actualCyclesIso X).toContinuousLinearEquiv.injective
+    apply Subtype.ext
+    apply Subtype.ext
+    ext x y
+    rw [actualCyclesIso_cochain, ← ConcreteCategory.comp_apply,
+      HomologicalComplex.toCycles_i]
+    have hz : (actualCyclesIso X).hom z = toKernelOne X c hc := by simp [z]
+    rw [hz]
+    rw [TopRep.homogeneousCochains.d_apply]
+    simp only [Nat.reduceAdd, TopRep.d_succ, TopRep.d_zero,
+      ConcreteCategory.hom_ofHom, hom_sub, ContIntertwiningMap.sub_apply,
+      coind₁ι_toFun, coind₁Map_toFun, ContinuousMap.const_apply,
+      ContinuousMap.comp_apply, ContinuousMap.coe_mk]
+    change (c y+q)-(c x+q)=c y-c x
+    abel
+
 /-- Every class in the original H1 is represented by an actual continuous
 crossed cocycle, not an arbitrary point of a substitute quotient. -/
 theorem actualClass_surjective (x : continuousCohomology 1 X) :
@@ -267,8 +322,8 @@ theorem actualClass_natural (c : C(G,X)) (hc : Crossed X c) :
     ConcreteCategory.comp_apply]
   congr 1
   have hm := mappedKernel_toKernelOne X Y φ f c hc
-  exact (congrArg (fun v => (actualCyclesIso Y).inv v) hm).trans' (by
-    simp [mappedKernel])
+  have hh := congrArg (fun v => (actualCyclesIso Y).inv v) hm
+  simpa [mappedKernel] using hh
 
 end Naturality
 

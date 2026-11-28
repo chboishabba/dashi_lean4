@@ -1,3 +1,4 @@
+import Synthesis.MillenniumNSSignedSpectralResidualExact
 import Synthesis.NavierStokesR854RealTimeIntegratedRateConditionalExact
 import Mathlib
 

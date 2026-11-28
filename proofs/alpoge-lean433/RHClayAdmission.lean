@@ -1,5 +1,5 @@
 import RHAdmission
-import Problems.RiemannHypothesis.Millennium
+import MillenniumExternal.AlpogeRHBoundaryExact
 
 /-!
 # Direct same-kernel exact Clay admission
@@ -16,13 +16,13 @@ The admission runner rejects any transitive sorryAx in these endpoints.
 namespace DASHI.AlpogeRH
 
 theorem original_clay_rh : Millennium.ClayRiemannHypothesis :=
-  Millennium.ClayRiemannHypothesis.of_mathlib original_mathlib_rh
+  MillenniumExternal.AlpogeRH.clay_of_admitted_mathlib original_mathlib_rh
 
 theorem original_clay_xi : Millennium.ClayRiemannHypothesis.Formulations.XiZeros :=
   Millennium.ClayRiemannHypothesis.xi_zeros original_clay_rh
 
 theorem original_clay_mathlib_roundtrip : _root_.RiemannHypothesis :=
-  Millennium.ClayRiemannHypothesis.mathlib original_clay_rh
+  MillenniumExternal.AlpogeRH.mathlib_of_clay original_clay_rh
 
 #print axioms original_clay_rh
 #print axioms original_clay_xi

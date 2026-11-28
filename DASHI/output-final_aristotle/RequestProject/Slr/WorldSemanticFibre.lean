@@ -139,9 +139,9 @@ theorem reciprocalComparison (a b : Reading) :
     compare b a = (compare a b).map Prod.swap := by
   classical
   by_cases h : propositionCoordinate a = propositionCoordinate b
-  · simp [compare, h, h.symm, Prod.swap]
+  · rw [compare, dif_pos h, dif_pos h.symm]
   · have hr : propositionCoordinate b ≠ propositionCoordinate a := Ne.symm h
-    simp [compare, h, hr]
+    rw [compare, dif_neg hr, dif_neg h]
 
 /-- Explicit comparison licence consumes the original document query model.
 The semantic model and source factorisation are not manufactured here. -/

@@ -39,8 +39,9 @@ theorem original_fractional_support_lower_bound {n m : ℕ}
         by_cases h : select i = j
         · subst j
           simp [(hs i).2]
-        · simp only [h, ite_false]
-          split_ifs <;> exact hweight i
+        · by_cases hm : j ∈ differenceSupport x (rivals i)
+          · simp [h, hm, hweight i]
+          · simp [h, hm]
       _ ≤ 1 := hcapacity j
 
 /-- The fractional witness cannot exceed the original input dimension.

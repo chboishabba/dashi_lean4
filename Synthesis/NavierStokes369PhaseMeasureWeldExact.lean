@@ -111,7 +111,8 @@ theorem physical_complex_phase_midpoint_bound (η ξ : Fin 3 → ℝ)
 
 /-- Both midpoint estimates together give a sharp uniform pair-rate
 bound, without a lattice gap or division by an individual input norm.
-min(A,4B) ≤ A/2+2B; equality is attainable at a right-angle input triad.
+min(A,4B) ≤ A/2+2B; the constant 1 is attained on the zero-input
+boundary and approached by nonzero transverse pairs.
 This is an actual single-cell viscous cancellation, not a bound on
 the double R406 signed exterior or the spacetime continuation. -/
 theorem transverse_pair_rate_bound (ν : ℝ) (hν : 0 < ν)
@@ -150,6 +151,27 @@ theorem raw_cell_pair_rate_bound (ν : ℝ) (hν : 0 < ν)
   have h := mul_le_mul_of_nonneg_right
     (transverse_pair_rate_bound ν hν η ξ u hr hi hRate) (phaseMass_nonneg v)
   convert h using 1 <;> ring
+
+
+/-- Direct input transversality also removes eta from the original output
+dot. This is stronger than the averaged pair-rate bound when the other
+input is small. No frequency-sign chart or division by |eta|. -/
+theorem transverse_other_input_dot (η ξ a : Fin 3 → ℝ)
+    (h : realDot η a = 0) :
+    realDot ξ a = realDot (fun i => ξ i-η i) a := by
+  simp only [realDot,Fin.sum_univ_three] at h ⊢
+  linear_combination h
+
+theorem transverse_other_input_bound (η ξ : Fin 3 → ℝ) (u : Fin 3 → ℂ)
+    (hr : realDot η (fun i => (u i).re) = 0)
+    (hi : realDot η (fun i => (u i).im) = 0) :
+    phaseDotSq ξ u ≤ massSq (fun i => ξ i-η i)*phaseMass u := by
+  have h : phaseDotSq ξ u = phaseDotSq (fun i => ξ i-η i) u := by
+    unfold phaseDotSq
+    rw [transverse_other_input_dot η ξ _ hr,
+        transverse_other_input_dot η ξ _ hi]
+  rw [h]
+  exact phaseDotSq_le _ _
 
 end DASHI.NavierStokes.EuclideanMidpoint
 

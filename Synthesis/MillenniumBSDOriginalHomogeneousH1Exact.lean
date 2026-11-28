@@ -1,6 +1,7 @@
 import Synthesis.MillenniumBSDOriginalKummerCocycleExactness
 import BSDCohomology.EllipticShaTarget
 import Mathlib.RepresentationTheory.Homological.ContCohomology.LowDegree
+import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 import Mathlib.Topology.CompactOpen
 import Mathlib.Tactic
 
@@ -24,8 +25,7 @@ def Crossed (c : C(G, X)) : Prop :=
   ∀ g h, c (g*h) = c g + X.ρ g (c h)
 
 theorem crossed_one (c : C(G,X)) (hc : Crossed X c) : c 1 = 0 := by
-  have h := hc 1 1
-  simp at h
+  have h : c 1 = c 1 + c 1 := by simpa using hc 1 1
   exact add_left_cancel (show c 1 + c 1 = c 1 + 0 by simpa using h.symm)
 
 def homogeneousRaw (c : C(G,X)) : C(G × G,X) where
@@ -46,9 +46,10 @@ theorem homogeneousMap_invariant (c : C(G,X)) (hc : Crossed X c) :
   simp only [coind₁_apply_apply, homogeneousMap_apply, map_sub]
   have hx := hc g (g⁻¹*x)
   have hy := hc g (g⁻¹*y)
-  rw [← mul_assoc, mul_inv_cancel, one_mul] at hx hy
-  rw [show X.ρ g (c (g⁻¹*x)) = c x - c g by rw [hx]; abel,
-      show X.ρ g (c (g⁻¹*y)) = c y - c g by rw [hy]; abel]
+  have hx' : c x = c g + X.ρ g (c (g⁻¹*x)) := by simpa [← mul_assoc] using hx
+  have hy' : c y = c g + X.ρ g (c (g⁻¹*y)) := by simpa [← mul_assoc] using hy
+  rw [show X.ρ g (c (g⁻¹*x)) = c x - c g by rw [hx']; abel,
+      show X.ρ g (c (g⁻¹*y)) = c y - c g by rw [hy']; abel]
   abel
 
 abbrev KernelOne :=
@@ -203,6 +204,73 @@ theorem incomingDifferential_normalized
     coind₁ι_toFun, coind₁Map_toFun, ContinuousMap.const_apply,
     ContinuousMap.comp_apply, ContinuousMap.coe_mk]
   exact congrArg (fun v => v-b.1 1) (zeroCochain_orbit X b g)
+
+
+/-- Every class in the original H1 is represented by an actual continuous
+crossed cocycle, not an arbitrary point of a substitute quotient. -/
+theorem actualClass_surjective (x : continuousCohomology 1 X) :
+    ∃ c : C(G,X), ∃ hc : Crossed X c, actualClass X c hc = x := by
+  obtain ⟨z,hz⟩ := actualClassMap_surjective X x
+  let σ := (actualCyclesIso X).hom z
+  refine ⟨normalize X σ,normalize_crossed X σ,?_⟩
+  unfold actualClass
+  rw [toKernelOne_normalize]
+  simpa [σ] using hz
+
+/-- Naturality with arbitrary nontrivial action and a simultaneous change
+of the group and coefficient object. This is the literal cocyclesMap
+under the same cycles/kernel identification as the existing donor. -/
+section Naturality
+variable {H : Type*} [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
+  [LocallyCompactSpace H]
+variable (Y : TopRep ℤ H) (φ : H →ₜ* G)
+variable (f : TopRep.res φ X ⟶ Y)
+
+def mappedCocycle (c : C(G,X)) : C(H,Y) :=
+  f.hom.toContinuousLinearMap.toContinuousMap.comp
+    (c.comp ⟨φ,φ.continuous_toFun⟩)
+
+theorem mappedCocycle_crossed (c : C(G,X)) (hc : Crossed X c) :
+    Crossed Y (mappedCocycle X Y φ f c) := by
+  intro g h
+  change f (c (φ (g*h))) = f (c (φ g)) + Y.ρ g (f (c (φ h)))
+  rw [map_mul, hc, map_add]
+  congr 1
+  exact DFunLike.congr_fun (f.hom.isIntertwining g) (c (φ h))
+
+def mappedKernel (σ : KernelOne X) : KernelOne Y :=
+  (actualCyclesIso Y).hom
+    (ContinuousCohomology.cocyclesMap φ f 1 ((actualCyclesIso X).inv σ))
+
+theorem mappedKernel_apply (σ : KernelOne X) (x y : H) :
+    (mappedKernel X Y φ f σ).1.1 x y =
+      f (σ.1.1 (φ x) (φ y)) := by
+  rfl
+
+theorem mappedKernel_toKernelOne (c : C(G,X)) (hc : Crossed X c) :
+    mappedKernel X Y φ f (toKernelOne X c hc) =
+      toKernelOne Y (mappedCocycle X Y φ f c)
+        (mappedCocycle_crossed X Y φ f c hc) := by
+  apply Subtype.ext
+  apply Subtype.ext
+  ext x y
+  rw [mappedKernel_apply]
+  change f (c (φ y)-c (φ x)) = f (c (φ y))-f (c (φ x))
+  exact map_sub _ _ _
+
+theorem actualClass_natural (c : C(G,X)) (hc : Crossed X c) :
+    ContinuousCohomology.map φ f 1 (actualClass X c hc) =
+      actualClass Y (mappedCocycle X Y φ f c)
+        (mappedCocycle_crossed X Y φ f c hc) := by
+  unfold actualClass
+  rw [← ConcreteCategory.comp_apply, ContinuousCohomology.π_map,
+    ConcreteCategory.comp_apply]
+  congr 1
+  have hm := mappedKernel_toKernelOne X Y φ f c hc
+  exact (congrArg (fun v => (actualCyclesIso Y).inv v) hm).trans' (by
+    simp [mappedKernel])
+
+end Naturality
 
 end
 end DASHI.BSD.OriginalH1

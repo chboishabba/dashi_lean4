@@ -218,6 +218,114 @@ theorem sameVelocityEnergy_iff {u : Velocity} (hs : TrustBoundarySmoothOn u) :
       (∫⁻ x, ENNReal.ofReal (‖timeFirst u t x‖ ^ 2)) ≤ ENNReal.ofReal C :=
   ⟨boundedEnergy_original, originalEnergy_to_boundedEnergy hs⟩
 
+
+/-- The closed time boundary is a genuine limit of the positive-time
+equations. This uses continuity on the half-space, not an arbitrary
+extension of a derivative through t=0. -/
+theorem closedTime_eq_of_positive {f g : ℝ → ℝ}
+    (hf : ContinuousOn f (Set.Ici 0)) (hg : ContinuousOn g (Set.Ici 0))
+    (h : ∀ t > 0, f t = g t) :
+    ∀ t ≥ 0, f t = g t := by
+  have he : Set.EqOn f g (Set.Ioi 0) := fun t ht => h t ht
+  exact he.of_subset_closure hf hg Set.Ioi_subset_Ici_self
+    (by rw [closure_Ioi])
+
+theorem partialTime_smooth_original {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {g : SpaceTime → E} (hg : TrustBoundarySmoothOn g) :
+    ContDiffOn ℝ ∞ (partialTime g) nonnegativeTime := by
+  unfold partialTime
+  exact (hg.fderivWithin uniqueDiffOn_nonnegativeTime (by simp)).clm_apply contDiffOn_const
+
+theorem continuousTimeSlice_original {E : Type*} [TopologicalSpace E]
+    {g : SpaceTime → E} (hg : ContinuousOn g nonnegativeTime) (x : R3) :
+    ContinuousOn (fun t => g (x,t)) (Set.Ici 0) :=
+  hg.comp (continuous_const.prodMk continuous_id).continuousOn (fun _ ht => ht)
+
+/-- Reverse transport of the original smoothness assertion, using the
+same space/time swap as in the forward proof. -/
+theorem timeFirst_smooth_reverse {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {g : SpaceTime → E}
+    (hg : ContDiffOn ℝ ∞ (fun z : ℝ × R3 => timeFirst g z.1 z.2)
+      (Set.Ici 0 ×ˢ Set.univ)) : TrustBoundarySmoothOn g := by
+  have hs : ContDiff ℝ ∞ (fun z : R3 × ℝ => (z.2,z.1)) :=
+    contDiff_snd.prodMk contDiff_fst
+  exact hg.comp hs.contDiffOn (fun z hz => ⟨hz,Set.mem_univ _⟩)
+
+/-- The original positive-time smooth solution satisfies the literal
+closed-time Clay momentum and divergence equations with force zero.
+Every derivative is the original within-half-space derivative. -/
+theorem originalSolution_to_clayEquations {ν : ℝ} {u₀ : InitialVelocity}
+    {u : Velocity} {p : Pressure}
+    (sol : Breakdown.IsSmoothSolution ν u₀ (timeFirst u) (timeFirst p)) :
+    TrustBoundarySmoothOn u ∧ TrustBoundarySmoothOn p ∧
+      EquationOne ν u p (fun _ => 0) ∧ EquationTwo u ∧ EquationThree u₀ u := by
+  have hu := timeFirst_smooth_reverse sol.smooth_velocity
+  have hp := timeFirst_smooth_reverse sol.smooth_pressure
+  refine ⟨hu,hp,?_,?_,sol.initial⟩
+  · intro z hz i
+    let ui : SpaceTime → ℝ := fun w => u w i
+    let lhs : SpaceTime → ℝ := fun w => partialTime ui w + convectionComponent u i w
+    let rhs : SpaceTime → ℝ := fun w =>
+      ν * spatialLaplacianComponent u i w - partialSpace i p w
+    have hui := component_smooth hu i
+    have hconv : ContinuousOn (convectionComponent u i) nonnegativeTime := by
+      unfold convectionComponent
+      apply ContinuousOn.finset_sum
+      intro j hj
+      exact (component_smooth hu j).continuousOn.mul
+        (partialSpace_smooth hui j).continuousOn
+    have hlap : ContinuousOn (spatialLaplacianComponent u i) nonnegativeTime := by
+      unfold spatialLaplacianComponent
+      apply ContinuousOn.finset_sum
+      intro j hj
+      exact (partialSpace_smooth (partialSpace_smooth hui j) j).continuousOn
+    have hl : ContinuousOn lhs nonnegativeTime :=
+      (partialTime_smooth_original hui).continuousOn.add hconv
+    have hr : ContinuousOn rhs nonnegativeTime :=
+      (continuousOn_const.mul hlap).sub (partialSpace_smooth hp i).continuousOn
+    have hpos : ∀ t > 0, lhs (z.1,t) = rhs (z.1,t) := by
+      intro t ht
+      have h := congrArg (fun v : R3 => v i) (sol.momentum t ht z.1)
+      dsimp [lhs,rhs,ui]
+      rw [partialTime_component u hu (z.1,t) ht.le i,
+        partialTime_eq_slice hu z.1 ht.le,
+        derivWithin_of_mem_nhds (Ici_mem_nhds ht),
+        convectionComponent_eq u hu z.1 ht.le i,
+        spatialLaplacianComponent_eq u hu z.1 ht.le i,
+        pressureGradientComponent_eq p hp z.1 ht.le i,
+        laplacian_original,gradient_original]
+      exact h
+    have he := closedTime_eq_of_positive
+      (continuousTimeSlice_original hl z.1)
+      (continuousTimeSlice_original hr z.1) hpos z.2 hz
+    simpa [lhs,rhs,ui] using he
+  · intro z hz
+    have hd : ContinuousOn (divergence u) nonnegativeTime := by
+      unfold divergence
+      apply ContinuousOn.finset_sum
+      intro i hi
+      exact (partialSpace_smooth (component_smooth hu i) i).continuousOn
+    have hpos : ∀ t > 0, divergence u (z.1,t) = 0 := by
+      intro t ht
+      exact (divergence_original hu z.1 ht.le).trans
+        (sol.incompressible t ht z.1)
+    exact closedTime_eq_of_positive (continuousTimeSlice_original hd z.1)
+      continuousOn_const hpos z.2 hz
+
+theorem sameSolutionR3_iff {ν : ℝ} {u₀ : InitialVelocity}
+    {u : Velocity} {p : Pressure} :
+    ClaySolutionR3 ν u₀ (fun _ => 0) u p ↔
+      Breakdown.IsSmoothSolution ν u₀ (timeFirst u) (timeFirst p) ∧
+      (∃ C : ℝ, ∀ t ≥ 0,
+        (∫⁻ x, ENNReal.ofReal (‖timeFirst u t x‖ ^ 2)) ≤ ENNReal.ofReal C) := by
+  constructor
+  · rintro ⟨hu,hp,he,hd,hi,henergy⟩
+    exact ⟨solution_original hu hp he hd hi,boundedEnergy_original henergy⟩
+  · rintro ⟨sol,henergy⟩
+    obtain ⟨hu,hp,he,hd,hi⟩ := originalSolution_to_clayEquations sol
+    exact ⟨hu,hp,he,hd,hi,originalEnergy_to_boundedEnergy hu henergy⟩
+
 /-- Direct whole-space source admission: compactly supported actual initial
 data and zero force satisfy the frozen Clay C specification. -/
 theorem original_space_to_clayC (h : Breakdown.BreakdownOnSpace) : ClayOptionC := by
@@ -268,6 +376,7 @@ theorem original_extended_certificate_to_clayC (h : Breakdown.ExtendedCertificat
     ClayOptionC :=
   original_space_to_clayC (Breakdown.extended_certificate_breakdown_on_space h)
 
+#print axioms DASHI.AlpogeBuckmaster.sameSolutionR3_iff
 #print axioms DASHI.AlpogeBuckmaster.sameVelocityEnergy_iff
 #print axioms DASHI.AlpogeBuckmaster.original_profile_to_clayCD
 #print axioms DASHI.AlpogeBuckmaster.original_weak_profile_to_clayC

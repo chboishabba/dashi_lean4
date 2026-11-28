@@ -66,7 +66,7 @@ theorem guarded_puncture {A : Type*} (P : A → Prop) (zero : A) :
     · exact False.elim (hne (Prod.ext hs hx))
     · exact ⟨x,hx⟩
   · rintro ⟨x,hx⟩
-    exact ⟨(true,x),Or.inr ⟨rfl,hx⟩,by decide⟩
+    exact ⟨(true,x),Or.inr ⟨rfl,hx⟩,fun h => Bool.noConfusion (congrArg Prod.fst h)⟩
 
 -- On the original Boolean carrier a unit identity hash isolates its
 -- already recovered witness; not a discovery theorem.

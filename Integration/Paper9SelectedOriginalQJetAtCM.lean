@@ -17,6 +17,8 @@ open Integration.Paper9OriginalEisensteinDerivative
 open Integration.Paper9HypergeometricQTransport
 open Integration.Paper9E2CorrectedClosure
 open Integration.Paper9SelectedCMDomain
+open Integration.Paper9RootODE
+open Integration.Paper9HypergeometricSeriesODE
 open Integration.Paper9ActualCMPoint
 open Integration.Paper9ActualJSourceJet
 

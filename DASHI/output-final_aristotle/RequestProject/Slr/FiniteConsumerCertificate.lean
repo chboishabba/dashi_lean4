@@ -168,7 +168,7 @@ theorem projectedEnvelopeDisagreement
     have ok : checkConstant domain evaluate = true := by
       simpa only [checkConstant, List.all_eq_true, decide_eq_true_eq] using all
     rw [ok] at failed
-    exact failed.elim
+    cases failed
 
 /-- Exact live preimages turn an envelope disagreement into a genuine
     consumer non-descent witness, not merely a resource-pruning residual. -/

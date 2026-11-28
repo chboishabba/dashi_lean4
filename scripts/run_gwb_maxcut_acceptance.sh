@@ -57,8 +57,69 @@ compile_slr GwbArticleSystemSoundness
 compile_slr GwbP4SourceLicence
 compile_slr GwbP4ArticleEndToEnd
 compile_slr GwbP5P10ExactWeld
+compile_slr NumericPnfRustPortContract
+compile_slr GwbCoreferenceFormalRepair
+compile_slr WorldSemanticFibre
+compile_slr IndexedWorldFibreInspection
+lake env lean tools/IndexedWorldFibreRunner.lean
 lake env lean tools/GwbProofRunner.lean
 lake env lean tools/RelationalObservedMeetRunner.lean
+
+# Optional actual multi-edition campaign. Each entry identifies original
+# independently pinned input files, not a synthetic translation or parser.
+# JSON array: {edition,qid,title,article,slr,projection,entity,properties}.
+if [[ -n "${GWB_VIEW_INPUTS_JSON:-}" ]]; then
+  command -v jq >/dev/null
+  jq -e 'type=="array" and length>=2 and length<=8 and
+      all(.[]; .qid=="Q207" and
+        ([.edition,.title,.article,.slr,.projection,.entity,.properties] |
+          all(.[];type=="string" and length>0))) and
+      any(.[];.edition=="en") and any(.[];.edition=="simple") and
+      any(.[];.edition!="en" and .edition!="simple" and .edition!="abstract")' \
+      "$GWB_VIEW_INPUTS_JSON" >/dev/null
+  out="$root/artifacts/gwb-multiview"
+  mkdir -p "$out"
+  rm -f "$out/receipt-manifest.json" "$out/cohort.json"
+  receipt_paths=()
+  while IFS= read -r row; do
+    edition="$(jq -er .edition <<<"$row")"
+    qid="$(jq -er .qid <<<"$row")"
+    title="$(jq -er .title <<<"$row")"
+    article="$(jq -er .article <<<"$row")"
+    slr="$(jq -er .slr <<<"$row")"
+    projection="$(jq -er .projection <<<"$row")"
+    entity="$(jq -er .entity <<<"$row")"
+    properties="$(jq -er .properties <<<"$row")"
+    dest="$out/view-${#receipt_paths[@]}.json"
+    rm -f "$dest" "$dest.tmp"
+    lake env lean --run tools/IndexedWorldFibreRunner.lean --edition "$edition" \
+      "$qid" "$title" "$article" "$slr" "$projection" "$entity" "$dest.tmp" "$properties"
+    jq -e --arg e "$edition" '.schema=="slr.jmd-indexed-world-fibre-receipt.v2" and
+        .edition==$e and .source_observation_checked and (.world_truth_paid==false)' "$dest.tmp" >/dev/null
+    # Negative control: the same bytes must not be relabelled as a
+    # different edition even though its QID and article digest are unchanged.
+    wrong="en"; [[ "$edition" == "en" ]] && wrong="simple"
+    rm -f "$dest.wrong"
+    if lake env lean --run tools/IndexedWorldFibreRunner.lean --edition "$wrong" \
+        "$qid" "$title" "$article" "$slr" "$projection" "$entity" "$dest.wrong" "$properties"; then
+      echo "UNSOUND: accepted wrong edition $wrong for $edition" >&2; exit 1
+    fi
+    [[ ! -e "$dest.wrong" ]] || { echo "Rejected control emitted output" >&2; exit 1; }
+    mv "$dest.tmp" "$dest"
+    receipt_paths+=("$dest")
+  done < <(jq -c '.[]' "$GWB_VIEW_INPUTS_JSON")
+  printf '%s\n' "${receipt_paths[@]}" | jq -R . | jq -s . >"$out/receipt-manifest.json"
+  if [[ -n "${SLR_NATIVE_EXECUTABLE:-}" ]]; then
+    timeout --kill-after=5s "${ITIR_STEP_TIMEOUT:-90s}" "$SLR_NATIVE_EXECUTABLE" relational-family \
+      inspect-indexed-cohort "$out/receipt-manifest.json" consumer:gwb-multiview-v1 >"$out/cohort.json.tmp"
+    jq -e '.schema=="slr.indexed-view-cohort.v1" and .candidate_only and
+      (.world_truth_paid==false) and all(.directed_pairs[];.consumer_proof_equivalence_paid==false)' \
+      "$out/cohort.json.tmp" >/dev/null
+    mv "$out/cohort.json.tmp" "$out/cohort.json"
+  fi
+  echo "GWB_MULTIVIEW_RECORDED_SOURCE_CHECKS_DONE; semantic proof preservation still requires actual licences"
+fi
+
 # Additional exact original SLR receipt checks, without a new parser.
 if [[ -n "${ITIR_RELATIONAL_FAMILY_JSON:-}" ]]; then
   mkdir -p "$root/artifacts/itir-native-maxcut"

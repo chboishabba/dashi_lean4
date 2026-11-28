@@ -1,0 +1,10 @@
+/-! Section 28 source-native all-degree signed Mellin and coupled Dickson root chart. -/
+import Synthesis.MillenniumBSDOriginalTwoCrossingAllDegreeSignPropagationExact
+import Synthesis.MillenniumHodgeDicksonOriginalCoupledTenDeckGeometryExact
+#check DASHI.BSD.SignedCrossing.original_two_crossing_all_higher_moments_positive
+#check DASHI.BSD.SignedCrossing.original_two_crossing_zero_higher_obstructs_nonnegative_first
+#check DASHI.Hodge.DicksonCoupled.originalCoupledTenDeckEquiv
+#check DASHI.Hodge.DicksonCoupled.original_coupled_generic_ten_deck_realized
+#check DASHI.Hodge.DicksonCoupled.original_coupled_ten_deck_projected_image_equiv
+#print axioms DASHI.BSD.SignedCrossing.original_two_crossing_all_higher_moments_positive
+#print axioms DASHI.Hodge.DicksonCoupled.original_coupled_generic_ten_deck_realized

@@ -155,11 +155,11 @@ def main() -> int:
         return 2
     # Exact Lean declaration required: incidental text is insufficient.
     entries = re.findall(
-        r"(?m)^\s*(?:_root_\.)?riemannHypothesis\s+depends on axioms:\s*\[([^]]*)\]\s*$",
+        r"(?m)^\s*'?(?:_root_\.)?riemannHypothesis'?\s+depends on axioms:\s*\[([^]]*)\]\s*$",
         axiom_text,
     )
     empty_entries = re.findall(
-        r"(?m)^\s*(?:_root_\.)?riemannHypothesis\s+does not depend on any axioms\s*$",
+        r"(?m)^\s*'?(?:_root_\.)?riemannHypothesis'?\s+does not depend on any axioms\s*$",
         axiom_text,
     )
     if len(entries) + len(empty_entries) != 1:

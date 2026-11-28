@@ -5,7 +5,10 @@ import Synthesis.MillenniumNSSignedSpectralResidualExact
 # Physical R596 -> N2e -> R568, without inventing a nonlinear payment
 
 Owner coordinates:
-* R225/R388/R596/R597 coherent Cauchy Gram Q and coherent self-work H.
+* R225/R388/R596/R597 only the FINITE coherent Gram/forcing normal forms.
+* The genuine Q'(t) and time-integrated trace is a separate real-time
+  physical heat/derivative/FTC input, derived classically in N2c/N2e
+  roadmap work but NOT supplied by R596's native finite theorem.
 * Agda #1543 N2c and #1551 NSProofControl N2e/N2f signed fractional bridge.
 * R568 original UNLIFTED signed, integrated nonzero-output forcing F.
 * R652/R653 separate strict-margin signed packet lower bound.
@@ -20,14 +23,14 @@ No global NSE, Galerkin all-cutoff estimate or Clay proof is asserted.
 
 namespace DASHI.NavierStokes.FractionalEndpoint
 
-/-- Exact bidirectional R596 terminal trace reformulation of original R568 C1.
+/-- Exact bidirectional physical real-time terminal trace reformulation of original R568 C1.
 Q0, QT are the real R597-normalized nonnegative Gram values; HI is the
 integrated H and FI is the original UNLIFTED forcing integral. -/
 theorem original_R568_C1_iff_positive_trace
     (Q0 QT HI FI B : ℝ)
-    (hR596 : 4 * FI = QT - Q0 + 2 * HI) :
+    (hRealTimeTrace : 4 * FI = QT - Q0 + 2 * HI) :
     4 * FI ≤ B ↔ QT + 2 * HI ≤ B + Q0 := by
-  rw [hR596]
+  rw [hRealTimeTrace]
   constructor <;> intro h <;> linarith
 
 /-- Original R653 signed retained-surplus lower side, on the exact SAME
@@ -35,26 +38,26 @@ physical cutoff and trajectory as the R596 identity. No assumption that
 rate-lifted R687 work has the same sign as unlifted FI. -/
 theorem original_R653_C2_iff_positive_trace
     (Q0 QT HI FI surplus diagonal : ℝ)
-    (hR596 : 4 * FI = QT - Q0 + 2 * HI) :
+    (hRealTimeTrace : 4 * FI = QT - Q0 + 2 * HI) :
     2 * surplus + diagonal ≤ 4 * FI ↔
       2 * surplus + diagonal + Q0 ≤ QT + 2 * HI := by
-  rw [hR596]
+  rw [hRealTimeTrace]
   constructor <;> intro h <;> linarith
 
 /-- True source-preserving C1/C2 sandwich. The two endpoint inequalities
 remain distinct: the upper never implies the positive retained C2 margin. -/
 theorem original_C1_C2_source_sandwich
     (Q0 QT HI FI surplus diagonal ceiling : ℝ)
-    (hR596 : 4 * FI = QT - Q0 + 2 * HI)
+    (hRealTimeTrace : 4 * FI = QT - Q0 + 2 * HI)
     (hC1 : 4 * FI ≤ ceiling)
     (hC2 : 2 * surplus + diagonal ≤ 4 * FI) :
     2 * surplus + diagonal + Q0 ≤ QT + 2 * HI ∧
       QT + 2 * HI ≤ ceiling + Q0 := by
   constructor
   · exact (original_R653_C2_iff_positive_trace
-      Q0 QT HI FI surplus diagonal hR596).mp hC2
+      Q0 QT HI FI surplus diagonal hRealTimeTrace).mp hC2
   · exact (original_R568_C1_iff_positive_trace
-      Q0 QT HI FI ceiling hR596).mp hC1
+      Q0 QT HI FI ceiling hRealTimeTrace).mp hC1
 
 /-- Physical fractional energy FTC in the N2e normalization.  In the
 real Galerkin consumer ET²-E0² is the time integral of
@@ -93,7 +96,7 @@ theorem original_R568_C1_of_fractional_signed_transfer
       Q0 QT HI FI : ℝ)
     (hκ : 0 ≤ κ)
     (hQ0 : 0 ≤ Q0)
-    (hR596 : 4 * FI = QT - Q0 + 2 * HI)
+    (hRealTimeTrace : 4 * FI = QT - Q0 + 2 * HI)
     (hFTC : ET ^ 2 - E0 ^ 2 =
       2 * signedTransfer - 4 * ν * ED)
     (hHeatQ : QT ≤ κ * ET ^ 2)
@@ -105,7 +108,7 @@ theorem original_R568_C1_of_fractional_signed_transfer
   have ht : κ * (E0 ^ 2 + 2 * signedTransfer) ≤
       κ * (E0 ^ 2 + 2 * transferCeiling) :=
     mul_le_mul_of_nonneg_left (by linarith) hκ
-  linarith only [hn, ht, hR596, hQ0]
+  linarith only [hn, ht, hRealTimeTrace, hQ0]
 
 /-- At a=0, zero energy transfer makes the N2c negative-order trace
 uniform once the true heat and physical-energy inputs are supplied.

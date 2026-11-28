@@ -28,16 +28,16 @@ git -C .lake/packages/mathlib diff --quiet HEAD --
 # trusting a root-toolchain olean or introducing a second statement.
 spec="$here/../../ExternalClayNS/ClaySpec.lean"
 test "$(git -C "$here/../.." hash-object "$spec")" = 4ed209d4e932f7344fa8a68fa4c97883ea018eae
-out="$here/.build/$pin"
-mkdir -p "$out"
-log="$here/admission-$pin.log"
+mkdir -p "$here/.build/$pin"
+out="$(mktemp -d "$here/.build/$pin/run.XXXXXXXX")"
+log="$out/admission.log"
 lake env bash -euo pipefail -c '
   here="$1"; out="$2"; spec="$3"
-  export LEAN_PATH="$out:$LEAN_PATH"
+  export LEAN_PATH="$out${LEAN_PATH:+:$LEAN_PATH}"
   lean --root="$(dirname "$spec")" -o "$out/ClaySpec.olean" "$spec"
   lean --root="$here" -o "$out/ClayDifferentialTransport.olean" "$here/ClayDifferentialTransport.lean"
   lean --root="$here" -o "$out/UnforcedAdmission.olean" "$here/UnforcedAdmission.lean"
   lean --root="$here" -o "$out/ClayUnforcedTransport.olean" "$here/ClayUnforcedTransport.lean"
 ' _ "$here" "$out" "$spec" 2>&1 | tee "$log"
 python3 "$here/audit_admission_axioms.py" "$log"
-printf '%s\n' 'PASS: original conditional terminal and literal Clay D transport only; original fifteen-condition witness still required.'
+printf '%s\n' 'PASS: original conditional terminal and literal Clay C/D transport only; original fifteen-condition witness still required.'

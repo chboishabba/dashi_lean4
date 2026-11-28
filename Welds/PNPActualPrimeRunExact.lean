@@ -142,21 +142,24 @@ def ReducedLayout (Q A : Nat) (r : E) : Prop :=
   r.src ∈ inventory Q A ∧ r.body.dst ∈ inventory Q A ∧ r.src ≠ r.body.dst ∧
     ∀ i, r.body.take i = 0 ∨ r.body.give i = 0
 
-theorem vector_disjoint (Q A : Nat) (r : E) (h : ReducedLayout Q A r)
+def Separated (r : E) : Prop :=
+  r.src ≠ r.body.dst ∧ ∀ i, r.body.take i = 0 ∨ r.body.give i = 0
+
+theorem vector_disjoint (Q A : Nat) (r : E) (h : Separated r)
     (i : Lane Q A) :
     vector Q A r.body.take r.src i = 0 ∨
       vector Q A r.body.give r.body.dst i = 0 := by
   cases i with
-  | inl i => exact h.2.2.2 i
+  | inl i => exact h.2 i
   | inr i =>
     by_cases e : i.val = r.src
     · right
-      simp [vector,e,h.2.2.1]
+      simp [vector,e,h.1]
     · left
       simp [vector,e]
 
 -- Exact support disjointness transports through the injective allocation.
-theorem valuation_disjoint (Q A : Nat) (r : E) (h : ReducedLayout Q A r)
+theorem valuation_disjoint (Q A : Nat) (r : E) (h : Separated r)
     (p : Nat) :
     (fractionEdge Q A r).take p = 0 ∨ (fractionEdge Q A r).give p = 0 := by
   classical
@@ -171,7 +174,7 @@ theorem valuation_disjoint (Q A : Nat) (r : E) (h : ReducedLayout Q A r)
     have ne : lanePrime Q A i ≠ p := fun e => hp ⟨i,e⟩
     simp [Finsupp.single_apply,ne,Ne.symm ne]
 
-theorem reduced_coprime (Q A : Nat) (r : E) (h : ReducedLayout Q A r) :
+theorem separated_coprime (Q A : Nat) (r : E) (h : Separated r) :
     Nat.Coprime (pack (fractionEdge Q A r).take) (pack (fractionEdge Q A r).give) := by
   let a := (fractionEdge Q A r).take
   let b := (fractionEdge Q A r).give
@@ -194,6 +197,10 @@ theorem reduced_coprime (Q A : Nat) (r : E) (h : ReducedLayout Q A r) :
   simp [v] at la lb
   change a p = 0 ∨ b p = 0 at dis
   omega
+
+theorem reduced_coprime (Q A : Nat) (r : E) (h : ReducedLayout Q A r) :
+    Nat.Coprime (pack (fractionEdge Q A r).take) (pack (fractionEdge Q A r).give) :=
+  separated_coprime Q A r h.2.2
 
 -- Actual compiler-wide ReducedLayout proof remains: emitted exits and
 -- private phases plus table target bounds. This theorem does not claim

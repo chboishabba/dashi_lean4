@@ -1,0 +1,4 @@
+/-! Section 26 source actual input-sharing capacity no-go. -/
+import Welds.PNPOriginalAnchoredInputOnlyCeilingNoGoExact
+#check PNPOriginalResidualFutureReadWeld.original_anchored_input_only_capacity_ceiling
+#print axioms PNPOriginalResidualFutureReadWeld.original_anchored_input_only_capacity_ceiling

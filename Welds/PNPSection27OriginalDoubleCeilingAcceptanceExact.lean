@@ -1,0 +1,5 @@
+/-! Original anchored input-only versus real query-horizon ceiling.
+No unrestricted SAT complexity assertion. -/
+import Welds.PNPOriginalAnchoredInputReadDoubleCeilingExact
+#check PNPOriginalResidualFutureReadWeld.original_anchored_input_read_double_ceiling
+#print axioms PNPOriginalResidualFutureReadWeld.original_anchored_input_read_double_ceiling

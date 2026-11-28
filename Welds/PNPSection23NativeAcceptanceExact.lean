@@ -1,0 +1,7 @@
+/-! Original signed anchored residual and same-run read native import root. -/
+import Welds.PNPOriginalResidualFutureReadWeldExact
+
+#check PNPOriginalResidualFutureReadWeld.anchored_original_residual_forces_actual_future_read
+#check PNPOriginalResidualFutureReadWeld.anchored_original_consumer_displacement
+#print axioms PNPOriginalResidualFutureReadWeld.anchored_original_residual_forces_actual_future_read
+#print axioms PNPOriginalResidualFutureReadWeld.anchored_original_consumer_displacement

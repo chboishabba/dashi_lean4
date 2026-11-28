@@ -1,0 +1,5 @@
+/-! Section 28 original anchored F3 closed internal observer non-splitting. -/
+import Welds.PNPOriginalResidualClosedInternalNoGoExact
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_closed_internal_observer_no_split
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_visible_requires_external_information
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_closed_internal_observer_no_split

@@ -519,6 +519,7 @@ def electionLicence (source : ElectionSource) (subject : BushOfficeSubject) :
     intro r h
     exact congrArg (fun x => electionAnswer x subject) h
 
+set_option maxRecDepth 10000 in
 theorem reciprocalElectionClaimSound
     (a b : ElectionSource)
     (ha : electionAnswer a .son = some election2000)

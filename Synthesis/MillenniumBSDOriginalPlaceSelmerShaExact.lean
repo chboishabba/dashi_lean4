@@ -1,6 +1,7 @@
 import Synthesis.MillenniumBSDActualCompletionKummerExact
 import Mathlib.NumberTheory.NumberField.FinitePlaces
 import Mathlib.NumberTheory.NumberField.InfinitePlace.Completion
+import Mathlib.GroupTheory.QuotientGroup.Basic
 
 /-!
 Original finite and infinite completions from the pinned Mathlib layout.
@@ -212,6 +213,45 @@ theorem selmerToShaTwo_kernel_iff
   · intro h
     apply Subtype.ext
     exact (originalInclusionH1_zero_iff_rationalKummer W hsK x.1).mpr h
+
+/-- Bundle the original global Kummer image INSIDE Selmer, not in a
+separately reconstructed finite square-class quotient. -/
+def globalKummerToSelmer
+    (hsK : Function.Surjective (fun Q : GeometricPoint W => (2:ℕ) • Q))
+    (hs : ∀ v : OriginalPlace K, Function.Surjective
+      (fun Q : GeometricPoint (localCurve W v) => (2:ℕ) • Q)) :
+    BasePoint W →+ originalSelmerTwo W hs where
+  toFun P := ⟨rationalKummerClass W hsK P,globalKummer_mem_selmer W hsK hs P⟩
+  map_zero' := Subtype.ext (map_zero (rationalKummerHom W hsK))
+  map_add' P R := Subtype.ext (rationalKummerClass_add W hsK P R)
+
+theorem selmerToShaTwo_ker
+    (hsK : Function.Surjective (fun Q : GeometricPoint W => (2:ℕ) • Q))
+    (hs : ∀ v : OriginalPlace K, Function.Surjective
+      (fun Q : GeometricPoint (localCurve W v) => (2:ℕ) • Q)) :
+    (selmerToShaTwo W hsK hs).ker=(globalKummerToSelmer W hsK hs).range := by
+  ext x
+  change selmerToShaTwo W hsK hs x=0 ↔
+    ∃ P,globalKummerToSelmer W hsK hs P=x
+  rw [selmerToShaTwo_kernel_iff W hsK hs]
+  constructor
+  · rintro ⟨P,hP⟩
+    exact ⟨P,Subtype.ext hP⟩
+  · rintro ⟨P,hP⟩
+    exact ⟨P,congrArg Subtype.val hP⟩
+
+/-- The actual quotient isomorphism with the place-local point-Sha
+subgroup, conditional only on geometric doubling onto at the global
+and local fields. This is algebraic Kummer exactness, not BSD rank. -/
+def selmerQuotientEquivShaTwo
+    (hsK : Function.Surjective (fun Q : GeometricPoint W => (2:ℕ) • Q))
+    (hs : ∀ v : OriginalPlace K, Function.Surjective
+      (fun Q : GeometricPoint (localCurve W v) => (2:ℕ) • Q)) :
+    (originalSelmerTwo W hs ⧸ (globalKummerToSelmer W hsK hs).range) ≃+
+      originalPointShaTwo W := by
+  rw [← selmerToShaTwo_ker W hsK hs]
+  exact QuotientAddGroup.quotientKerEquivOfSurjective
+    (selmerToShaTwo W hsK hs) (selmerToShaTwo_surjective W hsK hs)
 
 end Places
 end

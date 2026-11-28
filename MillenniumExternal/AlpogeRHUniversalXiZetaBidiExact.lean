@@ -18,4 +18,6 @@ theorem originalAllXiZerosAxis_iff_allNontrivialZetaCritical :
     exact (originalXiZeroOnAxis_iff_zetaCritical t).mpr
       (h (originalXiZetaZeroEquiv t))
 
+#print axioms originalAllXiZerosAxis_iff_allNontrivialZetaCritical
+
 end MillenniumExternal.AlpogeRH

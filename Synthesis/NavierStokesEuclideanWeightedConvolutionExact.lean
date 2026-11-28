@@ -201,5 +201,116 @@ theorem weighted_convolution_global
   rw [integral_const_mul,hmass] at hi
   exact hi
 
+/-- Actual 9D envelope, both independent input pairs retained. -/
+def fourAmplitudeEnvelope (ν : ℝ) (w : Vec3 → ℝ)
+    (z : Vec3 × (Vec3 × Vec3)) : ℝ :=
+  (2/ν)*(w z.2.1*w (z.1-z.2.1))*(w z.2.2*w (z.1-z.2.2))
+
+theorem fourAmplitudeEnvelope_integrable
+    (ν : ℝ) (hν : 0 < ν) (w : Vec3 → ℝ)
+    (hw : ∀ x,0 ≤ w x) (hmw : Measurable w)
+    (hE : Integrable (fun x => w x^2))
+    (hC : Integrable (fun ξ => (selfConvolution w ξ)^2)) :
+    Integrable (fourAmplitudeEnvelope ν w)
+      ((volume : Measure Vec3).prod
+        ((volume : Measure Vec3).prod (volume : Measure Vec3))) ∧
+    (∫ z,fourAmplitudeEnvelope ν w z ∂
+      ((volume : Measure Vec3).prod
+        ((volume : Measure Vec3).prod (volume : Measure Vec3)))) =
+      (2/ν)*(∫ ξ,(selfConvolution w ξ)^2) := by
+  let μ : Measure Vec3 := volume
+  let p := fun (ξ η : Vec3) => w η*w (ξ-η)
+  let M := fourAmplitudeEnvelope ν w
+  have hp (ξ : Vec3) : Integrable (p ξ) μ :=
+    (selfConvolution_le_squareMass w hmw hE hw ξ).1
+  have hm : Measurable M := by
+    unfold M fourAmplitudeEnvelope
+    exact ((measurable_const.mul
+      ((hmw.comp (measurable_fst.comp measurable_snd)).mul
+        (hmw.comp (measurable_fst.sub (measurable_fst.comp measurable_snd))))).mul
+      ((hmw.comp (measurable_snd.comp measurable_snd)).mul
+        (hmw.comp (measurable_fst.sub (measurable_snd.comp measurable_snd)))))
+  have hrow (ξ : Vec3) : Integrable (fun z => M (ξ,z)) (μ.prod μ) :=
+    ((hp ξ).const_mul (2/ν)).mul_prod (hp ξ)
+  have hrowMass (ξ : Vec3) :
+      (∫ z,M (ξ,z) ∂μ.prod μ)=(2/ν)*(selfConvolution w ξ)^2 := by
+    change (∫ z,((2/ν)*p ξ z.1)*p ξ z.2 ∂μ.prod μ)=_
+    rw [integral_prod_mul,integral_const_mul]
+    unfold selfConvolution
+    change (2/ν)*(∫ η,p ξ η)*(∫ η,p ξ η)=(2/ν)*(∫ η,p ξ η)^2
+    ring
+  have hnonneg (z : Vec3 × (Vec3 × Vec3)) : 0 ≤ M z := by
+    unfold M fourAmplitudeEnvelope
+    exact mul_nonneg (mul_nonneg (div_nonneg (by norm_num) hν.le)
+      (mul_nonneg (hw _) (hw _))) (mul_nonneg (hw _) (hw _))
+  have hn : (fun ξ : Vec3 => ∫ z, ‖M (ξ,z)‖ ∂μ.prod μ) =
+      fun ξ => (2/ν)*(selfConvolution w ξ)^2 := by
+    funext ξ
+    rw [← hrowMass ξ]
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun z => by
+      rw [Real.norm_eq_abs,abs_of_nonneg (hnonneg (ξ,z))]
+  have hi : Integrable M (μ.prod (μ.prod μ)) :=
+    (integrable_prod_iff hm.aestronglyMeasurable).mpr
+      ⟨Filter.Eventually.of_forall hrow,by rw [hn]; exact hC.const_mul _⟩
+  refine ⟨hi,?_⟩
+  change (∫ z,M z ∂μ.prod (μ.prod μ))=_
+  rw [integral_prod M hi]
+  simp_rw [hrowMass]
+  rw [integral_const_mul]
+
+/-- The actual constructed signed projected kernel is integrable in all
+nine coordinates, including the zero-output sector. The remaining
+measurability hypothesis refers to this exact function, not a surrogate
+envelope. At W=R²+|η|² the weight assumptions are ordinary H¹ plus the
+standard reciprocal radial integral. -/
+theorem centered_kernel_weighted_spatial_budget
+    (ν : ℝ) (hν : 0 < ν) (U : Vec3 → CVec3) (W : Vec3 → ℝ)
+    (hW : ∀ x,0 < W x) (hmW : Measurable W)
+    (hmU : Measurable (fun x => amplitude (U x)))
+    (hE : Integrable (fun x => phaseMass (U x)))
+    (hA : Integrable (fun x => phaseMass (U x)*W x))
+    (hB : Integrable (fun x => ((W x)⁻¹)^2))
+    (hK : Measurable (fun z : Vec3 × (Vec3 × Vec3) =>
+      centeredSignedKernel ν U z.1 z.2.1 z.2.2)) :
+    let μ := (volume : Measure Vec3).prod
+      ((volume : Measure Vec3).prod (volume : Measure Vec3))
+    let k := fun z : Vec3 × (Vec3 × Vec3) =>
+      centeredSignedKernel ν U z.1 z.2.1 z.2.2
+    Integrable k μ ∧ |∫ z,k z ∂μ| ≤
+      (2/ν)*(∫ x,((W x)⁻¹)^2)*(∫ x,phaseMass (U x)*W x)^2 := by
+  dsimp only
+  let w := fun x => amplitude (U x)
+  have hw : ∀ x,0 ≤ w x := fun x => amplitude_nonnegative _
+  have he : Integrable (fun x => w x^2) := by
+    simpa only [w,amplitude_sq] using hE
+  have ha : Integrable (fun x => w x^2*W x) := by
+    simpa only [w,amplitude_sq] using hA
+  obtain ⟨hC,hCb⟩ := weighted_convolution_global w W hw hW hmU hmW he ha hB
+  obtain ⟨hM,hMb⟩ := fourAmplitudeEnvelope_integrable ν hν w hw hmU he hC
+  have hp (z : Vec3 × (Vec3 × Vec3)) :
+      |centeredSignedKernel ν U z.1 z.2.1 z.2.2| ≤
+        fourAmplitudeEnvelope ν w z := by
+    by_cases hz : massSq z.1=0
+    · have hzero : centeredSignedKernel ν U z.1 z.2.1 z.2.2=0 := by
+        simp [centeredSignedKernel,centeredCoefficient,actualOutputResolvent,outputRate,hz]
+      rw [hzero,abs_zero]
+      unfold fourAmplitudeEnvelope
+      exact mul_nonneg (mul_nonneg (div_nonneg (by norm_num) hν.le)
+        (mul_nonneg (hw _) (hw _))) (mul_nonneg (hw _) (hw _))
+    · have hpos := lt_of_le_of_ne (massSq_nonnegative z.1) (Ne.symm hz)
+      exact centered_signed_product_majorant ν U z.1 z.2.1 z.2.2 hν hpos
+  have hn : ∀ᵐ z ∂((volume : Measure Vec3).prod
+      ((volume : Measure Vec3).prod (volume : Measure Vec3))),
+      ‖centeredSignedKernel ν U z.1 z.2.1 z.2.2‖ ≤ fourAmplitudeEnvelope ν w z :=
+    Filter.Eventually.of_forall fun z => by simpa only [Real.norm_eq_abs] using hp z
+  refine ⟨hM.mono' hK.aestronglyMeasurable hn,?_⟩
+  have hi := norm_integral_le_of_norm_le hM hn
+  rw [Real.norm_eq_abs,hMb] at hi
+  have hb := mul_le_mul_of_nonneg_left hCb (div_nonneg (by norm_num) hν.le)
+  rw [mul_assoc] at hb
+  simp only [w,amplitude_sq] at hb
+  exact le_trans hi hb
+
 end
 end DASHI.NavierStokes.EuclideanMidpoint

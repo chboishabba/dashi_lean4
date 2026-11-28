@@ -198,4 +198,39 @@ theorem reduced_coprime (Q A : Nat) (r : E) (h : ReducedLayout Q A r) :
 -- Actual compiler-wide ReducedLayout proof remains: emitted exits and
 -- private phases plus table target bounds. This theorem does not claim
 -- an Agda-to-Lean kernel-level parser correspondence.
+-- The actual normalized split-list source move and the complete prime
+-- integer run use the same raw edge count. No extra successor hypothesis.
+theorem primeMacroExact (Q A q : Nat) (table : Nat → Nat → Option Instruction)
+    (c : PNPStackFractran.Config) (hA : 0<A) (hq : q<Q) (ha : c.scanned<A)
+    (hl : ∀ d ∈ c.left,d<A)
+    (htarget : ∀ i, table q c.scanned=some i → i.target<Q) :
+    ∃ n, integerRun Q A (compile Q A table) n
+      (integerState Q A ⟨mainTag (.q q),PNPActualWordBisim.dataOf (max 2 A) c⟩) =
+      some (integerState Q A (PNPActualWordBisim.sourceResult (max 2 A) q table c)) := by
+  obtain ⟨n,h⟩ := PNPActualWordBisim.raw_step_bisim Q A q table c hA hq ha hl htarget
+  refine ⟨n,?_⟩
+  rw [compiled_primeRunExact,h]
+  rfl
+
+-- Finite checker for concrete compiled tables; proof of its success for
+-- ALL legal tables is distinct from the decidable concrete receipt.
+def layoutCheck (Q A : Nat) (r : E) : Bool :=
+  decide (r.src ∈ inventory Q A) &&
+  decide (r.body.dst ∈ inventory Q A) &&
+  decide (r.src ≠ r.body.dst) &&
+  decide (∀ i : Fin 5, r.body.take i = 0 ∨ r.body.give i = 0)
+
+theorem layoutCheck_sound (Q A : Nat) (r : E)
+    (h : layoutCheck Q A r = true) : ReducedLayout Q A r := by
+  simpa [layoutCheck,ReducedLayout,Bool.and_eq_true, and_assoc] using h
+
+def programLayoutCheck (Q A : Nat) (table : Nat → Nat → Option Instruction) : Bool :=
+  (compile Q A table).all (layoutCheck Q A)
+
+theorem compiled_reduced_receipt (Q A : Nat) (table : Nat → Nat → Option Instruction)
+    (ok : programLayoutCheck Q A table = true) (r : E)
+    (mem : r ∈ compile Q A table) :
+    Nat.Coprime (pack (fractionEdge Q A r).take) (pack (fractionEdge Q A r).give) := by
+  exact reduced_coprime Q A r (layoutCheck_sound Q A r ((List.all_eq_true.mp ok) r mem))
+
 end PNPActualPrimeRun

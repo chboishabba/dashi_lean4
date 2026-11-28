@@ -84,6 +84,8 @@ theorem originalXiZeroOnAxis_iff_zetaCritical
 
 #print axioms originalXiZetaZeroEquiv
 #print axioms originalXiParameter_im
+#print axioms originalXiParameter_im_zero_iff
+#print axioms originalXiZeroOnAxis_iff_zetaCritical
 #print axioms clay_of_admitted_mathlib
 #print axioms mathlib_of_clay
 #print axioms clay_iff_mathlib

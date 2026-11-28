@@ -77,4 +77,34 @@ theorem sweep_raw {Q A : Nat} {table : Nat → Nat → Option Instruction}
 
 -- Native receipt retains the original run length. A compressed word
 -- representation for repeated writes is not itself a physical clock.
+def repeatedWrites (bs : List Nat) : Nat → List Nat
+  | 0 => []
+  | k+1 => bs++repeatedWrites bs k
+
+theorem sweep_cycle {table : Nat → Nat → Option Instruction}
+    {q : Nat} {bs : List Nat} (loop : Sweep table q bs q) (k : Nat) :
+    Sweep table q (repeatedWrites bs k) q := by
+  induction k with
+  | zero => exact Sweep.done q
+  | succ k ih => exact sweep_append loop ih
+
+theorem sweep_prefix_cycle_suffix {table : Nat → Nat → Option Instruction}
+    {q p t : Nat} {xs bs ys : List Nat}
+    (prefix : Sweep table q xs p) (loop : Sweep table p bs p)
+    (suffix : Sweep table p ys t) (k : Nat) :
+    Sweep table q (xs++repeatedWrites bs k++ys) t := by
+  rw [List.append_assoc]
+  exact sweep_append prefix (sweep_append (sweep_cycle loop k) suffix)
+
+theorem sweep_prime {Q A : Nat} {table : Nat → Nat → Option Instruction}
+    (legal : LegalTable Q A table) (hA : 0<A)
+    {q p : Nat} {bs : List Nat} (s : Sweep table q bs p) (hq : q<Q)
+    (l ll rr : Nat) (hr : 0<rr) :
+    integerRun Q A (compile Q A table) (rawCount (max 2 A) l rr bs)
+      (integerState Q A ⟨mainTag (.q q),lanes l 0 0 ll rr⟩) =
+    some (integerState Q A ⟨mainTag (.q p),lanes
+      (appendWrites (max 2 A) l bs) 0 0 (ll+bs.length) (max 1 (rr-bs.length))⟩) := by
+  rw [compiled_primeRunExact,sweep_raw legal hA s hq l ll rr hr]
+  rfl
+
 end PNPBlankSweep

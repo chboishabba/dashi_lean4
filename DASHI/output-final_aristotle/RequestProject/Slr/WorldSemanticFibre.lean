@@ -247,6 +247,57 @@ theorem differingLiveProofSignsBlockViewLicence
     ¬ Nonempty (SourceQueryLicence m s q) :=
   incompatibleLiveReadingsBlockQueryLicence x y hx hy different
 
+
+/-- The proof-bearing value exported to the existing referee as the
+    signed-view-query answer. The external query identifier, source
+    digests, statement digest and native selectors must still be bound
+    by that referee; a JSON rendering is not the proof. -/
+structure LicensedSignedViewAnswer
+    {S O R T P U Q : Type}
+    (left : DocumentQueryModel S O R Q (Option Support))
+    (right : DocumentQueryModel T P U Q (Option Support))
+    (s : S) (t : T) (q : Q) where
+  leftSupport : Option Support
+  rightSupport : Option Support
+  leftSound : left.documentAnswer s q = leftSupport
+  rightSound : right.documentAnswer t q = rightSupport
+
+def signedViewAnswerOfLicences
+    {S O R T P U Q : Type}
+    {left : DocumentQueryModel S O R Q (Option Support)}
+    {right : DocumentQueryModel T P U Q (Option Support)}
+    {s : S} {t : T} {q : Q}
+    (l : SourceQueryLicence left s q) (r : SourceQueryLicence right t q) :
+    LicensedSignedViewAnswer left right s t q :=
+  ⟨left.readingAnswer l.chosenReading q, right.readingAnswer r.chosenReading q,
+    slrJmdDocumentQuerySound l _ rfl, slrJmdDocumentQuerySound r _ rfl⟩
+
+/-- The answer contains the actual source-bound support, not the
+    outcome of a candidate similarity or source-local polarity heuristic. -/
+theorem licensedSignedViewAnswerDelta
+    {S O R T P U Q : Type}
+    {left : DocumentQueryModel S O R Q (Option Support)}
+    {right : DocumentQueryModel T P U Q (Option Support)}
+    {s : S} {t : T} {q : Q}
+    (a : LicensedSignedViewAnswer left right s t q) :
+    viewProofDelta (left.documentAnswer s q) (right.documentAnswer t q) =
+      viewProofDelta a.leftSupport a.rightSupport := by
+  rw [a.leftSound, a.rightSound]
+
+/-- If two pair witnesses share exactly the same typed source and query,
+    their answer coordinate agrees. A mismatch in native pair readback
+    therefore signals a binding/model problem, not an ontology fact. -/
+theorem sharedLicensedViewAnswerUnique
+    {S O R T P U X Y Z Q : Type}
+    {left : DocumentQueryModel S O R Q (Option Support)}
+    {middle : DocumentQueryModel T P U Q (Option Support)}
+    {right : DocumentQueryModel X Y Z Q (Option Support)}
+    {s : S} {t : T} {u : X} {q : Q}
+    (a : LicensedSignedViewAnswer left middle s t q)
+    (b : LicensedSignedViewAnswer middle right t u q) :
+    a.rightSupport = b.leftSupport :=
+  a.rightSound.symm.trans b.leftSound
+
 end Wikidata.Slr.WorldSemanticFibre
 
 #print axioms Wikidata.Slr.WorldSemanticFibre.actionClosed
@@ -259,3 +310,6 @@ end Wikidata.Slr.WorldSemanticFibre
 
 #print axioms Wikidata.Slr.WorldSemanticFibre.zeroViewDeltaIffEqualSupport
 #print axioms Wikidata.Slr.WorldSemanticFibre.differingLiveProofSignsBlockViewLicence
+
+#print axioms Wikidata.Slr.WorldSemanticFibre.licensedSignedViewAnswerDelta
+#print axioms Wikidata.Slr.WorldSemanticFibre.sharedLicensedViewAnswerUnique

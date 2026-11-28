@@ -129,11 +129,12 @@ Equality of event labels alone is insufficient. -/
 def propositionCoordinate (r : Reading) :=
   (r.referent, r.role, r.scope, r.event, r.capacity, r.time, r.attribution)
 
-def compare (a b : Reading) : Option (Support × Support) := by
+noncomputable def compare (a b : Reading) : Option (Support × Support) := by
   classical
   exact if propositionCoordinate a = propositionCoordinate b
     then some (support a.sign, support b.sign) else none
 
+set_option maxRecDepth 10000 in
 theorem reciprocalComparison (a b : Reading) :
     compare b a = (compare a b).map Prod.swap := by
   classical

@@ -17,3 +17,11 @@ import Synthesis.MillenniumHodgeDicksonOriginalCoupledSixSignedDeckExact
 #print axioms DASHI.Hodge.DicksonCoupled.original_Q0_six_partner_preserves_signed_product
 #print axioms DASHI.Hodge.DicksonCoupled.original_Q0_coupled_six_partner_involution
 #print axioms DASHI.Hodge.DicksonCoupled.original_Q0_coupled_six_partner_signed_fibre_equivariant
+
+-- Punctured six-address original signed product yields a FREE
+-- order-two action on the SAME actual coupled root fibre.
+#check DASHI.Hodge.DicksonCoupled.originalQ0CoupledSixPartnerEquiv
+#check DASHI.Hodge.DicksonCoupled.original_Q0_coupled_partner_no_fixed_on_puncture
+#check DASHI.Hodge.DicksonCoupled.original_Q0_coupled_punctured_partner_two_cycle
+#print axioms DASHI.Hodge.DicksonCoupled.original_Q0_coupled_partner_no_fixed_on_puncture
+#print axioms DASHI.Hodge.DicksonCoupled.original_Q0_coupled_punctured_partner_two_cycle

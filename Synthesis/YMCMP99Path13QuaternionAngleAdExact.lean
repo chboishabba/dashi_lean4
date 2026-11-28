@@ -135,5 +135,44 @@ theorem qPath74_ad_radius (p : List Q) (e : ℝ) (he : 0≤e)
   have h := qAd_norm (qPrincipalVector p.prod)
   linarith
 
+/-- The quaternion principal vector exponentiates back to the same
+unit word whenever its imaginary part is nonzero. This selects the
+principal angle rather than a separate logarithm branch. Identity
+is handled separately; the antipodal point is excluded. -/
+theorem qPrincipalVector_exp (q : Q) (hq : ‖q‖=1) (hi : ‖q.im‖≠0) :
+    NormedSpace.exp (qPrincipalVector q)=q := by
+  have hnorm : ‖qPrincipalVector q‖=qAngle q := by
+    unfold qPrincipalVector
+    rw [norm_smul,Real.norm_eq_abs,abs_of_nonneg
+      (div_nonneg (qAngle_nonneg q) (norm_nonneg _)),div_mul_cancel₀ _ hi]
+  have ht : qAngle q≠0 := by
+    intro h
+    have hs := qAngle_sin_eq_im_norm q hq
+    rw [h,Real.sin_zero] at hs
+    exact hi hs.symm
+  rw [Quaternion.exp_of_re_eq_zero _ (qPrincipalVector_re q),hnorm,
+    qAngle_cos q hq,qAngle_sin_eq_im_norm q hq]
+  unfold qPrincipalVector
+  rw [smul_smul]
+  have h : ‖q.im‖/qAngle q*(qAngle q/‖q.im‖)=1 := by field_simp [hi,ht]
+  rw [h,one_smul]
+  exact Quaternion.re_add_im q
+
+theorem qPrincipalVector_one : qPrincipalVector (1:Q)=0 := by
+  simp [qPrincipalVector,qAngle]
+
+/-- Populate D/J's previous quantitative analytic-series slots using
+the actual quaternion word, in the full continuous operator algebra.
+Identifying the left-trivialized derivative with D, restricting to
+the Lie carrier, and the selected CMP102 operator remain separate. -/
+theorem qPath74_series_inverse (p : List Q) (e : ℝ) (he : 0≤e)
+    (hp : ∀ q∈p,‖q‖=1 ∧ qAngle q≤e) (hL : p.length≤74)
+    (hangle : 74*e≤Real.pi) (hsmall : 148*e≤1/2) :
+    let D := dexpSeries (qAd (qPrincipalVector p.prod))
+    ∃ J : Q →L[ℝ] Q,D*J=1 ∧ J*D=1 ∧
+      ‖D-1‖≤148*e ∧ ‖J‖≤2 ∧ ‖J-1‖≤296*e := by
+  exact dexpSeries_logInverse_enclosure _ e he
+    (qPath74_ad_radius p e he hp hL hangle) hsmall
+
 end
 end CMP99Pivot.Path13

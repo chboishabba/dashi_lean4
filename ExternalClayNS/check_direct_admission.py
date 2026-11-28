@@ -3,7 +3,7 @@
 direct theorem axiom log, no external acceptance claim. No network fallback.
 Reuse the existing SubmissionAudit and nested project, not another endpoint.
 """
-import pathlib, subprocess, tempfile, shutil, json, re, os, sys
+import pathlib, subprocess, tempfile, shutil, json, re, os, sys, hashlib
 
 ROOT=pathlib.Path(__file__).resolve().parent
 PIN="f9e8bc5b38b6e212696e8a30e3e91517af887bbd"
@@ -14,6 +14,7 @@ TARGETS=("NavierStokesR3.theorem_1_1","NavierStokesR3.comparator_of_breakdown",
          "PeriodicPaper.periodic_corollary","NavierStokes.ComparatorBridge.option_D_of_paper_candidate",
          PREFIX+"directComparatorD",PREFIX+"directClayD",PREFIX+"directClayD_roundTrip",
          PREFIX+"dualRouteReceipt")
+CANONICAL=("DASHILiteralClayNS.dashiDirectExactFeffermanC","DASHILiteralClayNS.dashiDirectExactFeffermanD")
 ALLOWED={"propext","Classical.choice","Quot.sound"}
 SOURCE_BLOBS={
     "NavierStokes/R3/Theorem.lean":"4151e7c90a9de31d8454fc49932b066d475bed08",
@@ -23,9 +24,9 @@ SOURCE_BLOBS={
     "lean-toolchain":"b814d987e0c93cb99938be934d9b277778495ba1",
 }
 
-def audit(log):
+def audit(log,targets=TARGETS):
     out={}
-    for name in TARGETS:
+    for name in targets:
         pat=(r"(?m)^(?:[^\r\n]*:\d+:\d+:[ \t]*info:[ \t]*|info:[ \t]*)?'"+
              re.escape(name)+r"' (?:depends on axioms:[ \t]*\[([^\]]*)\]|does not depend on any axioms)[ \t]*\r?$")
         matches=list(re.finditer(pat,log))
@@ -60,7 +61,7 @@ def local_source():
             want=git(ROOT,"rev-parse",f"HEAD:ExternalClayNS/{f}")
             if got!=want:raise ValueError(f"dirty admission input: {f}")
             blobs[f]=got
-    for f in ("SubmissionAudit.lean","ClaySpec.lean","Gap.lean","ClauseAudit.lean","lakefile.toml","lean-toolchain","check_direct_admission.py"):
+    for f in ("SubmissionAudit.lean","LeanDojoExactTerminal.lean","ClaySpec.lean","Gap.lean","ClauseAudit.lean","lakefile.toml","lean-toolchain","check_direct_admission.py"):
         if f not in blobs:raise ValueError("missing tracked source "+f)
     if (ROOT/"lean-toolchain").read_text().strip()!="leanprover/lean4:v"+VERSION:
         raise ValueError("nested toolchain mismatch")
@@ -68,7 +69,8 @@ def local_source():
     return dict(head=head,blobs=blobs)
 
 def packages():
-    manifest=json.loads((ROOT/"lake-manifest.json").read_text())
+    manifest_bytes=(ROOT/"lake-manifest.json").read_bytes()
+    manifest=json.loads(manifest_bytes)
     base=ROOT/manifest.get("packagesDir",".lake/packages")
     heads={}
     for p in manifest["packages"]:
@@ -79,7 +81,7 @@ def packages():
     for f,blob in SOURCE_BLOBS.items():
         if git(upstream,"rev-parse",f"HEAD:{f}")!=blob or git(upstream,"hash-object","--no-filters",str(upstream/f))!=blob:
             raise ValueError("source blob drift: "+f)
-    return heads
+    return dict(heads=heads,manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest())
 
 def run():
     if not shutil.which("lake"):raise ValueError("pinned Lean/lake unavailable")
@@ -103,13 +105,17 @@ def run():
     # A successful source elaboration and clean axiom log are not a
     # fresh kernel replay. Fail closed if the pinned toolchain cannot
     # replay the isolated terminal and all of its dependencies.
+    canonical=cmd("canonical.log","lake","env","bash","-c",
+              'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec lean --root="$2" -o "$1/LeanDojoExactTerminal.olean" "$2/LeanDojoExactTerminal.lean"',
+              "_",str(build),str(ROOT))
+    result.update(audit(canonical,CANONICAL))
     fresh=cmd("fresh-kernel.log","lake","env","bash","-c",
-              'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec leanchecker --fresh --verbose SubmissionAudit',
+              'export LEAN_PATH="$1${LEAN_PATH:+:$LEAN_PATH}"; exec leanchecker --fresh --verbose LeanDojoExactTerminal',
               "_",str(build))
-    if "replaying SubmissionAudit with --fresh" not in fresh.splitlines():
-        raise ValueError("missing exact terminal fresh-replay marker")
+    if "replaying LeanDojoExactTerminal with --fresh" not in fresh.splitlines():
+        raise ValueError("missing exact canonical terminal fresh-replay marker")
     if before!=local_source() or deps!=packages():raise ValueError("source drift during run")
-    (report/"receipt.json").write_text(json.dumps(dict(source=before,packages=deps,axioms=result,fresh_replay="SubmissionAudit"),indent=2))
+    (report/"receipt.json").write_text(json.dumps(dict(source=before,packages=deps,axioms=result,fresh_replay="LeanDojoExactTerminal"),indent=2))
     print("PASS direct C/D pinned native admission + fresh replay",report)
     print("Independent physical/manuscript verification remains separate.")
 

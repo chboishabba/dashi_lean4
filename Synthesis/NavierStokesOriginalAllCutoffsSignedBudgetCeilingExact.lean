@@ -30,7 +30,7 @@ theorem original_all_cutoffs_quarter_ceiling_of_uniform_signed_budget
     (hinit : ∀ N,
       fractionalEnergy N quarterWeight
         (fun k s => zeroExtend (X N s) k) 0 ^ 2 ≤ E₀)
-    (hsigned : ∀ N T : ℝ, 0 ≤ T →
+    (hsigned : ∀ (N : ℕ) (T : ℝ), 0 ≤ T →
       (∫ t in 0..T,
         fractionalEnergy N quarterWeight
           (fun k s => zeroExtend (X N s) k) t *

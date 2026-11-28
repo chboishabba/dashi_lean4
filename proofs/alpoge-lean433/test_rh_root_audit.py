@@ -2,7 +2,7 @@ import audit_p0_axioms as a
 from pathlib import Path
 import subprocess,sys
 checks=0
-for targets in (a.UPSTREAM,a.ADAPTER,a.CLAY,a.ROOT):
+for targets in (a.UPSTREAM,a.ADAPTER,a.CLAY,a.ROOT,a.XI):
     good='\n'.join(f"Proof.lean:10:1: info: '{n}' depends on axioms: [propext,\n Classical.choice, Quot.sound]" for n in targets)
     empty='\n'.join(f"'{n}' does not depend on any axioms" for n in targets)
     for txt in (good,empty,good.replace('\n','\r\n')):

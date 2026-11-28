@@ -21,7 +21,8 @@ def basePointToGeometric : BasePoint W →+ GeometricPoint W :=
 
 theorem basePointToGeometric_injective :
     Function.Injective (basePointToGeometric W) :=
-  WeierstrassCurve.Affine.Point.map_injective _
+  WeierstrassCurve.Affine.Point.map_injective (W' := W.toAffine)
+    (Algebra.ofId K (AlgebraicClosure K))
 
 theorem basePointToGeometric_fixed (P : BasePoint W) :
     IsGaloisFixedPoint W (basePointToGeometric W P) := by
@@ -55,9 +56,9 @@ theorem geometricFixed_iff_basePoint (P : GeometricPoint W) :
           WeierstrassCurve.Affine.Point.some.injEq] at he
         exact he.2
       obtain ⟨a,ha⟩ :=
-        (InfiniteGalois.mem_range_algebraMap_iff_fixed x).mpr hx
+        (InfiniteGalois.mem_range_algebraMap_iff_fixed (k := K) x).mpr hx
       obtain ⟨b,hb⟩ :=
-        (InfiniteGalois.mem_range_algebraMap_iff_fixed y).mpr hy
+        (InfiniteGalois.mem_range_algebraMap_iff_fixed (k := K) y).mpr hy
       let f := Algebra.ofId K (AlgebraicClosure K)
       have hab : (W⁄K).toAffine.Nonsingular a b :=
         (W.toAffine.baseChange_nonsingular a b f.injective).mp

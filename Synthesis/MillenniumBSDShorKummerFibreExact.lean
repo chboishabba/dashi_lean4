@@ -68,8 +68,8 @@ theorem reverseHalf_evenFlip_torsion (x r s t e0 e1 e2 : F)
   have h := (reverseHalf_factors x r s t e0 e1 e2 hr hs ht).1
   have hrs := reverseHalf_pair_nonzero r s e0 e1 x hr hs h01
   have hrt := reverseHalf_pair_nonzero r t e0 e2 x hr ht h02
-  have h01' : e0-e1=s^2-r^2 := by linear_combination hs-hr
-  have h02' : e0-e2=t^2-r^2 := by linear_combination ht-hr
+  have h01' : e0-e1=s^2-r^2 := by linear_combination hr-hs
+  have h02' : e0-e2=t^2-r^2 := by linear_combination hr-ht
   have h0 : e0=x-r^2 := by linear_combination hr
   rw [h,h01',h02']
   constructor

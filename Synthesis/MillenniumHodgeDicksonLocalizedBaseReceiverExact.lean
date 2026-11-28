@@ -54,5 +54,61 @@ theorem actual_sample_all_opens {F : Type*} [Field F] [CharZero F]
   exact actual_localized_receivers (actualFoldSample d hd)
     (isUnit_iff_ne_zero.mpr (actualFoldSample_denominator d hd))
 
+/-- The two actual source localizations are canonically inverse,
+over the original coupled ring, not merely inhabited. -/
+def sourceToPulled : ActualSourceOpen →+* PulledBaseOpen :=
+  actualSourceOpenLift (algebraMap ActualCoupledFoldAlgebra PulledBaseOpen)
+    (IsLocalization.Away.algebraMap_isUnit pulledBaseDenominator)
+
+def pulledToSource : PulledBaseOpen →+* ActualSourceOpen :=
+  pulledBaseOpenLift (algebraMap ActualCoupledFoldAlgebra ActualSourceOpen)
+    (IsLocalization.Away.algebraMap_isUnit chartDenominator)
+
+theorem sourceToPulled_on_original (a : ActualCoupledFoldAlgebra) :
+    sourceToPulled (algebraMap ActualCoupledFoldAlgebra ActualSourceOpen a)=
+      algebraMap ActualCoupledFoldAlgebra PulledBaseOpen a := by
+  simp [sourceToPulled,actualSourceOpenLift]
+
+theorem pulledToSource_on_original (a : ActualCoupledFoldAlgebra) :
+    pulledToSource (algebraMap ActualCoupledFoldAlgebra PulledBaseOpen a)=
+      algebraMap ActualCoupledFoldAlgebra ActualSourceOpen a := by
+  simp [pulledToSource,pulledBaseOpenLift]
+
+theorem source_pulled_roundTrip :
+    pulledToSource.comp sourceToPulled=RingHom.id ActualSourceOpen := by
+  apply IsLocalization.ringHom_ext (Submonoid.powers chartDenominator)
+  ext a
+  simp only [RingHom.comp_apply,RingHom.id_apply,sourceToPulled_on_original,
+    pulledToSource_on_original]
+
+theorem pulled_source_roundTrip :
+    sourceToPulled.comp pulledToSource=RingHom.id PulledBaseOpen := by
+  apply IsLocalization.ringHom_ext (Submonoid.powers pulledBaseDenominator)
+  ext a
+  simp only [RingHom.comp_apply,RingHom.id_apply,pulledToSource_on_original,
+    sourceToPulled_on_original]
+
+def actualSourcePulledEquiv : ActualSourceOpen ≃+* PulledBaseOpen where
+  toFun := sourceToPulled
+  invFun := pulledToSource
+  left_inv a := congrArg (fun f : ActualSourceOpen →+* ActualSourceOpen=>f a)
+    source_pulled_roundTrip
+  right_inv a := congrArg (fun f : PulledBaseOpen →+* PulledBaseOpen=>f a)
+    pulled_source_roundTrip
+  map_mul' := sourceToPulled.map_mul
+  map_add' := sourceToPulled.map_add
+
+/-- The actual localized map out of the base commutes on every
+original base coordinate, not only on a chosen geometric point. -/
+def actualLocalizedProjectionRingHom : ActualBaseOpen →+* ActualSourceOpen :=
+  actualBaseOpenLift (algebraMap ActualCoupledFoldAlgebra ActualSourceOpen)
+    (IsLocalization.Away.algebraMap_isUnit chartDenominator)
+
+theorem actualLocalizedProjectionRingHom_commutes :
+    actualLocalizedProjectionRingHom.comp (algebraMap CoupledSurfaceBase ActualBaseOpen)=
+      (algebraMap ActualCoupledFoldAlgebra ActualSourceOpen).comp
+        (algebraMap CoupledSurfaceBase ActualCoupledFoldAlgebra) := by
+  exact IsLocalization.Away.lift_comp baseChartDenominator _
+
 end
 end DASHI.Hodge.DicksonCoupled

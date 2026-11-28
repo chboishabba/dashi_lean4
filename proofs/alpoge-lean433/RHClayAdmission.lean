@@ -25,6 +25,19 @@ theorem original_clay_xi : Millennium.ClayRiemannHypothesis.Formulations.XiZeros
 theorem original_clay_mathlib_roundtrip : _root_.RiemannHypothesis :=
   MillenniumExternal.AlpogeRH.mathlib_of_clay original_clay_rh
 
+/-- Actual universal subtype endpoints, consuming the pinned source
+theorem rather than the earlier conditional zero-carrier equivalence. -/
+theorem original_all_zeta_subtype_critical :
+    ∀ s : {s : ℂ // Millennium.IsNontrivialZero s}, s.1.re=(1/2:ℝ) :=
+  fun s => original_clay_rh.zero_re_eq_half s.2
+
+theorem original_all_xi_subtype_axis :
+    ∀ t : {t : ℂ // Millennium.xi t=0},t.1.im=0 :=
+  MillenniumExternal.AlpogeRH.originalAllXiZerosAxis_iff_allNontrivialZetaCritical.mpr
+    original_all_zeta_subtype_critical
+
+#print axioms original_all_zeta_subtype_critical
+#print axioms original_all_xi_subtype_axis
 #print axioms original_clay_rh
 #print axioms original_clay_xi
 #print axioms original_clay_mathlib_roundtrip

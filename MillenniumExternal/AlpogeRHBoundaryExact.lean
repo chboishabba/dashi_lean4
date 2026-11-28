@@ -61,6 +61,27 @@ theorem originalXiParameter_im (s : ℂ) :
   simp [Millennium.zeta_zero_parameter, Complex.mul_im, Complex.sub_re]
   <;> ring
 
+
+/-- The horizontal coordinate identity is reversible on the ORIGINAL
+nontrivial-zeta/xi parameter, even before any external RH admission. -/
+theorem originalXiParameter_im_zero_iff (s : ℂ) :
+    (Millennium.zeta_zero_parameter s).im = 0 ↔
+      s.re = (1/2 : ℝ) := by
+  rw [originalXiParameter_im]
+  constructor <;> intro h <;> linarith
+
+/-- The actual xi-zero subtype carries precisely the same critical-line
+predicate as its original zeta-zero image. This is a type-specific BIDI weld,
+not a new proof that either condition holds for every zero. -/
+theorem originalXiZeroOnAxis_iff_zetaCritical
+    (t : {t : ℂ // Millennium.xi t = 0}) :
+    t.1.im = 0 ↔
+      (originalXiZetaZeroEquiv t).1.re = (1/2 : ℝ) := by
+  change t.1.im = 0 ↔ (Millennium.xi_argument t.1).re = (1/2 : ℝ)
+  have hc := originalXiParameter_im_zero_iff (Millennium.xi_argument t.1)
+  rwa [Millennium.zeta_zero_parameter.comp_xi_argument] at hc
+
+
 #print axioms originalXiZetaZeroEquiv
 #print axioms originalXiParameter_im
 #print axioms clay_of_admitted_mathlib

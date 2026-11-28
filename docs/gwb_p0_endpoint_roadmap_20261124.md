@@ -1220,3 +1220,6 @@ Use the original persisted PNF rows, not a replacement parser. Opt-in projection
 
 ### Controlled multilingual office cut (implementation, local acceptance pending)
 Restore explicit edition-aware runner; distinguish native SHA revision from legacy external revision. GwbMultilingualOffice adds controlled full-lead rule with typed holder/property/office/ordinal/year consumer, separate day consumer, reciprocal signed support, and English/Spanish day-loss collision. Run tools/GwbMultilingualOfficeRunner.lean with three original canonical source paths after --build-only. This is bounded rule interpretation only; exact native source/predicate attachment, independent referee, constructor signatures and original statement qualifier checks remain separate. No general coverage, authority or world truth. No CI dispatched.
+
+### Native occurrence attachment cut
+GwbMultilingualOffice.occurrence/predicateMatches/attachedAnswer retain the exact positive lead occurrence, with attachedYearSound, exactLeadOccurrences, attachedReciprocal and wrongOccurrenceRejected. Runner emits explicit source SHA, predicate span and two consumer answers; no native authority or referee proof is emitted. SLR must independently reopen the native parser candidate and exact projection and match each coordinate; referee still owns authenticated evidence. Local kernel acceptance pending.

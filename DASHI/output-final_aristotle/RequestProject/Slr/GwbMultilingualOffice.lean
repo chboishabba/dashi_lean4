@@ -89,6 +89,49 @@ theorem yearSupportCannotRecoverDays :
   rw [enDaysHeld, esDaysAvailable] at contra
   contradiction
 
+
+/-- Exact occurrence selected within the independently named full-lead rule.
+The original parser coordinate remains a separate checked premise. -/
+def occurrence : Edition → Nat × Nat × String
+  | .en => (93, 99, "served")
+  | .simple => (85, 88, "was")
+  | .es => (147, 154, "ejerció")
+
+def predicateMatches (s : Source) : Bool :=
+  let (a,b,literal) := occurrence s.1
+  decide (a < b ∧ b ≤ s.2.toList.length) &&
+    String.ofList ((s.2.toList.drop a).take (b-a)) == literal
+
+def attachedAnswer (s : Source) (q : Query) : Option Support :=
+  if predicateMatches s then answer s q else none
+
+theorem attachedYearSound (s : Source)
+    (leadMatched : s.2.startsWith (lead s.1) = true)
+    (predicateMatched : predicateMatches s = true) :
+    attachedAnswer s yearQuery = some (support .positive) := by
+  have h := yearAnswer s leadMatched
+  change answer s yearQuery = _ at h
+  simp [attachedAnswer, predicateMatched, h]
+
+theorem exactLeadOccurrences : ∀ e : Edition, predicateMatches (e, lead e) = true := by
+  intro e
+  cases e <;> decide
+
+theorem attachedReciprocal (a b : Source)
+    (ha : a.2.startsWith (lead a.1) = true)
+    (hb : b.2.startsWith (lead b.1) = true)
+    (pa : predicateMatches a = true)
+    (pb : predicateMatches b = true) :
+    viewProofDelta (attachedAnswer a yearQuery) (attachedAnswer b yearQuery) =
+      some (support .zero, support .zero) := by
+  rw [attachedYearSound a ha pa, attachedYearSound b hb pb]
+  exact sameSupportPreservesBothProofSigns _
+
+/-- A producer cannot transfer the controlled interpretation to an unrelated
+predicate merely because the same article and QID were selected. -/
+theorem wrongOccurrenceRejected :
+    predicateMatches (.en, "He flew warplanes.") = false := by decide
+
 end Wikidata.Slr.GwbMultilingualOffice
 
 #print axioms Wikidata.Slr.GwbMultilingualOffice.reciprocalYears

@@ -1,0 +1,4 @@
+/-! Section 28 original global finite physical source parity. -/
+import Synthesis.NavierStokesOriginalGlobalFullPhysicalLedgerExact
+#check DASHI.NavierStokes.PhysicalMixed.actual_original_global_all_finite_energy_tail_signed_quarter
+#print axioms DASHI.NavierStokes.PhysicalMixed.actual_original_global_all_finite_energy_tail_signed_quarter

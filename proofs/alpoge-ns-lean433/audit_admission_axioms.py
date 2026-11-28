@@ -10,6 +10,8 @@ EXPECTED = {
     "DASHI.AlpogeBuckmaster.from_profile",
     "DASHI.AlpogeBuckmaster.from_original_cell_condition",
     "DASHI.AlpogeBuckmaster.solution_original",
+    "DASHI.AlpogeBuckmaster.original_space_to_clayC",
+    "DASHI.AlpogeBuckmaster.original_cell_condition_to_clayC",
     "DASHI.AlpogeBuckmaster.original_torus_to_clayD",
     "DASHI.AlpogeBuckmaster.original_cell_condition_to_clayD",
 }

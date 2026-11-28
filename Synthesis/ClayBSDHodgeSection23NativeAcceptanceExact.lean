@@ -1,0 +1,14 @@
+/-! Section 23 native import and axiom check root. Must be run with branch lockfile. -/
+import Synthesis.MillenniumBSDNumberFieldSelmerShaOriginalWeldExact
+import Synthesis.MillenniumHodgeDicksonOriginalGeneratedChartWeldExact
+
+#check BSDCohomology.numberFieldSelmerQuotientEquivShaTwo
+#check BSDCohomology.numberField_selmerToSha_kernel
+#check BSDCohomology.numberField_selmerToSha_surjective
+#check DASHI.Hodge.DicksonCoupled.originalCoordinateEval_eq_cone_lift
+#check DASHI.Hodge.DicksonCoupled.original_coordinate_generated_has_projective_lift
+
+#print axioms BSDCohomology.numberFieldSelmerQuotientEquivShaTwo
+#print axioms BSDCohomology.numberField_selmerToSha_kernel
+#print axioms DASHI.Hodge.DicksonCoupled.originalCoordinateEval_eq_cone_lift
+#print axioms DASHI.Hodge.DicksonCoupled.original_coordinate_generated_has_projective_lift

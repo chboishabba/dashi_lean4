@@ -1226,3 +1226,6 @@ GwbMultilingualOffice.occurrence/predicateMatches/attachedAnswer retain the exac
 
 ### Golden pair and Abstract explicit-coordinate contract
 Ownership corrected: SensibLaw/Python historical prototype, SLR Rust/PostgreSQL production, Agda/Lean golden. GwbMultilingualOffice exactPairAnswer proves both ordered source answers (year/day), not just zero delta; tools/GwbGoldenPairRunner.lean recomputes exact source/predicate and emits golden answer independently of caller signs. AbstractConstructorConsumer proves the explicit occupation projection cannot recover office detail over possible completions; not an actual runtime interpretation. Source-bound isolated execution and exact formal demand digest remain required for referee issuance. Build integrated; no kernel execution here.
+
+### Exact entity dependency golden owner
+GwbExactEntityOffice strengthens the existing GwbWorldGraph qualified-year consumer to exact ordinal and day coordinates on the same original statement. exactOfficeRowsSound/witnessSameOriginalRow retain original row membership; missing/ambiguous evidence remains none. GwbExactEntityOfficeRunner independently reopens raw EntityData and reports full witness, revision and source digest. SLR compares this to native exact entity dependency; neither proves actual historical Abstract dynamic lookup. Local kernel run pending.

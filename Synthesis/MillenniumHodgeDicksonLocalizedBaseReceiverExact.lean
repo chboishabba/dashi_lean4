@@ -1,4 +1,5 @@
 import Synthesis.MillenniumHodgeDicksonBasePunctureExact
+import Mathlib.RingTheory.RingHom.Finite
 
 namespace DASHI.Hodge.DicksonCoupled
 noncomputable section
@@ -109,6 +110,47 @@ theorem actualLocalizedProjectionRingHom_commutes :
       (algebraMap ActualCoupledFoldAlgebra ActualSourceOpen).comp
         (algebraMap CoupledSurfaceBase ActualCoupledFoldAlgebra) := by
   exact IsLocalization.Away.lift_comp baseChartDenominator _
+
+/-- The original source ring is itself a localization at the pulled
+back base element. The squared denominator identity supplies the exact
+instance, so the standard finite-localization theorem applies to
+the actual chart without choosing a different source. -/
+theorem actualSourceOpen_isPulledLocalization :
+    IsLocalization.Away pulledBaseDenominator ActualSourceOpen := by
+  have h := IsLocalization.Away.mul_of_isUnit
+    (S:=ActualSourceOpen) chartDenominator chartDenominator
+    (IsLocalization.Away.algebraMap_isUnit chartDenominator)
+  simpa only [← pow_two,actualChartDenominator_square,pulledBaseDenominator] using h
+
+theorem actualLocalizedProjectionRingHom_finite :
+    actualLocalizedProjectionRingHom.Finite := by
+  let f := algebraMap CoupledSurfaceBase ActualCoupledFoldAlgebra
+  letI : IsLocalization.Away (f baseChartDenominator) ActualSourceOpen :=
+    actualSourceOpen_isPulledLocalization
+  letI : Module.Finite CoupledSurfaceBase ActualCoupledFoldAlgebra :=
+    coupledFold_finite baseA baseX baseEta
+  have hf : f.Finite := RingHom.finite_algebraMap.mpr inferInstance
+  have hfin := RingHom.localization_away_map_finite
+    CoupledSurfaceBase ActualCoupledFoldAlgebra ActualBaseOpen ActualSourceOpen
+    f baseChartDenominator hf
+  have he : actualLocalizedProjectionRingHom =
+      IsLocalization.Away.map ActualBaseOpen ActualSourceOpen f baseChartDenominator := by
+    apply IsLocalization.ringHom_ext (Submonoid.powers baseChartDenominator)
+    rw [actualLocalizedProjectionRingHom_commutes]
+    unfold IsLocalization.Away.map
+    rw [IsLocalization.map_comp]
+  rw [he]
+  exact hfin
+
+open AlgebraicGeometry in
+def actualLocalizedProjection :=
+  Spec.map (CommRingCat.ofHom actualLocalizedProjectionRingHom)
+
+open AlgebraicGeometry in
+theorem actualLocalizedProjection_proper : IsProper actualLocalizedProjection := by
+  letI : IsFinite actualLocalizedProjection :=
+    (IsFinite.SpecMap_iff _).mpr actualLocalizedProjectionRingHom_finite
+  infer_instance
 
 end
 end DASHI.Hodge.DicksonCoupled

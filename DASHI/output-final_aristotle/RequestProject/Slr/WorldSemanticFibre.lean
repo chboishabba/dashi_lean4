@@ -141,9 +141,11 @@ theorem reciprocalComparison (a b : Reading) :
   by_cases h : propositionCoordinate a = propositionCoordinate b
   · unfold compare
     rw [if_pos h.symm, if_pos h]
+    rfl
   · have hr : propositionCoordinate b ≠ propositionCoordinate a := Ne.symm h
     unfold compare
     rw [if_neg hr, if_neg h]
+    rfl
 
 /-- Explicit comparison licence consumes the original document query model.
 The semantic model and source factorisation are not manufactured here. -/

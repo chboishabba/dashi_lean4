@@ -4,6 +4,7 @@ import LeanDojoDivergenceTransport
 import LeanDojoEnergyTransport
 import LeanDojoSolutionTransport
 import Adapter
+import SubmissionAudit
 import Problems.NavierStokes.Millennium
 
 noncomputable section
@@ -113,6 +114,35 @@ theorem dashiExactFeffermanD : MillenniumNavierStokes.FeffermanD := by
   rintro ⟨sol, hper, _h11⟩
   apply hno
   exact leanDojoPeriodicSolution_to_comparator hν hf hdiv sol hper
+
+/- Direct source spine, sharing the identical existing solution transport. -/
+theorem dashiDirectExactFeffermanC : MillenniumNavierStokes.FeffermanC := by
+  intro ν hν
+  obtain ⟨u₀, f, hu₀, hf, hno⟩ := SubmissionAudit.directComparatorC ν hν
+  refine ⟨u₀, comparatorForceToLean f,
+    comparatorInitialDecay_to_leanDojo hu₀,
+    comparatorInitialDivergence_to_leanDojo hu₀.toInitialVelocityCondition,
+    comparatorForceDecay_to_leanDojo hf, ?_⟩
+  intro hdiv
+  rintro ⟨sol, _h6, h7⟩
+  apply hno
+  exact leanDojoR3Solution_to_comparator hν hf hdiv sol h7
+
+theorem dashiDirectExactFeffermanD : MillenniumNavierStokes.FeffermanD := by
+  intro ν hν
+  obtain ⟨u₀, f, hu₀, hf, hno⟩ := SubmissionAudit.directComparatorD ν hν
+  obtain ⟨huSmooth, huPeriodic, huDiv⟩ := comparatorInitialPeriodic_to_leanDojo hu₀
+  refine ⟨u₀, comparatorForceToLean f,
+    huSmooth, huPeriodic, huDiv,
+    comparatorForcePeriodic_to_leanDojo hf,
+    comparatorPeriodicForceDecay_to_leanDojo hf, ?_⟩
+  intro hdiv
+  rintro ⟨sol, hper, _h11⟩
+  apply hno
+  exact leanDojoPeriodicSolution_to_comparator hν hf hdiv sol hper
+
+#print axioms dashiDirectExactFeffermanC
+#print axioms dashiDirectExactFeffermanD
 
 #print axioms leanDojoR3Solution_to_comparator
 #print axioms leanDojoPeriodicSolution_to_comparator

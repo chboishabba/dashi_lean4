@@ -69,4 +69,41 @@ theorem original_fractional_support_input_ceiling {n m : ℕ}
     hits hweight hcapacity
   simpa using h
 
+
+/-- Consume the ACTUAL transcript observation theorem. The hitting-set
+premise is derived from same-state divergence and sound execution,
+rather than supplied independently. Overlaps are allowed, but the
+fractional-capacity premise remains an explicit original-coordinate
+certificate, and hence is limited to n total mass. -/
+theorem actual_transcript_fractional_support_lower_bound
+    {n m : ℕ} {S T Y : Type*}
+    (state : (Fin n → Bool) → S)
+    (transcript : (Fin n → Bool) → T)
+    (consumer : (Fin n → Bool) → Y)
+    (x : Fin n → Bool) (read : Finset (Fin n))
+    (rivals : Fin m → Fin n → Bool)
+    (weight : Fin m → ℝ)
+    (hread : ∀ y, (∀ j ∈ (↑read : Set (Fin n)), x j = y j) →
+      state x = state y → transcript x = transcript y)
+    (hsound : ∀ a b, state a = state b →
+      transcript a = transcript b → consumer a = consumer b)
+    (hsame : ∀ i, state x = state (rivals i))
+    (hdiff : ∀ i, consumer x ≠ consumer (rivals i))
+    (hweight : ∀ i, 0 ≤ weight i)
+    (hcapacity : ∀ j : Fin n,
+      (∑ i : Fin m,
+        if j ∈ differenceSupport x (rivals i) then weight i else 0) ≤ 1) :
+    (∑ i : Fin m, weight i) ≤ (read.card : ℝ) := by
+  apply original_fractional_support_lower_bound
+    x rivals read weight
+  · intro i
+    obtain ⟨j, hj, hr⟩ :=
+      actual_transcript_hits state transcript consumer x
+        (↑read : Set (Fin n)) hread hsound
+        (rivals i) (hsame i) (hdiff i)
+    exact ⟨j, hr, hj⟩
+  · exact hweight
+  · exact hcapacity
+
+
 end PNPResidualGeometryBridge

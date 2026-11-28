@@ -292,6 +292,29 @@ theorem actualClass_eq_iff_coboundary (c d : C(G,X))
   rw [← sub_eq_zero, ← actualClass_sub X c d hc hd]
   exact actualClass_zero_iff_coboundary X (c-d) (crossed_sub X c d hc hd)
 
+
+theorem crossed_add (c d : C(G,X)) (hc : Crossed X c) (hd : Crossed X d) :
+    Crossed X (c+d) := by
+  intro g h
+  change c (g*h)+d (g*h)=c g+d g+X.ρ g (c h+d h)
+  rw [hc,hd,map_add]
+  abel
+
+/-- Additivity in the actual homology object, using its original
+categorical projection rather than a separate class carrier. -/
+theorem actualClass_add (c d : C(G,X)) (hc : Crossed X c) (hd : Crossed X d) :
+    actualClass X (c+d) (crossed_add X c d hc hd) =
+      actualClass X c hc+actualClass X d hd := by
+  have hker : toKernelOne X (c+d) (crossed_add X c d hc hd) =
+      toKernelOne X c hc+toKernelOne X d hd := by
+    apply Subtype.ext
+    apply Subtype.ext
+    ext x y
+    change (c y+d y)-(c x+d x)=(c y-c x)+(d y-d x)
+    abel
+  unfold actualClass
+  rw [hker,map_add,map_add]
+
 /-- Every class in the original H1 is represented by an actual continuous
 crossed cocycle, not an arbitrary point of a substitute quotient. -/
 theorem actualClass_surjective (x : continuousCohomology 1 X) :

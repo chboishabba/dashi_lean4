@@ -13,7 +13,7 @@ inductive Referent where
   | proposition (key : String)
   | expletive
   | outside
-  deriving DecidableEq, Repr
+  deriving DecidableEq, BEq, Repr
 
 inductive Role where
   | agent | patient | speaker | experiencer | other | unknown
@@ -49,15 +49,19 @@ structure Reading where
 /-- Three-valued answer: zero is neither denial nor established action.
 A positive action requires the appropriate semantic role and asserted scope.
 A negative answer is an explicit negative assertion in that same fibre. -/
+def namedEntity : Referent → Bool
+  | .entity _ => true
+  | _ => false
+
 def action (actor : Referent) (r : Reading) : Sign :=
-  if r.referent = actor ∧ r.role = .agent ∧ r.scope = .asserted
+  if namedEntity actor = true ∧ r.referent = actor ∧ (r.role = .agent ∨ r.role = .speaker) ∧ r.scope = .asserted
   then r.sign else .zero
 
 def actionCoordinate (r : Reading) : Referent × Role × Scope × Sign :=
   (r.referent, r.role, r.scope, r.sign)
 
 def actionAt (actor : Referent) (c : Referent × Role × Scope × Sign) : Sign :=
-  if c.1 = actor ∧ c.2.1 = .agent ∧ c.2.2.1 = .asserted
+  if namedEntity actor = true ∧ c.1 = actor ∧ (c.2.1 = .agent ∨ c.2.1 = .speaker) ∧ c.2.2.1 = .asserted
   then c.2.2.2 else .zero
 
 theorem actionFactors (actor : Referent) (r : Reading) :
@@ -104,7 +108,10 @@ structure Support where
   deriving DecidableEq, Repr
 
 def support (s : Sign) : Support :=
-  ⟨s == .positive, s == .negative⟩
+  match s with
+  | .positive => ⟨true,false⟩
+  | .negative => ⟨false,true⟩
+  | .zero => ⟨false,false⟩
 
 def join (a b : Support) : Support :=
   ⟨a.positive || b.positive, a.negative || b.negative⟩

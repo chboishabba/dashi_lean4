@@ -8,7 +8,7 @@ SOURCE-WRITTEN, local kernel pending. The all-index shell identity is
 not yet the analytic theta/Eisenstein same-object theorem. -/
 namespace Integration.Paper9ThetaHadamardGeometry
 
-structure Quad where
+@[ext] structure Quad where
   a : ℤ
   b : ℤ
   c : ℤ
@@ -31,8 +31,7 @@ def div4 (x : Quad) : Quad :=
 def flip (x : Quad) : Quad := ⟨-x.a,x.b,x.c,x.d⟩
 
 theorem HH (x : Quad) : H (H x)=scale 4 x := by
-  cases x
-  congr 1 <;> simp [H,scale] <;> ring
+  ext <;> simp [H,scale] <;> ring
 
 theorem Hnorm (x : Quad) : normSq (H x)=4*normSq x := by
   unfold normSq H
@@ -43,8 +42,7 @@ theorem Htotal (x : Quad) : total (H x)=4*x.a := by
   ring
 
 theorem flipFlip (x : Quad) : flip (flip x)=x := by
-  cases x
-  simp [flip]
+  ext <;> simp [flip]
 
 theorem flipNorm (x : Quad) : normSq (flip x)=normSq x := by
   unfold normSq flip
@@ -82,7 +80,7 @@ theorem HdivExact (x : Quad) (hx : Odd x) (ht : total x%4=0) :
   rcases x with ⟨a,b,c,d⟩
   simp only [Odd] at hx
   simp only [total] at ht
-  congr 1 <;> simp only [scale,div4,H] <;> omega
+  ext <;> simp only [scale,div4,H] <;> omega
 
 theorem Hscale (k : ℤ) (x : Quad) : H (scale k x)=scale k (H x) := by
   cases x
@@ -93,7 +91,7 @@ theorem scale4Injective : Function.Injective (scale 4) := by
   rcases x with ⟨a,b,c,d⟩
   rcases y with ⟨e,f,g,h'⟩
   simp only [scale,Quad.mk.injEq] at h
-  congr 1 <;> omega
+  ext <;> omega
 
 theorem reopen (y : Quad) (hy : Odd y) (hs : total y%4=0) :
     H (div4 (H y))=y := by
@@ -102,8 +100,7 @@ theorem reopen (y : Quad) (hy : Odd y) (hs : total y%4=0) :
 
 theorem decodeEncode (x : Quad) : div4 (H (H x))=x := by
   rw [HH]
-  cases x
-  congr 1 <;> simp [div4,scale] <;> omega
+  ext <;> simp [div4,scale] <;> omega
 
 theorem reopenOdd (y : Quad) (hy : Odd y) (hs : total y%4=0) :
     total (div4 (H y))%2=1 := by
@@ -176,9 +173,15 @@ theorem squareParity (a : ℤ) : a^2%2=a%2 := by
   have h : a=2*(a/2)+a%2 := by omega
   have hm : a%2=0 ∨ a%2=1 := by omega
   rcases hm with h0|h1
-  · have he : a^2=2*(2*(a/2)^2) := by rw [h,h0]; ring
+  · have he : a^2=2*(2*(a/2)^2) := by
+      calc
+        a^2 = (2*(a/2)+a%2)^2 := congrArg (fun z : ℤ => z^2) h
+        _ = _ := by rw [h0]; ring
     omega
-  · have he : a^2=2*(2*(a/2)^2+2*(a/2))+1 := by rw [h,h1]; ring
+  · have he : a^2=2*(2*(a/2)^2+2*(a/2))+1 := by
+      calc
+        a^2 = (2*(a/2)+a%2)^2 := congrArg (fun z : ℤ => z^2) h
+        _ = _ := by rw [h1]; ring
     omega
 
 theorem normParity (x : Quad) : normSq x%2=total x%2 := by
@@ -197,6 +200,98 @@ theorem halfCard (n : ℕ) :
     Nat.card (HalfShell n) =
       Nat.card (IntegerOddShell n ⊕ IntegerOddShell n) :=
   Nat.card_congr (halfTwoCopies n)
+
+-- A coordinate bound follows from a squared norm budget, including
+-- n=0. This makes the shell equivalences genuinely finite.
+theorem coordBound (a : ℤ) (n : ℕ) (ha : a^2≤(n:ℤ)) :
+    -(n:ℤ)≤a ∧ a≤(n:ℤ) := by
+  have hn : (0:ℤ)≤(n:ℤ) := by positivity
+  constructor
+  · by_contra h
+    have h1 : a≤ -1 := by omega
+    have h2 := mul_nonneg (show 0≤-a by omega) (show 0≤-a-1 by omega)
+    nlinarith
+  · by_contra h
+    have h1 : 1≤a := by omega
+    have h2 := mul_nonneg (show 0≤a by omega) (show 0≤a-1 by omega)
+    nlinarith
+
+def NormShell (n : ℕ) := {x : Quad // normSq x=(n:ℤ)}
+
+def coordFin (a : ℤ) (n : ℕ) (ha : -(n:ℤ)≤a ∧ a≤(n:ℤ)) :
+    Fin (2*n+1) :=
+  ⟨(a+(n:ℤ)).toNat,by omega⟩
+
+theorem coordFinInjective (n : ℕ) (a b : ℤ)
+    (ha : -(n:ℤ)≤a ∧ a≤(n:ℤ)) (hb : -(n:ℤ)≤b ∧ b≤(n:ℤ))
+    (h : coordFin a n ha=coordFin b n hb) : a=b := by
+  have h' := congrArg Fin.val h
+  change (a+(n:ℤ)).toNat=(b+(n:ℤ)).toNat at h'
+  omega
+
+def shellCode (n : ℕ) (x : NormShell n) :
+    Fin (2*n+1) × Fin (2*n+1) × Fin (2*n+1) × Fin (2*n+1) :=
+  have h := x.property
+  ⟨coordFin x.val.a n (coordBound _ _ (by unfold normSq at h; nlinarith [sq_nonneg x.val.b,sq_nonneg x.val.c,sq_nonneg x.val.d])),
+   coordFin x.val.b n (coordBound _ _ (by unfold normSq at h; nlinarith [sq_nonneg x.val.a,sq_nonneg x.val.c,sq_nonneg x.val.d])),
+   coordFin x.val.c n (coordBound _ _ (by unfold normSq at h; nlinarith [sq_nonneg x.val.a,sq_nonneg x.val.b,sq_nonneg x.val.d])),
+   coordFin x.val.d n (coordBound _ _ (by unfold normSq at h; nlinarith [sq_nonneg x.val.a,sq_nonneg x.val.b,sq_nonneg x.val.c]))⟩
+
+theorem shellCodeInjective (n : ℕ) : Function.Injective (shellCode n) := by
+  intro x y h
+  apply Subtype.ext
+  apply Quad.ext
+  · exact coordFinInjective n _ _ _ _ (congrArg Prod.fst h)
+  · exact coordFinInjective n _ _ _ _ (congrArg (fun z => z.2.1) h)
+  · exact coordFinInjective n _ _ _ _ (congrArg (fun z => z.2.2.1) h)
+  · exact coordFinInjective n _ _ _ _ (congrArg (fun z => z.2.2.2) h)
+
+instance (n : ℕ) : Finite (NormShell n) :=
+  Finite.of_injective (shellCode n) (shellCodeInjective n)
+
+instance (n : ℕ) : Finite (IntegerOddShell n) :=
+  Finite.of_injective (fun x : IntegerOddShell n => (⟨x.val,x.property.1⟩ : NormShell n))
+    (fun _ _ h => Subtype.ext (congrArg Subtype.val h))
+
+instance (n : ℕ) : Finite (HalfShell n) :=
+  Finite.of_injective (fun x : HalfShell n => (⟨x.val,by simpa using x.property.1⟩ : NormShell (4*n)))
+    (fun _ _ h => Subtype.ext (congrArg Subtype.val h))
+
+-- The actual all-index coefficient is signed by norm parity.
+-- Even grade contributes zero to B-C; odd grade contributes twice.
+def Bcoeff (n : ℕ) : ℤ := Nat.card (NormShell n)
+def Ccoeff (n : ℕ) : ℤ := if n%2=0 then Bcoeff n else -Bcoeff n
+def Acoeff (n : ℕ) : ℤ := Nat.card (HalfShell n)
+
+theorem halfCardTwice (n : ℕ) :
+    Nat.card (HalfShell n)=2*Nat.card (IntegerOddShell n) := by
+  rw [halfCard, Nat.card_sum]
+  omega
+
+def oddShellFull (n : ℕ) (hn : n%2=1) : IntegerOddShell n ≃ NormShell n where
+  toFun x := ⟨x.val,x.property.1⟩
+  invFun x := ⟨x.val,x.property,by
+    have h := normParity x.val
+    rw [x.property] at h
+    omega⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+theorem oddShellEmpty (n : ℕ) (hn : n%2=0) :
+    IsEmpty (IntegerOddShell n) := ⟨fun x => by
+  have h := normParity x.val
+  rw [x.property.1,x.property.2] at h
+  omega⟩
+
+theorem jacobiShell (n : ℕ) : Bcoeff n=Acoeff n+Ccoeff n := by
+  by_cases h : n%2=0
+  · letI := oddShellEmpty n h
+    have ho : Nat.card (IntegerOddShell n)=0 := Nat.card_eq_zero_of_isEmpty
+    simp [Bcoeff,Ccoeff,Acoeff,h,halfCardTwice,ho]
+  · have hn : n%2=1 := by omega
+    have ho := Nat.card_congr (oddShellFull n hn)
+    simp [Bcoeff,Ccoeff,Acoeff,h,halfCardTwice,ho]
+    ring
 
 -- Shared polynomial invariants in any commutative ring.
 section Algebra
@@ -227,5 +322,6 @@ end Algebra
 
 #print axioms integerHalf
 #print axioms halfTwoCopies
+#print axioms jacobiShell
 #print axioms invariantDiscriminant
 end Integration.Paper9ThetaHadamardGeometry

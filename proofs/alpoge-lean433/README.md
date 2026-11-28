@@ -1,3 +1,35 @@
+## 28 November 2026 — same-source root semantic admission (current)
+
+The local runner now defaults to the licensed compact edition (explicit
+GRH_P0_SOURCE=original preserves the original author route).
+The existing root MillenniumExternal/AlpogeRHBoundaryExact.lean now
+imports only the pinned RH target; its three original public theorem
+names are retained. The isolated build recompiles those exact root
+source bytes in the v4.35.0 proof kernel and audits all three axioms
+receipts before RHClayAdmission consumes the root adapter. This removes
+the parallel adapter implementation from the shortest route.
+The old v4.28 root binary environment and Agda transport are still
+separate, not certified by recompilation. No native kernel here.
+
+MIT report https://math.mit.edu/~drew/shortgrh/ updated Nov27 17:27 UTC:
+all checks finished. Both editions accepted by the independent
+comparators; compact paranoid on two machines, readable on one,
+second readable stopped for memory. The explicit Schoenfeld bound
+and equivalence also accepted. External proof credit Alpöge/Claude
+and licensed rewrite authors; MIT verification independent.
+
+Local byte-matched parser c17eb864709fb08d11121b12dc0952555a295d29;
+test_rh_root_audit.py blob 0b4ca2af8852f1272541f7a39bd473ffd99b625d:
+41/41 normal and -O. Synthetic parser controls, not kernel receipts.
+
+```sh
+bash proofs/alpoge-lean433/check_original_p0_admission.sh
+# original author route (optional)
+GRH_P0_SOURCE=original GRH_P0_CLAY=1 bash proofs/alpoge-lean433/check_original_p0_admission.sh
+```
+
+---
+
 ## 22 Nov 2026 — actual author allChi → ζ RH descent pinned and checked
 
 **Original dependency, NOT RH→GRH:** at author/fork commit

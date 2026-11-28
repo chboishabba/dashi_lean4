@@ -1,3 +1,4 @@
+import Synthesis.NavierStokesLiteralGalerkinOutputFTCExact
 import Synthesis.NavierStokesRealCauchyLaplaceCoherentExact
 import Synthesis.NavierStokesLiteralHelicalRealTraceExact
 import Synthesis.MillenniumNSSignedSpectralResidualExact

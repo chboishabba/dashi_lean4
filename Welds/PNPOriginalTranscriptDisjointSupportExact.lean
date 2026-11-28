@@ -51,9 +51,11 @@ theorem actual_transcript_disjoint_support_input_ceiling
       Disjoint (differenceSupport x (rivals i))
         (differenceSupport x (rivals k))) :
     m ≤ n := by
-  exact (actual_transcript_disjoint_support_lower_bound
-    state transcript consumer x read rivals hread hsound hsame hdiff
-    hdisjoint).trans (Finset.card_le_univ read |>.trans_eq
-      (by simp))
+  calc
+    m ≤ read.card :=
+      actual_transcript_disjoint_support_lower_bound
+        state transcript consumer x read rivals hread hsound
+        hsame hdiff hdisjoint
+    _ ≤ n := by simpa using (Finset.card_le_univ read)
 
 end PNPResidualGeometryBridge

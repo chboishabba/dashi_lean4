@@ -1,0 +1,12 @@
+/-!
+Section41 original anchored F3 input/read ABI.
+Actual Boolean consumer divergence yields a real differing original
+input coordinate at a Fin k clock step, conditional on the explicitly
+defined address/probe observation factorization.
+No unrestricted universal SAT complexity lower bound.
+-/
+import Welds.PNPOriginalAnchoredCausalBitReadWeldExact
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_visible_requires_divergent_bit_read
+#check PNPOriginalResidualClosedEventNoGo.anchored_original_divergent_bit_read_has_legal_clock
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_visible_requires_divergent_bit_read
+#print axioms PNPOriginalResidualClosedEventNoGo.anchored_original_divergent_bit_read_has_legal_clock

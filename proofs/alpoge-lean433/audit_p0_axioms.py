@@ -28,10 +28,13 @@ CLAY = tuple("DASHI.AlpogeRH." + x for x in (
 ROOT = tuple("MillenniumExternal.AlpogeRH." + x for x in (
     "originalXiZetaZeroEquiv",
     "originalXiParameter_im",
+    "originalXiParameter_im_zero_iff",
+    "originalXiZeroOnAxis_iff_zetaCritical",
     "clay_of_admitted_mathlib",
     "mathlib_of_clay",
     "clay_iff_mathlib",
 ))
+XI = ("MillenniumExternal.AlpogeRH.originalAllXiZerosAxis_iff_allNontrivialZetaCritical",)
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 
 
@@ -58,11 +61,11 @@ def audit(txt, targets):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("upstream", "adapter", "clay", "root"))
+    parser.add_argument("mode", choices=("upstream", "adapter", "clay", "root", "xi"))
     parser.add_argument("log", type=pathlib.Path)
     args = parser.parse_args()
     try:
-        result = audit(args.log.read_text(encoding="utf-8"), {"upstream": UPSTREAM, "adapter": ADAPTER, "clay": CLAY, "root": ROOT}[args.mode])
+        result = audit(args.log.read_text(encoding="utf-8"), {"upstream": UPSTREAM, "adapter": ADAPTER, "clay": CLAY, "root": ROOT, "xi": XI}[args.mode])
     except (ValueError, OSError) as exc:
         parser.exit(1, f"BLOCKED: {exc}\n")
     for name, axioms in result.items():

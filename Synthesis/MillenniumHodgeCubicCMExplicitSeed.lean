@@ -138,4 +138,31 @@ theorem scaledPfaffian_mod13_ne_zero :
   rw [scaledPfaffian_mod13]
   decide
 
+
+/-- Division-free Cayley numerator: the first positive relative two-plane
+has metric diag(theta,theta*pi), pi=2-theta. This preserves the signed
+determinant, even when the normalized entries have large denominators. -/
+theorem cayley_plane_numerator (n pi : ℚ) :
+    (n^2-pi)^2+pi*(2*n)^2=(n^2+pi)^2 := by ring
+
+theorem cayley_plane_det (n pi : ℚ) (h : n^2+pi ≠ 0) :
+    ((n^2-pi)/(n^2+pi))^2 -
+      ((-2*n*pi)/(n^2+pi))*((2*n)/(n^2+pi))=1 := by
+  field_simp [h] <;> ring
+
+/-- The actual seed off-block entry after the first-plane rotation.
+The common factor D*theta is a unit at the selected prime over 29. -/
+theorem cayley_seed_entry (n theta D : ℚ)
+    (ht : theta ≠ 0) (hp : 2-theta ≠ 0) (hD : D ≠ 0)
+    (hn : n^2+(2-theta) ≠ 0) :
+    ((n^2-(2-theta))/(n^2+(2-theta)))*(-4/(D*theta)) +
+      ((-2*n*(2-theta))/(n^2+(2-theta)))*(-5/(D*theta*(2-theta))) =
+      (-4*(n^2-(2-theta))+10*n)/(D*theta*(n^2+(2-theta))) := by
+  field_simp [ht,hp,hD,hn] <;> ring
+
+/-- Explicit noncancelling residue. No claim that rational correspondences
+have uniformly bounded degree follows from this arithmetic identity. -/
+theorem cayley_seed_residue29 :
+    (-4*((1 : ZMod 29)^2-(2-3))+10*1) = 2 := by decide
+
 end DASHI.Hodge.CubicCM

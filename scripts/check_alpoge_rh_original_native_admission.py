@@ -24,6 +24,7 @@ and trust ledger, and must never be promoted from an empty printout.
 from __future__ import annotations
 import argparse
 import hashlib
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -43,6 +44,8 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--external-root", required=True, type=Path)
     p.add_argument("--main-sha256", required=True)
+    p.add_argument("--tree-manifest", required=True, type=Path,
+                   help="SHA256 JSON map of every original .lean/config source file")
     p.add_argument("--lean-version", default=REQUIRED_VERSION)
     p.add_argument("--lake", default="lake")
     a = p.parse_args()
@@ -57,6 +60,39 @@ def main() -> int:
     digest = hashlib.sha256(src.read_bytes()).hexdigest()
     if digest != a.main_sha256:
         print(f"FAIL: external original Main SHA mismatch: {digest}")
+        return 2
+    try:
+        expected = json.loads(a.tree_manifest.read_text(encoding="utf8"))
+        if not isinstance(expected, dict) or not expected:
+            raise ValueError("empty or non-object manifest")
+    except (OSError, ValueError) as exc:
+        print("FAIL: source tree manifest unavailable", exc)
+        return 2
+    actual_paths = {
+        str(f.relative_to(root).as_posix()) for f in root.rglob("*.lean")
+        if ".lake" not in f.relative_to(root).parts
+        and ".git" not in f.relative_to(root).parts
+    }
+    actual_paths |= {name for name in
+        ("lean-toolchain", "lakefile.toml", "lakefile.lean", "lake-manifest.json")
+        if (root / name).is_file()}
+    if set(expected) != actual_paths:
+        print("FAIL: incomplete/extra external original source manifest")
+        print("unlisted:", sorted(actual_paths - set(expected))[:20])
+        print("missing:", sorted(set(expected) - actual_paths)[:20])
+        return 2
+    for name, pinned in expected.items():
+        candidate = (root / name).resolve()
+        if (not candidate.is_relative_to(root)
+                or not candidate.is_file()
+                or not re.fullmatch("[0-9a-f]{64}", pinned)):
+            print("FAIL: invalid manifest path/hash:", name)
+            return 2
+        if hashlib.sha256(candidate.read_bytes()).hexdigest() != pinned:
+            print("FAIL: original source tree checksum mismatch:", name)
+            return 2
+    if expected.get("Main.lean") != digest:
+        print("FAIL: pinned Main hash differs from pinned complete tree")
         return 2
     try:
         v = run([a.lake, "env", "lean", "--version"], root)

@@ -1,3 +1,6 @@
+import RequestProject.Slr.DocumentQuerySound
+import RequestProject.Slr.TemporalDocumentProof
+
 /-!
 # GWB consumer-specific proof and explicit non-factorability witnesses
 
@@ -12,8 +15,6 @@ SLR's native M12/S28 checker must independently pay source/parser identity.
 These theorems only establish logical laws once the observed source
 coordinates are supplied. They do not fabricate reviewed semantic licences.
 -/
-import RequestProject.Slr.DocumentQuerySound
-import RequestProject.Slr.TemporalDocumentProof
 
 namespace Wikidata
 namespace Slr

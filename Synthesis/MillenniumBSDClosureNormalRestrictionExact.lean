@@ -7,12 +7,11 @@ import Mathlib.FieldTheory.KrullTopology
 Use the pinned Mathlib algebraic-closure lift and normal restriction,
 rather than postulating an arbitrary map between absolute Galois groups.
 The same chosen closure embedding controls the field and point maps.
-For a completion use L=K_v and its structural K-algebra. Continuity of
-the restriction in Krull topologies is proved via finite fixing sets
-in the companion next cut; this file pays the algebraic field map.
+For a completion use L=K_v and its structural K-algebra. The Krull continuity proof below uses finite fixing subextensions.
 -/
 namespace BSDCohomology
 open WeierstrassCurve
+open scoped Topology BigOperators
 noncomputable section
 universe u v
 variable {K : Type u} [Field K] [CharZero K]
@@ -89,6 +88,76 @@ theorem chosenClosurePointMap_equivariant
   exact closureGeometricPointMap_equivariant W _
     (closureRestrictionHom (chooseClosureEmbedding (K:=K) (L:=L)))
     (restrictClosureAutomorphism_commutes _) σ P
+
+/-- Continuity in the actual Krull topologies. For each finite global
+subextension, adjoin the finitely many embedded basis vectors to L.
+Its open fixing subgroup maps into the original global fixing subgroup.
+This argument does not require Kbar→Lbar to be surjective. -/
+theorem closureRestriction_continuous
+    (e : AlgebraicClosure K →ₐ[K] AlgebraicClosure L) :
+    Continuous (closureRestrictionHom e) := by
+  classical
+  apply continuous_of_continuousAt_one (closureRestrictionHom e)
+  change Filter.Tendsto (closureRestrictionHom e) (𝓝 1)
+    (𝓝 (closureRestrictionHom e 1))
+  rw [map_one]
+  rw [Filter.tendsto_def]
+  intro S hS
+  obtain ⟨E,hE,hsub⟩ :=
+    (krullTopology_mem_nhds_one_iff K (AlgebraicClosure K) S).mp hS
+  letI : FiniteDimensional K E := hE
+  let b := Module.finBasis K E
+  let gen : Fin (Module.finrank K E) → AlgebraicClosure L :=
+    fun i => e (b i : AlgebraicClosure K)
+  let T : Set (AlgebraicClosure L) := Set.range gen
+  letI : Fintype T := (Set.finite_range gen).fintype
+  let F := IntermediateField.adjoin L T
+  have hF : FiniteDimensional L F :=
+    IntermediateField.finiteDimensional_adjoin
+      (fun y _ => Algebra.IsIntegral.isIntegral y)
+  apply (krullTopology_mem_nhds_one_iff L (AlgebraicClosure L) _).mpr
+  refine ⟨F,hF,?_⟩
+  intro σ hσ
+  apply hsub
+  change closureRestrictionHom e σ ∈ E.fixingSubgroup
+  rw [IntermediateField.mem_fixingSubgroup_iff]
+  intro x hx
+  let xE : E := ⟨x,hx⟩
+  have hfix (i : Fin (Module.finrank K E)) :
+      closureRestrictionHom e σ (b i : AlgebraicClosure K) =
+        (b i : AlgebraicClosure K) := by
+    apply e.injective
+    change e (restrictClosureAutomorphism e σ (b i : AlgebraicClosure K)) =
+      e (b i : AlgebraicClosure K)
+    rw [← restrictClosureAutomorphism_commutes]
+    have hy : gen i ∈ F :=
+      IntermediateField.subset_adjoin L (Set.mem_range_self i)
+    exact (IntermediateField.mem_fixingSubgroup_iff F σ).mp hσ (gen i) hy
+  have hrepr : x = ∑ i : Fin (Module.finrank K E),
+      algebraMap K (AlgebraicClosure K) (b.repr xE i) *
+        (b i : AlgebraicClosure K) := by
+    simpa [xE,Algebra.smul_def] using
+      congrArg E.val (b.sum_repr xE).symm
+  calc
+    closureRestrictionHom e σ x =
+        closureRestrictionHom e σ
+          (∑ i : Fin (Module.finrank K E),
+            algebraMap K (AlgebraicClosure K) (b.repr xE i) *
+              (b i : AlgebraicClosure K)) := congrArg (closureRestrictionHom e σ) hrepr
+    _ = ∑ i : Fin (Module.finrank K E),
+        algebraMap K (AlgebraicClosure K) (b.repr xE i) *
+          (b i : AlgebraicClosure K) := by
+      rw [map_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [map_mul,AlgEquiv.commutes,hfix]
+    _ = x := hrepr.symm
+
+def continuousClosureRestriction
+    (e : AlgebraicClosure K →ₐ[K] AlgebraicClosure L) :
+    Field.absoluteGaloisGroup L →ₜ* Field.absoluteGaloisGroup K :=
+  ⟨closureRestrictionHom e,closureRestriction_continuous e⟩
+
 
 end
 end BSDCohomology

@@ -68,8 +68,7 @@ theorem main_of_not_mid (s : State) (h : s.tag.mid = false) :
   | mk tag data =>
     cases tag with
     | mk phase mid =>
-      simp [mainTag] at *
-      exact h.symm
+      cases mid <;> simp [mainTag] at *
 
 theorem runMacroBlock_sound (Q A : Nat) (table : Nat → Nat → Option Instruction)
     (fuel : Nat) (p : Phase) (v : Data) (w : State) (n : Nat)

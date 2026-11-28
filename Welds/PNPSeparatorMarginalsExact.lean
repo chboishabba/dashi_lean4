@@ -22,10 +22,10 @@ theorem value_agreement {n d : Nat} (a : Fin n → ℚ) (B : Fin n → Fin d →
 theorem original_factor_agreement {n d : Nat} (a : Fin n → ℚ)
     (B : Fin n → Fin d → ℚ) (u v : PNPBooleanFibre.Bits d)
     (S : Finset (Fin n)) (P : (Fin n → ℚ) → Prop)
-    (local : ∀ x y, (∀ j∈S,x j=y j) → (P x ↔ P y))
+    (locality : ∀ x y, (∀ j∈S,x j=y j) → (P x ↔ P y))
     (agree : ∀ j∈S, ∀ k, B j k≠0 → u k=v k) :
     P (PNPBooleanFibre.value a B u) ↔ P (PNPBooleanFibre.value a B v) :=
-  local _ _ (fun j hj => value_agreement a B u v j (agree j hj))
+  locality _ _ (fun j hj => value_agreement a B u v j (agree j hj))
 
 -- Reverse outside-context transport. A child's context is the
 -- sum of all compatible parent contexts multiplied by the other

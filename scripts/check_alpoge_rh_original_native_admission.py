@@ -78,9 +78,11 @@ def main() -> int:
         return 2
     with tempfile.TemporaryDirectory(prefix="original_rh_admission_") as d:
         check = Path(d) / "OriginalRHAdmissionCheck.lean"
+        # Do not rely on import Main without first building its .olean:
+        # replay the actual exact pinned source together with the witness.
         check.write_text(
-            "import Main\n"
-            "example : _root_.RiemannHypothesis := _root_.riemannHypothesis\n"
+            src.read_text(encoding="utf8") + "\n" +
+            "example : _root_.RiemannHypothesis := _root_.riemannHypothesis\n" +
             "#print axioms _root_.riemannHypothesis\n",
             encoding="utf8",
         )

@@ -61,13 +61,15 @@ theorem original_high_shell_uniform_energy_epsilon_payment
     (ht : ∀ k, outputDot k (zeroExtend x₀ k) = 0)
     (hE : stateEnergy x₀ ≤ Emax)
     (hthreshold : Emax < 2 * ν * R^2 * ε) :
-    ∃ X : ℝ → FiniteState N,
+    ∃ a < 0, ∃ X : ℝ → FiniteState N,
       X 0 = x₀ ∧
+      SolvesOn (finiteForce N ν) X (Ioi a) ∧
       (∫ t in 0..T, originalPhysicalHighShell N X R t) < ε := by
   obtain ⟨a,ha,X,hzero,hODE,hbound⟩ :=
     actual_original_same_flow_high_shell_epsilon_from_radius
       N ν hν x₀ hr ht
-  exact ⟨X,hzero,hbound T R ε hT hR hε (lt_of_le_of_lt hE hthreshold)⟩
+  exact ⟨a,ha,X,hzero,hODE,
+    hbound T R ε hT hR hε (lt_of_le_of_lt hE hthreshold)⟩
 
 end
 end DASHI.NavierStokes.PhysicalMixed

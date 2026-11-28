@@ -120,15 +120,16 @@ private def exactDirectRoleProjection
 
 /-- The original predicate-selection rule remains an explicit source-facing
     acceptance requirement, not a generated semantic ontology. -/
-private def selectedOriginalPredicate (raw : Json) : Bool :=
-  str? raw "pos" == some "VERB" &&
-  decide (((str? raw "dep").getD "") ∈
-    (["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"] : List String))
+private def selectedOriginalPredicate (extended : Bool) (raw : Json) : Bool :=
+  let deps := ["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"]
+  let selectedDeps := if extended then deps ++ ["pcomp", "acl:relcl"] else deps
+  (str? raw "pos" == some "VERB" || (extended && str? raw "pos" == some "AUX")) &&
+  selectedDeps.contains ((str? raw "dep").getD "")
 
-private def expectedOriginalPredicateCount (original : Array Json) : Nat :=
+private def expectedOriginalPredicateCount (extended : Bool) (original : Array Json) : Nat :=
   original.foldl (fun acc sentence =>
     acc + (((arr? sentence "dependency_rows").getD #[]).filter
-      selectedOriginalPredicate).size) 0
+      (selectedOriginalPredicate extended)).size) 0
 
 private def projectedPredicateKey (event : Json) : Option (String × Nat) := do
   let candidate ← str? event "slr_claim_candidate_id"
@@ -151,8 +152,23 @@ private def yearSpanKey (row : Json) : Option (Nat × Nat) := do
   let stop ← nat? row "end_char"
   pure (start, stop)
 
+private def negationCue (row : Json) : Bool :=
+  str? row "dep" == some "neg" ||
+  (str? row "dep" == some "advmod" &&
+   ["no", "not", "never", "nunca", "jamás"].contains (((str? row "lemma").getD "").toLower))
+
+private def exactNegationCues (text : String) (rows : Array Json) (predicate event : Json) : Bool :=
+  let expected := rows.filter (fun raw => negationCue raw && nat? raw "head_i" == nat? predicate "i")
+  match arr? event "negation_cue_tokens" with
+  | none => false
+  | some chosen =>
+    bool? event "negation_dependency_candidate" == some (!expected.isEmpty) &&
+    chosen.size == expected.size &&
+    expected.toList.all (fun raw => chosen.toList.any (fun p => rawMatchesProjection text raw p)) &&
+    chosen.toList.all (fun p => expected.toList.any (fun raw => rawMatchesProjection text raw p))
+
 private def validateEvent
-    (text : String) (original : Array Json) (event : Json) : Bool :=
+    (extended : Bool) (text : String) (original : Array Json) (event : Json) : Bool :=
   match str? event "slr_claim_candidate_id",
         (event.getObjVal? "predicate").toOption,
         arr? event "actors", arr? event "patients",
@@ -169,13 +185,14 @@ private def validateEvent
             nat? candidate "source_span_start" == some a &&
             nat? candidate "source_span_end" == some b &&
             originalToken text rows predicate &&
-            str? predicate "pos" == some "VERB" &&
-            (["ROOT", "conj", "ccomp", "xcomp", "advcl",
-               "acl", "relcl"].contains ((str? predicate "dep").getD "")) &&
+            selectedOriginalPredicate extended predicate &&
             exactDirectRoleProjection text rows predicate actors
-              ["nsubj", "csubj", "nsubjpass", "csubjpass", "agent"] &&
+              (if extended then ["nsubj", "csubj", "agent", "obl:agent"]
+               else ["nsubj", "csubj", "nsubjpass", "csubjpass", "agent"]) &&
             exactDirectRoleProjection text rows predicate patients
-              ["dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"]
+              (["dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"] ++
+               (if extended then ["nsubjpass", "csubjpass", "nsubj:pass", "csubj:pass"] else [])) &&
+            (!extended || exactNegationCues text rows predicate event)
       found &&
       decide (a < b ∧ b ≤ text.toList.length) &&
       bool? event "candidate_only" == some true &&
@@ -329,8 +346,11 @@ def checkProjectionFor (subject text : String) (source projection : Json) : Bool
       let rawNamed := (source.getObjVal? "named_entities").toOption
       let entities := (arr? source "named_entities").getD #[]
       let nerPresent := rawNamed.isSome
+      let policy := str? projection "projection_policy"
+      let extended := policy == some "native-multilingual-syntax-v2"
       str? source "schema" == some "slr-source-unit-pnf-record-v1" &&
       str? projection "schema" == some "slr-jmd-wikipedia-article-candidates-v1" &&
+      (policy == none || extended) &&
       !subject.isEmpty &&
       str? projection "wikidata_item_qid" == some subject &&
       (match str? source "source_unit_ref", str? source "revision_ref" with
@@ -353,10 +373,10 @@ def checkProjectionFor (subject text : String) (source projection : Json) : Bool
       bool? projection "text_order_is_event_chronology" == some false &&
       bool? projection "cross_sentence_identity_paid" == some false &&
       articleSectionCoverageExact text sections &&
-      events.size == expectedOriginalPredicateCount original &&
+      events.size == expectedOriginalPredicateCount extended original &&
       decide ((events.toList.map projectedPredicateKey).Nodup) &&
-      events.toList.all (validateEvent text original) &&
-      people.toList.all (fun p => validateEntity text entities p ["PERSON"]) &&
+      events.toList.all (validateEvent extended text original) &&
+      people.toList.all (fun p => validateEntity text entities p (if extended then ["PERSON", "PER"] else ["PERSON"])) &&
       dates.toList.all (fun d => validateEntity text entities d ["DATE", "TIME"]) &&
       proper.size == originalProperNounCount original &&
       decide ((proper.toList.map projectedTokenKey).Nodup) &&

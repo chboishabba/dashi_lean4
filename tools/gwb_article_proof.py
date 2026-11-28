@@ -26,6 +26,21 @@ SCHEMA = "slr-jmd-wikipedia-article-candidates-v1"
 SUBJECT_DEPS = {"nsubj", "csubj", "nsubjpass", "csubjpass", "agent"}
 OBJECT_DEPS = {"dobj", "obj", "iobj", "pobj", "attr", "oprd", "dative"}
 EVENT_DEPS = {"ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"}
+# v2 extends the original checked projection, not the parser.
+PROJECTION_POLICY = "native-multilingual-syntax-v2"
+ACTIVE_SUBJECT_DEPS = {"nsubj", "csubj", "agent", "obl:agent"}
+PASSIVE_PATIENT_DEPS = OBJECT_DEPS | {"nsubjpass", "csubjpass", "nsubj:pass", "csubj:pass"}
+EXTENDED_EVENT_DEPS = EVENT_DEPS | {"pcomp", "acl:relcl"}
+COPULAR_HEAD_DEPS = {"ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl", "pcomp", "acl:relcl"}
+
+def selected_predicate(token):
+    return ((token["pos"] == "VERB" and token["dep"] in EXTENDED_EVENT_DEPS)
+            or (token["pos"] == "AUX" and token["dep"] in COPULAR_HEAD_DEPS))
+
+def negation_cue(token):
+    return token["dep"] == "neg" or (token["dep"] == "advmod"
+             and token["lemma"].lower() in {"no", "not", "never", "nunca", "jamás"})
+
 YEAR = re.compile(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)")
 
 
@@ -135,7 +150,7 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
             raise ValueError("promoted named entity")
         coord = {"start_char": start, "end_char": stop,
                  "surface": surface, "label_ref": label}
-        if label == "PERSON":
+        if label in {"PERSON", "PER"}:
             mentions.append(coord)
         if label in {"DATE", "TIME"}:
             times.append({**coord, "year_candidates": [int(y) for y in YEAR.findall(surface)]})
@@ -174,14 +189,14 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
         dates = [d for d in times if begin <= d["start_char"] and d["end_char"] <= end]
         sentence_dates[sentence_index] = dates
         for verb in tokens:
-            if verb["pos"] != "VERB" or verb["dep"] not in EVENT_DEPS:
+            if not selected_predicate(verb):
                 continue
             actors = [r for r in tokens
-                      if r["dep"] in SUBJECT_DEPS and r["head_i"] == verb["i"]]
+                      if r["dep"] in ACTIVE_SUBJECT_DEPS and r["head_i"] == verb["i"]]
             patients = [r for r in tokens
-                        if r["dep"] in OBJECT_DEPS and r["head_i"] == verb["i"]]
-            cue_negation = any(r["dep"] == "neg" and r["head_i"] == verb["i"]
-                               for r in tokens)
+                        if r["dep"] in PASSIVE_PATIENT_DEPS and r["head_i"] == verb["i"]]
+            negation_tokens = [r for r in tokens if negation_cue(r) and r["head_i"] == verb["i"]]
+            cue_negation = bool(negation_tokens)
             eid = "source-event-candidate:" + digest(
                 cid + "|" + str(verb["i"]) + "|" + str(verb["start_char"]))
             events.append({
@@ -191,8 +206,9 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
                 "sentence_start": begin, "sentence_end": end,
                 "predicate": verb, "actors": actors, "patients": patients,
                 "negation_dependency_candidate": cue_negation,
+                "negation_cue_tokens": negation_tokens,
                 "scope": "unresolved-embedded-clause" if verb["dep"] in
-                         {"ccomp", "xcomp", "advcl", "acl", "relcl"} else
+                         {"ccomp", "xcomp", "advcl", "acl", "relcl", "pcomp", "acl:relcl"} else
                          "unresolved-source-assertion",
                 "co_sentential_time_candidates": dates,
                 "candidate_only": True, "semantic_licence_paid": False,
@@ -260,11 +276,13 @@ def derive_projection(record: dict, text: str, sections: list[dict]) -> dict:
                              (row["year_candidate"], row["start_char"]))
     return {
         "schema": SCHEMA,
+        "projection_policy": PROJECTION_POLICY,
         "source_unit_ref": record["source_unit_ref"],
         "source_revision_ref": record["revision_ref"],
         "source_text_sha256": digest(text),
         "wikidata_item_qid": QID,
-        "article_url": ARTICLE,
+        "article_url": ("https://" + manifestation["language"] + ".wikipedia.org/wiki/" + TITLE
+                        if manifestation.get("language") in {"en", "simple", "es"} else ARTICLE),
         "sections": sections,
         "people_mentions": mentions,
         "ner_observations_present": ner_observations_present,
@@ -385,6 +403,11 @@ def self_check() -> int:
     assert result["summary"]["proper_noun_token_candidates"] == 2; count += 1
     assert result["timeline_candidates"][0]["kind"] == "source-year-mention-not-event-date"; count += 1
     assert not result["event_candidates"][0]["world_event_occurrence_paid"]; count += 1
+    assert selected_predicate({"pos": "AUX", "dep": "ROOT"}); count += 1
+    assert selected_predicate({"pos": "VERB", "dep": "pcomp"}); count += 1
+    assert not selected_predicate({"pos": "AUX", "dep": "aux"}); count += 1
+    assert negation_cue({"dep": "advmod", "lemma": "no"}); count += 1
+    assert not negation_cue({"dep": "advmod", "lemma": "siempre"}); count += 1
     for mutate in ("bad-hash", "bad-head", "bad-span", "promote"):
         bad = copy.deepcopy(record)
         if mutate == "bad-hash":
@@ -416,6 +439,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--source-html", type=Path,
                    help="saved MediaWiki HTML; must reproduce exact --source-text and sections")
     p.add_argument("--source-revision", help="required with --source-text")
+    p.add_argument("--sections-json", type=Path, help="reuse exact sections from an earlier projection")
     p.add_argument("--slr-record", type=Path, help="reuse an already produced SLR source-unit record")
     args = p.parse_args(argv)
     if args.source_html and not args.source_text:
@@ -480,6 +504,11 @@ def main(argv: list[str] | None = None) -> int:
     record_path = args.output_dir / "slr-record.json"
     record_path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n",
                            encoding="utf-8")
+    if args.sections_json:
+        previous = json.loads(args.sections_json.read_text(encoding="utf-8"))
+        if previous.get("source_text_sha256") != digest(source):
+            raise ValueError("section donor source digest mismatch")
+        sections = previous["sections"]
     projection = derive_projection(record, source, sections)
     projection["acquisition_url"] = origin
     proj_path = args.output_dir / "article-candidates.json"

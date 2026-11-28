@@ -60,15 +60,15 @@ namespace PNPAlternatingState
 
 -- The schedule is fixed, each handoff carries ONLY S, the terminal
 -- observer sees only S. No timing, external memory or random access.
-def stateAt {A S : Type*} (schedule : Nat → Bool) (step : Bool → A → S → S)
+def stateAt {A S : Type*} (schedule : Nat → Bool) (step : Nat → Bool → A → S → S)
     (init : S) (x y : A) : Nat → S
   | 0 => init
-  | t+1 => if schedule t then step true x (stateAt schedule step init x y t)
-    else step false y (stateAt schedule step init x y t)
+  | t+1 => if schedule t then step t true x (stateAt schedule step init x y t)
+    else step t false y (stateAt schedule step init x y t)
 
 -- Rectangle closure proved on the literal alternating state trace,
 -- rather than assuming an arbitrary mixed-input circuit is rectangular.
-theorem mix {A S : Type*} (schedule : Nat → Bool) (step : Bool → A → S → S)
+theorem mix {A S : Type*} (schedule : Nat → Bool) (step : Nat → Bool → A → S → S)
     (init : S) (x y : A) (k : Nat)
     (h : ∀ i ≤ k, stateAt schedule step init x x i = stateAt schedule step init y y i) :
     ∀ i ≤ k, stateAt schedule step init x y i = stateAt schedule step init x x i := by
@@ -89,7 +89,7 @@ theorem mix {A S : Type*} (schedule : Nat → Bool) (step : Bool → A → S →
       simpa only [hp] using hd.symm
 
 theorem transcript_injective {A S : Type*} (schedule : Nat → Bool)
-    (step : Bool → A → S → S) (init : S) (k : Nat) (accept : S → Bool)
+    (step : Nat → Bool → A → S → S) (init : S) (k : Nat) (accept : S → Bool)
     (sound : ∀ x y, accept (stateAt schedule step init x y k) = true ↔ x=y) :
     Function.Injective (fun x : A => fun i : Fin (k+1) => stateAt schedule step init x x i.val) := by
   intro x y eq
@@ -102,12 +102,21 @@ theorem transcript_injective {A S : Type*} (schedule : Nat → Bool)
   exact (sound x x).mpr rfl
 
 theorem handoff_cardinality {A S : Type*} [Fintype A] [Fintype S]
-    (schedule : Nat → Bool) (step : Bool → A → S → S) (init : S)
+    (schedule : Nat → Bool) (step : Nat → Bool → A → S → S) (init : S)
     (k : Nat) (accept : S → Bool)
     (sound : ∀ x y, accept (stateAt schedule step init x y k) = true ↔ x=y) :
     Fintype.card A ≤ (Fintype.card S)^(k+1) := by
   classical
   simpa using Fintype.card_le_of_injective _ (transcript_injective schedule step init k accept sound)
+
+-- Finite Boolean storage, fixed public schedule. This is a handoff
+-- information bound, not a superpolynomial lower bound on arbitrary RAM.
+theorem bit_handoff_bound (n s : Nat) (schedule : Nat → Bool)
+    (step : Nat → Bool → (Fin n → Bool) → (Fin s → Bool) → (Fin s → Bool))
+    (init : Fin s → Bool) (k : Nat) (accept : (Fin s → Bool) → Bool)
+    (sound : ∀ x y, accept (stateAt schedule step init x y k) = true ↔ x=y) :
+    2^n ≤ (2^s)^(k+1) := by
+  simpa using handoff_cardinality schedule step init k accept sound
 
 end PNPAlternatingState
 

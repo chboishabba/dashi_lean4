@@ -77,4 +77,23 @@ theorem summarized_raw (B l rr : Nat) (bs : List Nat) (hr : 0<rr) :
         min bs.length (rr-1) := by
   rw [accumulated_exact,raw_exact B l rr bs hr]
 
+open PNPStackEmittedList PNPActualPrimeRun PNPActualPrimeLayout
+open PNPActualInventoryClosure
+
+theorem affinePrimeSweep {Q A : Nat}
+    {table : Nat → Nat → Option Instruction}
+    (legal : LegalTable Q A table) (hA : 0<A)
+    {q p : Nat} {bs : List Nat} (s : Sweep table q bs p) (hq : q<Q)
+    (l ll rr : Nat) (hr : 0<rr) :
+    let B := max 2 A
+    let z := summarize B bs
+    integerRun Q A (compile Q A table)
+      (6*bs.length+2*(1+B)*accumulated z l+min bs.length (rr-1))
+      (integerState Q A ⟨mainTag (.q q),lanes l 0 0 ll rr⟩) =
+      some (integerState Q A ⟨mainTag (.q p),lanes (endpoint z l) 0 0
+        (ll+bs.length) (max 1 (rr-bs.length))⟩) := by
+  dsimp
+  rw [← summarized_raw (max 2 A) l rr bs hr,endpoint_exact]
+  exact sweep_prime legal hA s hq l ll rr hr
+
 end PNPSweepAffineLedger

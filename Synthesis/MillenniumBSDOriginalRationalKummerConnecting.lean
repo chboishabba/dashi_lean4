@@ -1,5 +1,6 @@
 import BSDCohomology.EllipticFixedPointDescentExact
 import Synthesis.MillenniumBSDOriginalKummerH1Exact
+import Mathlib.GroupTheory.QuotientGroup.Basic
 
 /-! The original fixed-point descent and degree-one Kummer class give the
 connecting map on the base-field point group. The cohomological API still
@@ -103,6 +104,92 @@ theorem originalInclusionH1_zero_iff_rationalKummer
     exact ⟨basePointToGeometric W P,basePointToGeometric_fixed W P,
       ⟨Classical.choose (hs (basePointToGeometric W P)),
         Classical.choose_spec (hs (basePointToGeometric W P))⟩,hP.symm⟩
+
+
+/-- The original Kummer map is additive without choosing an additive
+section of geometric doubling. Half-choice independence is essential. -/
+theorem rationalKummerClass_add
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q))
+    (P R : BasePoint W) :
+    rationalKummerClass W hs (P+R) =
+      rationalKummerClass W hs P+rationalKummerClass W hs R := by
+  let Q₁ : GeometricHalfData W (basePointToGeometric W P) :=
+    ⟨Classical.choose (hs (basePointToGeometric W P)),
+      Classical.choose_spec (hs (basePointToGeometric W P))⟩
+  let Q₂ : GeometricHalfData W (basePointToGeometric W R) :=
+    ⟨Classical.choose (hs (basePointToGeometric W R)),
+      Classical.choose_spec (hs (basePointToGeometric W R))⟩
+  let Q : GeometricHalfData W (basePointToGeometric W (P+R)) :=
+    ⟨Q₁.half+Q₂.half,by rw [nsmul_add,Q₁.double_half,Q₂.double_half,map_add]⟩
+  have he : rationalKummerClass W hs (P+R) =
+      originalKummerH1Class W (basePointToGeometric_fixed W (P+R)) Q := by
+    unfold rationalKummerClass
+    exact originalKummerH1_half_independent W _ _ Q
+  rw [he]
+  let c₁ : C(Field.absoluteGaloisGroup K,torsionRep W) :=
+    ⟨kummerCocycleValue W (basePointToGeometric_fixed W P) Q₁,
+      originalKummerCocycle_continuous W _ Q₁⟩
+  let c₂ : C(Field.absoluteGaloisGroup K,torsionRep W) :=
+    ⟨kummerCocycleValue W (basePointToGeometric_fixed W R) Q₂,
+      originalKummerCocycle_continuous W _ Q₂⟩
+  have hc₁ : Crossed (torsionRep W) c₁ := kummerCocycleValue_mul W _ Q₁
+  have hc₂ : Crossed (torsionRep W) c₂ := kummerCocycleValue_mul W _ Q₂
+  change actualClass (torsionRep W)
+    ⟨kummerCocycleValue W (basePointToGeometric_fixed W (P+R)) Q,
+     originalKummerCocycle_continuous W _ Q⟩
+    (kummerCocycleValue_mul W _ Q) =
+      actualClass (torsionRep W) c₁ hc₁+actualClass (torsionRep W) c₂ hc₂
+  rw [← actualClass_add (torsionRep W) c₁ c₂ hc₁ hc₂]
+  have hco : (⟨kummerCocycleValue W (basePointToGeometric_fixed W (P+R)) Q,
+     originalKummerCocycle_continuous W _ Q⟩ :
+       C(Field.absoluteGaloisGroup K,torsionRep W)) = c₁+c₂ := by
+    ext σ
+    apply Subtype.ext
+    change galoisPointMap W σ (Q₁.half+Q₂.half)-(Q₁.half+Q₂.half) =
+      (galoisPointMap W σ Q₁.half-Q₁.half)+(galoisPointMap W σ Q₂.half-Q₂.half)
+    rw [map_add]
+    abel
+  -- The crossed-law proof is a Prop, so dependent substitution does
+  -- not impose a separate proof-identity obligation.
+  generalize h : (⟨kummerCocycleValue W (basePointToGeometric_fixed W (P+R)) Q,
+     originalKummerCocycle_continuous W _ Q⟩ :
+       C(Field.absoluteGaloisGroup K,torsionRep W)) = c at *
+  subst c
+  cases hco
+  rfl
+
+def rationalKummerHom
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
+    BasePoint W →+ EllipticTwoTorsionH1 W where
+  toFun := rationalKummerClass W hs
+  map_zero' := (rationalKummerClass_zero_iff_double W hs 0).mpr ⟨0,by simp⟩
+  map_add' := rationalKummerClass_add W hs
+
+abbrev rationalDoubles : AddSubgroup (BasePoint W) :=
+  (nsmulAddMonoidHom (α := BasePoint W) 2).range
+
+theorem rationalKummerHom_ker
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
+    (rationalKummerHom W hs).ker = rationalDoubles W := by
+  ext P
+  exact rationalKummerClass_zero_iff_double W hs P
+
+/-- Literal E(K)/2E(K) map into the ORIGINAL H1, with the actual
+first isomorphism theorem, not a finite cardinality comparison. -/
+def rationalKummerQuotientHom
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
+    (BasePoint W ⧸ rationalDoubles W) →+ EllipticTwoTorsionH1 W :=
+  QuotientAddGroup.lift (rationalDoubles W) (rationalKummerHom W hs)
+    (by rw [rationalKummerHom_ker])
+
+theorem rationalKummerQuotient_injective
+    (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
+    Function.Injective (rationalKummerQuotientHom W hs) := by
+  have h := QuotientAddGroup.kerLift_injective (rationalKummerHom W hs)
+  unfold rationalKummerQuotientHom
+  -- Transport the proven kernel identity into the quotient type.
+  simpa only [QuotientAddGroup.kerLift,rationalKummerHom_ker] using h
+
 
 end
 end BSDCohomology

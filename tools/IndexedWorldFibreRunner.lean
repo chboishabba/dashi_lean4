@@ -26,7 +26,10 @@ private def digestFile (path : String) : IO (Option String) := do
   return if digest.length == 64 then some digest else none
 
 def main (args : List String) : IO UInt32 := do
-  match args with
+  let (edition, positional) := match args with
+    | "--edition" :: e :: rest => (some e, rest)
+    | _ => (none, args)
+  match positional with
   | [qid, title, articlePath, slrPath, projectionPath, entityPath, outputPath, propertiesFile] =>
       let article ← IO.FS.readFile articlePath
       let some source ← readJson slrPath | return 1
@@ -47,12 +50,16 @@ def main (args : List String) : IO UInt32 := do
       if entityRevision == 0 then return 1
       let properties := (← IO.FS.readFile propertiesFile).splitOn "\n"
         |>.filter (fun p => !p.isEmpty)
-      if h : genericRootCheck
-          qid title article source projection entity = true then
+      let checked := match edition with
+        | some e => Wikidata.Slr.IndexedWorldFibreInspection.checkEditionRoot
+            e qid title article source projection entity
+        | none => genericRootCheck qid title article source projection entity
+      if checked then
         let inventory := Wikidata.Slr.IndexedWorldFibreInspection.inventory
             qid title source projection entity properties
         IO.FS.writeFile outputPath ((Json.mkObj [
-          ("schema", toJson ("slr.jmd-indexed-world-fibre-receipt.v1" : String)),
+          ("schema", toJson (if edition.isSome then "slr.jmd-indexed-world-fibre-receipt.v2" else "slr.jmd-indexed-world-fibre-receipt.v1" : String)),
+          ("edition", toJson edition),
           ("qid", toJson qid), ("title", toJson title),
           ("source_sha256", toJson articleDigest),
           ("original_slr_sha256", toJson sourceDigest),
@@ -69,7 +76,7 @@ def main (args : List String) : IO UInt32 := do
         IO.eprintln "INDEXED_WORLD_FIBRE_REJECTED: source/article/entity checks failed"
         return 1
   | _ =>
-      IO.eprintln "usage: lake env lean --run tools/IndexedWorldFibreRunner.lean QID TITLE ARTICLE SLR PROJECTION ENTITY OUTPUT PROPERTIES"
+      IO.eprintln "usage: lake env lean --run tools/IndexedWorldFibreRunner.lean [--edition LANG] QID TITLE ARTICLE SLR PROJECTION ENTITY OUTPUT PROPERTIES"
       return 2
 
 #print axioms Wikidata.Slr.IndexedWorldFibreInspection.independentlyCheckedMembers

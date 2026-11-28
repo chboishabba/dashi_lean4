@@ -48,13 +48,23 @@ def checkEditionRoot (edition qid title article : String)
   Wikidata.Slr.ArticleProof.checkProjectionFor qid article source projection &&
   Wikidata.Slr.GwbWorldGraph.jsonEntityMatchesQid qid entity &&
   str link "site" == site && str link "title" == title &&
-  (str manifest "language" == edition ||
-    (edition == "simple" && str manifest "language" == "en")) &&
-  revision.startsWith editionPrefix &&
-  (match (revision.drop editionPrefix.length).toString.toNat? with
-   | some n => decide (n > 0) && str source "source_unit_ref" ==
-       ("wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":" ++ toString n)
-   | none => false)
+  ((revision.startsWith editionPrefix &&
+    (str manifest "language" == edition ||
+      (edition == "simple" && str manifest "language" == "en")) &&
+    (match (revision.drop editionPrefix.length).toString.toNat? with
+     | some n => decide (n > 0) && str source "source_unit_ref" ==
+         ("wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":" ++ toString n)
+     | none => false)) ||
+   (revision.startsWith "source-revision:sha256:" &&
+    str manifest "language" == edition &&
+    str manifest "revision_ref" == revision &&
+    str manifest "source_unit_ref" == str source "source_unit_ref" &&
+    (let prefix := "source:wikipedia:" ++ edition ++ ":" ++ title.replace " " "_" ++ ":revid:"
+     let unit := str source "source_unit_ref"
+     unit.startsWith prefix &&
+       (match (unit.drop prefix.length).toString.toNat? with
+        | some n => decide (n > 0)
+        | none => false))))
 
 structure CheckedEditionRoot (edition qid title article : String)
     (source projection entity : Json) where

@@ -61,6 +61,9 @@ compile_slr NumericPnfRustPortContract
 compile_slr GwbCoreferenceFormalRepair
 compile_slr WorldSemanticFibre
 compile_slr IndexedWorldFibreInspection
+compile_slr GwbWorldSemanticWeld
+compile_slr GwbMultilingualOffice
+lake env lean tools/GwbMultilingualOfficeRunner.lean
 lake env lean tools/IndexedWorldFibreRunner.lean
 lake env lean tools/GwbProofRunner.lean
 lake env lean tools/RelationalObservedMeetRunner.lean

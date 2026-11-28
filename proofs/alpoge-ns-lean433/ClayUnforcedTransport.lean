@@ -109,6 +109,81 @@ theorem original_torus_to_clayD (h : Breakdown.BreakdownOnTorus) : ClayOptionD :
     intro t ht i x
     exact hup (x,t) ht i
 
+
+/-- A compactly supported smooth field has compactly supported smooth
+directional derivatives of every order, with the original word retained. -/
+theorem spatialWord_smooth_compact (dirs : List R3) {u₀ : InitialVelocity}
+    (hs : ContDiff ℝ ∞ u₀) (hc : HasCompactSupport u₀) :
+    ContDiff ℝ ∞ (iteratedSpatialDirectional dirs u₀) ∧
+      HasCompactSupport (iteratedSpatialDirectional dirs u₀) := by
+  induction dirs with
+  | nil => exact ⟨hs, hc⟩
+  | cons v vs ih =>
+    change ContDiff ℝ ∞
+        (fun x => fderiv ℝ (iteratedSpatialDirectional vs u₀) x v) ∧
+      HasCompactSupport (fun x => fderiv ℝ (iteratedSpatialDirectional vs u₀) x v)
+    exact ⟨(ih.1.fderiv_right (by simp)).clm_apply contDiff_const,
+      ih.2.fderiv_apply ℝ v⟩
+
+theorem compactInitialRapidDecay {u₀ : InitialVelocity}
+    (hs : ContDiff ℝ ∞ u₀) (hc : HasCompactSupport u₀) : InitialRapidDecay u₀ := by
+  intro α K
+  let g := iteratedSpatialDirectional (initialSpatialWord α) u₀
+  obtain ⟨hgs, hgc⟩ := spatialWord_smooth_compact (initialSpatialWord α) hs hc
+  let w : R3 → ℝ := fun x => ‖g x‖ * (1 + ‖x‖)^K
+  have hw : Continuous w := hgs.continuous.norm.mul ((continuous_const.add continuous_norm).pow K)
+  have hwc : HasCompactSupport w := by
+    apply hgc.of_isClosed_subset (isClosed_tsupport w)
+    apply closure_mono
+    intro x hx
+    apply Function.mem_support.mpr
+    intro hzero
+    exact (Function.mem_support.mp hx) (by simp [w, hzero])
+  obtain ⟨B, hB⟩ := hw.bounded_above_of_compact_support hwc
+  refine ⟨max B 0, le_max_right _ _, fun x => ?_⟩
+  apply (le_div_iff₀ (by positivity : 0 < (1 + ‖x‖)^K)).2
+  have hb : 0 ≤ w x := by dsimp [w]; positivity
+  calc
+    ‖g x‖ * (1 + ‖x‖)^K = |w x| := (abs_of_nonneg hb).symm
+    _ ≤ B := by simpa [Real.norm_eq_abs] using hB x
+    _ ≤ max B 0 := le_max_left _ _
+
+theorem zeroSpaceForce : ForceRapidDecayR3 (fun _ => 0) := by
+  intro α m K
+  refine ⟨0, le_rfl, ?_⟩
+  intro z hz
+  simp [zeroDirectional]
+
+/-- The actual finite Lebesgue integral in ClaySpec bounds the
+nonnegative extended-real integral used by the original paper. -/
+theorem boundedEnergy_original {u : Velocity} (h : BoundedEnergy u) :
+    ∃ C : ℝ, ∀ t ≥ 0,
+      (∫⁻ x, ENNReal.ofReal (‖timeFirst u t x‖ ^ 2)) ≤ ENNReal.ofReal C := by
+  obtain ⟨C, hC⟩ := h
+  refine ⟨C, fun t ht => ?_⟩
+  obtain ⟨hlp, hlt⟩ := hC t ht
+  have hi : Integrable (fun x : R3 => ‖u (x,t)‖ ^ 2) volume :=
+    hlp.integrable_norm_pow (p := 2) (by decide)
+  have hnn : 0 ≤ᵐ[volume] (fun x : R3 => ‖u (x,t)‖ ^ 2) :=
+    Filter.Eventually.of_forall (fun x => sq_nonneg _)
+  change (∫⁻ x, ENNReal.ofReal (‖u (x,t)‖ ^ 2)) ≤ ENNReal.ofReal C
+  rw [← ofReal_integral_eq_lintegral_ofReal hi hnn]
+  exact ENNReal.ofReal_le_ofReal hlt.le
+
+/-- Direct whole-space source admission: compactly supported actual initial
+data and zero force satisfy the frozen Clay C specification. -/
+theorem original_space_to_clayC (h : Breakdown.BreakdownOnSpace) : ClayOptionC := by
+  intro ν hν
+  obtain ⟨u₀, hs, hc, hd, hn⟩ := h ν hν
+  refine ⟨u₀, (fun _ => 0), ⟨hs, ?_, compactInitialRapidDecay hs hc,
+    contDiffOn_const, zeroSpaceForce⟩, ?_⟩
+  · intro x
+    rw [initialDivergence_original hs]
+    exact hd x
+  · rintro ⟨u,p,hu,hp,he,hdiv,hi,henergy⟩
+    exact hn ⟨timeFirst u, timeFirst p, solution_original hu hp he hdiv hi,
+      boundedEnergy_original henergy⟩
+
 open Breakdown Breakdown.CertCell Breakdown.CertCell.GivenShape Breakdown.CellLayerSystem
 
 theorem original_cell_condition_to_clayD {k : ℕ} {C : Type} {nE nM : ℕ}
@@ -118,6 +193,15 @@ theorem original_cell_condition_to_clayD {k : ℕ} {C : Type} {nE nM : ℕ}
     (h : CellSystemCondition D X R T Y N B) : ClayOptionD :=
   original_torus_to_clayD (from_original_cell_condition D X R T Y N B h).2.1
 
+theorem original_cell_condition_to_clayC {k : ℕ} {C : Type} {nE nM : ℕ}
+    (D : CellLayerData k C nE nM) (X : Instance.InstanceData k C nE nM)
+    (R : CellCalculus.CellCalculusEntry D) (T : TreeEntry D R)
+    (Y : CellLayerEntries D R T) (N : CoerciveNumbers) (B : ReductionEntries k)
+    (h : CellSystemCondition D X R T Y N B) : ClayOptionC :=
+  original_space_to_clayC (from_original_cell_condition D X R T Y N B h).1
+
+#print axioms DASHI.AlpogeBuckmaster.original_space_to_clayC
+#print axioms DASHI.AlpogeBuckmaster.original_cell_condition_to_clayC
 #print axioms DASHI.AlpogeBuckmaster.solution_original
 #print axioms DASHI.AlpogeBuckmaster.original_torus_to_clayD
 #print axioms DASHI.AlpogeBuckmaster.original_cell_condition_to_clayD

@@ -47,7 +47,9 @@ theorem diagonal_iff {I J : Type*} (pivot : I → Option J) (d c : I → ℤ)
     refine ⟨z,fun i => ?_⟩
     have hi := hg i
     cases hp : pivot i with
-    | none => simpa [diagonal,hp] using hi.symm
+    | none =>
+      have hc : c i=0 := by simpa [hp] using hi
+      simpa [diagonal,hp] using hc.symm
     | some j =>
       have he : ∃ i, pivot i=some j := ⟨i,hp⟩
       have eq : Classical.choose he=i :=

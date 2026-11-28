@@ -108,6 +108,49 @@ theorem physical_complex_phase_midpoint_bound (η ξ : Fin 3 → ℝ)
   simpa only [phaseDotSq_eq_complex_normSq, phaseMass_eq_complex_normSq_sum]
     using phase_midpoint_dual_bound η ξ u hr hi
 
+
+/-- Both midpoint estimates together give a sharp uniform pair-rate
+bound, without a lattice gap or division by an individual input norm.
+min(A,4B) ≤ A/2+2B; equality is attainable at a right-angle input triad.
+This is an actual single-cell viscous cancellation, not a bound on
+the double R406 signed exterior or the spacetime continuation. -/
+theorem transverse_pair_rate_bound (ν : ℝ) (hν : 0 < ν)
+    (η ξ : Fin 3 → ℝ) (u : Fin 3 → ℂ)
+    (hr : realDot η (fun i => (u i).re) = 0)
+    (hi : realDot η (fun i => (u i).im) = 0)
+    (hRate : 0 < massSq η + massSq (fun i => ξ i-η i)) :
+    phaseDotSq ξ u / (ν*(massSq η+massSq (fun i => ξ i-η i))) ≤
+      phaseMass u / ν := by
+  have h := phase_midpoint_dual_bound η ξ u hr hi
+  have h1 := le_trans h (min_le_left _ _)
+  have h2 := le_trans h (min_le_right _ _)
+  have hb : phaseDotSq ξ u ≤
+      (massSq η+massSq (fun i => ξ i-η i))*phaseMass u := by
+    rw [physical_midpoint_mass_identity]
+    nlinarith only [h1,h2]
+  apply (div_le_iff₀ (mul_pos hν hRate)).mpr
+  calc
+    phaseDotSq ξ u ≤
+      (massSq η+massSq (fun i => ξ i-η i))*phaseMass u := hb
+    _ = phaseMass u / ν * (ν*(massSq η+massSq (fun i => ξ i-η i))) := by
+      field_simp [ne_of_gt hν] <;> ring
+
+/-- Multiply by the actual second input's squared mass: the raw
+divergence-form numerator divided by the literal pair rate is
+bounded by the product of the two input energies divided by ν.
+The existing original Bishop Leray contraction is the projection donor. -/
+theorem raw_cell_pair_rate_bound (ν : ℝ) (hν : 0 < ν)
+    (η ξ : Fin 3 → ℝ) (u v : Fin 3 → ℂ)
+    (hr : realDot η (fun i => (u i).re) = 0)
+    (hi : realDot η (fun i => (u i).im) = 0)
+    (hRate : 0 < massSq η + massSq (fun i => ξ i-η i)) :
+    (phaseDotSq ξ u * phaseMass v) /
+      (ν*(massSq η+massSq (fun i => ξ i-η i))) ≤
+      (phaseMass u * phaseMass v)/ν := by
+  have h := mul_le_mul_of_nonneg_right
+    (transverse_pair_rate_bound ν hν η ξ u hr hi hRate) (phaseMass_nonneg v)
+  convert h using 1 <;> ring
+
 end DASHI.NavierStokes.EuclideanMidpoint
 
 namespace DASHI.NavierStokes.SignedMeasure

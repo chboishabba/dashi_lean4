@@ -144,4 +144,65 @@ theorem centralDiskSquaredRootError :
         (8270793387711404 / 10^12 : ℝ) < 2 / 10^26 := by
   norm_num [centralDiskRadius]
 
+
+/-- Squared central coordinate w=z² retains the sign. The Mellin
+tail in w has coefficients bounded by 25600 starting at degree 2. -/
+def centralSquaredRadius : ℝ := centralDiskRadius ^ 2
+
+def centralQuadraticLower : ℝ := 8270793387711404 / (12 * 10^12)
+
+def centralContractionBound : ℝ :=
+  25600 * (2 * centralSquaredRadius - centralSquaredRadius^2) /
+    (centralQuadraticLower * (1-centralSquaredRadius)^2)
+
+theorem centralContractionBound_small :
+    0 < centralContractionBound ∧ centralContractionBound < 1 / 10^11 := by
+  norm_num [centralContractionBound, centralSquaredRadius, centralDiskRadius,
+    centralQuadraticLower]
+
+theorem centralSquared_self_map :
+    (13 / 10^12 + 25600 * centralSquaredRadius^2 /
+      (1-centralSquaredRadius)) / centralQuadraticLower <
+        centralSquaredRadius := by
+  norm_num [centralSquaredRadius, centralDiskRadius, centralQuadraticLower]
+
+/-- Difference estimate for every degree, used in the absolutely
+convergent tail rather than a finite Taylor truncation. -/
+theorem norm_pow_sub_pow_bound {x y : ℂ} {R : ℝ} (hR : 0 ≤ R)
+    (hx : ‖x‖ ≤ R) (hy : ‖y‖ ≤ R) (n : ℕ) :
+    ‖x^(n+1)-y^(n+1)‖ ≤ (n+1 : ℝ)*R^n*‖x-y‖ := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have hdecomp : x^(n+1+1)-y^(n+1+1) =
+        x*(x^(n+1)-y^(n+1))+(x-y)*y^(n+1) := by
+      rw [pow_succ x, pow_succ y]
+      ring
+    rw [hdecomp]
+    calc
+      ‖x*(x^(n+1)-y^(n+1))+(x-y)*y^(n+1)‖ ≤
+          ‖x*(x^(n+1)-y^(n+1))‖+‖(x-y)*y^(n+1)‖ := norm_add_le _ _
+      _ ≤ R*((n+1 : ℝ)*R^n*‖x-y‖)+‖x-y‖*R^(n+1) := by
+        rw [norm_mul, norm_mul, norm_pow]
+        exact add_le_add
+          (mul_le_mul hx ih (norm_nonneg _) hR)
+          (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (norm_nonneg _) hy _) (norm_nonneg _))
+      _ = _ := by
+        push_cast
+        rw [pow_succ]
+        ring
+
+/-- Algebraic fixed-point identity: no claim that a numerically small
+signed scalar is exactly zero. -/
+theorem signed_squared_fixed_point_iff
+    (m a w tail : ℂ) (ha : a ≠ 0) :
+    w = -(m+tail)/a ↔ m+a*w+tail=0 := by
+  constructor
+  · intro h
+    have h' := (eq_div_iff ha).mp h
+    linear_combination h'
+  · intro h
+    apply (eq_div_iff ha).mpr
+    linear_combination h
+
 end DASHI.BSD.SignedCrossing

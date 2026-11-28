@@ -45,7 +45,8 @@ theorem pressure_summable_from_raw_projected {J : Type*}
         _ = c * pressureCell k (u p) (v p) := by
           rw [hs]
           ring
-    rw [hterm, inv_mul_cancel_left₀ hc]
+    rw [hterm]
+    field_simp [hc]
   exact (hdiff.mul_left c⁻¹).congr (fun p => (heq p).symm)
 
 end

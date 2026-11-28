@@ -130,22 +130,18 @@ def cusp4 : CuspForm 𝒮ℒ 4 where
   toFun := difference4
   slash_action_eq' := fun _ ⟨γ,hγ⟩ => hγ ▸ difference4Slash γ
   holo' := (thetaHolo thetaE4 E4Differentiable).sub E₄.holo'
-  zero_at_cusps' {c} hc := by
-    rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z] at hc
-    rw [OnePoint.isZeroAt_iff_forall_SL2Z hc]
-    intro γ _
-    rw [difference4Slash γ,OnePoint.IsZeroAtImInfty,Filter.ZeroAtFilter]
+  zero_at_cusps' {c} hc γ hγ := by
+    rw [difference4Slash γ]
+    rw [IsZeroAtImInfty, Filter.ZeroAtFilter]
     simpa [difference4] using E4Limit.sub original4Limit
 
 def cusp6 : CuspForm 𝒮ℒ 6 where
   toFun := difference6
   slash_action_eq' := fun _ ⟨γ,hγ⟩ => hγ ▸ difference6Slash γ
   holo' := (thetaHolo thetaE6 E6Differentiable).sub E₆.holo'
-  zero_at_cusps' {c} hc := by
-    rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z] at hc
-    rw [OnePoint.isZeroAt_iff_forall_SL2Z hc]
-    intro γ _
-    rw [difference6Slash γ,OnePoint.IsZeroAtImInfty,Filter.ZeroAtFilter]
+  zero_at_cusps' {c} hc γ hγ := by
+    rw [difference6Slash γ]
+    rw [IsZeroAtImInfty, Filter.ZeroAtFilter]
     simpa [difference6] using E6Limit.sub original6Limit
 
 theorem thetaE4_eq_original (τ : ℍ) : thetaE4 τ = E₄ τ :=

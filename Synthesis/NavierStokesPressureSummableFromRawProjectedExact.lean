@@ -49,5 +49,19 @@ theorem pressure_summable_from_raw_projected {J : Type*}
     field_simp [hc]
   exact (hdiff.mul_left c⁻¹).congr (fun p => (heq p).symm)
 
+
+/-- The original zero-output pressure cells vanish identically, so
+there is no exceptional summability hypothesis at k=0. -/
+theorem pressure_summable_zero_output {J : Type*}
+    (u v : J → CVec3) :
+    Summable (fun p : J =>
+      pressureCell (0 : Vec3) (u p) (v p)) := by
+  have heq : (fun p : J => pressureCell (0 : Vec3) (u p) (v p)) =
+      (fun _ : J => (0 : ℂ)) := by
+    funext p
+    exact pressureCell_zero (0 : Vec3) (u p) (v p) rfl
+  rw [heq]
+  simp
+
 end
 end DASHI.NavierStokes.EuclideanMidpoint

@@ -49,15 +49,18 @@ def main() -> int:
                    help="Immutable external original source Git commit SHA")
     p.add_argument("--tree-manifest", required=True, type=Path,
                    help="SHA256 JSON map of every original .lean/config source file")
-    p.add_argument("--lean-version", default=REQUIRED_VERSION)
     p.add_argument("--lake", default="lake")
     a = p.parse_args()
     root = a.external_root.resolve()
     if not re.fullmatch("[0-9a-f]{40}", a.expected_git_head):
         print("FAIL: immutable original external Git HEAD pin missing/malformed")
         return 2
-    head = run(["git", "rev-parse", "HEAD"], root)
-    status = run(["git", "status", "--porcelain"], root)
+    try:
+        head = run(["git", "rev-parse", "HEAD"], root)
+        status = run(["git", "status", "--porcelain"], root)
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError) as exc:
+        print("FAIL: external original Git checkout missing/uninspectable:", exc)
+        return 2
     if (head.returncode or status.returncode
             or head.stdout.strip() != a.expected_git_head
             or status.stdout.strip()):
@@ -113,7 +116,7 @@ def main() -> int:
         print("FAIL: pinned native compiler unavailable", e)
         return 2
     print("Compiler version:", v.stdout.strip())
-    if v.returncode or a.lean_version not in v.stdout:
+    if v.returncode or REQUIRED_VERSION not in v.stdout:
         print("FAIL: wrong Lean version")
         return 2
     try:
@@ -150,11 +153,20 @@ def main() -> int:
     if "depends on axioms:" not in axiom_text and "does not depend on any axioms" not in axiom_text:
         print("FAIL: transitive axiom report missing")
         return 2
-    match = re.search(r"depends on axioms:\s*\[([^]]*)\]", axiom_text)
-    if not match and "does not depend on any axioms" not in axiom_text:
-        print("FAIL: unable to parse explicit RH axiom dependency list")
+    # Exact Lean declaration required: incidental text is insufficient.
+    entries = re.findall(
+        r"(?m)^\\s*(?:_root_\\.)?riemannHypothesis\\s+depends on axioms:\\s*\\[([^]]*)\\]\\s*$",
+        axiom_text,
+    )
+    empty_entries = re.findall(
+        r"(?m)^\\s*(?:_root_\\.)?riemannHypothesis\\s+does not depend on any axioms\\s*$",
+        axiom_text,
+    )
+    if len(entries) + len(empty_entries) != 1:
+        print("FAIL: exactly one original-witness axiom report required")
         return 2
-    actual = {s.strip() for s in match.group(1).split(",") if s.strip()} if match else set()
+    actual = {token.strip() for token in entries[0].split(",")
+              if token.strip()} if entries else set()
     unexpected = actual - WHITELIST
     if unexpected:
         print("FAIL: unexpected transitive axioms", sorted(unexpected))

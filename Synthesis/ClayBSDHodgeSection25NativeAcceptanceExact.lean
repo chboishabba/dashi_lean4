@@ -1,0 +1,11 @@
+/-! Source-native Section 25 BSD Mellin sign and Hodge actual Q0 torsor audit.
+No universal BSD rank/Hodge cycle inference. -/
+import Synthesis.MillenniumBSDOriginalTwoCrossingRankFourSignCutExact
+import Synthesis.MillenniumHodgeDicksonOriginalEvenDeckRootTorsorExact
+#check DASHI.BSD.SignedCrossing.twoCrossing_zeroSecond_requires_negativeFirst
+#check DASHI.BSD.SignedCrossing.twoCrossing_nonnegativeFirst_forces_positiveSecond
+#check DASHI.Hodge.DicksonCoupled.actualOriginalRootEvenDeckEquiv
+#check DASHI.Hodge.DicksonCoupled.actualOriginalRootPuncturedNonempty
+#print axioms DASHI.BSD.SignedCrossing.twoCrossing_zeroSecond_requires_negativeFirst
+#print axioms DASHI.Hodge.DicksonCoupled.originalRootEvenDeck_surjective
+#print axioms DASHI.Hodge.DicksonCoupled.actualOriginalRootPuncturedNonempty

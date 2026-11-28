@@ -151,12 +151,13 @@ theorem rationalKummerClass_add
     abel
   -- The crossed-law proof is a Prop, so dependent substitution does
   -- not impose a separate proof-identity obligation.
-  generalize h : (⟨kummerCocycleValue W (basePointToGeometric_fixed W (P+R)) Q,
-     originalKummerCocycle_continuous W _ Q⟩ :
-       C(Field.absoluteGaloisGroup K,torsionRep W)) = c at *
-  subst c
-  cases hco
-  rfl
+  have hcongr (c d : C(Field.absoluteGaloisGroup K,torsionRep W))
+      (hc : Crossed (torsionRep W) c) (hd : Crossed (torsionRep W) d)
+      (h : c=d) : actualClass (torsionRep W) c hc =
+        actualClass (torsionRep W) d hd := by
+    subst d
+    rfl
+  exact hcongr _ _ _ _ hco
 
 def rationalKummerHom
     (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
@@ -185,10 +186,14 @@ def rationalKummerQuotientHom
 theorem rationalKummerQuotient_injective
     (hs : Function.Surjective (fun Q : GeometricPoint W => (2 : ℕ) • Q)) :
     Function.Injective (rationalKummerQuotientHom W hs) := by
-  have h := QuotientAddGroup.kerLift_injective (rationalKummerHom W hs)
-  unfold rationalKummerQuotientHom
-  -- Transport the proven kernel identity into the quotient type.
-  simpa only [QuotientAddGroup.kerLift,rationalKummerHom_ker] using h
+  intro a b
+  refine Quotient.inductionOn₂' a b ?_
+  intro P R h
+  change rationalKummerHom W hs P = rationalKummerHom W hs R at h
+  apply Quotient.sound'
+  rw [QuotientAddGroup.leftRel_apply,← rationalKummerHom_ker W hs]
+  change rationalKummerHom W hs (-P+R)=0
+  rw [map_add,map_neg,h,neg_add_cancel]
 
 
 end

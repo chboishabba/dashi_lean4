@@ -4,6 +4,8 @@ import Synthesis.NavierStokesR726SignedDefectViscosityNoGoExact
 import Synthesis.NavierStokesR726PhysicalRadicalSignCertificatesExact
 import Synthesis.NavierStokesOriginalC1C2R652TraceWeldExact
 import Synthesis.NavierStokesEuclideanOriginalMidpointLerayWeldExact
+import Synthesis.NavierStokesRealCauchyTraceFTCExact
+import Synthesis.NavierStokesEuclideanDoubleInteractionKernelExact
 import Mathlib
 
 /-!

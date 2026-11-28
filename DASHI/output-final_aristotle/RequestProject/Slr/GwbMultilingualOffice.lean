@@ -132,7 +132,45 @@ predicate merely because the same article and QID were selected. -/
 theorem wrongOccurrenceRejected :
     predicateMatches (.en, "He flew warplanes.") = false := by decide
 
+
+/-- The golden pair answer, not merely an equality of signed deltas.
+The two query coordinates are deliberately different. -/
+inductive OfficeConsumer where
+  | years | days
+  deriving DecidableEq, Repr
+
+def OfficeConsumer.query : OfficeConsumer → Query
+  | .years => yearQuery
+  | .days => dayQuery
+
+def expectedSupport (e : Edition) (q : OfficeConsumer) : Option Support :=
+  match q with
+  | .years => some (support .positive)
+  | .days => if e = .es then some (support .positive) else none
+
+theorem attachedConsumerExact (s : Source) (q : OfficeConsumer)
+    (h : s.2.startsWith (lead s.1) = true)
+    (p : predicateMatches s = true) :
+    attachedAnswer s q.query = expectedSupport s.1 q := by
+  cases q with
+  | years => exact attachedYearSound s h p
+  | days =>
+    rcases s with ⟨e, text⟩
+    cases e <;> simp [OfficeConsumer.query, dayQuery, attachedAnswer,
+      answer, expectedSupport, h, p]
+
+/-- Independent ordered source pair. No inference via a third source. -/
+theorem exactPairAnswer (a b : Source) (q : OfficeConsumer)
+    (ha : a.2.startsWith (lead a.1) = true)
+    (hb : b.2.startsWith (lead b.1) = true)
+    (pa : predicateMatches a = true) (pb : predicateMatches b = true) :
+    (attachedAnswer a q.query, attachedAnswer b q.query) =
+      (expectedSupport a.1 q, expectedSupport b.1 q) := by
+  rw [attachedConsumerExact a q ha pa, attachedConsumerExact b q hb pb]
+
 end Wikidata.Slr.GwbMultilingualOffice
 
 #print axioms Wikidata.Slr.GwbMultilingualOffice.reciprocalYears
 #print axioms Wikidata.Slr.GwbMultilingualOffice.yearSupportCannotRecoverDays
+
+#print axioms Wikidata.Slr.GwbMultilingualOffice.exactPairAnswer

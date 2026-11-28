@@ -1223,3 +1223,6 @@ Restore explicit edition-aware runner; distinguish native SHA revision from lega
 
 ### Native occurrence attachment cut
 GwbMultilingualOffice.occurrence/predicateMatches/attachedAnswer retain the exact positive lead occurrence, with attachedYearSound, exactLeadOccurrences, attachedReciprocal and wrongOccurrenceRejected. Runner emits explicit source SHA, predicate span and two consumer answers; no native authority or referee proof is emitted. SLR must independently reopen the native parser candidate and exact projection and match each coordinate; referee still owns authenticated evidence. Local kernel acceptance pending.
+
+### Golden pair and Abstract explicit-coordinate contract
+Ownership corrected: SensibLaw/Python historical prototype, SLR Rust/PostgreSQL production, Agda/Lean golden. GwbMultilingualOffice exactPairAnswer proves both ordered source answers (year/day), not just zero delta; tools/GwbGoldenPairRunner.lean recomputes exact source/predicate and emits golden answer independently of caller signs. AbstractConstructorConsumer proves the explicit occupation projection cannot recover office detail over possible completions; not an actual runtime interpretation. Source-bound isolated execution and exact formal demand digest remain required for referee issuance. Build integrated; no kernel execution here.

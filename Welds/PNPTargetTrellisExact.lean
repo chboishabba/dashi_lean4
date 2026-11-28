@@ -17,7 +17,8 @@ noncomputable def crossingEquiv {r : Nat}
     Residual U V t ≃ ↥(V ⊓ U) where
   toFun y := ⟨y.val-y₀.val, by
     have h := (boundary_translate V U t y₀.val (y.val-y₀.val) y₀.property)
-    exact h.mp (by convert y.property using 1 <;> abel)⟩
+    have e : y₀.val+(y.val-y₀.val)=y.val := by abel
+    exact h.mp (by rw [e]; exact y.property)⟩
   invFun d := ⟨y₀.val+d.val,
     (boundary_translate V U t y₀.val d.val y₀.property).mpr d.property⟩
   left_inv y := by ext; abel
@@ -51,5 +52,24 @@ theorem residual_step {r : Nat} (used a t : Syndrome r) (b : Bool) :
 -- State merging must add all original lifts, not count one per label.
 theorem mass_preserved (a b c d : Nat) :
     (a+b)+(c+d)=(a+c)+(b+d) := by omega
+
+-- At a fixed cut, all clauses wholly before the cut have already
+-- been satisfied; untouched clauses have fixed unresolved status.
+-- Only crossing clauses carry variable bits. This injection is the
+-- exact finite state-count receiver once those bits are extracted.
+theorem state_capacity {X : Type*} [Fintype X] {r w : Nat}
+    (U V : Submodule (ZMod 3) (Syndrome r)) (t : Syndrome r)
+    (y₀ : Residual U V t) (syndrome : X → Residual U V t)
+    (live : X → Fin w → Bool)
+    (inj : Function.Injective (fun x => (syndrome x,live x))) :
+    Fintype.card X ≤ Fintype.card ↥(V ⊓ U) * 2^w := by
+  classical
+  let f := fun x : X => (crossingEquiv U V t y₀ (syndrome x),live x)
+  have hf : Function.Injective f := by
+    intro x y h
+    apply inj
+    exact Prod.ext ((crossingEquiv U V t y₀).injective (congrArg Prod.fst h))
+      (congrArg Prod.snd h)
+  simpa using Fintype.card_le_of_injective f hf
 
 end PNPTargetTrellis

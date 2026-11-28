@@ -1229,3 +1229,6 @@ Ownership corrected: SensibLaw/Python historical prototype, SLR Rust/PostgreSQL 
 
 ### Exact entity dependency golden owner
 GwbExactEntityOffice strengthens the existing GwbWorldGraph qualified-year consumer to exact ordinal and day coordinates on the same original statement. exactOfficeRowsSound/witnessSameOriginalRow retain original row membership; missing/ambiguous evidence remains none. GwbExactEntityOfficeRunner independently reopens raw EntityData and reports full witness, revision and source digest. SLR compares this to native exact entity dependency; neither proves actual historical Abstract dynamic lookup. Local kernel run pending.
+
+### Elaborated declaration readback
+GwbGoldenStatement.lean reads exactPairAnswer from the Lean environment as a theorem declaration and emits its elaborated Expr representation and universe parameter names, not a caller-provided digest or pretty source. Encoding is pinned to Lean 4.28.0 and is syntactic (not an alpha-equivalence normal form). Native SLR must bind this to the concrete source/selector/consumer instance and formal demand. This is not a standalone referee certification; trusted clean build, independent execution and DB role remain required. Local kernel run pending.

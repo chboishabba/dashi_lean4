@@ -67,6 +67,7 @@ compile_slr AbstractConstructorConsumer
 compile_slr GwbExactEntityOffice
 lake env lean tools/GwbExactEntityOfficeRunner.lean
 lake env lean tools/GwbGoldenPairRunner.lean
+lake env lean tools/GwbGoldenStatement.lean
 lake env lean tools/GwbMultilingualOfficeRunner.lean
 lake env lean tools/IndexedWorldFibreRunner.lean
 lake env lean tools/GwbProofRunner.lean

@@ -1,6 +1,7 @@
 import Welds.PNPSection32GeometryAcceptanceExact
 import Welds.PNPOriginalModularIncidenceExact
 import Welds.PNPQuotientDemandBoundaryExact
+import Welds.PNPIncidenceLineExact
 
 /-! Native source written; no kernel acceptance claimed. -/
 #check PNPOriginalModularIncidence.exactOneFromClauses
@@ -11,3 +12,7 @@ import Welds.PNPQuotientDemandBoundaryExact
 #check PNPQuotientDemandBoundary.stutter_overhead
 #print axioms PNPOriginalModularIncidence.original_incidence_refutes
 #print axioms PNPOriginalModularIncidence.parityFromClauses
+
+#check PNPIncidenceLine.oneFreeRefutes
+#check PNPIncidenceLine.eightColumnRefutes
+#print axioms PNPIncidenceLine.eightColumnRefutes

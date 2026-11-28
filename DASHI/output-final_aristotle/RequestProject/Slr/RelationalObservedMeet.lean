@@ -350,14 +350,14 @@ Every represented candidate survives in the upper envelope, including a
 reported refutation. This is not a proof that the represented domain covers
 production-live semantics. -/
 def checkDemandInventory (receipt : Json) : Bool := Id.run do
-  let some universe := rows receipt "represented_universe" | return false
+  let some represented := rows receipt "represented_universe" | return false
   let some candidates := rows receipt "candidates" | return false
   let some oldEvidence := rows receipt "historical_evidence" | return false
   let some current := rows receipt "current_evidence" | return false
   let some horizon := rows receipt "signed_horizon_tallies" | return false
   let some demand := nat receipt "demand_id" | return false
   let some original := obj receipt "original_demand" | return false
-  let some keys := universe.mapM demandKey | return false
+  let some keys := represented.mapM demandKey | return false
   let some actual := candidates.mapM demandKey | return false
   let some evidenceIds := current.mapM (fun e => nat e "evidence_id") | return false
   let candidateExact := (candidates.zip keys).all fun (c, k) =>
@@ -388,7 +388,7 @@ def checkDemandInventory (receipt : Json) : Bool := Id.run do
   return str receipt "schema" == some "slr.native-demand-fibre.v1" &&
     nat original "demand_id" == some demand && decide (demand > 0) &&
     keys == actual && decide keys.Nodup && decide evidenceIds.Nodup &&
-    universe.all (fun row => nat row "demand_id" == some demand) &&
+    represented.all (fun row => nat row "demand_id" == some demand) &&
     candidateExact &&
     (receipt.getObjValAs? Bool "current_authority_view_installed").toOption == some true &&
     current.all (fun e => oldEvidence.contains e &&
@@ -546,7 +546,9 @@ theorem historicalCarrierRepairExact (roles : List (String × Nat))
     (old : List NumericRoleSlot)
     (bad : exactNumericRoleSlots roles old = false) :
     uniqueExactNumericCarrier roles [old, expectedNumericRoleSlots roles] = true := by
-  simp [uniqueExactNumericCarrier, bad, exactNumericRoleSlots]
+  have hOld : decide (old = expectedNumericRoleSlots roles) = false := by
+    simpa [exactNumericRoleSlots] using bad
+  simp [uniqueExactNumericCarrier, exactNumericRoleSlots, hOld]
 
 
 /-- Historical focus readback: retain every represented key, all three signed

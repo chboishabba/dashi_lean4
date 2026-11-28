@@ -6,6 +6,8 @@ import Synthesis.NavierStokesOriginalC1C2R652TraceWeldExact
 import Synthesis.NavierStokesEuclideanOriginalMidpointLerayWeldExact
 import Synthesis.NavierStokesRealCauchyTraceFTCExact
 import Synthesis.NavierStokesEuclideanDoubleInteractionKernelExact
+import Synthesis.NavierStokesEuclideanSignedProductMajorantExact
+import Synthesis.NavierStokesEuclideanWeightedConvolutionExact
 import Mathlib
 
 /-!

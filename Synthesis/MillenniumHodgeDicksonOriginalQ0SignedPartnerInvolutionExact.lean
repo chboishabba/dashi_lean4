@@ -33,13 +33,13 @@ theorem original_Q0_partner_preserves_original_equation
     (a s : F) :
     Q0Field a (originalQ0SignedPartner a s) = Q0Field a s := by
   have h := original_Q0_signed_first_jet a s (dField a s / 2)
-  unfold originalQ0SignedPartner
-  rw [sub_eq_zero.mp (by
-    calc
-      Q0Field a (s + dField a s / 2) - Q0Field a s =
-          (dField a s / 2) * (dField a s - 2*(dField a s/2)) := h
-      _ = 0 := by ring)]
-  rfl
+  apply sub_eq_zero.mp
+  calc
+    Q0Field a (originalQ0SignedPartner a s) - Q0Field a s =
+        (dField a s / 2) *
+          (dField a s - 2 * (dField a s / 2)) := by
+            simpa [originalQ0SignedPartner] using h
+    _ = 0 := by ring
 
 /-- The original signed root derivative reverses exactly under
 the selected quadratic involution, even at a branch double root. -/
@@ -53,8 +53,10 @@ theorem original_Q0_partner_flips_signed_derivative
 coordinate, without postulating a deck-transformation action. -/
 theorem original_Q0_partner_involution (a s : F) :
     originalQ0SignedPartner a (originalQ0SignedPartner a s) = s := by
-  simp only [originalQ0SignedPartner,
-    original_Q0_partner_flips_signed_derivative]
+  change originalQ0SignedPartner a s +
+      dField a (originalQ0SignedPartner a s) / 2 = s
+  rw [original_Q0_partner_flips_signed_derivative]
+  unfold originalQ0SignedPartner
   ring
 
 /-- The branch/fixed locus equals vanishing of the ACTUAL
@@ -67,7 +69,8 @@ theorem original_Q0_partner_fixed_iff_branch (a s : F) :
     have hz : dField a s / 2 = 0 := by
       apply add_left_cancel (a := s)
       simpa using h
-    exact (div_eq_zero_iff).mp hz |>.resolve_right (by norm_num)
+    have htwo : (2 : F) ≠ 0 := by norm_num
+    exact (div_eq_zero_iff).mp hz |>.resolve_right htwo
   · intro h
     simp [h]
 

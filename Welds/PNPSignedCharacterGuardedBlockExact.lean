@@ -125,3 +125,44 @@ theorem card_bound {L R S : Type*} [Fintype L] [Fintype S]
     Fintype.card L ≤ Fintype.card S :=
   Fintype.card_le_of_injective encode (distinct_rows_injective f encode decode sound distinct)
 end PNPCutStateNecessity
+
+namespace PNPSignedCharacterTail
+
+def swapPair (p : ℚ × ℚ × ℚ) : ℚ × ℚ × ℚ := (-p.1,p.2.2,p.2.1)
+
+theorem swap_involutive (p : ℚ × ℚ × ℚ) : swapPair (swapPair p) = p := by
+  rcases p with ⟨s,x,y⟩
+  simp [swapPair]
+
+theorem swap_no_fixed {p : ℚ × ℚ × ℚ} (h : p.2.1 ≠ p.2.2) :
+    swapPair p ≠ p := by
+  intro eq
+  exact h (congrArg (fun q : ℚ × ℚ × ℚ => q.2.2) eq)
+
+theorem signed_max_energy (x : Hist) (w m : ℚ)
+    (h0 : w * contrast x 0 ≤ m) (h1 : w * contrast x 1 ≤ m)
+    (h2 : w * contrast x 2 ≤ m) : w^2 * energy x ≤ m^2 := by
+  norm_num [contrast] at h0 h1 h2
+  let a := w*(2*x.a-x.b-x.c)
+  let b := w*(2*x.b-x.a-x.c)
+  let c := w*(2*x.c-x.a-x.b)
+  have ha : 0 ≤ m-a := sub_nonneg.mpr h0
+  have hb : 0 ≤ m-b := sub_nonneg.mpr h1
+  have hc : 0 ≤ m-c := sub_nonneg.mpr h2
+  have h : (m-a)*(m-b)+(m-b)*(m-c)+(m-c)*(m-a) =
+      3*(m^2-w^2*energy x) := by dsimp [a,b,c,energy]; ring
+  have hn : 0 ≤ (m-a)*(m-b)+(m-b)*(m-c)+(m-c)*(m-a) :=
+    add_nonneg (add_nonneg (mul_nonneg ha hb) (mul_nonneg hb hc)) (mul_nonneg hc ha)
+  linarith
+
+end PNPSignedCharacterTail
+
+namespace PNPCutStateNecessity
+-- Countercontrol: equality has 2^n distinct one-way rows but admits a
+-- linear comparison circuit. State-count is not sequential time.
+theorem equality_rows {L : Type*} [DecidableEq L] :
+    ∀ l l' : L, l ≠ l' → ∃ r : L, decide (l = r) ≠ decide (l' = r) := by
+  intro l l' h
+  refine ⟨l, ?_⟩
+  simp [Ne.symm h]
+end PNPCutStateNecessity

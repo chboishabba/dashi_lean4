@@ -25,6 +25,11 @@ CLAY = tuple("DASHI.AlpogeRH." + x for x in (
     "original_clay_xi",
     "original_clay_mathlib_roundtrip",
 ))
+ROOT = tuple("MillenniumExternal.AlpogeRH." + x for x in (
+    "clay_of_admitted_mathlib",
+    "mathlib_of_clay",
+    "clay_iff_mathlib",
+))
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 
 
@@ -51,11 +56,11 @@ def audit(txt, targets):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("upstream", "adapter", "clay"))
+    parser.add_argument("mode", choices=("upstream", "adapter", "clay", "root"))
     parser.add_argument("log", type=pathlib.Path)
     args = parser.parse_args()
     try:
-        result = audit(args.log.read_text(encoding="utf-8"), {"upstream": UPSTREAM, "adapter": ADAPTER, "clay": CLAY}[args.mode])
+        result = audit(args.log.read_text(encoding="utf-8"), {"upstream": UPSTREAM, "adapter": ADAPTER, "clay": CLAY, "root": ROOT}[args.mode])
     except (ValueError, OSError) as exc:
         parser.exit(1, f"BLOCKED: {exc}\n")
     for name, axioms in result.items():

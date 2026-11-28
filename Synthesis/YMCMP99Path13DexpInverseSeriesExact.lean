@@ -28,8 +28,11 @@ theorem factorial_ge_two_pow (n : ℕ) : 2^(n+1)≤(n+2).factorial := by
   induction n with
   | zero => decide
   | succ n ih =>
+    change 2^(n+1+1)≤(n+1+2).factorial
     rw [show n+1+2=n+2+1 by omega,Nat.factorial_succ,pow_succ]
-    exact Nat.mul_le_mul (by omega) (by simpa [mul_comm] using ih)
+    calc
+      2^(n+1)*2 = 2*2^(n+1) := Nat.mul_comm _ _
+      _ ≤ (n+2+1)*(n+2).factorial := Nat.mul_le_mul (by omega) ih
 
 theorem dexpTail_bound (A : R) (n : ℕ) :
     ‖dexpTail A n‖≤(‖A‖/2)^(n+1) := by

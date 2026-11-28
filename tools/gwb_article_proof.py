@@ -431,7 +431,7 @@ def main(argv: list[str] | None = None) -> int:
         source = args.source_text.read_text(encoding="utf-8")
         revision = args.source_revision
         origin = "offline-source-file"
-        sections = [{"kind": "paragraph", "heading": "Offline fixture",
+        sections = [{"kind": "paragraph", "heading": "Lead",
                      "start_char": 0, "end_char": len(source)}]
         if args.source_html:
             saved_html = args.source_html.read_text(encoding="utf-8")

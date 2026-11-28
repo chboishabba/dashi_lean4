@@ -2,10 +2,9 @@ import Synthesis.MillenniumBSDNumberFieldSelmerShaOriginalWeldExact
 import Synthesis.MillenniumBSDGeneralKummerCosetExact
 
 /-!
-The original rational-point double-coset geometry, the number-field
-Selmer inclusion and the original Sha map now form ONE same-object
-bidirectional sequence. All objects are the original curve over K,
-not synthetic square-class or finite-field replacement carriers.
+Source-native rational doubles, number-field two-Selmer inclusion,
+and original Sha kernel have the SAME K-curve and actual completions.
+No generic substitute field, square-class quotient or extra half data.
 -/
 namespace BSDCohomology
 open WeierstrassCurve
@@ -14,33 +13,37 @@ universe u
 variable {K : Type u} [Field K] [NumberField K]
 variable (W : WeierstrassCurve K) [W.IsElliptic]
 
-/-- Two actual rational points define the SAME original Selmer class
-exactly when their difference is a double of a rational point.
-No spurious geometric half over Kbar is treated as rational. -/
+/-- Original rational double-coset BIDI at the selected original
+number-field Selmer source. This uses actual rational, not geometric,
+halves on the right. -/
 theorem numberFieldKummerSelmer_sameCoset
     (P R : BasePoint W) :
     numberFieldKummerToSelmer W P =
       numberFieldKummerToSelmer W R ↔
       ∃ S : BasePoint W, (2 : ℕ) • S = P - R := by
-  change (⟨rationalKummerClass W (globalHalfOnto W) P,
-      globalKummer_mem_selmer W (globalHalfOnto W)
-        (localHalfOnto W) P⟩ :
-      numberFieldSelmerTwo W) =
-    ⟨rationalKummerClass W (globalHalfOnto W) R,
-      globalKummer_mem_selmer W (globalHalfOnto W)
-        (localHalfOnto W) R⟩ ↔ _
-  rw [Subtype.mk.injEq]
-  exact general_rationalKummer_sameCoset W P R
+  constructor
+  · intro h
+    apply (general_rationalKummer_sameCoset W P R).mp
+    exact congrArg Subtype.val h
+  · intro h
+    apply Subtype.ext
+    exact (general_rationalKummer_sameCoset W P R).mpr h
 
-/-- Actual Selmer kernel/image transport on the same source:
-a Selmer class has trivial image in the original point-Sha subgroup
-exactly when it comes from a global rational point. -/
+/-- Image of original rational point group equals kernel of the
+original number-field Selmer-to-point-Sha map. The quotient is
+already provided by numberFieldSelmerQuotientEquivShaTwo. -/
 theorem numberFieldSelmerSha_zero_iff_globalKummer
     (z : numberFieldSelmerTwo W) :
-    selmerToShaTwo W (globalHalfOnto W) (localHalfOnto W) z = 0 ↔
+    selmerToShaTwo W
+      (general_geometric_doubling_onto W)
+      (fun v => general_geometric_doubling_onto (localCurve W v)) z = 0 ↔
       ∃ P : BasePoint W, numberFieldKummerToSelmer W P = z := by
-  rw [← AddMonoidHom.mem_ker]
-  rw [numberField_selmerToSha_kernel]
+  change z ∈
+    (selmerToShaTwo W
+      (general_geometric_doubling_onto W)
+      (fun v => general_geometric_doubling_onto (localCurve W v))).ker ↔ _
+  rw [numberField_selmerToSha_kernel W]
+  change z ∈ (numberFieldKummerToSelmer W).range ↔ _
   exact AddSubgroup.mem_range
 
 end

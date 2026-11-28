@@ -1,0 +1,6 @@
+/-! Section 26 original N2e signed nonlinear transfer equivalence. -/
+import Synthesis.NavierStokesOriginalQuarterSignedTransferInverseCutExact
+#check DASHI.NavierStokes.PhysicalMixed.actual_original_quarter_transfer_upper_iff_paid_energy
+#check DASHI.NavierStokes.PhysicalMixed.actual_original_quarter_energy_ceiling_of_signed_budget
+#print axioms DASHI.NavierStokes.PhysicalMixed.actual_original_quarter_transfer_upper_iff_paid_energy
+#print axioms DASHI.NavierStokes.PhysicalMixed.actual_original_quarter_energy_ceiling_of_signed_budget

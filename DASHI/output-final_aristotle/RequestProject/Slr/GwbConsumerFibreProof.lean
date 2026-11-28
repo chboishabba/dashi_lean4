@@ -1,3 +1,6 @@
+import RequestProject.Slr.DocumentQuerySound
+import RequestProject.Slr.TemporalDocumentProof
+
 /-!
 # GWB consumer-specific proof and explicit non-factorability witnesses
 
@@ -12,8 +15,6 @@ SLR's native M12/S28 checker must independently pay source/parser identity.
 These theorems only establish logical laws once the observed source
 coordinates are supplied. They do not fabricate reviewed semantic licences.
 -/
-import RequestProject.Slr.DocumentQuerySound
-import RequestProject.Slr.TemporalDocumentProof
 
 namespace Wikidata
 namespace Slr
@@ -55,18 +56,18 @@ theorem fibreJoinCommutative {Meaning Meta : Type}
     (a b : EvidenceFibre Meaning Meta) : a.join b = b.join a := by
   apply EvidenceFibre.extensional
   · funext x
-    exact propext (or_comm (a.meanings x) (b.meanings x))
+    exact propext (or_comm)
   · funext x
-    exact propext (or_comm (a.annotations x) (b.annotations x))
+    exact propext (or_comm)
 
 theorem fibreJoinAssociative {Meaning Meta : Type}
     (a b c : EvidenceFibre Meaning Meta) :
     (a.join b).join c = a.join (b.join c) := by
   apply EvidenceFibre.extensional
   · funext x
-    exact propext (or_assoc (a.meanings x) (b.meanings x) (c.meanings x))
+    exact propext (or_assoc)
   · funext x
-    exact propext (or_assoc (a.annotations x) (b.annotations x) (c.annotations x))
+    exact propext (or_assoc)
 
 /-- All metadata alternatives remain available after either merge order. -/
 theorem fibreJoinRetainsBothAnnotations {Meaning Meta : Type}
@@ -188,28 +189,28 @@ theorem literalYearQueryCloses :
     A source-text match alone cannot pay world occurrence, coreference,
     event-date attachment, or clause scope. -/
 theorem actualPossessionNotLicensed :
-    ¬ SourceQueryLicence sourceModel readingA .actualPossession := by
+    ¬ Nonempty (SourceQueryLicence sourceModel readingA .actualPossession) := by
   apply incompatibleLiveReadingsBlockQueryLicence readingA readingB
   · rfl
   · rfl
   · decide
 
 theorem actorIdentityNotLicensed :
-    ¬ SourceQueryLicence sourceModel readingA .actorIdentity := by
+    ¬ Nonempty (SourceQueryLicence sourceModel readingA .actorIdentity) := by
   apply incompatibleLiveReadingsBlockQueryLicence readingA readingB
   · rfl
   · rfl
   · decide
 
 theorem eventDateNotLicensed :
-    ¬ SourceQueryLicence sourceModel readingA .eventDated2003 := by
+    ¬ Nonempty (SourceQueryLicence sourceModel readingA .eventDated2003) := by
   apply incompatibleLiveReadingsBlockQueryLicence readingA readingB
   · rfl
   · rfl
   · decide
 
 theorem embeddedScopeNotLicensed :
-    ¬ SourceQueryLicence sourceModel readingA .embeddedClause := by
+    ¬ Nonempty (SourceQueryLicence sourceModel readingA .embeddedClause) := by
   apply incompatibleLiveReadingsBlockQueryLicence readingA readingB
   · rfl
   · rfl

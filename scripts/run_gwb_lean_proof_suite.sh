@@ -12,8 +12,11 @@ out="$(realpath "$out")"
 command -v sha256sum >/dev/null || { echo "sha256sum unavailable" >&2; exit 2; }
 command -v lake >/dev/null || { echo "Pinned Lake/Lean unavailable; install repo lean-toolchain through elan" >&2; exit 2; }
 command -v tar >/dev/null || { echo "tar unavailable" >&2; exit 2; }
-if ! lake env lean --version | grep -q '4.35.0-rc3'; then
-  echo "Pinned root Lean 4.35.0-rc3 not active; do not use /usr/bin/lean 4.27.0" >&2
+toolchain_pin="$(tr -d '\r\n' < "$root/lean-toolchain")"
+expected_lean_version="${toolchain_pin##*:}"
+expected_lean_version="${expected_lean_version#v}"
+if ! lake env lean --version | grep -q "$expected_lean_version"; then
+  echo "Pinned root Lean $expected_lean_version not active; do not use an unpinned system Lean" >&2
   exit 2
 fi
 

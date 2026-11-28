@@ -375,6 +375,51 @@ theorem reciprocalBushOfficeSound
   · exact bushOfficeIntervalsDisjoint
 
 
+/-- Actual indexed P9 office-interval weld: the independently imported
+    qualified statement and the licensed article answer carry the SAME
+    subject/property/object/year coordinates. Neither title equality nor
+    parser observation counts suffice. The theorem is bounded to this
+    declared controlled-language consumer, not all readings of English. -/
+theorem indexedOfficeOriginalQualifiedAgreement
+    (subject : BushOfficeSubject) {article : String}
+    {slr projection entity : Json}
+    (root : indexedOfficeRootCheck subject article slr projection entity = true)
+    (matched : indexedOfficeLeadMatches subject article = true)
+    (w : GwbWorldGraph.OriginalQualifiedYearWitness entity
+      (officeSubjectQid subject) "P39" "Q11696"
+      (officeSubjectYears subject).1 (officeSubjectYears subject).2) :
+    indexedOfficeRootCheck subject article slr projection entity = true ∧
+    indexedOfficeModel.documentAnswer article subject =
+      some (officeSubjectQid subject, "P39", "Q11696",
+        (officeSubjectYears subject).1, (officeSubjectYears subject).2) ∧
+    w.statement ∈ GwbWorldGraph.originalPropertyRows entity
+      (officeSubjectQid subject) "P39" ∧
+    GwbWorldGraph.yearIntervalStatementMatches "P39" "Q11696"
+      (officeSubjectYears subject).1 (officeSubjectYears subject).2 w.statement = true := by
+  have native := GwbWorldGraph.originalQualifiedYearWitnessSound w
+  exact ⟨root, indexedOfficeAnswerSound subject article matched, native.1, native.2⟩
+
+/-- Bilateral source licences do not identify distinct holders merely
+    because both exact native statements have the same office object. -/
+theorem indexedOfficeDistinctHolderComparison
+    {son father : String} {sa pa ea sb pb eb : Json}
+    (rootA : indexedOfficeRootCheck .son son sa pa ea = true)
+    (rootB : indexedOfficeRootCheck .father father sb pb eb = true)
+    (ha : indexedOfficeLeadMatches .son son = true)
+    (hb : indexedOfficeLeadMatches .father father = true)
+    (wa : GwbWorldGraph.OriginalQualifiedYearWitness ea "Q207" "P39" "Q11696" 2001 2009)
+    (wb : GwbWorldGraph.OriginalQualifiedYearWitness eb "Q23505" "P39" "Q11696" 1989 1993) :
+    indexedOfficeModel.documentAnswer son .son ≠
+      indexedOfficeModel.documentAnswer father .father ∧
+    (officeSubjectYears .father).2 < (officeSubjectYears .son).1 ∧
+    wa.statement ∈ GwbWorldGraph.originalPropertyRows ea "Q207" "P39" ∧
+    wb.statement ∈ GwbWorldGraph.originalPropertyRows eb "Q23505" "P39" := by
+  have a := indexedOfficeOriginalQualifiedAgreement .son rootA ha wa
+  have b := indexedOfficeOriginalQualifiedAgreement .father rootB hb wb
+  refine ⟨?_, bushOfficeIntervalsDisjoint, a.2.2.1, b.2.2.1⟩
+  rw [a.2.1, b.2.1]
+  decide
+
 /-- A bounded shared-event key, independent of article subject. The
     historical result is only source-attributed; neither its legitimacy nor
     the constitutional/legal consequences are inferred. -/
@@ -474,6 +519,7 @@ def electionLicence (source : ElectionSource) (subject : BushOfficeSubject) :
     intro r h
     exact congrArg (fun x => electionAnswer x subject) h
 
+set_option maxRecDepth 10000 in
 theorem reciprocalElectionClaimSound
     (a b : ElectionSource)
     (ha : electionAnswer a .son = some election2000)
@@ -502,6 +548,61 @@ theorem reciprocalElectionReadingsSound (a b : ElectionSource) :
     positiveElectionAgreement positiveElectionAgreement a b rfl rfl
 
 
+
+/-- Compression of the original checked office answer for a declared
+    exact interval consumer. A different tuple or a missing match is
+    unavailable, not a proof of negation. The original full answer remains
+    the provenance inverse. -/
+def exactOfficeIntervalProjection
+    (expected : String × String × String × Nat × Nat)
+    (answer : Option (String × String × String × Nat × Nat)) : Option Bool :=
+  if answer = some expected then some true else none
+
+def exactOfficeIntervalLicence (article : String) (subject : BushOfficeSubject) :
+    SourceQueryLicence
+      (projectQueryAnswer indexedOfficeModel (exactOfficeIntervalProjection
+        (officeSubjectQid subject, "P39", "Q11696",
+          (officeSubjectYears subject).1, (officeSubjectYears subject).2))) article subject :=
+  projectSourceQueryLicence (indexedOfficeLicence article subject) _
+
+theorem exactOfficeIntervalCompressionSound
+    (subject : BushOfficeSubject) {article : String}
+    {slr projection entity : Json}
+    (root : indexedOfficeRootCheck subject article slr projection entity = true)
+    (matched : indexedOfficeLeadMatches subject article = true)
+    (w : GwbWorldGraph.OriginalQualifiedYearWitness entity
+      (officeSubjectQid subject) "P39" "Q11696"
+      (officeSubjectYears subject).1 (officeSubjectYears subject).2) :
+    (projectQueryAnswer indexedOfficeModel (exactOfficeIntervalProjection
+      (officeSubjectQid subject, "P39", "Q11696",
+        (officeSubjectYears subject).1, (officeSubjectYears subject).2))).documentAnswer article subject =
+      some true ∧
+    w.statement ∈ GwbWorldGraph.originalPropertyRows entity (officeSubjectQid subject) "P39" := by
+  have h := indexedOfficeOriginalQualifiedAgreement subject root matched w
+  constructor
+  · change exactOfficeIntervalProjection _ (indexedOfficeModel.documentAnswer article subject) = _
+    rw [h.2.1]
+    simp [exactOfficeIntervalProjection]
+  · exact h.2.2.1
+
+/-- The coarse office-only view collapses two original bounded answers.
+    A holder consumer therefore cannot descend through it. This is a
+    concrete GWB/GHWB context-loss control, not an invented semantic model. -/
+def officeObjectOnly (a : String × String × String × Nat × Nat) : String := a.2.2.1
+
+theorem officeOnlyCompressionLosesHolder :
+    ¬ (∃ holder : String → Unit → String,
+      ∀ a : String × String × String × Nat × Nat, ∀ q : Unit,
+        a.1 = holder (officeObjectOnly a) q) := by
+  apply contextCollisionBlocksCompression officeObjectOnly (fun a (_ : Unit) => a.1)
+    ("Q207", "P39", "Q11696", 2001, 2009)
+    ("Q23505", "P39", "Q11696", 1989, 1993) ()
+  · rfl
+  · decide
+
 end GwbArticleSystem
 end Slr
 end Wikidata
+
+#print axioms Wikidata.Slr.GwbArticleSystem.exactOfficeIntervalCompressionSound
+#print axioms Wikidata.Slr.GwbArticleSystem.officeOnlyCompressionLosesHolder

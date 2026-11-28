@@ -1,3 +1,4 @@
+import RequestProject.Slr.IndexedWorldFibreInspection
 import RequestProject.Slr.GwbProductionTrace
 import RequestProject.Slr.GwbCanonicalSourceProof
 import RequestProject.Slr.GwbRelationTransport
@@ -648,11 +649,22 @@ def runReciprocalOfficeCheck
       if hb : Slr.GwbArticleSystem.indexedOfficeLeadMatches .father b = true then
         let wa := Slr.GwbWorldGraph.originalQualifiedYearWitnesses ea "Q207" "P39" "Q11696" 2001 2009
         let wb := Slr.GwbWorldGraph.originalQualifiedYearWitnesses eb "Q23505" "P39" "Q11696" 1989 1993
-        if wa.isEmpty || wb.isEmpty then return 1
-        for w in wa do
-          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
-        for w in wb do
-          let _ := Slr.GwbWorldGraph.originalQualifiedYearWitnessSound w
+        let some witnessA := wa.head? | return 1
+        let some witnessB := wb.head? | return 1
+        if hRootA : Slr.GwbArticleSystem.indexedOfficeRootCheck .son a sa pa ea = true then
+          if hRootB : Slr.GwbArticleSystem.indexedOfficeRootCheck .father b sb pb eb = true then
+            for w in wa do
+              let _ := Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement .son hRootA ha w
+            for w in wb do
+              let _ := Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement .father hRootB hb w
+            let _ := Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison
+              hRootA hRootB ha hb witnessA witnessB
+            let _ := Slr.GwbArticleSystem.exactOfficeIntervalCompressionSound .son hRootA ha witnessA
+            let _ := Slr.GwbArticleSystem.exactOfficeIntervalCompressionSound .father hRootB hb witnessB
+            let _ := Slr.GwbArticleSystem.officeOnlyCompressionLosesHolder
+            pure ()
+          else return 1
+        else return 1
         let _ := Slr.GwbArticleSystem.reciprocalBushOfficeSound ha hb
         let some literalA := Slr.GwbArticleSystem.matchedOfficeLead? .son a | return 1
         let some literalB := Slr.GwbArticleSystem.matchedOfficeLead? .father b | return 1
@@ -689,6 +701,11 @@ def runReciprocalOfficeCheck
           ("forward", toJson ("son tenure after father tenure" : String)),
           ("backward", toJson ("father tenure before son tenure" : String)),
           ("same_office", toJson true), ("distinct_holders", toJson true),
+          ("bounded_article_kb_interval_weld_checked", toJson true),
+          ("exact_interval_consumer_compression_checked", toJson true),
+          ("office_only_holder_compression_obstructed", toJson true),
+          ("context_compression_scope", toJson ("exact original holder/property/object/year tuple; not a common pair query" : String)),
+          ("weld_theorem", toJson ("Wikidata.Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison" : String)),
           ("disjoint_year_intervals", toJson true), ("direct_succession_paid", toJson false),
           ("shared_event_identity_paid", toJson false),
           ("bounded_shared_election_outcome_paid", toJson sharedElection),
@@ -703,6 +720,43 @@ def runReciprocalOfficeCheck
     else return 1
   | _, _, _, _, _, _, _ => return 1
 
+
+/-- Generic revision-pinned source inventory. Check original article bytes
+and independent EntityData before emitting the recorded fibre. -/
+def runIndexedWorldFibre (qid title articlePath slrPath projectionPath entityPath
+    outputPath : String) (properties : List String) : IO UInt32 := do
+  let article ← IO.FS.readFile articlePath
+  let paths := [articlePath, slrPath, projectionPath, entityPath]
+  let mut hashes : List String := []
+  for p in paths do
+    let out ← IO.Process.output { cmd := "sha256sum", args := #[p] }
+    if out.exitCode != 0 then return 1
+    hashes := hashes ++ [(out.stdout.splitOn " ").head!]
+  match Json.parse (← IO.FS.readFile slrPath), Json.parse (← IO.FS.readFile projectionPath),
+      Json.parse (← IO.FS.readFile entityPath) with
+  | .ok source, .ok projection, .ok entity =>
+    let manifest := (source.getObjVal? "manifestation").toOption.getD Json.null
+    if (manifest.getObjValAs? String "source_text_sha256").toOption != some hashes[0]! ||
+       (projection.getObjValAs? String "source_text_sha256").toOption != some hashes[0]! then
+      return 1
+    let some revision := Slr.GwbArticleSystem.entityRevision entity qid | return 1
+    if revision == 0 then return 1
+    if h : Slr.IndexedWorldFibreInspection.checkRoot qid title article source projection entity = true then
+      let _checked : Slr.IndexedWorldFibreInspection.CheckedRoot qid title article source projection entity := ⟨h⟩
+      let inventory := Slr.IndexedWorldFibreInspection.inventory qid title source projection entity properties
+      IO.FS.writeFile outputPath ((Json.mkObj [
+        ("schema", toJson ("slr.jmd-indexed-world-fibre-receipt.v1" : String)),
+        ("source_sha256", toJson hashes[0]!),
+        ("original_slr_sha256", toJson hashes[1]!),
+        ("projection_sha256", toJson hashes[2]!),
+        ("entity_sha256", toJson hashes[3]!),
+        ("entity_revision", toJson revision), ("inventory", inventory),
+        ("source_observation_checked", toJson true),
+        ("cross_source_alignment_paid", toJson false),
+        ("world_truth_paid", toJson false)]).pretty ++ "\n")
+      return 0
+    else return 1
+  | _, _, _ => return 1
 
 def main (args : List String) : IO UInt32 := do
   match args with
@@ -730,6 +784,8 @@ def main (args : List String) : IO UInt32 := do
       runArticleP4Check article slr projection native wikidata
   | ["reciprocal-office-check", a, sa, pa, ea, b, sb, pb, eb, office, output] =>
       runReciprocalOfficeCheck a sa pa ea b sb pb eb office output
+  | "indexed-world-fibre" :: qid :: title :: article :: slr :: projection :: entity :: output :: properties =>
+      runIndexedWorldFibre qid title article slr projection entity output properties
   | ["article-clause-check", article, slr, projection, root, output] =>
       runArchivedClauseCheck article slr projection root output
   | ["article-office-check", article, slr, projection, root, office, output] =>
@@ -846,6 +902,8 @@ def main (args : List String) : IO UInt32 := do
 
 #print axioms Wikidata.Slr.GwbArticleSystem.reciprocalBushOfficeSound
 #print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeAnswerSound
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeOriginalQualifiedAgreement
+#print axioms Wikidata.Slr.GwbArticleSystem.indexedOfficeDistinctHolderComparison
 
 #print axioms Wikidata.Slr.GwbArticleSystem.electionRowsExact
 #print axioms Wikidata.Slr.GwbArticleSystem.reciprocalElectionClaimSound

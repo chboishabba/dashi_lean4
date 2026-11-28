@@ -125,6 +125,34 @@ theorem glue_iff (l : U →ₗ[F] F) (r : V →ₗ[F] F) :
     have e : leftIn U V ⟨x,hu⟩=rightIn U V ⟨x,hv⟩ := rfl
     rw [← hl,← hr,e]
 
+-- Parent boundary information is determined by the two child
+-- boundaries. This is the actual condition that allows one retained
+-- representative to determine the parent's label, even though its
+-- mass counts many distinct private normal restrictions.
+theorem parent_boundary_le (W : Submodule F M) :
+    ((U ⊔ V) ⊓ W) ≤ (U ⊓ (V ⊔ W)) ⊔ (V ⊓ (U ⊔ W)) := by
+  intro x hx
+  obtain ⟨u,hu,v,hv,e⟩ := Submodule.mem_sup.mp hx.1
+  have hu' : u∈V⊔W := by
+    have he : u=x-v := by rw [← e]; abel
+    rw [he]
+    exact (V⊔W).sub_mem (le_sup_right hx.2) (le_sup_left hv)
+  have hv' : v∈U⊔W := by
+    have he : v=x-u := by rw [← e]; abel
+    rw [he]
+    exact (U⊔W).sub_mem (le_sup_right hx.2) (le_sup_left hu)
+  exact Submodule.mem_sup.mpr ⟨u,⟨hu,hu'⟩,v,⟨hv,hv'⟩,e⟩
+
+theorem sibling_overlap_left (W : Submodule F M) :
+    U⊓V ≤ U⊓(V⊔W) := by
+  intro x hx
+  exact ⟨hx.1,le_sup_left hx.2⟩
+
+theorem sibling_overlap_right (W : Submodule F M) :
+    U⊓V ≤ V⊓(U⊔W) := by
+  intro x hx
+  exact ⟨hx.2,le_sup_left hx.1⟩
+
 end Glue
 
 -- Original affine observation fibres all have the same kernel mass.

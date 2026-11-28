@@ -122,8 +122,8 @@ private def exactDirectRoleProjection
     acceptance requirement, not a generated semantic ontology. -/
 private def selectedOriginalPredicate (raw : Json) : Bool :=
   str? raw "pos" == some "VERB" &&
-  (["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"]
-    .contains ((str? raw "dep").getD ""))
+  decide (((str? raw "dep").getD "") ∈
+    (["ROOT", "conj", "ccomp", "xcomp", "advcl", "acl", "relcl"] : List String))
 
 private def expectedOriginalPredicateCount (original : Array Json) : Nat :=
   original.foldl (fun acc sentence =>
@@ -377,7 +377,7 @@ def checkProjection (text : String) (source projection : Json) : Bool :=
   checkProjectionFor "Q207" text source projection
 
 structure CheckedIndexedArticleExtraction
-    (subject text : String) (source projection : Json) where
+    (subject text : String) (source projection : Json) : Type where
   checked : checkProjectionFor subject text source projection = true
 
 def checkedIndexedArticle?

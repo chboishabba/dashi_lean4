@@ -17,9 +17,9 @@ def str (j : Json) (key : String) : String :=
 
 def checkRoot (qid title article : String) (source projection entity : Json) : Bool :=
   let revision := str source "revision_ref"
-  ArticleProof.checkProjectionFor qid article source projection &&
-  GwbArticleIdentity.checkSitelink qid title entity &&
-  GwbWorldGraph.jsonEntityMatchesQid qid entity &&
+  Wikidata.Slr.ArticleProof.checkProjectionFor qid article source projection &&
+  Wikidata.Slr.GwbArticleIdentity.checkSitelink qid title entity &&
+  Wikidata.Slr.GwbWorldGraph.jsonEntityMatchesQid qid entity &&
   revision.startsWith "enwiki-revid:" &&
   (match (revision.drop "enwiki-revid:".length).toString.toNat? with
    | some n => decide (n > 0) && str source "source_unit_ref" ==
@@ -47,11 +47,11 @@ theorem membersMatchingExact (rows : List Json) (test : Json → Bool) (row : Js
   simp only [membersMatching, List.mem_filter]
 
 def propertyMembers (entity : Json) (qid property : String) : List Json :=
-  GwbWorldGraph.originalPropertyRows entity qid property
+  Wikidata.Slr.GwbWorldGraph.originalPropertyRows entity qid property
 
 theorem propertyMembersExact (entity : Json) (qid property : String) (row : Json) :
     row ∈ propertyMembers entity qid property ↔
-    row ∈ GwbWorldGraph.originalPropertyRows entity qid property := Iff.rfl
+    row ∈ Wikidata.Slr.GwbWorldGraph.originalPropertyRows entity qid property := Iff.rfl
 
 /-- Each source retains its own row membership. No cross-source proposition
 alignment follows from sharing a root or matching a property string. -/
@@ -63,7 +63,7 @@ theorem independentlyCheckedMembers
     (ha : a ∈ rows) (hb : b ∈ propertyMembers entity qid property) :
     checkRoot qid title article source projection entity = true ∧
     articleMembers source projection lane = some rows ∧ a ∈ rows ∧
-    b ∈ GwbWorldGraph.originalPropertyRows entity qid property :=
+    b ∈ Wikidata.Slr.GwbWorldGraph.originalPropertyRows entity qid property :=
   ⟨root.checked, selected, ha, hb⟩
 
 def inventory (qid title : String) (source projection entity : Json)

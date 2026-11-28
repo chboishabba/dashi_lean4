@@ -40,7 +40,7 @@ theorem actual_original_Q0_root_unique_even_deck
   let E := actualOriginalRootEvenDeckEquiv a y δ base hδ
   refine ⟨E.symm target, E.apply_symm_apply target, ?_⟩
   intro e he
-  exact E.injective he
+  exact E.injective (he.trans (E.apply_symm_apply target).symm)
 
 end
 end DASHI.Hodge.DicksonCoupled

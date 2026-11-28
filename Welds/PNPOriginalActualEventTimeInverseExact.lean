@@ -13,6 +13,7 @@ The source uses the existing ReachableDivergentSet and
 actual_event_capacity theorem; no fresh synthetic oracle is introduced.
 -/
 namespace PNPActualEventDemand
+open PNPHyperfabricOwnedEvents
 open scoped BigOperators
 
 /-- If the genuinely observed same-run obligations carry more total

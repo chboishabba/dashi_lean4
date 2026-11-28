@@ -261,6 +261,37 @@ theorem actualClass_zero_iff_coboundary (c : C(G,X)) (hc : Crossed X c) :
     change (c y+q)-(c x+q)=c y-c x
     abel
 
+
+
+/-- Equality of actual H1 classes is precisely a signed coboundary
+difference. This uses the existing additive projection, not a new quotient. -/
+theorem crossed_sub (c d : C(G,X)) (hc : Crossed X c) (hd : Crossed X d) :
+    Crossed X (c-d) := by
+  intro g h
+  change c (g*h)-d (g*h)=c g-d g+X.ρ g (c h-d h)
+  rw [hc,hd,map_sub]
+  abel
+
+theorem actualClass_sub (c d : C(G,X)) (hc : Crossed X c) (hd : Crossed X d) :
+    actualClass X (c-d) (crossed_sub X c d hc hd) =
+      actualClass X c hc-actualClass X d hd := by
+  have hker : toKernelOne X (c-d) (crossed_sub X c d hc hd) =
+      toKernelOne X c hc-toKernelOne X d hd := by
+    apply Subtype.ext
+    apply Subtype.ext
+    ext x y
+    change (c y-d y)-(c x-d x)=(c y-c x)-(d y-d x)
+    abel
+  unfold actualClass
+  rw [hker,map_sub,map_sub]
+
+theorem actualClass_eq_iff_coboundary (c d : C(G,X))
+    (hc : Crossed X c) (hd : Crossed X d) :
+    actualClass X c hc = actualClass X d hd ↔
+      ∃ q : X, ∀ g, c g-d g = X.ρ g q-q := by
+  rw [← sub_eq_zero, ← actualClass_sub X c d hc hd]
+  exact actualClass_zero_iff_coboundary X (c-d) (crossed_sub X c d hc hd)
+
 /-- Every class in the original H1 is represented by an actual continuous
 crossed cocycle, not an arbitrary point of a substitute quotient. -/
 theorem actualClass_surjective (x : continuousCohomology 1 X) :

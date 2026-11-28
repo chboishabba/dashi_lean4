@@ -53,7 +53,7 @@ namespace PNPActualLaneAllocation
 -- Finite emitted inventory is the owner: five data indices and all
 -- actual control/private tag indices. Enumerate the primes, not lanes
 -- from a different compiler.
-def allocLanePrime (i : Nat) : Nat := Nat.nth Nat.Prime i
+noncomputable def allocLanePrime (i : Nat) : Nat := Nat.nth Nat.Prime i
 
 theorem alloc_prime (i : Nat) : Nat.Prime (allocLanePrime i) := by
   unfold allocLanePrime

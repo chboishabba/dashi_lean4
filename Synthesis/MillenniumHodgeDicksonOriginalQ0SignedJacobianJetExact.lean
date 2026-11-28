@@ -12,6 +12,7 @@ coupled fibre and actual original y_i, not a global projective
 smoothness, algebraic cycle, primitive pairing, or Hodge theorem.
 -/
 namespace DASHI.Hodge.DicksonCoupled
+open scoped BigOperators
 noncomputable section
 
 variable {F : Type*} [Field F] [CharZero F]

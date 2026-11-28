@@ -1,0 +1,13 @@
+import Welds.PNPSection32GeometryAcceptanceExact
+import Welds.PNPOriginalModularIncidenceExact
+import Welds.PNPQuotientDemandBoundaryExact
+
+/-! Native source written; no kernel acceptance claimed. -/
+#check PNPOriginalModularIncidence.exactOneFromClauses
+#check PNPOriginalModularIncidence.original_incidence_refutes
+#check PNPOriginalModularIncidence.parityFromClauses
+#check PNPOriginalModularIncidence.unresolved_retains_source
+#check PNPOriginalModularIncidence.declared_allowance_exact
+#check PNPQuotientDemandBoundary.stutter_overhead
+#print axioms PNPOriginalModularIncidence.original_incidence_refutes
+#print axioms PNPOriginalModularIncidence.parityFromClauses

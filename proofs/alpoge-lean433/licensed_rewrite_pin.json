@@ -54,7 +54,7 @@
   "independent_verification": {
     "mit": {
       "url": "https://math.mit.edu/~drew/shortgrh/",
-      "as_of_utc": "2026-11-26T20:46:00Z",
+      "as_of_utc": "2026-11-27T17:27:00Z",
       "compact_modules": 794,
       "readable_modules": 803,
       "compact_paranoid_comparator_passes": 2,
@@ -64,7 +64,11 @@
         "Classical.choice",
         "Quot.sound"
       ],
-      "archive_sha256": "9138cf2f5862e64f823ed676e8d37333c0717e1a13cd8f74f6b735ab2d1ba57c"
+      "archive_sha256": "9138cf2f5862e64f823ed676e8d37333c0717e1a13cd8f74f6b735ab2d1ba57c",
+      "status": "all checks finished; both editions compile and replay every module; all five comparator statements accepted by con-leche and con-ron; compact paranoid passes on two machines, readable on one; second readable run stopped for insufficient RAM, not a proof rejection",
+      "compact_export_bytes": 5172274528,
+      "readable_export_bytes": 4485867644,
+      "schoenfeld_equivalence_and_bound": "paranoid comparator accepted"
     },
     "waterloo": {
       "url": "https://mrubinst.github.io/grh-lean-compact-check/",

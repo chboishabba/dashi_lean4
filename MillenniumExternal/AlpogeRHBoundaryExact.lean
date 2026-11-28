@@ -40,7 +40,7 @@ theorem clay_iff_mathlib :
 /-- The actual pole-cancelled xi zero and nontrivial zeta zero
 carriers, with the ORIGINAL inverse coordinate functions. No zero
 count or critical-strip sampling is used. -/
-def originalXiZetaZeroEquiv :
+noncomputable def originalXiZetaZeroEquiv :
     {t : ℂ // Millennium.xi t = 0} ≃
       {s : ℂ // Millennium.IsNontrivialZero s} where
   toFun t := ⟨Millennium.xi_argument t.1,

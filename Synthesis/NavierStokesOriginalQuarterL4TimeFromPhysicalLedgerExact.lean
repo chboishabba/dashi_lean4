@@ -73,5 +73,86 @@ theorem original_quarter_energy_L4_time_paid_by_physical_dissipation
       (pow_nonneg hE₀ 3)
     _ = E₀^4 := by ring
 
+
+/-- The original global finite Galerkin equation pays its OWN interval
+integrability: on a fixed finite [0,T], every Fourier component has
+a physical derivative, hence the finite quarter-energy sum and
+physical dissipation are continuous, and so integrable. This avoids
+postulating a separate analytic scalar trajectory. -/
+theorem original_actual_finite_quarter_and_dissipation_integrable
+    (N : ℕ) (ν T a : ℝ) (hT : 0 ≤ T) (ha : a < 0)
+    (X : ℝ → FiniteState N)
+    (hODE : DASHI.NavierStokes.RealContinuation.SolvesOn
+      (finiteForce N ν) X (Ioi a)) :
+    IntervalIntegrable
+      (fun t => (fractionalEnergy N quarterWeight
+        (fun k s => zeroExtend (X s) k) t)^4) volume 0 T ∧
+    IntervalIntegrable
+      (fun t => periodicDissipation N
+        (fun k s => zeroExtend (X s) k) t) volume 0 T := by
+  let U : Vec3 → ℝ → CVec3 := fun k s => zeroExtend (X s) k
+  have ho (t : ℝ) (ht : t ∈ uIcc 0 T)
+      (k : Vec3) (i : Fin 3) :
+      HasDerivAt (fun s => U k s i)
+        (-((ν * massSq k : ℝ) : ℂ) * U k t i +
+          galerkinForce N U k t i) t := by
+    have h0 : 0 ≤ t := by rw [uIcc_of_le hT] at ht; exact ht.1
+    exact zeroExtend_ODE_of_derivative N ν X t
+      (hODE t (ha.trans_le h0)) k i
+  have hc (k : Vec3) (i : Fin 3) :
+      ContinuousOn (fun t => U k t i) (uIcc 0 T) :=
+    fun t ht => (ho t ht k i).continuousAt.continuousWithinAt
+  have hcE : ContinuousOn (fractionalEnergy N quarterWeight U) (uIcc 0 T) := by
+    unfold fractionalEnergy
+    apply continuousOn_finset_sum
+    intro k _
+    apply ContinuousOn.const_mul
+    unfold realHermitian
+    simp only [Fin.sum_univ_three]
+    fun_prop
+  have hcD : ContinuousOn (periodicDissipation N U) (uIcc 0 T) := by
+    unfold periodicDissipation
+    apply continuousOn_finset_sum
+    intro k _
+    apply ContinuousOn.const_mul
+    unfold realHermitian
+    simp only [Fin.sum_univ_three]
+    fun_prop
+  exact ⟨(hcE.pow 4).intervalIntegrable, hcD.intervalIntegrable⟩
+
+/-- One actual globally defined finite physical flow owns ALL
+fourth-moment payment inputs. The interval integrability is produced
+by the actual original ODE rather than hypothesized, and the energy
+and viscosity budgets are the same global-flow source. -/
+theorem actual_global_original_quarter_L4_time_payment
+    (N : ℕ) (ν : ℝ) (hν : 0 < ν)
+    (x₀ : FiniteState N)
+    (hr : reflectState x₀ = x₀)
+    (ht : ∀ k, outputDot k (zeroExtend x₀ k) = 0) :
+    ∃ a < 0, ∃ X : ℝ → FiniteState N,
+      X 0 = x₀ ∧
+      DASHI.NavierStokes.RealContinuation.SolvesOn
+        (finiteForce N ν) X (Ioi a) ∧
+      (∀ t ≥ 0, reflectState (X t) = X t) ∧
+      (∀ t ≥ 0, ∀ k,
+        outputDot k (zeroExtend (X t) k) = 0) ∧
+      (∀ T : ℝ, 0 ≤ T →
+        2 * ν * (∫ t in 0..T,
+          (fractionalEnergy N quarterWeight
+            (fun k s => zeroExtend (X s) k) t)^4)
+        ≤ (stateEnergy x₀)^4) := by
+  obtain ⟨a, ha, X, hzero, hODE, hreal, htrans, hledger⟩ :=
+    actual_global_finite_energy_and_dissipation_payment N ν hν.le x₀ hr ht
+  refine ⟨a, ha, X, hzero, hODE, hreal, htrans, ?_⟩
+  intro T hT
+  obtain ⟨hq, hd⟩ :=
+    original_actual_finite_quarter_and_dissipation_integrable
+      N ν T a hT ha X hODE
+  exact original_quarter_energy_L4_time_paid_by_physical_dissipation
+    N ν (stateEnergy x₀) T X hT hν.le
+    (stateEnergy_nonneg x₀)
+    (fun t ht => (hledger t ht).1)
+    (hledger T hT).2 hq hd
+
 end
 end DASHI.NavierStokes.PhysicalMixed
